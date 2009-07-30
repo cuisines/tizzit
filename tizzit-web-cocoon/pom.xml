@@ -1,36 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <groupId>org.cqcms</groupId>
-   <artifactId>cqcms-web-cocoon</artifactId>
-   <version>${conquest.version}</version>
+   <groupId>org.tizzit</groupId>
+   <artifactId>tizzit-web-cocoon</artifactId>
+   <version>${tizzit.version}</version>
    <packaging>war</packaging>
-   <name>CQCMS Cocoon</name>
+   <name>tizzit Cocoon</name>
    <parent>
-      <groupId>org.cqcms</groupId>
-      <artifactId>cqcms</artifactId>
+      <groupId>org.tizzit</groupId>
+      <artifactId>tizzit</artifactId>
       <version>1.0</version>
-      <relativePath>../cqcms/pom.xml</relativePath>
+      <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
    <dependencies>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-core</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-core</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-common</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-common</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-plugin-api</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-plugin-api</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-xmlsearch-xindice</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-xmlsearch-xindice</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
 
       <dependency>

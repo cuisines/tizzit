@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.cqcms</groupId>
-	<artifactId>cqcms</artifactId>
+	<groupId>org.tizzit</groupId>
+	<artifactId>tizzit</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0</version>
-	<name>CQCMS</name>
-	<description>The CQCMS Project.</description>
+	<name>tizzit</name>
+	<description>The tizzit Project.</description>
 	<scm>
-		<connection>scm:svn:https://cqcms.svn.sourceforge.net/svnroot/cqcms/trunk/cqcms/</connection>
-		<url>http://cqcms.svn.sourceforge.net/viewvc/cqcms/trunk/</url>
+		<connection>scm:svn:https://tizzit.svn.sourceforge.net/svnroot/tizzit/trunk/tizzit/</connection>
+		<url>http://tizzit.svn.sourceforge.net/viewvc/tizzit/trunk/</url>
 	</scm>
 	<organization>
 		<name>Juwi MacMillan Group GmbH</name>
@@ -18,7 +18,7 @@
 	<inceptionYear>2009</inceptionYear>
 	<issueManagement>
 		<system>mantis</system>
-		<url>http://cqcms.jira.com</url>
+		<url>http://tizzit.jira.com</url>
 	</issueManagement>
 	<ciManagement>
 		<system>continuum</system>
@@ -589,23 +589,23 @@
 	</build>
 	<modules>
 
-		<module>../cqcms-mda</module>
-		<module>../cqcms-common</module>
+		<module>../tizzit-mda</module>
+		<module>../tizzit-common</module>
 
-		<module>../cqcms-plugin-api</module>
-		<module>../cqcms-core</module>
-		<module>../cqcms-webstart</module>
-		<module>../cqcms-web-cocoon</module>
-		<module>../cqcms-richclient</module>
-		<module>../cqcms-web-admin</module>
-		<module>../cqcms-loginmodules</module>
-		<module>../cqcms-web-xindice</module>
-		<module>../cqcms-plugin-testcontainer</module>
-		<module>../cqcms-xmlsearch-xindice</module>
+		<module>../tizzit-plugin-api</module>
+		<module>../tizzit-core</module>
+		<module>../tizzit-webstart</module>
+		<module>../tizzit-web-cocoon</module>
+		<module>../tizzit-richclient</module>
+		<module>../tizzit-web-admin</module>
+		<module>../tizzit-loginmodules</module>
+		<module>../tizzit-web-xindice</module>
+		<module>../tizzit-plugin-testcontainer</module>
+		<module>../tizzit-xmlsearch-xindice</module>
 
 		<!--
-			<module>../cqcms-web-serveradmin</module>
-			<module>../cqcms-adminclient</module>
+			<module>../tizzit-web-serveradmin</module>
+			<module>../tizzit-adminclient</module>
 		-->
 
 		<!--
@@ -613,7 +613,7 @@
 -->
 	</modules>
 	<properties>
-		<conquest.version>3.0.3-SNAPSHOT</conquest.version><!-- -SNAPSHOT -->
+		<tizzit.version>3.0.3-SNAPSHOT</tizzit.version><!-- -SNAPSHOT -->
 		<spring.version>2.5.6</spring.version>
 		<spring.security.version>2.0.4</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
@@ -647,11 +647,11 @@
 		-->
 		<hibernate.dialect>org.hibernate.dialect.Oracle9Dialect</hibernate.dialect>
 		<tomcat.home>${env.CATALINA_HOME}</tomcat.home>
-		<application.id>cqcms</application.id>
+		<application.id>tizzit</application.id>
 		<application.package>de.juwimm.cms</application.package>
-		<application.name>CQCMS</application.name>
+		<application.name>tizzit</application.name>
 		<application.version>2.4.12</application.version>
-		<dataSource.name>ConQuestDS</dataSource.name>
+		<dataSource.name>tizzitDS</dataSource.name>
 		<dataSource>java:/${dataSource.name}</dataSource>
 	</properties>
 	<profiles>

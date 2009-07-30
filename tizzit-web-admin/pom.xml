@@ -2,22 +2,22 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.cqcms</groupId>
-   <artifactId>cqcms-web-admin</artifactId>
-	<version>${conquest.version}</version>
+	<groupId>org.tizzit</groupId>
+   <artifactId>tizzit-web-admin</artifactId>
+	<version>${tizzit.version}</version>
 	<packaging>war</packaging>
-   <name>CQCMS Web Admin</name>
+   <name>tizzit Web Admin</name>
 	<parent>
-	   <groupId>org.cqcms</groupId>
-	   <artifactId>cqcms</artifactId>
+	   <groupId>org.tizzit</groupId>
+	   <artifactId>tizzit</artifactId>
 		<version>1.0</version>
-		<relativePath>../cqcms/pom.xml</relativePath>
+		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<dependencies>
 	   <dependency>
 	      <groupId>${pom.groupId}</groupId>
-	      <artifactId>cqcms-webstart</artifactId>
-	      <version>${conquest.version}</version>
+	      <artifactId>tizzit-webstart</artifactId>
+	      <version>${tizzit.version}</version>
 	   </dependency>
 	   <dependency>
 	      <groupId>javax.servlet</groupId>
@@ -70,8 +70,8 @@
                <artifactItems>
                   <artifactItem>
                      <groupId>${pom.groupId}</groupId>
-                     <artifactId>cqcms-richclient</artifactId>
-                     <version>${conquest.version}</version>
+                     <artifactId>tizzit-richclient</artifactId>
+                     <version>${tizzit.version}</version>
                      <type>zip</type>                            
                   </artifactItem>
                </artifactItems>
@@ -89,7 +89,7 @@
                      <tasks>
                         <echo>Copying version.xml and JNLP file...</echo>
                         <copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="true" failonerror="false">
-                           <fileset dir="${pom.basedir}/../../cqcms-richclient/target/jnlp">
+                           <fileset dir="${pom.basedir}/../../tizzit-richclient/target/jnlp">
                               <include name="version.xml"/>
                               <include name="*.jnlp"/>
                            </fileset>

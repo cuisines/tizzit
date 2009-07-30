@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.cqcms</groupId>
-   <artifactId>cqcms-richclient</artifactId>
-	<version>${conquest.version}</version>
+	<groupId>org.tizzit</groupId>
+   <artifactId>tizzit-richclient</artifactId>
+	<version>${tizzit.version}</version>
 	<parent>
-		<groupId>org.cqcms</groupId>
-		<artifactId>cqcms</artifactId>
+		<groupId>org.tizzit</groupId>
+		<artifactId>tizzit</artifactId>
 		<version>1.0</version>
-		<relativePath>../cqcms/pom.xml</relativePath>
+		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<packaging>jar</packaging>
-	<name>CQCMS Swing Rich Client</name>
+	<name>tizzit Swing Rich Client</name>
 	<repositories>
 		<repository>
 			<id>audaxis-tinylookandfeel</id>
@@ -20,23 +20,23 @@
    <dependencies>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-core</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-core</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-common</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-common</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-plugin-api</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-plugin-api</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>${pom.groupId}</groupId>
-         <artifactId>cqcms-loginmodules</artifactId>
-         <version>${conquest.version}</version>
+         <artifactId>tizzit-loginmodules</artifactId>
+         <version>${tizzit.version}</version>
       </dependency>
       <dependency>
          <groupId>org.springframework</groupId>
@@ -160,7 +160,7 @@
 	            <phase>compile</phase>
 	            <configuration>
 	              <tasks>
-					<copy file="${pom.basedir}/../cqcms/pom.xml" tofile="${pom.basedir}/target/classes/pom.xml" overwrite="true"/>
+					<copy file="${pom.basedir}/../tizzit/pom.xml" tofile="${pom.basedir}/target/classes/pom.xml" overwrite="true"/>
 	              </tasks>
 	            </configuration>
 	            <goals>
@@ -184,10 +184,10 @@
             <configuration>
                <dependencies>
                   <includes>
-                     <include>org.cqcms:cqcms-core</include>
-                     <include>org.cqcms:cqcms-common</include>
-                     <include>org.cqcms:cqcms-plugin-api</include>
-                     <include>org.cqcms:cqcms-loginmodules</include>
+                     <include>org.tizzit:tizzit-core</include>
+                     <include>org.tizzit:tizzit-common</include>
+                     <include>org.tizzit:tizzit-plugin-api</include>
+                     <include>org.tizzit:tizzit-loginmodules</include>
                      <include>org.springframework:spring</include>
                      <include>org.springframework.security:spring-security-core-tiger</include>
                      <include>org.springframework.security:spring-security-acl</include>
@@ -226,11 +226,11 @@
                   <storetype>JKS</storetype>
                   <storepass>123456</storepass>
                   <keypass>123456</keypass>
-                  <alias>cqcms</alias>
+                  <alias>tizzit</alias>
                   <validity>720</validity>
                   
-                  <dnameCn>www.cqcms.org</dnameCn>
-                  <dnameOu>ConQuest Open Source Team</dnameOu>
+                  <dnameCn>www.tizzit.org</dnameCn>
+                  <dnameOu>tizzit Open Source Team</dnameOu>
                   <dnameO>maintained by Juwi MacMillan Group GmbH</dnameO>
                   <dnameL>Walsrode</dnameL>
                   <dnameSt>Bockhorn 1</dnameSt>
@@ -262,7 +262,7 @@
                      <classpath>
                         <element>
                               <groupId>${pom.groupId}</groupId>
-                              <artifactId>cqcms-common</artifactId>
+                              <artifactId>tizzit-common</artifactId>
                         </element>
                         <element>
                            <groupId>jaxen</groupId>

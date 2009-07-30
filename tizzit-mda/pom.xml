@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
-   <artifactId>cqcms-mda</artifactId>
+   <artifactId>tizzit-mda</artifactId>
    <packaging>pom</packaging>
-   <version>${conquest.version}</version>
-   <name>CQCMS MDA</name>
+   <version>${tizzit.version}</version>
+   <name>tizzit MDA</name>
    <parent>
-      <groupId>org.cqcms</groupId>
-      <artifactId>cqcms</artifactId>
+      <groupId>org.tizzit</groupId>
+      <artifactId>tizzit</artifactId>
       <version>1.0</version>
-      <relativePath>../cqcms/pom.xml</relativePath>
+      <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
    <dependencies>
       <dependency>
@@ -58,14 +58,14 @@
       </plugins>
    </build>
    <properties>
-      <model.uri>jar:file:${pom.basedir}/src/uml/cqcms.xml.zip!/cqcms.xml</model.uri>
+      <model.uri>jar:file:${pom.basedir}/src/uml/tizzit.xml.zip!/tizzit.xml</model.uri>
       <filter/>
       <validation>true</validation>
       <conf.dir>${pom.basedir}/src/main/config</conf.dir>
       <!-- cartridge output locations -->
-      <core.generated.dir>${pom.basedir}/../cqcms-core/target/src</core.generated.dir>
-      <core.manual.dir>${pom.basedir}/../cqcms-core/src/main/java</core.manual.dir>
-      <common.generated.dir>${pom.basedir}/../cqcms-common/target/src</common.generated.dir>
+      <core.generated.dir>${pom.basedir}/../tizzit-core/target/src</core.generated.dir>
+      <core.manual.dir>${pom.basedir}/../tizzit-core/src/main/java</core.manual.dir>
+      <common.generated.dir>${pom.basedir}/../tizzit-common/target/src</common.generated.dir>
       <!-- hibernate configuration -->
       <!-- default strategy to use when using inhertiance -->
       <hibernate.inheritance.strategy>subclass</hibernate.inheritance.strategy>

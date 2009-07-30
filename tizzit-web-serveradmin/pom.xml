@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.cqcms</groupId>
-	<artifactId>cqcms-web-serveradmin</artifactId>
-	<version>${conquest.version}</version>
+	<groupId>org.tizzit</groupId>
+	<artifactId>tizzit-web-serveradmin</artifactId>
+	<version>${tizzit.version}</version>
 	<packaging>war</packaging>
-	<name>CQCMS Serveradmin (GWT)</name>
+	<name>tizzit Serveradmin (GWT)</name>
 	<parent>
-		<groupId>org.cqcms</groupId>
-		<artifactId>cqcms</artifactId>
+		<groupId>org.tizzit</groupId>
+		<artifactId>tizzit</artifactId>
 		<version>1.0</version>
-		<relativePath>../cqcms/pom.xml</relativePath>
+		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<distributionManagement>
 		<repository>
@@ -66,16 +66,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
-			<artifactId>cqcms-common</artifactId>
-			<version>${conquest.version}</version>
+			<artifactId>tizzit-common</artifactId>
+			<version>${tizzit.version}</version>
 			 <!-- <type>pom</type> -->
 			<scope>compile</scope>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
-			<artifactId>cqcms-common</artifactId>
-			<version>${conquest.version}</version>
+			<artifactId>tizzit-common</artifactId>
+			<version>${tizzit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -145,7 +145,7 @@
 				<version>2.0-beta22-SNAPSHOT</version>
 				<configuration>
 					<compileTargets>
-						<value>de.juwimm.cms.ConquestAdministrationView</value>
+						<value>de.juwimm.cms.tizzitAdministrationView</value>
 					</compileTargets>
 					<extraJvmArgs>-Xmx512M</extraJvmArgs>
 					<generateGettersAndSetters>true</generateGettersAndSetters>
@@ -169,7 +169,7 @@
 					<style>OBF</style>
                     <!-- default: true -->
 					<resourcesOnPath>true</resourcesOnPath>
-					<runTarget>de.juwimm.cms.ConquestAdministrationView/ConquestAdministrationView.html</runTarget>
+					<runTarget>de.juwimm.cms.tizzitAdministrationView/tizzitAdministrationView.html</runTarget>
 					<!-- default: true -->
 					<sourcesOnPath>true</sourcesOnPath>
 					<webXml>${basedir}/src/main/webapp/WEB-INF/web.xml</webXml>

@@ -2,17 +2,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.cqcms</groupId>
-	<artifactId>cqcms-webstart</artifactId>
+	<groupId>org.tizzit</groupId>
+	<artifactId>tizzit-webstart</artifactId>
 	<packaging>jar</packaging>
-	<name>CQCMS Webstart Servlets and Services</name>
+	<name>tizzit Webstart Servlets and Services</name>
 	<parent>
-		<groupId>org.cqcms</groupId>
-		<artifactId>cqcms</artifactId>
+		<groupId>org.tizzit</groupId>
+		<artifactId>tizzit</artifactId>
 		<version>1.0</version>
-		<relativePath>../cqcms/pom.xml</relativePath>
+		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
-	<version>${conquest.version}</version>
+	<version>${tizzit.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
