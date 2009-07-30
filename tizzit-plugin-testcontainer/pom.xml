@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.cqcms</groupId>
+   <artifactId>cqcms-plugin-testcontainer</artifactId>
+   <version>${conquest.version}</version>
+   <parent>
+      <groupId>org.cqcms</groupId>
+      <artifactId>cqcms</artifactId>
+      <version>1.0</version>
+      <relativePath>../cqcms/pom.xml</relativePath>
+   </parent>
+   <packaging>jar</packaging>
+   <name>CQCMS Plugin Testcontainer</name>
+   <dependencies>
+      <dependency>
+         <groupId>${pom.groupId}</groupId>
+         <artifactId>cqcms-richclient</artifactId>
+         <version>${conquest.version}</version>
+         <type>jar</type>
+      </dependency>
+      <dependency>
+         <groupId>${pom.groupId}</groupId>
+         <artifactId>cqcms-plugin-api</artifactId>
+         <version>${conquest.version}</version>
+         <type>jar</type>
+      </dependency>
+      <dependency>
+         <groupId>log4j</groupId>
+         <artifactId>log4j</artifactId>
+         <type>jar</type>
+      </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>3.8.1</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+   <build>
+      <sourceDirectory>src/main/java</sourceDirectory>
+   </build>
+</project>

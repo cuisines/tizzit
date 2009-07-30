@@ -1,0 +1,14 @@
+<document>
+	<properties>
+		<title>ConQuest Changes</title>
+		<author email="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</author>
+	</properties>
+	<body>
+		<release version="2.2.0" date="in SVN">
+			<action dev="skulawik" type="update"> Blah blah. </action>
+			<action dev="skulawik" type="add">ConQuest technical project website created.</action>
+			<action dev="skulawik" type="fix" issue="12345"> Corrected bug blah blah. </action>
+			<!--<action dev="skulawik" type="remove" due-to="John Doe" due-to-email="john@doe.com"> Removed blah blah. </action>-->
+		</release>
+	</body>
+</document>

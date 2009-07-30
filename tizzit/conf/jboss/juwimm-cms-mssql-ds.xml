@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss Server Configuration                                           -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<datasources>
+	<local-tx-datasource>
+		<jndi-name>MySqlDS</jndi-name>
+		<connection-url>jdbc:sqlserver://localhost:1433;DatabaseName=cms;selectmethod=cursor</connection-url>
+		<driver-class>com.microsoft.jdbc.sqlserver.SQLServerDriver</driver-class>
+	    <transaction-isolation>TRANSACTION_READ_UNCOMMITTED</transaction-isolation>
+		<user-name>sa</user-name>
+		<password>sa</password>
+		<min-pool-size>5</min-pool-size>
+	</local-tx-datasource>
+</datasources>

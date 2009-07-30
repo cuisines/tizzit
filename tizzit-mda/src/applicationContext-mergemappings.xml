@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings name="SpringMappings">
+	<mapping>
+		<from>
+			<![CDATA[<!-- applicationContext hibernateProperties merge-point -->]]>
+		</from>
+		<to>
+			<![CDATA[
+			<prop key="hibernate.dialect">${cqPropertiesBeanSpring.hibernateSqlDialect}</prop>
+			<prop key="hibernate.show_sql">${cqPropertiesBeanSpring.hibernateShowSql}</prop>
+			<!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
+		]]>
+		</to>
+	</mapping>
+</mappings>
+<!--  -->

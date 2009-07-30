@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">    
+<compass-core-mapping package="de.juwimm.cms.search.vo">
+    <resource alias="DocumentSearchValue">
+        <resource-id name="uid" />
+        <resource-property name="documentId" store="yes" index="un_tokenized" />
+        <resource-property name="unitId" store="yes" index="un_tokenized" />
+        <resource-property name="siteId" store="yes" index="un_tokenized" />
+        <resource-property name="unitName" store="yes" index="un_tokenized" />
+        <resource-property name="documentName" store="yes" index="tokenized" />
+        <resource-property name="mimeType" store="yes" index="un_tokenized" />
+        <resource-property name="timeStamp" store="yes" index="no" />
+        <resource-property name="contents" store="compress" index="tokenized" />
+        <resource-property name="summary" store="yes" index="no" />
+        <resource-property name="title" store="yes" index="tokenized" />
+    </resource>
+</compass-core-mapping>

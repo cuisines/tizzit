@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+<web-app>
+  <display-name>Apache Xindice</display-name>
+  <description>Apache Xindice XMLRPC Server</description>
+  <servlet>
+    <servlet-name>xindice</servlet-name>
+    <servlet-class>org.apache.xindice.server.XindiceServlet</servlet-class>
+
+    <!--
+      - This parameter should point to the Xindice Server configuration
+      - file. Relative paths resolved relative to webapp context root and
+      - must point to the resource within context. Absolute paths
+      - (starting with '/') loaded from the file system.
+      -->
+    <init-param>
+      <param-name>xindice.configuration</param-name>
+      <param-value>WEB-INF/system.xml</param-value>
+    </init-param>
+
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>xindice</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>xindice</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+<!-- 
+	Please make sure to secure the 
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>CQCMS XMLRPC Service</web-resource-name>
+      <description>Authentication required for CQCMS XMLRPC Service</description>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+    </auth-constraint>
+    <user-data-constraint> 
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>CQCMS XMLRPC Service</realm-name>
+  </login-config> 
+   -->
+</web-app>

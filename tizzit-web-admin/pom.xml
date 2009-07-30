@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.cqcms</groupId>
+   <artifactId>cqcms-web-admin</artifactId>
+	<version>${conquest.version}</version>
+	<packaging>war</packaging>
+   <name>CQCMS Web Admin</name>
+	<parent>
+	   <groupId>org.cqcms</groupId>
+	   <artifactId>cqcms</artifactId>
+		<version>1.0</version>
+		<relativePath>../cqcms/pom.xml</relativePath>
+	</parent>
+	<dependencies>
+	   <dependency>
+	      <groupId>${pom.groupId}</groupId>
+	      <artifactId>cqcms-webstart</artifactId>
+	      <version>${conquest.version}</version>
+	   </dependency>
+	   <dependency>
+	      <groupId>javax.servlet</groupId>
+	      <artifactId>servlet-api</artifactId>
+	      <version>2.4</version>
+	      <scope>provided</scope>
+	   </dependency>
+	   <dependency>
+	      <groupId>jnlp-jardiff</groupId>
+	      <artifactId>jardiff</artifactId>
+	      <version>1.0</version>
+	   </dependency>
+	   <dependency>
+	      <groupId>jnlp-jardiff</groupId>
+	      <artifactId>jnlp</artifactId>
+	      <version>1.0</version>
+	   </dependency>
+	   <dependency>
+	      <groupId>jnlp-jardiff</groupId>
+	      <artifactId>jnlp-servlet</artifactId>
+	      <version>1.0</version>
+	   </dependency>
+	</dependencies>
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>auto-clean</id>
+                  <phase>validate</phase>
+                  <goals>
+                     <goal>clean</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>dependency-maven-plugin</artifactId>
+            <executions>
+               <execution>
+                  <phase>process-resources</phase>
+                  <goals>
+                     <goal>unpack</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <configuration>
+               <artifactItems>
+                  <artifactItem>
+                     <groupId>${pom.groupId}</groupId>
+                     <artifactId>cqcms-richclient</artifactId>
+                     <version>${conquest.version}</version>
+                     <type>zip</type>                            
+                  </artifactItem>
+               </artifactItems>
+               <outputDirectory>${project.build.directory}/${project.build.finalName}/</outputDirectory>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+               <execution >
+                  <id>process-resources</id>
+                  <phase>process-resources</phase>
+                  <configuration>
+                     <tasks>
+                        <echo>Copying version.xml and JNLP file...</echo>
+                        <copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="true" failonerror="false">
+                           <fileset dir="${pom.basedir}/../../cqcms-richclient/target/jnlp">
+                              <include name="version.xml"/>
+                              <include name="*.jnlp"/>
+                           </fileset>
+                        </copy>
+                        <echo>... done!</echo>
+                     </tasks>
+                  </configuration>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
+</project>

@@ -1,0 +1,13 @@
+<projectDescription>
+  <name>cqcms-web-xindice</name>
+  <comment>The CQCMS Project.</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

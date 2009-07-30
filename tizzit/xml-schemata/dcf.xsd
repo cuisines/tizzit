@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:annotation>
+        <xsd:documentation>            
+            dcf.xml scheme description
+        </xsd:documentation>
+        <xsd:appinfo>1.0</xsd:appinfo>
+    </xsd:annotation>
+    
+    <!-- root-element -->
+    <xsd:element name="config" type="configTyp"/>
+    
+    <!-- sub-element dcf -->
+    <xsd:complexType name="configTyp">        
+        <xsd:sequence minOccurs="1">
+            <xsd:element name="dcf" type="dcfTyp" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <!-- sub-element availableTemplates -->
+    <xsd:complexType name="dcfTyp">
+        <xsd:sequence minOccurs="1">
+            <xsd:element name="availableTemplates" type="availableTemplatesTyp" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <!-- list of items -->
+    <xsd:complexType name="availableTemplatesTyp">
+        <xsd:sequence minOccurs="1">
+            <xsd:element name="item" type="itemTyp" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <!-- string, not null -->
+    <xsd:simpleType name="notEmptyStringTyp"> 
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"></xsd:minLength> 
+        </xsd:restriction>        
+    </xsd:simpleType>
+    
+    <!-- item-Element -->
+    <xsd:complexType name="itemTyp">
+        <xsd:simpleContent>
+            <xsd:extension base="notEmptyStringTyp">
+                <xsd:attribute name="editableBy" type="roleTyp" use="optional"/>                                           <!-- pages based on this template can be edited by these roles-->
+                <xsd:attribute name="filename" type="notEmptyStringTyp" use="required"/>                        <!-- filename for this template excluding extension -->
+                <xsd:attribute name="role" type="roleTyp" use="optional"/>                                                       <!-- pages based on this template can be created by this role -->
+                <xsd:attribute name="titleRequired" type="xsd:boolean" use="optional" default="false"/>  <!-- headline required in content? -->
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>    
+    
+    <!-- roles that can be used in role- and/or editableBy-attribute  -->
+    <xsd:simpleType name="roleTyp">
+        <xsd:restriction base="xsd:string"> 
+            <xsd:enumeration value="allrights"/>                                                                                                  <!-- dirty trick for getting all rights -->
+            <xsd:enumeration value="siteRoot"/> 
+            <xsd:enumeration value="unitAdmin"/>
+            <xsd:enumeration value="viewWebstats"/>            
+        </xsd:restriction> 
+    </xsd:simpleType> 
+    
+    <!-- list of all roles currently in the database  -->
+    <xsd:simpleType name="allRolesTyp"> 
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="approve"/>            
+            <xsd:enumeration value="changeUser"/>            
+            <xsd:enumeration value="createUser"/>            
+            <xsd:enumeration value="deleteUser"/>            
+            <xsd:enumeration value="deploy"/>
+            <xsd:enumeration value="makeInvisible"/>
+            <xsd:enumeration value="manageHosts"/>
+            <xsd:enumeration value="openNewNavigation"/>            
+            <xsd:enumeration value="pageStatusbar"/>
+            <xsd:enumeration value="siteRoot"/>
+            <xsd:enumeration value="stundenplan"/>
+            <xsd:enumeration value="symlink"/>
+            <xsd:enumeration value="unitAdmin"/>
+            <xsd:enumeration value="viewMetadata"/>
+            <xsd:enumeration value="viewWebstats"/>            
+        </xsd:restriction> 
+    </xsd:simpleType> 
+</xsd:schema>

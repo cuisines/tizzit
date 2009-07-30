@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <bean id="communication" class="de.juwimm.cms.util.CommunicationFactory" singleton="true">
+        <property name="clientService" ref="clientServiceSpring" />
+    </bean>
+    
+    <bean id="contentManager" class="de.juwimm.cms.content.ContentManager" singleton="true">
+        <property name="communication">
+            <ref bean="communication" />
+        </property>
+    </bean>
+
+    <!-- pool.releaseTarget 
+    <bean id="commBean" class="de.juwimm.cms.beans.test.PoolTestItem" singleton="false"
+        destroy-method="destroy"/>
+    <bean id="commPool" class="org.springframework.aop.target.CommonsPoolTargetSource">
+        <property name="targetBeanName">
+            <value>communication</value>
+        </property>
+        <property name="maxSize">
+            <value>5</value>
+        </property>
+    </bean>
+    <bean id="comm" class="de.juwimm.cms.common.beans.PoolFactory">
+        <property name="pool">
+            <ref bean="commPool"/>
+        </property>
+    </bean>
+    -->
+    <!--
+    <bean id="comm" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="targetSource">
+            <ref local="commPool"/>
+        </property>
+    </bean>
+    -->
+
+    <bean id="taskPoller" class="de.juwimm.cms.util.TaskPoller" />
+    <bean id="scheduledTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+        <!-- wait 10 seconds before starting repeated execution -->
+        <property name="delay">
+            <value>10000</value>
+        </property>
+        <!-- run every 50 seconds -->
+        <property name="period">
+            <value>50000</value>
+        </property>
+        <property name="timerTask">
+            <ref local="taskPoller" />
+        </property>
+    </bean>
+    <bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
+        <property name="scheduledTimerTasks">
+            <list>
+                <ref local="scheduledTask" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref bean="RemoteAuthenticationProvider" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="RemoteAuthenticationProvider" class="org.springframework.security.providers.rcp.RemoteAuthenticationProvider">
+        <property name="remoteAuthenticationManager" ref="remoteRemoteAuthenticationManagerService" />
+    </bean>
+
+
+</beans>

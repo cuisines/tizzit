@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>cqcms-mda</artifactId>
+   <packaging>pom</packaging>
+   <version>${conquest.version}</version>
+   <name>CQCMS MDA</name>
+   <parent>
+      <groupId>org.cqcms</groupId>
+      <artifactId>cqcms</artifactId>
+      <version>1.0</version>
+      <relativePath>../cqcms/pom.xml</relativePath>
+   </parent>
+   <dependencies>
+      <dependency>
+         <groupId>org.andromda.profiles.uml14</groupId>
+         <artifactId>andromda-profile</artifactId>
+         <type>xml.zip</type>
+      </dependency>
+      <dependency>
+         <groupId>org.andromda.cartridges</groupId>
+         <artifactId>andromda-spring-cartridge</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.andromda.cartridges</groupId>
+         <artifactId>andromda-hibernate-cartridge</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.andromda.cartridges</groupId>
+         <artifactId>andromda-java-cartridge</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.andromda.translationlibraries</groupId>
+         <artifactId>andromda-ocl-validation-library</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.andromda.translationlibraries</groupId>
+         <artifactId>andromda-ocl-query-library</artifactId>
+      </dependency>
+   </dependencies>
+   <build>
+      <sourceDirectory>${pom.basedir}/src/uml</sourceDirectory>
+      <plugins>
+         <plugin>
+            <groupId>org.andromda.maven.plugins</groupId>
+            <artifactId>andromda-maven-plugin</artifactId>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>run</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <configuration>
+               <configurationUri>${pom.basedir}/src/andromda.xml</configurationUri>
+            </configuration>
+         </plugin>
+          
+      </plugins>
+   </build>
+   <properties>
+      <model.uri>jar:file:${pom.basedir}/src/uml/cqcms.xml.zip!/cqcms.xml</model.uri>
+      <filter/>
+      <validation>true</validation>
+      <conf.dir>${pom.basedir}/src/main/config</conf.dir>
+      <!-- cartridge output locations -->
+      <core.generated.dir>${pom.basedir}/../cqcms-core/target/src</core.generated.dir>
+      <core.manual.dir>${pom.basedir}/../cqcms-core/src/main/java</core.manual.dir>
+      <common.generated.dir>${pom.basedir}/../cqcms-common/target/src</common.generated.dir>
+      <!-- hibernate configuration -->
+      <!-- default strategy to use when using inhertiance -->
+      <hibernate.inheritance.strategy>subclass</hibernate.inheritance.strategy>
+      <hibernate.db.showSql>true</hibernate.db.showSql>
+      <!-- hibernate generator class to use for identifiers -->
+      <hibernate.generatorClass>native</hibernate.generatorClass>
+   </properties>
+</project>

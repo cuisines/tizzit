@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
+    <!-- ========================= GENERAL DEFINITIONS ========================= -->
+    <!-- Message source for this context, loaded from localized "messages_xx" files -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename"><value>messages</value></property>
+    </bean>
+
+    <!-- applicationContext merge-point -->
+#set ($daoRefsEnabled = !$entities.empty)
+#set ($daosEnabled = $daosEnabled && !$entities.empty)
+## only generate this stuff if 'daos' has been defined in a namespace
+#if ($daosEnabled)
+    <!-- Hibernate SessionFactory -->
+    <bean id="sessionFactory" class="$sessionFactory">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingResources">
+            <list>
+#foreach($entity in $entities)
+#if ($entity.requiresHibernateMapping)
+                <value>${entity.packagePath}/${entity.entityName}.hbm.xml</value>
+#end
+#end
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+#if ($stringUtils.isNotBlank($hibernatePoolSize))
+                <prop key="hibernate.pool.size">$hibernatePoolSize</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateTransactionManagerStrategy))
+                <prop key="hibernate.transaction.manager.strategy">$hibernateTransactionManagerStrategy</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateUserTransactionName))
+                <prop key="hibernate.jta.UserTransaction">$hibernateUserTransactionName</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateTransactionManagerLookup))
+                <prop key="hibernate.transaction.manager_lookup_class">$hibernateTransactionManagerLookup</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateUseOuterJoin))
+                <prop key="hibernate.use_outer_join">$hibernateUseOuterJoin</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateShowSql))
+                <prop key="hibernate.show_sql">$hibernateShowSql</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateJndiName))
+                <prop key="hibernate.session_factory_name">$hibernateJndiName</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateDialect))
+                <prop key="hibernate.dialect">$hibernateDialect</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateDefaultSchema))
+                <prop key="hibernate.default_schema">$hibernateDefaultSchema</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateMaxFetchDepth))
+                <prop key="hibernate.max_fetch_depth">$hibernateMaxFetchDepth</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateJdbcFetchSize))
+                <prop key="hibernate.jdbc.fetch_size">$hibernateJdbcFetchSize</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateJdbcBatchSize))
+                <prop key="hibernate.jdbc.batch_size">$hibernateJdbcBatchSize</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateJdbcUseScrollableResultSet))
+                <prop key="hibernate.jdbc.use_scrollable_resultset">$hibernateJdbcUseScrollableResultSet</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateJdbcUseStreamsForBinary))
+                <prop key="hibernate.use_streams_for_binary">$hibernateJdbcUseStreamsForBinary</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateHbm2DDLAuto))
+                <prop key="hibernate.hbm2ddl.auto">$hibernateHbm2DDLAuto</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateQuerySubstitutions))
+                <prop key="hibernate.query.substitutions">$hibernateQuerySubstitutions</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateEnableCache))
+                <prop key="hibernate.cache.use_query_cache">$hibernateEnableCache</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateCacheProvider))
+                <prop key="hibernate.cache.provider_class">$hibernateCacheProvider</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateQueryCacheFactory))
+                <prop key="hibernate.cache.query_cache_factory">$hibernateQueryCacheFactory</prop>
+#end
+#if ($stringUtils.isNotBlank($hibernateConnectionReleaseMode))
+                <prop key="hibernate.connection.release_mode">$hibernateConnectionReleaseMode</prop>
+#end
+                <!-- applicationContext hibernateProperties merge-point -->
+            </props>
+        </property>
+    </bean>
+ 
+#foreach($entity in $entities)
+    <bean id="$entity.getBeanName(false)" class="$entity.fullyQualifiedDaoImplementationName">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+#end
+#end
+    <!-- ========================= Start of SERVICE DEFINITIONS ========================= -->
+#foreach($service in $services)
+    <!-- $service.name Service Implementation -->
+    <bean id="$service.getBeanName(false)" class="$service.fullyQualifiedImplementationName"/>
+#end
+    <!-- ========================= End of SERVICE DEFINITIONS ========================= -->
+
+</beans>

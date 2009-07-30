@@ -1,0 +1,23 @@
+html * {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+body {
+	background-color: #FFF;
+	color: #000;
+	font-size: small;
+	margin: 0px;
+	overflow: auto;
+}
+
+.header {
+	background: #f2efc4;
+}
+
+.footer {
+	background: #fbeac4;
+}
+
+.conquestAdministrationMainContentPanel {
+	background: #5bea34;
+}

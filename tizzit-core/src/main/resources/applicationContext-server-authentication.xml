@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:jee="http://www.springframework.org/schema/jee" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"	
+	xmlns:security="http://www.springframework.org/schema/security"	
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd 
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+	
+	<security:http realm="ConQuest Remote Services"> 
+		<security:http-basic/>
+		<security:intercept-url pattern="/**" /><!-- @TODO TODO: Add Security Roles + Annotations  -->
+	</security:http> 	
+	
+	<bean id="authenticationProvider" class="de.juwimm.cms.beans.foreign.security.ConQuestDaoAuthenticationProvider">
+		<security:custom-authentication-provider/>
+	</bean> 
+		
+	<bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+		<property name="providers">
+			<list>
+				<bean class="de.juwimm.cms.beans.foreign.security.ConQuestDaoAuthenticationProvider"/>
+			</list>
+		</property>
+	</bean>
+	 
+	<bean id="accessDecisionManager" class='org.springframework.security.vote.AffirmativeBased'>
+		<property name="decisionVoters">
+			<list>
+				<ref bean="roleVoter"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="roleVoter" class="org.springframework.security.vote.RoleVoter">
+		<property name="rolePrefix" value=""/>
+	</bean>
+</beans>

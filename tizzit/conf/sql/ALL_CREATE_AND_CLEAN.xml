@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\cvsroot\juwimm-sqltrax\sqltrax.xsd">
+	<createTable name="comp_address">
+		<field name="address_id" datatype="long" empty="false" index="primary"/>
+		<field name="room_nr" datatype="varchar" length="255"/>
+		<field name="building_level" datatype="varchar" length="255"/>
+		<field name="building_nr" datatype="varchar" length="255"/>
+		<field name="street" datatype="varchar" length="255"/>
+		<field name="street_nr" datatype="varchar" length="255"/>
+		<field name="post_office_box" datatype="varchar" length="255"/>
+		<field name="country_code" datatype="varchar" length="3"/>
+		<field name="country" datatype="varchar" length="255"/>
+		<field name="zip_code" datatype="varchar" length="50"/>
+		<field name="city" datatype="varchar" length="255"/>
+		<field name="phone1" datatype="varchar" length="255"/>
+		<field name="phone2" datatype="varchar" length="255"/>
+		<field name="fax" datatype="varchar" length="255"/>
+		<field name="mobile_phone" datatype="varchar" length="255"/>
+		<field name="email" datatype="varchar" length="255"/>
+		<field name="homepage" datatype="varchar" length="255"/>
+		<field name="address_type" datatype="varchar" length="255" default="Büro"/>
+		<field name="misc" datatype="clob"/>
+		<field name="person_id_fk" datatype="long" index="true"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="department_id_fk" datatype="long" index="true"/>
+		<field name="external_id" datatype="varchar" length="255" index="true"/>
+		<field name="last_modified_date" datatype="long" index="true" default="0"/>
+	</createTable>
+	<createTable name="comp_department">
+		<field name="department_id" datatype="long" index="primary" empty="false"/>
+		<field name="name" datatype="varchar" length="255"/>
+		<field name="unit_id_fk" datatype="long" index="true"/>
+	</createTable>
+	<createTable name="comp_person">
+		<field name="person_id" datatype="long" index="primary" empty="false"/>
+		<field name="birth_day" datatype="varchar" length="50"/>
+		<field name="position" datatype="int"/>
+		<field name="salutation" datatype="varchar" length="50"/>
+		<field name="sex" datatype="tinyint"/>
+		<field name="title" datatype="varchar" length="255"/>
+		<field name="firstname" datatype="varchar" length="255"/>
+		<field name="lastname" datatype="varchar" length="255"/>
+		<field name="job" datatype="varchar" length="100"/>
+		<field name="image_id" datatype="int" index="true"/>
+		<field name="job_title" datatype="varchar" length="255"/>
+		<field name="country_job" datatype="varchar" length="100"/>
+		<field name="medical_association" datatype="varchar" length="255"/>
+		<field name="link_medical_association" datatype="varchar" length="255"/>
+		<field name="external_id" datatype="varchar" length="255" index="true"/>
+		<field name="last_modified_date" datatype="long" index="true" default="0"/>
+	</createTable>
+	<createTable name="comp_persontounitlink">
+		<field name="personToUnitLink_id" datatype="int" index="primary" empty="false"/>
+		<field name="role_type" datatype="int"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="person_id_fk" datatype="long" index="true"/>
+	</createTable>
+	<createTable name="comp_talktime">
+		<field name="talk_time_id" datatype="long" index="primary" empty="false"/>
+		<field name="talk_time_type" datatype="varchar" length="255"/>
+		<field name="talk_times" datatype="clob"/>
+		<field name="person_id_fk" datatype="long" index="true"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="department_id_fk" datatype="long" index="true"/>
+	</createTable>
+	<createTable name="content">
+		<field name="content_id" datatype="int" index="primary" empty="false"/>
+		<field name="status" datatype="int"/>
+		<field name="template" datatype="varchar" length="100"/>
+		<field name="update_search_index" datatype="tinyint"  default="1"/> 
+	</createTable>
+	<createTable name="contentversion">
+		<field name="content_version_id" datatype="int" index="primary" empty="false"/>
+		<field name="version" datatype="varchar" length="5" index="true"/>
+		<field name="heading" datatype="varchar" length="255"/>
+		<field name="text" datatype="clob"/>
+		<field name="version_comment" datatype="clob"/>
+		<field name="create_date" datatype="long" index="true"/>
+		<field name="creator" datatype="varchar" length="255" index="true"/>
+		<field name="content_id_fk" datatype="int" index="true"/>
+		<field name="lock_id_fk" datatype="int" index="true"/>
+	</createTable>
+	<!--	<createTable name="contentversion_searchable">
+		<field name="content_version_id" datatype="int" index="primary" empty="false"/>
+		<field name="version" datatype="varchar" length="5" index="true"/>
+		<field name="heading" datatype="varchar" length="255"/>
+		<field name="text" datatype="clob"/>
+		<field name="version_comment" datatype="clob"/>
+		<field name="revision_id_fk" datatype="int" index="true"/>
+		<field name="content_id_fk" datatype="int" index="true"/>
+		<field name="lock_id_fk" datatype="int" index="true"/>
+	</createTable>
+	-->
+	<createTable name="departments2persons">
+		<field name="persons_id_fk" datatype="long" empty="false" index="primary"/>
+		<field name="departments_id_fk" datatype="long" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="document">
+		<field name="document_id" datatype="int" empty="false" index="primary"/>
+		<field name="document" datatype="blob"/>
+		<field name="document_name" datatype="varchar" length="255"/>
+		<field name="time_stamp" datatype="long"/>
+		<field name="mime_type" datatype="varchar" length="50"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="use_count_last_version" datatype="int"/>
+		<field name="use_count_publish_version" datatype="int"/>
+		<field name="update_search_index" datatype="tinyint"  default="1"/> 
+	</createTable>
+	<createTable name="edition">
+		<field name="edition_id" datatype="int" empty="false" index="primary"/>
+		<field name="creator_id_fk" datatype="varchar" length="255" index="true"/>
+		<field name="user_comment" datatype="clob"/>
+		<field name="creation_date" datatype="long"/>
+		<field name="status" datatype="tinyint"/>
+		<field name="unit_id" datatype="int" index="true"/>
+		<field name="view_document_id" datatype="int" index="true"/>
+	</createTable>
+	<createTable name="editionslice">
+		<field name="edition_slice_id" datatype="int" empty="false" index="primary"/>
+		<field name="edition_id" datatype="int" empty="false" index="true"/>
+		<field name="slice_nr" datatype="int" empty="false" index="true"/>
+		<field name="slice_data" datatype="blob"/>
+	</createTable>
+	<createTable name="groups2roles">
+		<field name="roles_id_fk" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="groups_id_fk" datatype="int" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="groups2users">
+		<field name="users_id_fk" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="groups_id_fk" datatype="int" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="host">
+		<field name="host_name" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="site_id_fk" datatype="int" index="true"/>
+		<field name="startpage_vc_id_fk" datatype="int" index="true"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="redirect_url" datatype="varchar" length="255"/>
+		<field name="redirect_host_name_id_fk" datatype="varchar" length="255" index="true"/>
+	</createTable>
+	<createTable name="keygen">
+		<field name="idx" datatype="int" empty="false"/>
+		<field name="name" datatype="varchar" length="100" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="locks">
+		<field name="lock_id" datatype="int" empty="false" index="primary"/>
+		<field name="create_date" datatype="long"/>
+		<field name="owner_id_fk" datatype="varchar" length="255" index="true"/>
+	</createTable>
+<!--	<createTable name="path_cache">
+		<field name="path" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="root_viewcomponent_id" datatype="int" empty="false" index="primary"/>
+		<field name="viewcomponent_id" datatype="int"/>
+		<field name="modified_date" datatype="datetime"/>
+	</createTable>-->
+	<createTable name="persons2units">
+		<field name="persons_id_fk" datatype="long" empty="false" index="primary"/>
+		<field name="units_id_fk" datatype="int" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="picture">
+		<field name="picture_id" datatype="int" empty="false" index="primary"/>
+		<field name="thumbnail" datatype="blob"/>
+		<field name="picture" datatype="blob"/>
+		<field name="preview" datatype="blob"/>
+		<field name="time_stamp" datatype="long"/>
+		<field name="mime_type" datatype="varchar" length="50"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="alt_text" datatype="varchar" length="255"/>
+		<field name="picture_name" datatype="varchar" length="255"/>
+		<field name="height" datatype="int"/>
+		<field name="width" datatype="int"/>
+	</createTable>
+	<createTable name="role">
+		<field name="role_id" datatype="varchar" length="255" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="sgroup">
+		<field name="group_id" datatype="int" empty="false" index="primary"/>
+		<field name="group_name" datatype="varchar" length="255"/>
+		<field name="site_id_fk" datatype="int" index="true"/>
+	</createTable>
+	<createTable name="site">
+		<field name="site_id" datatype="int" empty="false" index="primary"/>
+		<field name="site_name" datatype="varchar" length="255"/>
+		<field name="site_short" datatype="varchar" length="50" index="true"/>
+		<field name="site_config" datatype="clob"/>
+		<field name="mandator_dir" datatype="varchar" length="255" index="true"/>
+		<field name="root_unit_id_fk" datatype="int"/>
+		<field name="default_view_document_id_fk" datatype="int"/>
+		<field name="cache_expire" datatype="long"/>
+		<field name="site_group_id_fk" datatype="int"/>
+		<field name="wysiwyg_image_url" datatype="varchar" length="255"/>
+		<field name="help_url" datatype="varchar" length="255"/>
+		<field name="dcf_url" datatype="varchar" length="255"/>
+		<field name="preview_url" datatype="varchar" length="255"/>
+		<field name="page_name_full" datatype="varchar" length="255"/>
+		<field name="page_name_content" datatype="varchar" length="255"/>
+		<field name="page_name_search" datatype="varchar" length="255"/>
+		<field name="last_modified_date" datatype="long" index="true" default="0"/>
+	</createTable>
+	<createTable name="site_group">
+		<field name="site_group_id" datatype="int" empty="false" index="primary"/>
+		<field name="site_group_name" datatype="varchar" length="255"/>
+	</createTable>
+	<createTable name="sites2users">
+		<field name="users_id_fk" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="sites_id_fk" datatype="int" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="task">
+		<field name="task_id" datatype="int" empty="false" index="primary"/>
+		<field name="task_type" datatype="tinyint"/>
+		<field name="receiver_role" datatype="varchar" length="50" index="true"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="receiver" datatype="varchar" length="255" index="true"/>
+		<field name="sender" datatype="varchar" length="255" index="true"/>
+		<field name="user_comment" datatype="clob"/>
+		<field name="status" datatype="tinyint"/>
+		<field name="creation_date" datatype="long"/>
+	</createTable>
+	<createTable name="task2view_components">
+		<field name="task_id_fk" datatype="int" empty="false" index="primary"/>
+		<field name="view_components_id_fk" datatype="int" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="unit">
+		<field name="unit_id" datatype="int" empty="false" index="primary"/>
+		<field name="name" datatype="varchar" length="255"/>
+		<field name="image_id" datatype="int" index="true"/>
+		<field name="logo_id" datatype="int" index="true"/>
+		<field name="site_id_fk" datatype="int" index="true"/>
+		<field name="last_modified_date" datatype="long" index="true" default="0"/>
+	</createTable>
+	<createTable name="units2users">
+		<field name="users_id_fk" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="units_id_fk" datatype="int" empty="false" index="primary"/>
+	</createTable>
+	<createTable name="usr">
+		<field name="user_id" datatype="varchar" length="255" empty="false" index="primary"/>
+		<field name="first_name" datatype="varchar" length="255"/>
+		<field name="last_name" datatype="varchar" length="255"/>
+		<field name="email" datatype="varchar" length="255"/>
+		<field name="config_xml" datatype="clob"/>
+		<field name="login_date" datatype="long"/>
+		<field name="active_site_id_fk" datatype="int" index="true"/>
+		<field name="masterRoot" datatype="tinyint" default="0"/>
+		<field name="passwd" datatype="varchar" length="60"/>
+		<!-- deprecated -->
+	</createTable>
+	<createTable name="viewcomponent">
+		<field name="view_component_id" datatype="int" empty="false" index="primary"/>
+		<field name="parent_id_fk" datatype="int" index="true"/>
+		<field name="first_child_id_fk" datatype="int" index="true"/>
+		<field name="prev_node_id_fk" datatype="int" index="true"/>
+		<field name="next_node_id_fk" datatype="int" index="true"/>
+		<field name="unit_id_fk" datatype="int" index="true"/>
+		<field name="status" datatype="int"/>
+		<field name="show_type" datatype="tinyint"/>
+		<field name="view_type" datatype="tinyint"/>
+		<field name="visible" datatype="tinyint"/>
+		<field name="search_indexed" datatype="tinyint"/>
+		<field name="xml_search_indexed" datatype="tinyint" default="1"/>
+		<field name="display_link_name" datatype="varchar" length="255" index="true"/>
+		<field name="link_description" datatype="varchar" length="255"/>
+		<field name="url_link_name" datatype="varchar" length="255"/>
+		<field name="approved_link_name" datatype="varchar" length="255"/>
+		<field name="view_level" datatype="varchar" length="10"/>
+		<field name="view_index" datatype="varchar" length="10"/>
+		<field name="online_start" datatype="long"/>
+		<field name="online_stop" datatype="long"/>
+		<field name="reference" datatype="varchar" length="255" index="true"/>
+		<field name="view_document_id_fk" datatype="int" index="true"/>
+		<field name="online_state" datatype="tinyint" default="0"/>
+		<field name="deploy_command" datatype="tinyint" default="0"/>
+		<field name="meta_data" datatype="clob"/>
+		<field name="meta_description" datatype="clob"/>
+		<field name="create_date" datatype="long" default="0"/>
+		<field name="last_modified_date" datatype="long" default="0"/>
+		<field name="realm2vc_id_fk" datatype="int" index="true"/>
+		<field name="display_settings" datatype="tinyint" default="0"/>
+		<field name="user_last_modified_date" datatype="long" default="0"/>
+	</createTable>
+	<createTable name="viewdocument">
+		<field name="view_document_id" datatype="int" empty="false" index="primary"/>
+		<field name="language" datatype="varchar" length="50" index="true"/>
+		<field name="view_type" datatype="varchar" length="50" index="true"/>
+		<field name="view_component_id_fk" datatype="int" index="true"/>
+		<field name="site_id_fk" datatype="int" index="true"/>
+	</createTable>
+	
+	<!-- Safeguard Start -->
+	<createTable name="realm_ldap">
+		<field name="ldap_realm_id" datatype="int" empty="false" index="primary"/>
+		<field name="realm_name" datatype="varchar" length="255" />
+		<field name="ldap_url" datatype="varchar" length="255" />
+		<field name="ldap_authentication_type" datatype="varchar" length="255" />
+		<field name="ldap_suffix" datatype="varchar" length="255" />
+		<field name="ldap_prefix" datatype="varchar" length="255" />
+		<field name="login_page_id" datatype="varchar" length="255" />
+		<field name="site_id_fk" datatype="int" />
+	</createTable>
+	<createTable name="realm_simple_pw">
+		<field name="simple_pw_realm_id" datatype="int"  empty="false" index="primary"/>
+		<field name="realm_name" datatype="varchar" length="255" />
+		<field name="login_page_id" datatype="varchar" length="255" />
+		<field name="owner_id_fk" datatype="varchar" length="255" />
+		<field name="site_id_fk" datatype="int" />	
+	</createTable>
+	<createTable name="realm_simple_pw_user">
+		<field name="simple_pw_realm_user_id" datatype="int"  empty="false" index="primary"/>
+		<field name="user_name" datatype="varchar" length="255" />
+		<field name="password" datatype="varchar" length="255" />
+		<field name="roles" datatype="varchar" length="1024" />
+		<field name="simple_pw_realm_id_fk" datatype="int" />
+	</createTable>
+	<createTable name="realm_jdbc">
+		<field name="jdbc_realm_id" datatype="int"  empty="false" index="primary"/>
+		<field name="statement_user" datatype="varchar" length="255" />
+		<field name="statement_role_per_user" datatype="varchar" length="255" />
+		<field name="jndi_name" datatype="varchar" length="255" />
+		<field name="realm_name" datatype="varchar" length="255" />
+		<field name="login_page_id" datatype="varchar" length="255" />
+		<field name="site_id_fk" datatype="int" />
+	</createTable>
+	<createTable name="realm_jaas">
+		<field name="jaas_realm_id" datatype="int"  empty="false" index="primary"/>
+		<field name="realm_name" datatype="varchar" length="255" />
+		<field name="login_page_id" datatype="varchar" length="255" />
+		<field name="jaas_policy_name" datatype="varchar" length="255" />
+		<field name="site_id_fk" datatype="int" />
+	</createTable>
+	<createTable name="realm2view_component">
+		<field name="realm2view_component_id" datatype="int" empty="false" index="primary" />
+		<field name="role_needed" datatype="varchar" length="255" />
+		<field name="simple_pw_realm_id_fk" datatype="int" />
+		<field name="jdbc_realm_id_fk" datatype="int" />
+		<field name="ldap_realm_id_fk" datatype="int" />
+		<field name="jaas_realm_id_fk" datatype="int" />
+		<field name="view_component_id_fk" datatype="int" />
+		<field name="login_page_id_fk" datatype="int" />
+	</createTable>
+	<!-- Safeguard Ende -->
+	<createTable name="short_link">
+		<field name="short_link_id" datatype="int" empty="false" index="primary"/>
+		<field name="short_link" datatype="varchar" length="255"/>
+		<field name="redirect_url" datatype="varchar" length="255"/>
+		<field name="site_id_fk" datatype="int" index="true"/>
+		<field name="view_document_id_fk" datatype="int" index="true"/>
+	</createTable>
+	
+	<deleteFrom table="keygen"/>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">address.address_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">content.content_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">contentversion.content_version_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">department.department_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">document.document_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">edition.edition_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">editionslice.edition_slice_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">locks.lock_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">person.person_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">picture.picture_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">talktime.talk_time_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">task.task_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">2</field>
+		<field name="name">unit.unit_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">viewcomponent.view_component_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">1</field>
+		<field name="name">viewdocument.view_document_id</field>
+	</insertInto>
+	<insertInto table="keygen">
+		<field name="idx">2</field>
+		<field name="name">site.site_id</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">changeUser</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">createUser</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">deleteUser</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">deploy</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">siteRoot</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">symlink</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">separator</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">unitAdmin</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">approve</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">makeInvisible</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">openNewNavigation</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">viewWebstats</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">viewMetadata</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">pageStatusbar</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">manageHosts</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">manageSafeGuard</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">viewShowtype</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">editUrlLinkname</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">changeSearchIndexed</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">changeXmlSearchIndexed</field>
+	</insertInto>
+	<insertInto table="role">
+		<field name="role_id">updatePageLastModifiedDate</field>
+	</insertInto>
+	<insertInto table="site">
+		<field name="site_id">1</field>
+		<field name="site_name">www.test.de</field>
+		<field name="site_short">test</field>
+		<field name="root_unit_id_fk">1</field>
+	</insertInto>
+	<insertInto table="unit">
+		<field name="unit_id">1</field>
+		<field name="name">erste rootunit</field>
+		<field name="site_id_fk">1</field>
+		<field name="last_modified_date">1</field>
+	</insertInto>
+	<insertInto table="usr">
+		<field name="user_id">cqroot</field>
+		<field name="first_name">ConQuest </field>
+		<field name="last_name">MasterRoot User</field>
+		<field name="email">sascha-matthias.kulawik@juwimm.com</field>
+		<field name="active_site_id_fk">1</field>
+		<field name="passwd">QL0AFWMIX8NRZTKeof9cXsvbvu8=</field><!-- 123 -->
+		<field name="masterRoot">1</field>
+	</insertInto>
+</sql>

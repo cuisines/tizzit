@@ -1,0 +1,18 @@
+<!-- The JBossEntityResolver mbean service which allows customization of the
+xml parser entity resolver publicID/systemID to dtd/schema file mapping.
+See, http://wiki.jboss.org/wiki/Wiki.jsp?page=XMLEntitySchemaResolution
+-->
+<server>
+   <mbean code="org.jboss.services.xml.JBossEntityResolverMgr"
+      name="jboss.xml:service=JBossEntityResolverMgr">
+      <attribute name="WarnOnNonFileURLs">true</attribute>
+      <attribute name="EntityMap">
+      	-//SPRING//DTD\ BEAN//EN=spring-beans.dtd
+      	<!--
+      	-//SPRING//DTD\ BEAN//EN=org/springframework/beans/factory/xml/spring-beans.dtd
+      	-//SPRING//DTD\ BEAN//EN=org/springframework/beans/factory/xml/spring-beans-2.0.dtd
+      	-//Hibernate/Hibernate\ Configuration\ DTD\ 3.0//EN=org/hibernate/hibernate-configuration-3.0.dtd
+      	-->
+      </attribute>
+   </mbean>
+</server>

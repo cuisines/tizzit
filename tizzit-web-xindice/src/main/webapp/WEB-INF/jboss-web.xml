@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<jboss-web>
+    <!-- All secured web content uses this security manager Please make sure to hide xindice with a firewall.
+    <security-domain>java:/jaas/juwimm-cms-security-domain</security-domain>-->
+   <context-root>/xindice</context-root>
+</jboss-web>

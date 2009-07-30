@@ -1,0 +1,74 @@
+<root><text dcfname="text" label="Textfeld">
+Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu lesen.
+Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu lesen.
+Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu lesen. Sie
+lesen ja immer noch, was f&#252;r eine Zeitverschwendung. Dies
+ist ein Blindtext - bitte h&#246;ren Sie auf zu le<br/>
+sen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Sie lesen ja immer noch, was f&#252;r eine
+Zeitverschwendung. 
+
+<ul type="disc">
+<li>sdfsdfsfdfds</li>
+
+<li>ljkljklhgg</li>
+
+<li>
+&#246;&#252;&#246;&#252;&#246;&#252;&#246;&#252;&#246;&#252;</li>
+
+<li>kokokokok 
+
+<ul type="disc">
+<li>ABCABCABC</li>
+
+<li>DEFDEFDEF</li>
+
+<li>kokokokok</li>
+</ul>
+</li>
+
+<li>ztztztztztzt</li>
+
+<li>kkjdddd</li>
+
+<li>fdsfd</li>
+
+<li>sdf</li>
+
+<li>kkkkk#</li>
+
+<li>uhjkhjkgf</li>
+
+<li>gffghhghhhghghgdfsfd</li>
+</ul>
+
+<b>Dies ist ein fhfBlindtext</b> - bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Sie lesen ja immer noch, was f&#252;r eine
+Zeitverschwendung. Dies ist ein Blindtext - bitte h&#246;ren
+Sie auf zu lesen. Dies ist ein Blindtext. <internalLink dcfname="de.juwimm.cms.content.modules.InternalLink" description="mehr" label="#DEFAULT">
+                <internalLink level="3" viewid="2850"><![CDATA[mehr]]></internalLink>
+            </internalLink><br/>
+<br/>
+<b>Dies ist ein Blindtext -</b> bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Sie lesen ja immer noch, was f&#252;r eine
+Zeitverschwendung. Dies ist ein Blindtext - bitte h&#246;ren
+Sie auf zu lesen. Dies ist ein Blindtext. <internalLink dcfname="de.juwimm.cms.content.modules.InternalLink" description="mehr" label="Interner Link">
+                <internalLink level="3" viewid="2850"><![CDATA[mehr]]></internalLink>
+            </internalLink><br/>
+<br/>
+<b>Dies ist ein Blindtext</b> - bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Dies ist ein Blindtext - bitte h&#246;ren Sie auf zu
+lesen. Sie lesen ja immer noch, was f&#252;r eine
+Zeitverschwendung. Dies ist ein Blindtext - bitte h&#246;ren
+Sie auf zu lesen. Dies ist ein Blindtext. <internalLink dcfname="de.juwimm.cms.content.modules.InternalLink" description="mehr" label="Interner Link">
+                <internalLink level="3" viewid="2850"><![CDATA[mehr]]></internalLink>
+            </internalLink><br/>
+<br/>
+<br/>
+</text></root>

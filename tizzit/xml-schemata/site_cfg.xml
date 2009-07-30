@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<default>
+		<customerName>TESTSERVER CONQUEST</customerName>
+		<screen width="1024" height="768"/>
+		<wysiwygImageUrl>http://localhost/cocoon/cms/ukd/img/</wysiwygImageUrl>
+		<bugpageUrl>http://213.252.141.120/bugtracker/</bugpageUrl>
+		<demoWebUrl fullFrameset="index_1.html" contentOnly="content.html">http://localhost/cocoon/cms/ukd/</demoWebUrl>
+		<helpWebUrl>http://ukdhilfe.juwimm.net</helpWebUrl>
+		<dcfUrl>http://localhost/config/dcf/</dcfUrl>
+		<liveServer>
+			<url>213.252.141.109</url>
+			<username>kowo</username>
+			<password>123</password>
+		</liveServer>
+	</default>
+</config>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp codebase="$$fake80codebase">
+   <information>
+      <title>ConQuest 3.0 Open Source</title>
+      <vendor>Juwi MacMillan Group GmbH</vendor>
+      <homepage href="http://www.cqcms.org"> </homepage>
+      <icon href="/cms/img/cms_64x64.gif"> </icon>
+      <icon href="/cms/img/cms_450x300.gif" kind="splash"> </icon>
+      <description>Contains the Client module</description>
+      <description kind="short">Swing Client</description>
+   </information>
+   <security>
+      <all-permissions> </all-permissions>
+   </security>
+   <resources>
+      <j2se version="1.5+" max-heap-size="256m" initial-heap-size="64m"/>
+      $dependencies 
+<!--
+		<property name="sun.lang.ClassLoader.allowArraySyntax" value="true"/>
+		 java-vm-args="sun.lang.ClassLoader.allowArraySyntax=true"
+-->
+   </resources>
+   <application-desc main-class="$mainClass">
+      <argument>URL_HOST</argument>
+      <argument>$$fake80codebase</argument>
+      <argument>$$fakeClientMailAppenderProperties</argument>
+   </application-desc>
+</jnlp>

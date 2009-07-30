@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+   <!-- <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="de/juwimm/cms/beans/ehcache.xml"></property>
+    </bean>
+    <bean id="cacheProvider" class="org.springmodules.cache.provider.ehcache.EhCacheFacade">
+        <property name="cacheManager" ref="cacheManager"/>
+        <property name="cacheProfiles">
+            <props>
+                <prop key="first">[cacheName=firstCache]</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="cachingInterceptor"
+        class="org.springmodules.cache.interceptor.caching.CachingInterceptor">
+        <property name="cacheProviderFacade" ref="cacheProvider"/>
+        <property name="cachingAttributeSource"
+            value="de.juwimm.cms.beans.test.TestResult.test*=[cacheProfileId=first]"/>
+    </bean>
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames" value="cacheable"/>
+        <property name="interceptorNames">
+            <list>
+                <value>cachingInterceptor</value>
+            </list>
+        </property>
+        </bean>-->
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation">
+            <value>classpath:de/juwimm/cms/beans/ehcache.xml</value>
+        </property>
+    </bean>
+    <bean id="methodCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager">
+            <ref local="cacheManager"/>
+        </property>
+        <property name="cacheName">
+            <value>nanoCache</value>
+        </property>
+    </bean>
+    <bean id="methodCacheInterceptor" class="de.juwimm.cms.common.beans.MethodCacheInterceptor">
+        <property name="cache">
+            <ref local="methodCache"/>
+        </property>
+    </bean>
+    <bean id="methodCachePointCut"
+        class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice">
+            <ref local="methodCacheInterceptor"/>
+        </property>
+        <property name="patterns">
+            <list>
+                <value>.*test.*</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="cacheable" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="de.juwimm.cms.beans.test.TestResult"/>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>methodCachePointCut</value>
+            </list>
+        </property>
+    </bean>
+</beans>

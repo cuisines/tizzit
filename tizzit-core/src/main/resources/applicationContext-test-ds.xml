@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="propertyConfigurator" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>classpath:testConquest.properties</value>
+		</property>
+	</bean>
+	
+	
+	<!-- 
+		Import EJBs into spring context
+	 -->
+	<bean id="sequenceSession" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="de.juwimm.sequence.SequenceSession"/>
+		  <property name="businessInterface" value="de.juwimm.sequence.remote.SequenceSession"/>		  
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="viewServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.ViewService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.ViewService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="adminServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.AdministrationService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.AdministrationService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="contentServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.ContentService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.ContentService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<!-- 
+		Local Stateless Session Bean 
+		Class LocalHomeProxy must be in the classpath (jboss.jar)	
+	-->
+	<bean id="editionServiceEJB" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.EditionService/Local"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.EditionServiceLocalHome"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="masterRootServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.MasterRootService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.MasterRootService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="unitServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.UnitService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.UnitService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="userServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.UserService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.UserService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="webServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.WebService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.remote.WebService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="safeguardServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.safeguard.remote.SafeguardService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.safeguard.remote.SafeguardService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="componentsServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.components.remote.ComponentsService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.components.remote.ComponentsService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="authorizationServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.authorization.remote.AuthorizationService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.authorization.remote.AuthorizationService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+	
+	<bean id="searchengineServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
+		  <property name="jndiName" value="ejb/de.juwimm.cms.search.remote.SearchengineService/Remote"/>
+		  <property name="businessInterface" value="de.juwimm.cms.search.remote.SearchengineService"/>
+		  <property name="jndiEnvironment">
+ 			<props>
+				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
+				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
+			</props> 
+		</property>
+	</bean>
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>${driverClassName}</value>
+		</property>
+		<property name="url">
+			<value>${testUrl}</value>
+		</property>
+		<property name="username">
+			<value>${testUsername}</value>
+		</property>
+		<property name="password">
+			<value>${testPassword}</value>
+		</property>		
+	</bean>
+</beans>

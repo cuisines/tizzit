@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.cqcms</groupId>
+	<artifactId>cqcms-loginmodules</artifactId>
+	<version>${conquest.version}</version>
+	<parent>
+		<groupId>org.cqcms</groupId>
+		<artifactId>cqcms</artifactId>
+		<version>1.0</version>
+		<relativePath>../cqcms/pom.xml</relativePath>
+	</parent>
+	<packaging>jar</packaging>
+	<name>CQCMS Loginmodules</name>
+	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jbosssx</artifactId>
+			<version>${jboss.security.version}</version>
+		</dependency> 
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-jmx</artifactId>
+			<version>${jboss.security.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-system</artifactId>
+			<version>${jboss.security.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-transaction</artifactId>
+			<version>${jboss.security.version}</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-j2ee</artifactId>
+			<version>${jboss.security.version}</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+	</build>
+</project>

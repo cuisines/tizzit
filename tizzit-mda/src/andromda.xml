@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<andromda>
+	<properties>
+		<property name="modelValidation">false</property>
+		<property name="processAllModelPackages">false</property>
+	</properties>
+	<!-- Geht nicht mit neuem Kaspersky!!! [CH]	
+	<server>
+		<host>localhost</host>
+		<port>4447</port>
+	</server>-->
+	<repositories>
+		<repository name="netBeansMDR">
+			<models>
+				<model>
+					<uri>${model.uri}</uri>
+					<transformations>
+						<transformation>
+							<uri>file:${pom.basedir}/src/springServiceTransform.xsl</uri>
+						</transformation>
+					</transformations>
+					<moduleSearchLocations>
+						<location patterns="**/*.xml.zip">${settings.localRepository}/org/andromda/profiles/uml14</location>
+					</moduleSearchLocations>
+					<modelPackages>
+						<modelPackage process="false">de::juwimm::cms::liveserver::remote</modelPackage>
+						<modelPackage process="false">de::juwimm::cms::beans::foreign</modelPackage>
+						<modelPackage process="false">de::juwimm::cms::search::xmldb</modelPackage>
+					</modelPackages>
+				</model>
+			</models>
+		</repository>
+	</repositories>
+	<mappingsSearchLocations>
+		<location patterns="*.xml">file:${pom.basedir}/src/conf/</location>
+	</mappingsSearchLocations>
+	<namespaces>
+		<namespace name="default">
+			<properties>
+				<property name="wrapperMappingsUri">JavaWrapper</property>
+				<property name="foreignKeySuffix">_ID_FK</property>
+				<property name="jdbcMappingsUri">JDBC</property>
+				<property name="languageMappingsUri">file:${pom.basedir}/src/conf/JavaMappings-30.xml</property>
+				<property name="maxSqlNameLength">30</property>
+				<property name="sqlMappingsUri">file:${pom.basedir}/src/conf/Oracle9iMappings.xml</property>
+				<!--<property name="sqlMappingsUri">${sql.mappings}</property>-->
+				<property name="hibernateVersion">3</property>
+
+				<property name="hibernateCacheProvider">org.hibernate.cache.EhCacheProvider</property>
+				<property name="hibernateQueryCacheFactory">org.hibernate.cache.StandardQueryCacheFactory</property>
+				<property name="hibernateTransactionFactoryClass">org.hibernate.transaction.JBossTransactionManagerLookup</property>
+				<!-- DONE THROUGH TRANSFORMER!!!
+				<property name="entityNamePattern">{0}Hbm</property>
+				<property name="entityImplementationNamePattern">{0}HbmImpl</property>
+-->
+				<property name="entityNamePattern">{0}</property>
+				<property name="entityImplementationNamePattern">{0}Impl</property>
+				
+				<property name="acegiServiceSecurity">true</property>
+				<property name="acegiRolePrefix"></property>
+				<property name="acegiAuthenticationManager">authenticationManager</property>
+				<property name="acegiServiceSecurityInterceptor">org.springframework.security.intercept.method.aopalliance.MethodSecurityInterceptor</property>
+				<property name="acegiServiceAccessDecisionManager">org.springframework.security.vote.AffirmativeBased</property>
+				<property name="acegiServiceDecisionVoter">org.springframework.security.vote.RoleVoter</property>
+				
+				
+			</properties>
+		</namespace>
+		<namespace name="hibernate">
+			<properties>
+				<property name="mergeLocation">${conf.dir}/cartridge/hibernate</property>
+				<property name="hibernateTypeMappingsUri">Hibernate</property>
+				<property name="hibernateInheritanceStrategy">class</property>
+				<property name="defaultHibernateGeneratorClass">native</property>
+				<property name="hibernateJdbcUseStreamsForBinary">true</property>
+				<property name="hibernateDefaultCascade">none</property>
+				<property name="entities">${core.generated.dir}</property>
+				<property name="entity-impls">${core.manual.dir}</property>
+				<property name="entity-mappings">${core.generated.dir}</property>
+				<property name="customTypesPackage">${core.generated.dir}</property>
+				<property name="configuration">${core.generated.dir}</property>
+				<property name="user-types">${core.generated.dir}</property>
+				<property name="cache">${core.generated.dir}</property>
+				<property name="hibernateEnableCache">true</property>
+				<property name="hibernateEnableAssociationsCache">false</property>
+				<property name="ehCacheMaxElementsInMemory">500</property>
+				<property name="ehCacheEternal">false</property>
+				<property name="ehCacheTimeToIdleSeconds">120</property>
+				<property name="ehCacheTimeToLiveSeconds">3600</property>
+				<property name="ehCacheOverflowToDisk">true</property>
+			</properties>
+		</namespace>
+		<namespace name="spring">
+			<properties>
+			   <property name="mergeLocation">${conf.dir}/cartridge/spring</property>   
+			   <property name="mergeMappingsUri">file:${pom.basedir}/src/applicationContext-mergemappings.xml</property>
+				<property name="sessionFactory">org.springframework.orm.hibernate3.LocalSessionFactoryBean</property>
+
+				<!-- optimized for JTA Datasources -->
+				<property name="hibernateConnectionReleaseMode">auto</property>
+				
+				<property name="hibernateJdbcUseStreamsForBinary">true</property>
+
+				<property name="hibernateEnableCache">true</property>
+				<property name="hibernateEnableAssociationsCache">true</property>
+				<!-- Soll nicht automatisch generiert werden
+				<property name="dataSource">${dataSource}</property>
+				-->
+				<property name="compositionDefinesEagerLoading">true</property>
+
+
+				<!--<property name="hibernateDialect">org.hibernate.dialect.SAPDBDialect</property>
+				<property name="userTransactionName">UserTransaction</property>
+				<property name="transactionManagerName">java:TransactionManager</property>
+				-->
+
+				<property name="spring-configuration">${core.generated.dir}</property>
+				<property name="services">${common.generated.dir}</property>
+				<property name="service-impls">${core.manual.dir}</property>
+				<property name="service-interfaces">${common.generated.dir}</property>
+				<!-- has to be checked -->
+				<property name="daos">${core.generated.dir}</property>
+				<property name="dao-impls">${core.manual.dir}</property>
+				<property name="enableDaoPropertiesCreateMethod">false</property>
+
+				<property name="server">${core.generated.dir}</property>
+				<property name="server-config">${core.generated.dir}</property>
+				<property name="server-impl">${core.manual.dir}</property>
+				<property name="criteria">${common.generated.dir}</property>
+				<property name="value-objects">${common.generated.dir}</property>
+				<property name="clientHttpInvokerExecutor">de.juwimm.cms.http.AuthenticationStreamSupportingHttpInvokerRequestExecutor</property>				
+				<property name="client">${common.generated.dir}</property>
+				<property name="client-config">${common.generated.dir}</property>
+				<property name="richClient">true</property>
+				<property name="serviceRemoteContext">remote</property>
+				<property name="serviceRemotePort">80</property>
+				<property name="configPropertyPrefix">cq.</property>
+			</properties>
+		</namespace>
+		<namespace name="java">
+			<properties>
+				<property name="mergeLocation">${conf.dir}/cartridge/java</property>
+				<property name="enumerations">${common.generated.dir}</property>
+				<property name="exceptions">${common.generated.dir}</property>
+				<property name="value-objects">${common.generated.dir}</property>
+			</properties>
+		</namespace>
+	</namespaces>
+</andromda>

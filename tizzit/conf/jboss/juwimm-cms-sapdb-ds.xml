@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources>
+	<local-tx-datasource>
+		<jndi-name>ConQuestDS</jndi-name>
+		<connection-url>jdbc:sapdb://localhost/CMS</connection-url>
+		<driver-class>com.sap.dbtech.jdbc.DriverSapDB</driver-class>
+		<user-name>CONQUEST</user-name>
+		<password>CONQUEST</password>
+		<min-pool-size>10</min-pool-size>
+		<max-pool-size>25</max-pool-size>
+		<blocking-timeout-millis>30000</blocking-timeout-millis>
+		<idle-timeout-minutes>5</idle-timeout-minutes>
+		<metadata>
+			<type-mapping>SapDB</type-mapping>
+		</metadata>
+	</local-tx-datasource>
+
+</datasources>

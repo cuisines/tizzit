@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  This is used to map the model types to Java types
+  for the generated code.
+-->
+<mappings name="Java">
+	<extends>Java</extends>
+    <mapping>
+        <from>datatype::InputStream</from>
+        <to>java.io.InputStream</to>
+    </mapping>
+    <mapping>
+        <from>datatype::OutputStream</from>
+        <to>java.io.OutputStream</to>
+    </mapping>
+    <mapping>
+        <from>datatype::PrintStream</from>
+        <to>java.io.PrintStream</to>
+    </mapping>
+    <mapping>
+        <from>datatype::Element</from>
+        <to>org.w3c.dom.Element</to>
+    </mapping>
+    <!-- new mappings are using custom package names -->
+	<mapping>
+		<from>juwimm::datatype::InputStream</from>
+		<to>java.io.InputStream</to>
+	</mapping>
+	<mapping>
+		<from>juwimm::datatype::OutputStream</from>
+		<to>java.io.OutputStream</to>
+	</mapping>
+	<mapping>
+		<from>juwimm::datatype::PrintStream</from>
+		<to>java.io.PrintStream</to>
+	</mapping>
+	<mapping>
+		<from>juwimm::datatype::Element</from>
+		<to>org.w3c.dom.Element</to>
+	</mapping>
+    <mapping>
+        <from>juwimm::datatype::LargeBlob</from>
+        <to>java.sql.Blob</to>
+    </mapping>
+		<mapping>
+			<from>juwimm::datatype::ContentHandler</from>
+			<to>org.xml.sax.ContentHandler</to>
+		</mapping>
+</mappings>

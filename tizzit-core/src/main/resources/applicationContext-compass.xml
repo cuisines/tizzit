@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.1.xsd">
+	
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="allowCustomIsolationLevels" value="true"/>
+	</bean>
+	
+	<bean id="compassSettings" class="de.juwimm.cms.search.compass.CompassSettings" lazy-init="false" scope="singleton">
+		<constructor-arg><value>${cqPropertiesBeanSpring.hibernateSqlDialect}</value></constructor-arg>
+		<constructor-arg><ref bean="cqPropertiesBeanSpring"/></constructor-arg>
+	</bean>
+	
+	<!--
+	<compass:compass name="compass" txManager="transactionManager">
+		<compass:connection>
+			<compass:file path="target/test-index" />
+		</compass:connection>
+	</compass:compass>
+	
+	< ! - -  A direct LocalCompassSessionBean, used with code within a transaciton context - - >
+	<compass:session id="compass" /> -->
+	
+	<bean id="compass" class="org.compass.spring.LocalCompassBean" lazy-init="false" scope="singleton">
+		<property name="resourceLocations">
+			<list>
+				<value>classpath:de/juwimm/cms/search/compass/SearchWebValues.cpm.xml</value>
+				<value>classpath:de/juwimm/cms/search/compass/SearchDocumentValues.cpm.xml</value>
+			</list>
+		</property>
+		<property name="compassSettings" ref="compassSettings"/>
+		<property name="transactionManager">
+			<ref local="transactionManager" />
+		</property>
+	</bean>	
+	<!-- COMPASS END -->
+
+	<bean id="htmlResourceLocator" class="de.juwimm.cms.search.res.HtmlResourceLocator"/>
+	<bean id="pdfResourceLocator" class="de.juwimm.cms.search.res.PDFResourceLocator"/>
+	<bean id="rtfResourceLocator" class="de.juwimm.cms.search.res.RTFResourceLocator"/>
+	<bean id="wordResourceLocator" class="de.juwimm.cms.search.res.WordResourceLocator"/>
+	<bean id="documentResourceLocatorFactory" class="de.juwimm.cms.search.res.DocumentResourceLocatorFactory"/>
+	
+</beans>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--
+  This is used to map the model types to 
+  Oracle 9i types for generated code.
+-->
+<mappings name="Oracle9i"> 
+    <extends>Oracle9i</extends>
+    <mapping>
+        <from>juwimm::datatype::LargeBlob</from>
+        <to>BLOB</to>
+    </mapping> 
+</mappings>

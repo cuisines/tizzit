@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  - Copyright 1999-2004 The Apache Software Foundation.
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -     http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -
+  - CVS $Id$
+  -->
+
+<!--
+  - Command Tool properties file for Xindice
+  -
+  - Attributes...
+  -    class - java class associated with this command
+  -    helpclass - type of comand, there are 3 ( document,security,hidden )
+  -    description - description of this command
+  -
+  - Version: $Revision: 29685 $ $Date: 2009-02-12 18:39:53 +0100 (Thu, 12 Feb 2009) $
+  - Author: Kimbro Staken (kstaken@xmldatabases.org)
+  -->
+
+<commands>
+   <user>
+      <command switch="ac"
+               name="add_collection"
+               class="org.apache.xindice.tools.command.AddCollection"
+               helpclass="document"
+               description="Adds a collection/nested collection" />
+      <command switch="dc"
+               name="delete_collection"
+               class="org.apache.xindice.tools.command.DeleteCollection"
+               helpclass="document"
+               description="Deletes a collection/Nested collection" />
+      <command switch="import"
+               name="import"
+               class="org.apache.xindice.tools.command.ImportTree"
+               helpclass="document"
+               description="Creates a collection/document from a directory tree" />
+      <command switch="di"
+               name="delete_indexer"
+               class="org.apache.xindice.tools.command.DeleteIndexer"
+               helpclass="hidden"
+               description="" />
+      <command switch="ai"
+               name="add_indexer"
+               class="org.apache.xindice.tools.command.AddIndexer"
+               helpclass="hidden"
+               description="" />
+      <command switch="li"
+               name="list_indexers"
+               class="org.apache.xindice.tools.command.ListIndexers"
+               helpclass="document"
+               description="Retrieves a list of Indexers on a Collection" />
+      <command switch="shutdown"
+               name="shutdown_server"
+               class="org.apache.xindice.tools.command.Shutdown"
+               helpclass="security"
+               description="Shuts down the Xindice Server" />
+      <command switch="ad"
+               name="add_document"
+               class="org.apache.xindice.tools.command.AddDocument"
+               helpclass="document"
+               description="Adds a document" />
+      <command switch="ar"
+               name="add_resource"
+               class="org.apache.xindice.tools.command.AddResource"
+               helpclass="document"
+               description="Adds a resource" />
+      <command switch="addmultiple"
+               name="add_multiple_documents"
+               class="org.apache.xindice.tools.command.AddMultipleDocuments"
+               helpclass="document"
+               description="Adds multiple documents" />
+      <command switch="dd"
+               name="delete_document"
+               class="org.apache.xindice.tools.command.DeleteDocument"
+               helpclass="document"
+               description="Deletes a document" />
+      <command switch="lc"
+               name="list_collections"
+               class="org.apache.xindice.tools.command.ListCollections"
+               helpclass="document"
+               description="Retrieves a collection/nested collection list" />
+      <command switch="rd"
+               name="retrieve_document"
+               class="org.apache.xindice.tools.command.RetrieveDocument"
+               helpclass="document"
+               description="Retrieves a document for storage elsewhere" />
+      <command switch="ld"
+               name="list_documents"
+               class="org.apache.xindice.tools.command.ListCollectionDocuments"
+               helpclass="document"
+               description="Retrieves a list of documents in a particular collection" />
+      <command switch="xpath"
+               name="xpath_query"
+               class="org.apache.xindice.tools.command.XPathQuery"
+               helpclass="document"
+               description="Queries a Collection using XPath" />
+      <command switch="xupdate"    
+               name="xupdate_query"
+               class="org.apache.xindice.tools.command.XUpdate"
+               helpclass="document"
+               description="Updates a Collection using XUpdate" />
+      <command switch="export"
+               name="export"
+               class="org.apache.xindice.tools.command.ExportTree"
+               helpclass="document"
+               description="Exports a collection/document from a directory tree" />
+   </user>
+</commands>

@@ -1,0 +1,878 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.cqcms</groupId>
+	<artifactId>cqcms</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0</version>
+	<name>CQCMS</name>
+	<description>The CQCMS Project.</description>
+	<scm>
+		<connection>scm:svn:https://cqcms.svn.sourceforge.net/svnroot/cqcms/trunk/cqcms/</connection>
+		<url>http://cqcms.svn.sourceforge.net/viewvc/cqcms/trunk/</url>
+	</scm>
+	<organization>
+		<name>Juwi MacMillan Group GmbH</name>
+		<url>http://www.juwimm.com</url>
+	</organization>
+	<inceptionYear>2009</inceptionYear>
+	<issueManagement>
+		<system>mantis</system>
+		<url>http://cqcms.jira.com</url>
+	</issueManagement>
+	<ciManagement>
+		<system>continuum</system>
+		<notifiers>
+			<notifier>
+				<type>mail</type>
+				<configuration>
+					<address />
+				</configuration>
+			</notifier>
+		</notifiers>
+	</ciManagement>
+	<developers>
+		<developer>
+			<id>sascha</id>
+			<name>Sascha-Matthias Kulawik</name>
+			<email>sascha-matthias.kulawik@juwimm.com</email>
+			<organization>Juwi MacMillan Group GmbH</organization>
+			<roles>
+				<role>Architect</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>GMT +1</timezone>
+		</developer>
+		<developer>
+			<id>cschalm</id>
+			<name>Carsten Schalm</name>
+			<roles>
+				<role>Developer</role>
+				<role>Architect</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.andromda.profiles.uml14</groupId>
+				<artifactId>andromda-profile</artifactId>
+				<version>3.2</version>
+				<type>xml.zip</type>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda</groupId>
+				<artifactId>andromda-core</artifactId>
+				<version>3.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xalan</groupId>
+						<artifactId>xalan</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.translationlibraries</groupId>
+				<artifactId>andromda-ocl-translation-core</artifactId>
+				<version>3.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.translationlibraries</groupId>
+				<artifactId>andromda-ocl-validation-library</artifactId>
+				<version>3.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.cartridges</groupId>
+				<artifactId>andromda-spring-cartridge</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.cartridges</groupId>
+				<artifactId>andromda-hibernate-cartridge</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.cartridges</groupId>
+				<artifactId>andromda-webservice-cartridge</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.cartridges</groupId>
+				<artifactId>andromda-java-cartridge</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.cartridges</groupId>
+				<artifactId>andromda-jsf-cartridge</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda</groupId>
+				<artifactId>andromda-utils</artifactId>
+				<version>3.2</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xalan</groupId>
+						<artifactId>xalan</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.andromda.translationlibraries</groupId>
+				<artifactId>andromda-ocl-query-library</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<!--
+				This dependency provides the ability to implement your business
+				logic in an interpreted manner during development on your local
+				machine
+			-->
+			<dependency>
+				<groupId>org.andromda</groupId>
+				<artifactId>andromda-script-wrappers</artifactId>
+				<version>3.2</version>
+				<scope>runtime</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>antlr</groupId>
+				<artifactId>antlr</artifactId>
+				<version>2.7.2</version>
+			</dependency>
+			<dependency>
+				<groupId>aopalliance</groupId>
+				<artifactId>aopalliance</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>bouncycastle</groupId>
+				<artifactId>bcprov-jdk15</artifactId>
+				<version>136</version>
+			</dependency>
+			<dependency>
+				<groupId>com.lowagie</groupId>
+				<artifactId>itext</artifactId>
+				<version>0.99</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.7.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-digester</groupId>
+				<artifactId>commons-digester</artifactId>
+				<version>1.7</version>
+				<scope>runtime</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>commons-discovery</groupId>
+				<artifactId>commons-discovery</artifactId>
+				<version>0.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.0</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>1.3.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-jexl</groupId>
+				<artifactId>commons-jexl</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.4</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.0.4</version>
+				<!--<scope>provided</scope>-->
+			</dependency>
+			<dependency>
+				<groupId>commons-pool</groupId>
+				<artifactId>commons-pool</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>1.1.4</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>1.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.fontbox</groupId>
+				<artifactId>fontbox</artifactId>
+				<version>0.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jsp-api</artifactId>
+				<version>2.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>1.1.2</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>1.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>jaxen</groupId>
+				<artifactId>jaxen</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>jboss</groupId>
+				<artifactId>jboss-j2ee</artifactId>
+				<version>3.2.3</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>juwimm-sequence</groupId>
+				<artifactId>juwimm-sequence-remote</artifactId>
+				<version>1.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>1.2.13</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-core</artifactId>
+				<version>2.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-snowball</artifactId>
+				<version>2.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-highlighter</artifactId>
+				<version>2.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core-tiger</artifactId>
+				<version>${spring.security.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-support</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency> 
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${spring.security.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-support</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-context</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-aop</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-acl</artifactId>
+				<version>${spring.security.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-support</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-jdbc</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.xfire</groupId>
+				<artifactId>xfire-all</artifactId>
+				<version>1.1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate</artifactId>
+				<version>3.2.5.ga</version>
+				<!--   <scope>provided</scope>-->
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>dom4j</groupId>
+						<artifactId>dom4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.transaction</groupId>
+						<artifactId>jta</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>servlet-api</artifactId>
+						<groupId>javax.servlet</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jta</artifactId>
+						<groupId>javax.transaction</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>connector</artifactId>
+						<groupId>javax.resource</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>xjavadoc</artifactId>
+						<groupId>xdoclet</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>cos</artifactId>
+						<groupId>com.servlets</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jstl</artifactId>
+						<groupId>javax.servlet</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>standard</artifactId>
+						<groupId>taglibs</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>quartz</artifactId>
+						<groupId>quartz</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>oro</groupId>
+				<artifactId>oro</artifactId>
+				<version>2.0.8</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.1-FINAL</version>
+			</dependency> 
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-scratchpad</artifactId>
+				<version>3.1-FINAL</version>
+			</dependency> 
+			<dependency>
+				<groupId>quartz</groupId>
+				<artifactId>quartz</artifactId>
+				<version>1.5.2</version>
+			</dependency>
+			<dependency>
+				<groupId>taglibs</groupId>
+				<artifactId>standard</artifactId>
+				<version>1.1.1</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xercesImpl</artifactId>
+				<version>2.7.1</version>
+			</dependency>
+			<dependency>
+				<groupId>xerces</groupId>
+				<artifactId>xmlParserAPIs</artifactId>
+				<version>2.6.2</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<!-- This one really sucks. I tried it but changing the content of the licence file
+				 a replacement of all existing headers is happening. If this might be solved we
+				 can try it again. 
+			<plugin>
+				<groupId>com.google.code.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<configuration>
+					<basedir>../</basedir>
+					<header>header.txt</header>
+					<aggregate>true</aggregate>
+					<includes>
+	                    <include>**/**.java</include>
+	                </includes>
+	                <excludes>
+	                    <exclude>conf/**</exclude>
+	                    <exclude>**.xml</exclude>
+	                </excludes>
+	                <encoding>UTF-8</encoding>
+	                <properties>
+	                    <year>${project.inceptionYear}</year>
+	                </properties>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			 -->
+		</plugins>
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.5</source>
+						<target>1.5</target>
+						<excludes>
+							<exclude>**/*Point*.java</exclude>
+						</excludes>
+						<!--
+							<executable>${jdk6exe}</executable> <fork>true</fork>
+						-->
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.andromda.maven.plugins</groupId>
+					<artifactId>andromda-multi-source-plugin</artifactId>
+					<version>3.2</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>add-source</goal>
+							</goals>
+							<configuration>
+								<sourceDirectories>
+									<directory>target/src</directory>
+								</sourceDirectories>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.andromda.maven.plugins</groupId>
+					<artifactId>andromda-maven-plugin</artifactId>
+					<version>3.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<modules>
+
+		<module>../cqcms-mda</module>
+		<module>../cqcms-common</module>
+
+		<module>../cqcms-plugin-api</module>
+		<module>../cqcms-core</module>
+		<module>../cqcms-webstart</module>
+		<module>../cqcms-web-cocoon</module>
+		<module>../cqcms-richclient</module>
+		<module>../cqcms-web-admin</module>
+		<module>../cqcms-loginmodules</module>
+		<module>../cqcms-web-xindice</module>
+		<module>../cqcms-plugin-testcontainer</module>
+		<module>../cqcms-xmlsearch-xindice</module>
+
+		<!--
+			<module>../cqcms-web-serveradmin</module>
+			<module>../cqcms-adminclient</module>
+		-->
+
+		<!--
+      
+-->
+	</modules>
+	<properties>
+		<conquest.version>3.0.3-SNAPSHOT</conquest.version><!-- -SNAPSHOT -->
+		<spring.version>2.5.6</spring.version>
+		<spring.security.version>2.0.4</spring.security.version>
+		<jboss.security.version>4.2.2.GA</jboss.security.version>
+
+		<!--
+			Change this to generate to the correct MDA database mappings, For
+			MySql use: MySQL For Hypersonic use: HypersonicSql For Oracle9i use:
+			Oracle9i For DB2 use: DB2 For Informix use: InformixDB For MSSQL use:
+			MSSQL For Pointbase use: PointBase For Postgres use: PostgreSQL For
+			Sybase use: Sybase For SapDB use: SapDB For Derby use: Derby
+		-->
+		<sql.mappings>Oracle9i</sql.mappings>
+		<!--
+			Change this for the appropriate database For MySql use:
+			org.hibernate.dialect.MySQLDialect For MySql InnoDB use:
+			org.hibernate.dialect.MySQLInnoDBDialect For MySql MyISAM use:
+			org.hibernate.dialect.MySQLMyISAMDialect For Hypersonic use:
+			org.hibernate.dialect.HSQLDialect For Oracle any version use:
+			org.hibernate.dialect.OracleDialect For Oracle9i/10g use:
+			org.hibernate.dialect.Oracle9Dialect For DB2 use:
+			org.hibernate.dialect.DB2Dialect For Informix use:
+			org.hibernate.dialect.InformixDialect For MSSQL use:
+			org.hibernate.dialect.SQLServerDialect For Pointbase use:
+			org.hibernate.dialect.PointbaseDialect For Postgres use:
+			org.hibernate.dialect.PostgreSQLDialect For Sybase use:
+			org.hibernate.dialect.SybaseDialect For Sybase Anywhere use:
+			org.hibernate.dialect.SybaseAnywhereDialect For SapDB use:
+			org.hibernate.dialect.SAPDBDialect For Progress use:
+			org.hibernate.dialect.ProgressDialect For Derby use:
+			org.hibernate.dialect.DerbyDialect
+		-->
+		<hibernate.dialect>org.hibernate.dialect.Oracle9Dialect</hibernate.dialect>
+		<tomcat.home>${env.CATALINA_HOME}</tomcat.home>
+		<application.id>cqcms</application.id>
+		<application.package>de.juwimm.cms</application.package>
+		<application.name>CQCMS</application.name>
+		<application.version>2.4.12</application.version>
+		<dataSource.name>ConQuestDS</dataSource.name>
+		<dataSource>java:/${dataSource.name}</dataSource>
+	</properties>
+	<profiles>
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<!--
+					Change driver jar for appropriate database For MySQL use:
+					mysql-connector-java-X-bin.jar For Hypersonic use: hsqldb.jar
+				-->
+				<jdbc.driver.jar>
+					/path/to/hsqldb/hsqldb.jar
+				</jdbc.driver.jar>
+				<!--
+					Change driver for appropriate database For MySQL use:
+					com.mysql.jdbc.Driver For Hypersonic use: org.hsqldb.jdbcDriver For
+					Oracle9i use: oracle.jdbc.driver.OracleDriver For DB2 use:
+					COM.ibm.db2.jdbc.app.DB2Driver For Informix use:
+					com.informix.jdbc.IfxDriver For MSSQL use:
+					com.microsoft.jdbc.sqlserver.SQLServerDriver For Pointbase use:
+					com.pointbase.jdbc.jdbcUniversalDriver For Postgres use:
+					org.postgresql.Driver For Sybase use:
+					com.sybase.jdbc2.jdbc.SybDataSource For SapDB use:
+					com.sap.dbtech.jdbc.DriverSapDB For Progress use:
+					com.progress.sql.jdbc.JdbcProgressDriver For Derby use:
+					org.apache.derby.jdbc.EmbeddedDriver
+				-->
+				<jdbc.driver>
+					oracle.jdbc.driver.OracleDriver
+				</jdbc.driver>
+				<jdbc.url>jdbc:oracle:thin:@localhost:1521:XE</jdbc.url>
+				<jdbc.username>system</jdbc.username>
+				<jdbc.password>oracle</jdbc.password>
+				<!--
+					Change exception sorder class name for appropriate database For
+					MySQL use:
+					org.jboss.resource.adapter.jdbc.vendor.MySQLExceptionSorter For
+					Hypersonic use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter For
+					Oracle9i use:
+					org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter For
+					DB2 use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter For
+					Informix use:
+					org.jboss.resource.adapter.jdbc.vendor.InformixExceptionSorter For
+					MSSQL use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter For
+					Pointbase use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter For
+					Postgres use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter For
+					Sybase use:
+					org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter For
+					SapDB use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter For
+					Progress use:
+					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter
+				-->
+				<jdbc.exception.sorter>
+					org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
+				</jdbc.exception.sorter>
+			</properties>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>
+								org.andromda.maven.plugins
+							</groupId>
+							<artifactId>
+								andromdapp-maven-plugin
+							</artifactId>
+							<version>3.2</version>
+							<!--
+								provides the injection of the script wrapper support into the
+								class files (this should only be done when developing locally),
+								uncomment this executions element to enable <executions>
+								<execution> <id>instrument-scripts</id> <goals>
+								<goal>instrument-scripts</goal> </goals> </execution>
+								</executions>
+							-->
+							<configuration>
+								<scriptWrapper>
+									org.andromda.scriptwrappers.GroovyScriptWrapper
+								</scriptWrapper>
+								<locations>
+									<location>
+										<rootPath>
+											${pom.basedir}/src/main/java
+										</rootPath>
+										<!--
+											adjust these to include or exclude specific files, by default
+											all files found in the rootPath are considered <includes>
+											<include>relative/path/to/file/to/include/SomeClass.java</include>
+											</includes> <excludes>
+											<exclude>relative/path/to/file/to/include/SomeClass.java</exclude>
+											</excludes>
+										-->
+									</location>
+								</locations>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+		<profile>
+			<id>development</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			<properties>
+				<jdbc.driver.jar />
+				<jdbc.driver />
+				<jdbc.url />
+				<jdbc.username />
+				<jdbc.password />
+				<jdbc.exception.sorter />
+				<webservice.host />
+				<webservice.port />
+			</properties>
+		</profile>
+		<profile>
+			<id>validation</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>val</value>
+				</property>
+			</activation>
+			<properties>
+				<jdbc.driver.jar />
+				<jdbc.driver />
+				<jdbc.url />
+				<jdbc.username />
+				<jdbc.password />
+				<jdbc.exception.sorter />
+				<webservice.host />
+				<webservice.port />
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>prod</value>
+				</property>
+			</activation>
+			<properties>
+				<jdbc.driver.jar />
+				<jdbc.driver />
+				<jdbc.url />
+				<jdbc.username />
+				<jdbc.password />
+				<jdbc.exception.sorter />
+				<webservice.host />
+				<webservice.port />
+			</properties>
+		</profile>
+	</profiles>
+	<distributionManagement>
+		<!--
+			<repository> <id>m2</id> <url>file:///home/maven/m2</url>
+			</repository>s<snapshotRepository> <id>m2</id>
+			<url>file:///home/maven/m2</url> </snapshotRepository> <site>
+			<id>m2</id> <url>file:///home/maven/m2site</url> </site>
+		-->
+	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>andromda</id>
+			<name>AndroMDA Repository</name>
+			<url>http://team.andromda.org/maven2</url>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<name>Jboss own repo</name>
+			<url>http://repository.jboss.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>compass-project.org</id>
+			<name>Compass</name>
+			<url>http://repo.compass-project.org</url>
+		</repository>
+		<repository>
+			<id>keyintegrity</id>
+			<name>Repo for XMLDB / Xindice</name>
+			<url>http://repo.keyintegrity.com/maven2/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>andromda</id>
+			<name>AndroMDA Repository</name>
+			<url>http://team.andromda.org/maven2</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>codehaus</id>
+			<name>Codehaus Repository</name>
+			<url>http://repository.codehaus.org/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>mc-release</id>
+			<name>Local Maven repository of releases</name>
+			<url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+	<prerequisites>
+		<maven>2.0.8</maven>
+	</prerequisites>
+</project>

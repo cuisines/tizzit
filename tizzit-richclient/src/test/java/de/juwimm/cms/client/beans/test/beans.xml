@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+    <bean id="communication" class="de.juwimm.cms.util.CommunicationFactory"
+        singleton="true" />
+    <!--
+    <bean id="ctx" class="org.springframework.context.support.ClassPathXmlApplicationContext">
+        <constructor-arg>
+            <list>
+                <value>com/mycompany/myapp/util/applicationContext.xml</value>
+                <value>com/mycompany/myapp/dataaccess/applicationContext.xml</value>
+                <value>com/mycompany/myapp/dataaccess/services.xml</value>
+            </list>
+        </constructor-arg>
+    </bean>
+    -->
+    
+    <bean id="poolItem" class="de.juwimm.cms.beans.test.PoolTestItem" singleton="false"
+        destroy-method="destroy"/>
+    <bean id="pool" class="org.springframework.aop.target.CommonsPoolTargetSource">
+        <property name="targetBeanName">
+            <value>poolItem</value>
+        </property>
+        <property name="maxSize">
+            <value>5</value>
+        </property>
+    </bean>
+    <!--
+    <bean id="comm" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="targetSource">
+            <ref local="commPool"/>
+        </property>
+    </bean>
+    -->
+    <bean id="item" class="de.juwimm.cms.common.beans.PoolFactory">
+        <property name="pool">
+            <ref bean="pool"/>
+        </property>
+    </bean>
+</beans>
