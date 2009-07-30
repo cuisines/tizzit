@@ -58,7 +58,7 @@
       </plugins>
    </build>
    <properties>
-      <model.uri>jar:file:${pom.basedir}/src/uml/tizzit.xml.zip!/tizzit.xml</model.uri>
+      <model.uri>jar:file:${pom.basedir}/src/uml/cqcms.xml.zip!/cqcms.xml</model.uri>
       <filter/>
       <validation>true</validation>
       <conf.dir>${pom.basedir}/src/main/config</conf.dir>
