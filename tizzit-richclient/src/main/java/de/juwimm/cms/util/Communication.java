@@ -53,6 +53,7 @@ import de.juwimm.cms.gui.table.ModifiedPagesTableModel;
 import de.juwimm.cms.gui.tree.CmsTreeModel;
 import de.juwimm.cms.gui.tree.PageNode;
 import de.juwimm.cms.http.HttpClientWrapper;
+import de.juwimm.cms.remote.AdministrationServiceSpring;
 import de.juwimm.cms.remote.ClientServiceSpring;
 import de.juwimm.cms.safeguard.vo.*;
 import de.juwimm.cms.search.vo.XmlSearchValue;
@@ -2238,22 +2239,15 @@ public class Communication implements ExitListener, ActionListener {
 	public void exportXlsPersonData(File outputFile) {
 		try {
 			log.info("exportXlsPersonData");
-			/*
-			 * AdministrationServiceSoapBindingStub as =
-			 * (AdministrationServiceSoapBindingStub)
-			 * getAdministrationService(); as.exportXlsPersonData();
-			 * log.info("got answer... ");
-			 * 
-			 * Object[] attachments = (Object[]) as.getAttachments();
-			 * 
-			 * DataHandler dh = (DataHandler) ((AttachmentPart)
-			 * attachments[0]).getDataHandler();
-			 * 
-			 * if (log.isDebugEnabled()) log.debug("File: " +
-			 * outputFile.getName()); dh.writeTo(new
-			 * FileOutputStream(outputFile)); outputFile = null; System.gc();
-			 */
-
+			  ClientServiceSpring cs = (ClientServiceSpring) getClientService();
+			  InputStream is = cs.exportXlsPersonData();
+			  FileOutputStream fos = new FileOutputStream(outputFile);
+			  int read = 0;
+			  while((read = is.read()) != -1)
+			  {
+				  fos.write(read);
+			  }
+			  fos.close();
 		} catch (Exception exe) {
 			log.error("Error exporting PersonData", exe);
 		}

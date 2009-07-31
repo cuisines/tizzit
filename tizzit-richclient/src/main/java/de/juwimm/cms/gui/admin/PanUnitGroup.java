@@ -206,6 +206,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 			btnDelGroup.setEnabled(enabled);
 			btnSave.setEnabled(enabled);
 			btnExportPersonData.setEnabled(enabled);
+			scrollRoles.setEnabled(enabled);
 		} else {
 			// enable only some
 			btnUnitAdd.setEnabled(enabled);
@@ -296,9 +297,13 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 			if (e.getValueIsAdjusting()) return;
 			if (lstGroups.isSelectionEmpty()) {
 				btnDelGroup.setEnabled(false);
+				btnSave.setEnabled(false);
+				scrollRoles.setEnabled(false);
 				lstRoles.clearSelection();
 			} else {
 				btnDelGroup.setEnabled(true);
+				scrollRoles.setEnabled(true);
+				btnSave.setEnabled(true);
 				try {
 					GroupValue gv = (GroupValue) ((DropDownHolder) lstGroups.getSelectedValue()).getObject();
 					RoleValue[] rv = gv.getRoles();
