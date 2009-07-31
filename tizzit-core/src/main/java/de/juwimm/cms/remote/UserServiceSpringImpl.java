@@ -1088,21 +1088,47 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 */
 	@Override
 	protected void handleSetConnectedUsers4Site(Integer siteId, String[] userIds) throws Exception {
-		Collection<UserHbm> coll = null;
+		Collection<UserHbm> usersIn = null;
+		Collection<String> usersRemove = new ArrayList<String>();
+		Collection<String> usersNew = new ArrayList<String>();
+		Collection<String> users = new ArrayList<String>();
+		
+		// Collections are nicer to handle
+		for(int i=0; i<userIds.length; i++) {
+			users.add(userIds[i]);
+		}
+		
+		SiteHbm site = null;
 		try {
-			SiteHbm site = super.getSiteHbmDao().load(siteId);
-			coll = site.getUsers();
+			site = super.getSiteHbmDao().load(siteId);
+			usersIn = site.getUsers();
+			
 		} catch (Exception exe) {
 			log.warn("Error while executing the finder \"findAll\" in getConnectedUsersForSite: " + exe.getMessage());
 		}
-		coll.clear();
-		for (int i = 0; i < userIds.length; i++) {
-			try {
-				UserHbm user = super.getUserHbmDao().load(userIds[i]);
-				coll.add(user);
-			} catch (Exception exe) {
-				log.error("Error occured", exe);
+		
+		// compare old user list with new one -> element in both means stay, just in old means del
+		for (UserHbm user : usersIn) {
+			if(users.contains(user.getUserId())){
+				users.remove(user.getUserId());
 			}
+			else {
+				usersRemove.add(user.getUserId());
+			}
+		}
+		
+		// users still in list are the really new ones - create them
+		for(String userId : users)
+		{
+			UserHbm user = super.getUserHbmDao().load(userId);
+			user.getSites().add(site);
+		}
+		
+		// remove the users deleted users
+		for(String userId : usersRemove)
+		{
+			UserHbm user = super.getUserHbmDao().load(userId);
+			user.getSites().remove(site);
 		}
 	}
 

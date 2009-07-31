@@ -284,6 +284,6 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 //        {
 //        	//userHbm.drop
 //        }
-//        super.remove(userHbm);
+        super.remove(userHbm);
     }
 }
