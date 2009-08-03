@@ -1075,6 +1075,10 @@ public class Communication implements ExitListener, ActionListener {
 			return cdao;
 		} catch (Exception exception) {
 			if (exception instanceof AlreadyCheckedOutException) { throw (AlreadyCheckedOutException) exception; }
+			if (exception.getCause() != null &&
+					exception.getCause() instanceof AlreadyCheckedOutException) {
+				throw (AlreadyCheckedOutException) exception.getCause();
+			}
 			UserException ue = new UserException("Error checking out: " + exception.getMessage());
 			log.error("Error checking out ", exception);
 			throw ue;
