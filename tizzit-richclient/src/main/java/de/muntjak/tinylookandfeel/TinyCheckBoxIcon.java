@@ -1,0 +1,569 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*	Tiny Look and Feel                                                         *
+*                                                                              *
+*  (C) Copyright 2003 - 2007 Hans Bickel                                       *
+*                                                                              *
+*   For licensing information and credits, please refer to the                 *
+*   comment in file de.muntjak.tinylookandfeel.TinyLookAndFeel                 *
+*                                                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+package de.muntjak.tinylookandfeel;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+
+import javax.swing.AbstractButton;
+import javax.swing.plaf.metal.MetalCheckBoxIcon;
+
+import de.muntjak.tinylookandfeel.controlpanel.ColorRoutines;
+import de.muntjak.tinylookandfeel.controlpanel.DrawRoutines;
+
+/**
+ * TinyCheckBoxIcon
+ *
+ * @version 1.0
+ * @author Hans Bickel
+ */
+public class TinyCheckBoxIcon extends MetalCheckBoxIcon {
+	
+	// cache for already drawn icons - speeds up drawing by a factor
+	// of up to 100 if there are several check boxes or one check box
+	// is painted several times
+	static HashMap cache = new HashMap();
+	
+	static final int[][] a = {
+		{255, 255, 255, 242, 228, 209, 187, 165, 142, 120, 104},
+		{255, 255, 242, 228, 209, 187, 165, 142, 120, 104, 86},
+		{255, 242, 228, 209, 187, 165, 142, 120, 104, 86, 72},
+		{242, 228, 209, 187, 165, 142, 120, 104, 86, 72, 56},
+		{228, 209, 187, 165, 142, 120, 104, 86, 72, 56, 42},
+		{209, 187, 165, 142, 120, 104, 86, 72, 56, 42, 28},
+		{187, 165, 142, 120, 104, 86, 72, 56, 42, 28, 17},
+		{165, 142, 120, 104, 86, 72, 56, 42, 28, 17, 9},
+		{142, 120, 104, 86, 72, 56, 42, 28, 17, 9, 0},
+		{120, 104, 86, 72, 56, 42, 28, 17, 9, 0, 0},
+		{104, 86, 72, 56, 42, 28, 17, 9, 0, 0, 0}
+	};
+	
+	protected int getControlSize() {
+		return getIconWidth();
+	}
+
+	/**
+	 * Draws the check box icon at the specified location.
+	 *
+	 * @param c The component to draw on.
+	 * @param g The graphics context.
+	 * @param x The x coordinate of the top left corner.
+	 * @param y The y coordinate of the top left corner.
+	 */
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+		AbstractButton button = (AbstractButton) c;
+		Color col = null;
+		
+		if(!button.isEnabled()) {
+			col = Theme.buttonDisabledColor[Theme.style].getColor();
+		}
+		else if(button.getModel().isPressed()) {
+			if(button.getModel().isRollover()) {
+				col = Theme.buttonPressedColor[Theme.style].getColor();
+			}
+			else {
+				col = Theme.buttonNormalColor[Theme.style].getColor();
+			}
+		}
+		else if(button.getModel().isRollover() && Theme.buttonRollover[Theme.style]) {
+			col = Theme.buttonRolloverBgColor[Theme.style].getColor();
+		}
+		else {
+			col = Theme.buttonNormalColor[Theme.style].getColor();
+		}
+			
+		g.setColor(col);
+		
+		switch(Theme.derivedStyle[Theme.style]) {
+			case Theme.TINY_STYLE:
+				drawTinyCheck(g, button, col, x, y, getIconWidth(), getIconHeight());
+				break;
+			case Theme.W99_STYLE:
+				drawWinCheck(g, button, col, x, y, getIconWidth(), getIconHeight());
+				break;
+			case Theme.YQ_STYLE:
+				if(TinyLookAndFeel.controlPanelInstantiated) {
+					drawXpCheckNoCache(g, button, col, x, y, getIconWidth(), getIconHeight());
+				}
+				else {
+					drawXpCheck(g, button, col, x, y, getIconWidth(), getIconHeight());
+				}
+				break;
+		}
+
+		// checkmark
+		if(!button.isSelected()) return;
+		
+		if(!button.isEnabled()) {
+			g.setColor(Theme.buttonCheckDisabledColor[Theme.style].getColor());
+		}
+		else {
+			g.setColor(Theme.buttonCheckColor[Theme.style].getColor());
+		}
+		
+		switch(Theme.derivedStyle[Theme.style]) {
+			case Theme.TINY_STYLE:
+				drawTinyCheckMark(g, button, col, x, y);
+				break;
+			case Theme.W99_STYLE:
+				drawWinCheckMark(g, x, y);
+				break;
+			case Theme.YQ_STYLE:
+				drawXpCheckMark(g, x, y);
+				break;
+		}
+	}
+	
+	private void drawTinyCheck(Graphics g, AbstractButton b, Color c,
+		int x, int y, int w, int h)
+	{
+	}
+	
+	private void drawWinCheck(Graphics g, AbstractButton b, Color c,
+		int x, int y, int w, int h)
+	{
+		if(!b.isEnabled()) {
+			g.setColor(Theme.buttonLightDisabledColor[Theme.style].getColor());
+		}
+		else {
+			g.setColor(Theme.buttonLightColor[Theme.style].getColor());
+		}
+		
+		if(b.getModel().isPressed() && b.getModel().isRollover()) {
+			g.drawLine(x + 0, y + 12, x + 12, y + 12);
+			g.drawLine(x + 12, y + 0, x + 12, y + 11);
+		}
+		else {
+			g.fillRect(x, y, w, h);
+		}
+		
+		if(!b.isEnabled()) {
+			g.setColor(ColorRoutines.getAverage(c, Theme.buttonDarkDisabledColor[Theme.style].getColor()));
+		}
+		else {
+			g.setColor(ColorRoutines.getAverage(c, Theme.buttonDarkColor[Theme.style].getColor()));
+		}
+		
+		g.drawLine(x + 0, y + 0, x + 11, y + 0);
+		g.drawLine(x + 0, y + 1, x + 0, y + 11);
+		
+		if(!b.isEnabled()) {
+			g.setColor(Theme.buttonDarkDisabledColor[Theme.style].getColor());
+		}
+		else {
+			g.setColor(Theme.buttonDarkColor[Theme.style].getColor());
+		}
+		g.drawLine(x + 1, y + 1, x + 10, y + 1);
+		g.drawLine(x + 1, y + 2, x + 1, y + 10);
+		
+		g.setColor(Theme.backColor[Theme.style].getColor());
+		g.drawLine(x + 1, y + 11, x + 11, y + 11);
+		g.drawLine(x + 11, y + 1, x + 11, y + 10);
+	}
+	
+	private void drawXpCheck(Graphics g, AbstractButton b, Color c,
+		int x, int y, int w, int h)
+	{
+		boolean pressed = b.getModel().isPressed();
+		boolean armed = b.getModel().isArmed();
+		boolean enabled = b.isEnabled();
+		boolean rollover = b.getModel().isRollover();
+		boolean focused = (Theme.buttonFocusBorder[Theme.style] &&
+			!rollover && b.isFocusOwner());
+
+		// In 1.3.5 key was build with argument rollover instead of (rollover || armed)
+		// Fixed in 1.3.6
+		CheckKey key = new CheckKey(c, pressed, enabled, (rollover || armed), focused);
+		Object value = cache.get(key);
+
+		if(value != null) {
+			// image already cached - paint image and return
+			g.drawImage((Image)value, x, y, b);
+			return;
+		}
+		
+		Image img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics imgGraphics = img.getGraphics();
+
+		// spread light is between 0 and 20
+		int spread1 = Theme.buttonSpreadLight[Theme.style];
+		int spread2 = Theme.buttonSpreadDark[Theme.style];
+		
+		if(!b.isEnabled()) {
+			spread1 = Theme.buttonSpreadLightDisabled[Theme.style];
+			spread2 = Theme.buttonSpreadDarkDisabled[Theme.style];
+		}
+		
+		int spreadStep1 = spread1 * 5;	// 20 -> 100
+		// this means, we can never fully darken background,
+		// but we also want it bright enough
+		int spreadStep2 = spread2 * 4;	// 20 -> 80
+		
+		if(pressed && (rollover || armed)) {
+			spreadStep2 *= 2;
+		}
+
+		c = ColorRoutines.lighten(c, spreadStep1);
+
+		imgGraphics.setColor(ColorRoutines.darken(c, spreadStep2));
+		imgGraphics.fillRect(1, 1, w - 2, h - 2);
+		Color color;
+		
+		for (int row = 0; row < 11; row++) {
+			for (int col = 0; col < 11; col++) {
+				color = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255 - a[col][row]);
+				imgGraphics.setColor(color);
+				imgGraphics.drawLine(col + 1, row + 1, col + 1, row + 1);
+			}
+		}
+
+		// border
+		if(!b.isEnabled()) {
+			imgGraphics.setColor(Theme.buttonBorderDisabledColor[Theme.style].getColor());
+			imgGraphics.drawRect(0, 0, w - 1, h - 1);
+		}
+		else {
+			imgGraphics.setColor(Theme.buttonBorderColor[Theme.style].getColor());
+			imgGraphics.drawRect(0, 0, w - 1, h - 1);
+				
+			if(rollover && Theme.buttonRollover[Theme.style] && !pressed) {
+				DrawRoutines.drawRolloverCheckBorder(imgGraphics,
+					Theme.buttonRolloverColor[Theme.style].getColor(), 0, 0, w, h);
+			}
+			else if(focused && !pressed) {
+				DrawRoutines.drawRolloverCheckBorder(imgGraphics,
+					Theme.buttonDefaultColor[Theme.style].getColor(), 0, 0, w, h);
+			}
+		}
+		
+		// dispose of image graphics
+		imgGraphics.dispose();
+		
+		// draw the image
+		g.drawImage(img, x, y, b);
+		
+		// add the image to the cache
+		cache.put(key, img);
+	}
+	
+	private void drawXpCheckNoCache(Graphics g, AbstractButton b, Color c,
+		int x, int y, int w, int h)
+	{
+		boolean pressed = b.getModel().isPressed();
+		boolean armed = b.getModel().isArmed();
+		boolean enabled = b.isEnabled();
+		boolean rollover = b.getModel().isRollover();
+		boolean focused = (Theme.buttonFocusBorder[Theme.style] &&
+			!rollover && b.isFocusOwner());
+		
+		boolean useCachedImage = !pressed && !armed && !rollover && !focused;
+		Image img = null;
+		Object key = null;
+		
+		if(useCachedImage) {
+			// New in 1.3.7: Keys must also evaluate border color
+			if(enabled) {
+				key = new EnabledCheckKey(c,
+					Theme.buttonBorderColor[Theme.style].getColor());
+			}
+			else {
+				key = new DisabledCheckKey(c,
+					Theme.buttonBorderDisabledColor[Theme.style].getColor());
+			}
+			
+			Object value = cache.get(key);
+
+			if(value != null) {
+				// image already cached - paint image and return
+				g.drawImage((Image)value, x, y, b);
+				return;
+			}
+			
+			img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		}
+
+		// spread light is between 0 and 20
+		int spread1 = Theme.buttonSpreadLight[Theme.style];
+		int spread2 = Theme.buttonSpreadDark[Theme.style];
+		
+		if(!enabled) {
+			spread1 = Theme.buttonSpreadLightDisabled[Theme.style];
+			spread2 = Theme.buttonSpreadDarkDisabled[Theme.style];
+		}
+		
+		int spreadStep1 = spread1 * 5;	// 20 -> 100
+		// this means, we can never fully darken background,
+		// but we also want it bright enough
+		int spreadStep2 = spread2 * 4;	// 20 -> 80
+		
+		if(pressed && (rollover || armed)) {
+			spreadStep2 *= 2;
+		}
+
+		c = ColorRoutines.lighten(c, spreadStep1);
+		
+		Graphics graphics = null;
+		int bx = x, by = y;
+		
+		if(img != null) {
+			graphics = img.getGraphics();
+			
+			Color bg = b.getBackground();
+			
+			if(!b.isOpaque()) {
+				Container parent = b.getParent();
+				bg = parent.getBackground();
+				
+				while(parent != null && !parent.isOpaque()) {
+					parent = parent.getParent();
+					bg = parent.getBackground();
+				}
+			}
+			
+			graphics.setColor(bg);
+			graphics.fillRect(0, 0, w - 1, h - 1);
+			bx = 0; by = 0;
+		}
+		else {
+			graphics = g;
+			graphics.translate(x, y);
+		}
+
+		graphics.setColor(ColorRoutines.darken(c, spreadStep2));
+		graphics.fillRect(1, 1, w - 2, h - 2);
+		Color color;
+		
+		for (int row = 0; row < 11; row++) {
+			for (int col = 0; col < 11; col++) {
+				color = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255 - a[col][row]);
+				graphics.setColor(color);
+				graphics.drawLine(col + 1, row + 1, col + 1, row + 1);
+			}
+		}
+
+		if(img == null) {
+			graphics.translate(-x, -y);
+		}
+
+		// border
+		if(!enabled) {
+			graphics.setColor(Theme.buttonBorderDisabledColor[Theme.style].getColor());
+			graphics.drawRect(bx, by, w - 1, h - 1);
+		}
+		else {
+			graphics.setColor(Theme.buttonBorderColor[Theme.style].getColor());
+			graphics.drawRect(bx, by, w - 1, h - 1);
+				
+			if(rollover && Theme.buttonRollover[Theme.style] && !pressed) {
+				DrawRoutines.drawRolloverCheckBorder(graphics,
+					Theme.buttonRolloverColor[Theme.style].getColor(), bx, by, w, h);
+			}
+			else if(focused && !pressed) {
+				DrawRoutines.drawRolloverCheckBorder(graphics,
+					Theme.buttonDefaultColor[Theme.style].getColor(), bx, by, w, h);
+			}
+		}
+		
+		if(img != null) {
+			// dispose of image graphics
+			graphics.dispose();
+			
+			// draw the image
+			g.drawImage(img, x, y, b);
+			
+			// cache image
+			cache.put(key, img);
+		}
+	}
+	
+	private void drawTinyCheckMark(Graphics g, AbstractButton b, Color c, int x, int y) {
+		g.drawLine(x + 2, y + 5, x + 3, y + 5);
+		g.drawLine(x + 3, y + 6, x + 4, y + 6);
+		g.drawLine(x + 4, y + 7, x + 6, y + 7);
+		g.drawLine(x + 5, y + 8, x + 5, y + 8);
+		g.drawLine(x + 6, y + 6, x + 7, y + 6);
+		g.drawLine(x + 7, y + 5, x + 8, y + 5);
+		g.drawLine(x + 8, y + 4, x + 9, y + 4);
+		g.drawLine(x + 9, y + 3, x + 10, y + 3);
+		g.drawLine(x + 10, y + 2, x + 10, y + 2);
+		g.drawLine(x + 12, y + 1, x + 12, y + 1);
+		
+		if(!b.isEnabled()) {
+			g.setColor(ColorRoutines.darken(c, 10));
+		}
+		else {
+			g.setColor(ColorRoutines.darken(c, 20));
+		}
+		g.drawLine(x + 3, y + 7, x + 3, y + 7);
+		g.drawLine(x + 4, y + 8, x + 4, y + 8);
+		g.drawLine(x + 6, y + 9, x + 6, y + 9);
+		g.drawLine(x + 7, y + 8, x + 7, y + 8);
+		g.drawLine(x + 8, y + 7, x + 8, y + 7);
+		g.drawLine(x + 9, y + 6, x + 9, y + 6);
+		g.drawLine(x + 12, y + 3, x + 12, y + 3);
+		g.drawLine(x + 13, y + 2, x + 13, y + 2);
+		
+		if(!b.isEnabled()) {
+			g.setColor(ColorRoutines.darken(c, 20));
+		}
+		else {
+			g.setColor(ColorRoutines.darken(c, 40));
+		}
+		g.drawLine(x + 5, y + 9, x + 5, y + 9);
+		g.drawLine(x + 6, y + 8, x + 6, y + 8);
+		g.drawLine(x + 7, y + 7, x + 7, y + 7);
+		g.drawLine(x + 8, y + 6, x + 8, y + 6);
+		g.drawLine(x + 9, y + 5, x + 9, y + 5);
+		g.drawLine(x + 12, y + 2, x + 12, y + 2);
+	}
+	
+	private void drawWinCheckMark(Graphics g, int x, int y) {
+		g.drawLine(x + 3, y + 5, x + 3, y + 7);
+		g.drawLine(x + 4, y + 6, x + 4, y + 8);
+		g.drawLine(x + 5, y + 7, x + 5, y + 9);
+		g.drawLine(x + 6, y + 6, x + 6, y + 8);
+		g.drawLine(x + 7, y + 5, x + 7, y + 7);
+		g.drawLine(x + 8, y + 4, x + 8, y + 6);
+		g.drawLine(x + 9, y + 3, x + 9, y + 5);
+	}
+	
+	private void drawXpCheckMark(Graphics g, int x, int y) {
+		g.drawLine(x + 3, y + 5, x + 3, y + 7);
+		g.drawLine(x + 4, y + 6, x + 4, y + 8);
+		g.drawLine(x + 5, y + 7, x + 5, y + 9);
+		g.drawLine(x + 6, y + 6, x + 6, y + 8);
+		g.drawLine(x + 7, y + 5, x + 7, y + 7);
+		g.drawLine(x + 8, y + 4, x + 8, y + 6);
+		g.drawLine(x + 9, y + 3, x + 9, y + 5);
+	}
+	
+	public int getIconWidth() {
+		return Theme.checkSize[Theme.derivedStyle[Theme.style]].width;
+	}
+
+	public int getIconHeight() {
+		return Theme.checkSize[Theme.derivedStyle[Theme.style]].height;
+	}
+	
+	/*
+	 * EnabledCheckKey is used as key in the cache HashMap.
+	 * Overrides equals() and hashCode().
+	 * Used only if we are run from ControlPanel.
+	 */
+	static class EnabledCheckKey {
+		int spread1;
+		int spread2;
+		Color c, back;
+		
+		EnabledCheckKey(Color c, Color back) {
+			spread1 = Theme.buttonSpreadLight[Theme.style];
+			spread2 = Theme.buttonSpreadDark[Theme.style];
+			this.c = c;
+			this.back = back;
+		}
+		
+		public boolean equals(Object o) {
+			if(o == null) return false;
+			if(!(o instanceof EnabledCheckKey)) return false;
+			
+			EnabledCheckKey other = (EnabledCheckKey)o;
+			
+			return (c.equals(other.c) &&
+				back.equals(other.back) &&
+				spread1 == other.spread1 &&
+				spread2 == other.spread2);
+		}
+		
+		public int hashCode() {
+			return c.hashCode() * back.hashCode() * spread1 * spread2;
+		}
+	}
+	
+	/*
+	 * DisabledCheckKey is used as key in the cache HashMap.
+	 * Overrides equals() and hashCode().
+	 * Used only if we are run from ControlPanel.
+	 */
+	static class DisabledCheckKey {
+		int spread1;
+		int spread2;
+		Color c, back;
+		
+		DisabledCheckKey(Color c, Color back) {
+			spread1 = Theme.buttonSpreadLightDisabled[Theme.style];
+			spread2 = Theme.buttonSpreadDarkDisabled[Theme.style];
+			this.c = c;
+			this.back = back;
+		}
+		
+		public boolean equals(Object o) {
+			if(o == null) return false;
+			if(!(o instanceof DisabledCheckKey)) return false;
+			
+			DisabledCheckKey other = (DisabledCheckKey)o;
+			
+			return (c.equals(other.c) &&
+				back.equals(other.back) &&
+				spread1 == other.spread1 &&
+				spread2 == other.spread2);
+		}
+		
+		public int hashCode() {
+			return c.hashCode() * back.hashCode() * spread1 * spread2;
+		}
+	}
+	
+	/*
+	 * CheckKey is used as key in the cache HashMap.
+	 * Overrides equals() and hashCode().
+	 */
+	static class CheckKey {
+		
+		private Color c;
+		private boolean pressed;
+		private boolean enabled;
+		private boolean rollover;
+		private boolean focused;
+		
+		CheckKey(Color c, boolean pressed, boolean enabled, boolean rollover, boolean focused) {
+			this.c = c;
+			this.pressed = pressed;
+			this.enabled = enabled;
+			this.rollover = rollover;
+			this.focused = focused;
+		}
+		
+		public boolean equals(Object o) {
+			if(o == null) return false;
+			if(!(o instanceof CheckKey)) return false;
+
+			CheckKey other = (CheckKey)o;
+			
+			return pressed == other.pressed &&
+				enabled == other.enabled &&
+				rollover == other.rollover &&
+				focused == other.focused &&
+				c.equals(other.c);
+		}
+		
+		public int hashCode() {
+			return c.hashCode() *
+				(pressed ? 1 : 2) *
+				(enabled ? 4 : 8) *
+				(rollover ? 16 : 32);
+		}
+	}
+}
