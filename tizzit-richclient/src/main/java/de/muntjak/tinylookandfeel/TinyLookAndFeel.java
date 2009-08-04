@@ -591,12 +591,11 @@ public class TinyLookAndFeel extends MetalLookAndFeel {
 	public static ImageIcon loadIcon(final String fileName, final Object invoker) {
 		// This should work for both applications and applets
 		URL url = Thread.currentThread().getContextClassLoader().getResource(
-			"de/muntjak/tinylookandfeel/icons/" + fileName);
-		
+			"tinylookandfeel/icons/" + fileName);
 		if(url == null) {
 			// Another try
 			url = TinyLookAndFeel.class.getResource(
-				"/de/muntjak/tinylookandfeel/icons/" + fileName);
+				"/tinylookandfeel/icons/" + fileName);
 			
 			if(url == null) {
 				System.err.println("TinyLaF: Icon directory could not be resolved.");
