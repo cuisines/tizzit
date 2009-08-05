@@ -387,7 +387,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			while (vdIt.hasNext()) {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
 				// vdl.getViewComponent().toXml(null, 0, true, false, 1, false, false, out);
-				super.getViewComponentHbmDao().toXml(vdl.getViewComponent(), new Integer(0), true, false, 1, false, false, out);
+				super.getViewComponentHbmDao().toXml(vdl.getViewComponent(), null, true, false, -1, false, false, out);
 
 			}
 			if (log.isDebugEnabled()) log.debug("Finished creating ViewComponent Data");

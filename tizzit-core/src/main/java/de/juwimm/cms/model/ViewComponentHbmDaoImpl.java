@@ -80,6 +80,12 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	}
 
 	@Override
+	/**
+	 * @param current
+	 * @param onlyThisUnitId
+	 * @param withContent
+	 * @param depth max level of recursion, 0 for this node only, -1 for infinity
+	 */
 	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
 
@@ -221,7 +227,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				}
 			}
 		}
-		if (depth != 1) { // 1 is only THIS ViewComponent
+		if (depth != 0) { // 1 is only THIS ViewComponent
 			try {
 				Collection coll = current.getChildrenOrdered();
 				Iterator it = coll.iterator();
@@ -230,7 +236,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 					if (onlyThisUnitId == null || onlyThisUnitId.equals(vcl.getUnit4ViewComponent())) {
 						if (!returnOnlyVisibleOne || this.shouldBeVisible(vcl, liveServer)) {
 							int destDepth = depth - 1;
-							if (depth == 0) destDepth = 0;
+							if (depth == -1) destDepth = -1;
 							this.toXml(vcl, onlyThisUnitId, withContent, withUrl, destDepth, liveServer, returnOnlyVisibleOne, out);
 						}
 					} else {
