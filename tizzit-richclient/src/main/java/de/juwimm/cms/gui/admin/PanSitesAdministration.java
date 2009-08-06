@@ -115,6 +115,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private JTextField txtPageNameSearch = new JTextField();
 	private JButton btnMigrateConfig = new JButton();
 	private JButton btnReindexSite = new JButton();
+	private JComboBox cbxLanguage = new JComboBox();
+	private JComboBox cbxViewType = new JComboBox();
 	
 	private Color backgroundTextFieldError = new Color(0xed4044); 
 
@@ -147,12 +149,29 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword"));
 			lblSiteId.setText(rb.getString("panel.sitesAdministration.lblSiteId"));
 			btnParametrize.setText(rb.getString("panel.sitesAdministration.btnParametrize"));
+			cbxLanguage.addItem("en");
+			cbxLanguage.addItem("de");
+			cbxLanguage.addItem("es");
+			cbxLanguage.addItem("fr");
+			cbxLanguage.addItem("it");
+			cbxLanguage.addItem("ru");
+			cbxLanguage.addItem("tr");
+			cbxLanguage.addItem("nl"); //Holland
+			cbxLanguage.addItem("dk"); //Dänemark
+			cbxLanguage.addItem("se"); //Schweden
+			cbxLanguage.addItem("sa"); //Saudi-Arabien
+			cbxLanguage.addItem("pl"); //Polen
+			cbxLanguage.addItem("uae"); // Vereinigte Arabische Emirate
+			
+			cbxViewType.addItem("browser");
+			cbxViewType.addItem("WAP");
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
 	}
 
 	void jbInit() throws Exception {
+		
 		GridBagConstraints gridBagConstraints110 = new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0);
 		gridBagConstraints110.gridx = 1;
 		gridBagConstraints110.gridy = 1;
@@ -644,7 +663,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			spCacheExpire.setValue(Integer.valueOf(vo.getCacheExpire()));
 		else
 			spCacheExpire.setValue(Integer.valueOf(0));
-		if (vo.getSiteId() > 0) {
+		//is not new or is a duplicate(-2) 
+		if (vo.getSiteId() > 0 || vo.getSiteId() == -2) {
 			ConfigReader cfg = new ConfigReader(comm.getSiteConfig(vo.getSiteId()), ConfigReader.CONF_NODE_DEFAULT);
 			
 			if (this.isMigrated(vo)) {
@@ -662,8 +682,11 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtPageNameFull.setText(vo.getPageNameFull());
 			txtPageNameContent.setText(vo.getPageNameContent());
 			txtPageNameSearch.setText(vo.getPageNameSearch());
-			
-			lblSiteIdContent.setText(Integer.toString(vo.getSiteId()));
+			if(vo.getSiteId() == -2){
+				lblSiteIdContent.setText(" ");
+			}else{
+				lblSiteIdContent.setText(Integer.toString(vo.getSiteId()));
+			}
 			if (!cfg.getConfigNodeValue("liveServer/url").equalsIgnoreCase("")) {
 				txtLiveserverPassword.setText(cfg.getConfigNodeValue("liveServer/password"));
 				txtLiveserverURL.setText(cfg.getConfigNodeValue("liveServer/url"));
@@ -680,6 +703,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			}
 			dlgSiteparams.load(cfg);
 		} else {
+			//new site
 			dlgSiteparams.load(null);
 			txtImageUrl.setText("http://");
 			txtHelpUrl.setText("http://213.252.141.120/bugtracker/");
@@ -758,7 +782,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		SiteValue voSource = (SiteValue) tblSiteSorter.getValueAt(tblSite.getSelectedRow(), 2);
 		SiteValue voDestination = new SiteValue(); 
 		BeanUtils.copyProperties(voSource, voDestination);
-		voDestination.setSiteId(-1);
+		voDestination.setSiteId(-2);
 		
 		Integer maxCopyNumber = -1;
 		//Copy of X 999
