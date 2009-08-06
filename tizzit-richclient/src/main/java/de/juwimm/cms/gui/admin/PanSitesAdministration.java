@@ -21,6 +21,8 @@ import static de.juwimm.cms.common.Constants.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -28,6 +30,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,6 +46,10 @@ import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.util.XercesHelper;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>Title: ConQuest</p>
@@ -71,6 +78,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private JTable tblSite = new JTable();
 	private JButton btnDelete = new JButton();
 	private JButton btnCreateNew = new JButton();
+	private JButton btnDuplicate = new JButton();
 	private JLabel lblSiteName = new JLabel();
 	private JLabel lblImageURL = new JLabel();
 	private JTextField txtImageUrl = new JTextField();
@@ -107,6 +115,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private JTextField txtPageNameSearch = new JTextField();
 	private JButton btnMigrateConfig = new JButton();
 	private JButton btnReindexSite = new JButton();
+	
+	private Color backgroundTextFieldError = new Color(0xed4044); 
 
 	public PanSitesAdministration() {
 		try {
@@ -116,11 +126,12 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			tblUser.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			btnDelete.setIcon(UIConstants.MODULE_DATABASECOMPONENT_DELETE);
 			btnCreateNew.setIcon(UIConstants.MODULE_DATABASECOMPONENT_ADD);
+			btnDuplicate.setIcon(UIConstants.MNU_FILE_EDIT_COPY);
 			titledBorder2.setTitle(rb.getString("panel.sitesAdministration.frmConnectedUsers"));
 			btnSaveChanges.setText(rb.getString("dialog.save"));
 			btnReindexSite.setText(rb.getString("panel.sitesAdministration.btnReindexSite"));
-			lblSiteShort.setText(rb.getString("panel.sitesAdministration.lblSiteShort"));
-			lblSiteName.setText(rb.getString("panel.sitesAdministration.lblSiteName"));
+			lblSiteShort.setText(rb.getString("panel.sitesAdministration.lblSiteShort")+" *");
+			lblSiteName.setText(rb.getString("panel.sitesAdministration.lblSiteName")+" *");
 			lblImageURL.setText(rb.getString("panel.sitesAdministration.lblImageURL"));
 			lblHelpUrl.setText(rb.getString("panel.sitesAdministration.lblBugpageURL"));
 			lblWebURL.setText(rb.getString("panel.sitesAdministration.lblWebURL"));
@@ -142,6 +153,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	}
 
 	void jbInit() throws Exception {
+		GridBagConstraints gridBagConstraints110 = new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0);
+		gridBagConstraints110.gridx = 1;
+		gridBagConstraints110.gridy = 1;
 		GridBagConstraints gridBagConstraints6 = new GridBagConstraints(1, 2, 1, 1, 0.5, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
 		gridBagConstraints6.anchor = java.awt.GridBagConstraints.NORTHWEST;
 		gridBagConstraints6.weightx = 0.0;
@@ -264,6 +278,12 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				btnCreateNewActionPerformed(e);
 			}
 		});
+		btnDuplicate.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				btnDuplicateSiteActionPerformed(e);				
+			}
+			
+		});
 		lblSiteName.setText("Site Name");
 		lblImageURL.setText("Image URL");
 		lblHelpUrl.setText("Bugpage URL");
@@ -300,7 +320,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints10.anchor = java.awt.GridBagConstraints.WEST;
 		gridBagConstraints10.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gridBagConstraints10.insets = new java.awt.Insets(5, 10, 0, 0);
-		jLabelMandatorDir.setText("Mandator-Dir");
+		jLabelMandatorDir.setText("Mandator-Dir *");
 		jLabelCacheExpire.setText("Cache-Expire");
 		gridBagConstraints18.gridy = 10;
 		gridBagConstraints15.gridy = 11;
@@ -337,8 +357,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 100), 0, 0));
 		this.add(jScrollPane1, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST,
 				GridBagConstraints.VERTICAL, new Insets(5, 10, 0, 0), 200, 0));
-		this.add(btnDelete, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
+		
 		this.add(panDetails, new GridBagConstraints(2, 0, 1, 2, 1.0, 1.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
 		jScrollPane1.getViewport().add(tblSite, null);
@@ -363,6 +382,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		panDetails.add(txtDcfUrl, new GridBagConstraints(1, 7, 3, 1, 0.6, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
 		this.add(btnCreateNew, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
+		this.add(btnDelete, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
+		this.add(btnDuplicate, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
 		panDetails.add(lblSiteId, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
@@ -420,6 +443,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private void setButtonsEnabled(boolean enabled) {
 		btnSaveChanges.setEnabled(enabled);
 		btnDelete.setEnabled(enabled);
+		btnDuplicate.setEnabled(enabled);
 		btnParametrize.setEnabled(enabled);
 		btnReindexSite.setEnabled(enabled);
 	}
@@ -433,24 +457,72 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		tblUser.setModel(tblUserSorter);
 	}
 
+
+	
 	private void reloadSites() {
 		//setValues(new SiteValue());
+		resetInputsHighlight();
 		tblSiteModel = new SiteTableModel();
 		tblSiteSorter = new TableSorter(tblSiteModel, tblSite.getTableHeader());
 		tblSiteModel.addRows(comm.getAllSites());
 		tblSite.getSelectionModel().clearSelection();
-		tblSite.setModel(tblSiteSorter);
-		tblUserModel.setSelectedUsers(new String[0]);
-		siteSelected(false);
+		tblSite.setModel(tblSiteSorter);		
+		tblUserModel.setSelectedUsers(new String[0]);		
 	}
 
 	private void selectSite(int siteId) {
 		int row = tblSiteModel.getRowForSite(siteId);
 		if (row >= 0) {
 			tblSite.getSelectionModel().setSelectionInterval(row, row);
+		}		
+	}
+	
+	private boolean validateSaveSite(SiteValue siteValue){
+		Boolean isValid = true;
+		FocusListener focusListener = new FocusListener(){
+			public void focusGained(FocusEvent e) {
+				if(e.getSource() instanceof JTextField){
+					JTextField source = (JTextField)e.getSource();
+					resetInputHighlight(source);
+				}
+			}
+			public void focusLost(FocusEvent e) {
+			}
+			
+		};
+		
+		if(siteValue.getShortName() == null || siteValue.getShortName().isEmpty()){
+			txtSiteShort.setBackground(backgroundTextFieldError);					
+			txtSiteShort.addFocusListener(focusListener);
+			isValid = false;
+		}
+		if(siteValue.getName() == null || siteValue.getName().isEmpty()){
+			txtSiteName.setBackground(backgroundTextFieldError);					
+			txtSiteName.addFocusListener(focusListener);
+			isValid = false;
+		}		
+		if(siteValue.getMandatorDir() == null || siteValue.getMandatorDir().isEmpty()){
+			txtMandatorDir.setBackground(backgroundTextFieldError);					
+			txtMandatorDir.addFocusListener(focusListener);
+			isValid = false;
+		}
+		if(isValid == false){
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.sitesAdministration.save.missingFields"),
+					rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+		}
+		return isValid;
+	}
+	
+	private void resetInputHighlight(JTextField source){
+		if(source.getBackground().equals(backgroundTextFieldError)){
+			source.setBackground(Color.WHITE);
 		}
 	}
-
+	private void resetInputsHighlight(){		
+		resetInputHighlight(txtSiteShort);
+		resetInputHighlight(txtSiteName);
+		resetInputHighlight(txtMandatorDir);
+	}
 	public void save() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -469,33 +541,36 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				vo.setPageNameContent(txtPageNameContent.getText());
 				vo.setPageNameFull(txtPageNameFull.getText());
 				vo.setPageNameSearch(txtPageNameSearch.getText());
-				if (vo.getSiteId() == null || vo.getSiteId() <= 0) {
-					siteToSelect = comm.createSite(vo).getSiteId();
-				} else {
-					comm.updateSite(vo);
+				if(validateSaveSite(vo)){
+					if (vo.getSiteId() == null || vo.getSiteId() <= 0) {
+						
+						siteToSelect = comm.createSite(vo).getSiteId();
+					} else {
+						comm.updateSite(vo);
+					}
+					comm.setConnectedUsersForSite(siteToSelect,	tblUserModel.getSelectedUsers());
+	
+					Document doc = XercesHelper.getNewDocument();
+	
+					Element configEl = doc.createElement("config");
+					doc.appendChild(configEl);
+					Element defaultEl = doc.createElement("default");
+					configEl.appendChild(defaultEl);
+					Element elm = doc.createElement("liveServer");
+					defaultEl.appendChild(elm);
+					if (chkLiveserver.isSelected()) {
+						XercesHelper.createTextNode(elm, "password", txtLiveserverPassword.getText());
+						XercesHelper.createTextNode(elm, "url", txtLiveserverURL.getText());
+						XercesHelper.createTextNode(elm, "username", txtLiveserverUser.getText());
+					}
+					elm = doc.createElement("parameters");
+					defaultEl.appendChild(elm);
+					dlgSiteparams.save(elm);
+					String siteCfg = XercesHelper.node2string(configEl);
+					comm.setSiteConfig(siteToSelect, siteCfg);
+					reloadSites();
+					selectSite(siteToSelect);
 				}
-				comm.setConnectedUsersForSite(siteToSelect,	tblUserModel.getSelectedUsers());
-
-				Document doc = XercesHelper.getNewDocument();
-
-				Element configEl = doc.createElement("config");
-				doc.appendChild(configEl);
-				Element defaultEl = doc.createElement("default");
-				configEl.appendChild(defaultEl);
-				Element elm = doc.createElement("liveServer");
-				defaultEl.appendChild(elm);
-				if (chkLiveserver.isSelected()) {
-					XercesHelper.createTextNode(elm, "password", txtLiveserverPassword.getText());
-					XercesHelper.createTextNode(elm, "url", txtLiveserverURL.getText());
-					XercesHelper.createTextNode(elm, "username", txtLiveserverUser.getText());
-				}
-				elm = doc.createElement("parameters");
-				defaultEl.appendChild(elm);
-				dlgSiteparams.save(elm);
-				String siteCfg = XercesHelper.node2string(configEl);
-				comm.setSiteConfig(siteToSelect, siteCfg);
-				reloadSites();
-				selectSite(siteToSelect);
 				setButtonsEnabled(true);
 				setCursor(Cursor.getDefaultCursor());
 			}
@@ -533,12 +608,14 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				siteSelected(false);
 			}
 			chkLiveserverActionPerformed(null);
+			resetInputsHighlight();
 		}
 	}
 
 	private void siteSelected(boolean val) {
 		panDetails.setEnabled(val);
 		btnDelete.setEnabled(val);
+		btnDuplicate.setEnabled(val);
 		tblUser.setEnabled(val);
 		txtDcfUrl.setEnabled(val);
 		txtImageUrl.setEnabled(val);
@@ -676,6 +753,47 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		tblSiteModel.addRow(vo);
 		tblSite.setRowSelectionInterval(tblSiteModel.getRowCount() - 1, tblSiteModel.getRowCount() - 1);
 	}
+	
+	private void btnDuplicateSiteActionPerformed(ActionEvent e) {		
+		SiteValue voSource = (SiteValue) tblSiteSorter.getValueAt(tblSite.getSelectedRow(), 2);
+		SiteValue voDestination = new SiteValue(); 
+		BeanUtils.copyProperties(voSource, voDestination);
+		voDestination.setSiteId(-1);
+		
+		Integer maxCopyNumber = -1;
+		//Copy of X 999
+		String siteNamePatternRegex = Messages.getString("panel.sitesAdministration.siteCopy",voSource.getName(),"[0-9]*");
+		//Copy of X
+		String siteNamePattern = Messages.getString("panel.sitesAdministration.siteCopy",voSource.getName(),"").trim();
+		
+		for(int i=0;i<tblSiteSorter.getRowCount();i++){
+			SiteValue iSiteValue =(SiteValue)tblSiteSorter.getValueAt(i,2);
+			
+			if(iSiteValue.getName().replaceFirst(siteNamePatternRegex, "").length()==0){
+				String copyNumberString = iSiteValue.getName().replace(siteNamePattern, "");
+				copyNumberString = copyNumberString.trim();
+				Integer copyNumber=-1;
+				if(!copyNumberString.isEmpty()){
+					copyNumber = Integer.valueOf(copyNumberString);					
+				}
+				if(copyNumber > maxCopyNumber){
+					maxCopyNumber = copyNumber;
+				}
+			}else if (iSiteValue.getName().equals(siteNamePattern)){
+				if(0 > maxCopyNumber){
+					maxCopyNumber = 0;
+				}
+			}
+		}
+		maxCopyNumber++;
+		if(maxCopyNumber == 0){
+			voDestination.setName(siteNamePattern);
+		}else{
+			voDestination.setName(Messages.getString("panel.sitesAdministration.siteCopy",voSource.getName(),maxCopyNumber.toString()));
+		}
+		tblSiteModel.addRow(voDestination);
+		tblSite.setRowSelectionInterval(tblSiteModel.getRowCount() - 1, tblSiteModel.getRowCount() - 1);
+	}
 
 	private void btnParametrizeActionPerformed(ActionEvent e) {
 		int width = 400;
@@ -764,6 +882,23 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		return (vo.getWysiwygImageUrl() != null &&
 				vo.getDcfUrl() != null && vo.getHelpUrl() != null && vo.getPreviewUrl() != null &&
 				vo.getPageNameContent() != null && vo.getPageNameFull() != null && vo.getPageNameSearch() != null);
+	}
+
+	/**
+	 * @return
+	 */
+	public FocusListener getResetInputsHighlightFocusListener() {
+		return new FocusListener(){
+
+			public void focusGained(FocusEvent e) {				
+				
+			}
+
+			public void focusLost(FocusEvent e) {
+				resetInputsHighlight();				
+			}
+			
+		};
 	}
 
 } //  @jve:decl-index=0:visual-constraint="10,10"

@@ -89,6 +89,7 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 		if (comm.getUser().isMasterRoot()) {
 			panSitesAdmin = new PanSitesAdministration();
 			panTab.add(panSitesAdmin, rb.getString("panel.admin.tab.sites"));
+			panTab.addFocusListener(panSitesAdmin.getResetInputsHighlightFocusListener());
 		} else if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			panUserSites = new PanUserSites();
 			panTab.add(panUserSites, rb.getString("panel.admin.tab.user.sites"));
