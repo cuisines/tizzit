@@ -1325,4 +1325,56 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 	}
 
+	/**
+	 * It sets to the site specified in the viewDocument.siteId this viewDocument as default view document for the site 
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected ViewDocumentValue handleSetDefaultViewDocument(String viewType, String language, Integer siteId) throws Exception {
+		SiteHbm site = getSiteHbmDao().load(siteId);
+		ViewDocumentHbm viewDocumentDefault = null;
+		if(site.getDefaultViewDocument() != null && checkEquals(site.getDefaultViewDocument(),language,viewType)){			
+			viewDocumentDefault = site.getDefaultViewDocument();
+		}else{
+			List<ViewDocumentHbm> viewDocuments = (List<ViewDocumentHbm>)getViewDocumentHbmDao().findAll(siteId);
+			for(ViewDocumentHbm viewDocument : viewDocuments){
+				if(checkEquals(viewDocument,language,viewType)){
+					viewDocumentDefault = viewDocument;
+					break;
+				}
+			}
+			if(viewDocumentDefault == null){
+				if(site.getDefaultViewDocument()!=null){
+					//modify current active ViewDocument 
+					viewDocumentDefault = site.getDefaultViewDocument();
+					viewDocumentDefault.setLanguage(language);
+					viewDocumentDefault.setViewType(viewType);
+					getViewDocumentHbmDao().update(viewDocumentDefault);
+				}else{
+					//create
+					viewDocumentDefault = ViewDocumentHbm.Factory.newInstance();
+					viewDocumentDefault.setLanguage(language);
+					viewDocumentDefault.setViewType(viewType);
+					viewDocumentDefault.setSite(site);
+					ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
+					viewComponent.setReference("root");
+					viewComponent.setDisplayLinkName("root");
+					viewComponent.setLinkDescription("root");
+					viewDocumentDefault = getViewDocumentHbmDao().create(viewDocumentDefault);
+					viewComponent = getViewComponentHbmDao().create(viewDocumentDefault, "root", "root", "root", null);
+					viewDocumentDefault.setViewComponent(viewComponent);
+					getViewDocumentHbmDao().update(viewDocumentDefault);
+				}
+			}
+			site.setDefaultViewDocument(viewDocumentDefault);
+			getSiteHbmDao().update(site);
+		}
+		return viewDocumentDefault.getDao();
+	}
+	
+	private boolean checkEquals(ViewDocumentHbm viewDocument, String language, String viewType){
+		return viewDocument.getLanguage().equals(language) &&
+		viewDocument.getViewType().equals(viewType);		
+	}
+
 }

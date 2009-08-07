@@ -1735,4 +1735,14 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		}
 		return null;
 	}
+
+	@Override
+	protected ViewDocumentValue handleSetDefaultViewDocument(String viewType,String language,Integer siteId) throws Exception {
+		return getViewServiceSpring().setDefaultViewDocument(viewType,language,siteId);
+	}
+
+	@Override
+	protected ViewDocumentValue handleGetDefaultViewDocument4Site(Integer siteId) throws Exception {
+		return getViewServiceSpring().getDefaultViewDocument4Site(siteId);
+	}
 }
