@@ -41,7 +41,7 @@ public final class CommunicationFactory implements FactoryBean {
 	public Communication getObject() throws Exception {
 		if (instance == null) {
 			Spin.setDefaultProxyFactory(new CGLibProxyFactory());
-			instance = (Communication) Spin.off(new Communication()); 
+			instance = (Communication) Spin.off(new Communication().initialize()); 
 			instance.setClientService(clientService);
 			if (log.isDebugEnabled()) log.debug("instanciated new Communication Object by Spring-getObject()");
 		}

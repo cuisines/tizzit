@@ -88,10 +88,16 @@ public class Communication implements ExitListener, ActionListener {
 	private ClientServiceSpring clientService;
 
 	public Communication() {
+		
+	}
+	
+	public Communication initialize()
+	{
 		if (!isSessionInitialized) {
 			ActionHub.addExitListener(this);
 			isSessionInitialized = true;
 		}
+		return this;
 	}
 
 	public ClientServiceSpring getClientService() {
