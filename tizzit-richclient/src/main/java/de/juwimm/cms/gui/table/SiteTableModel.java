@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
  * <p>Title: ConQuest</p>
@@ -43,12 +44,13 @@ public class SiteTableModel extends DefaultTableModel {
 		columnNames.addElement(rb.getString("panel.sitesAdministration.lblSiteShort"));
 	}
 
-	public void addRow(SiteValue vo) {
+	public void addRow(SiteValue vo,ViewDocumentValue defaultViewDocumentValue) {
 		// Vector is natively used by DefaultTableModel
 		Vector vec = new Vector();
 		vec.add(vo.getName());
 		vec.add(vo.getShortName());
 		vec.add(vo);
+		vec.add(defaultViewDocumentValue);
 		addRow(vec);
 	}
 
@@ -59,7 +61,7 @@ public class SiteTableModel extends DefaultTableModel {
 
 	public void addRows(SiteValue[] vos) {
 		for (int i = 0; i < vos.length; i++) {
-			addRow(vos[i]);
+			addRow(vos[i],null);
 		}
 	}
 

@@ -2304,4 +2304,12 @@ public class Communication implements ExitListener, ActionListener {
 			IOUtils.closeQuietly(fis);
 		}
 	}
+	
+	public void setDefaultViewDocument(String viewType,String language,Integer siteId){
+		getClientService().setDefaultViewDocument(viewType,language,siteId);
+	}
+	
+	public ViewDocumentValue getDefaultViewDocument4Site(Integer siteId){
+		return getClientService().getDefaultViewDocument4Site(siteId);
+	}
 }

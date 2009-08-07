@@ -45,11 +45,15 @@ import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.util.XercesHelper;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JLabel;
+import javax.swing.JComboBox;
+import java.awt.ComponentOrientation;
 
 /**
  * <p>Title: ConQuest</p>
@@ -63,6 +67,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private static final long serialVersionUID = 2978346578319967671L;
 	private static Logger log = Logger.getLogger(PanSitesAdministration.class);
 	private final String newSiteName = rb.getString("panel.sitesAdministration.NEW_SITE_NAME");
+	private static ViewDocumentValue newViewDocument = new ViewDocumentValue(); 
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private SiteTableModel tblSiteModel = new SiteTableModel();
 	private SiteUserTableModel tblUserModel = null;
@@ -118,8 +123,15 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private JComboBox cbxLanguage = new JComboBox();
 	private JComboBox cbxViewType = new JComboBox();
 	
-	private Color backgroundTextFieldError = new Color(0xed4044); 
-
+	private Color backgroundTextFieldError = new Color(0xed4044);
+	private JLabel jViewTypeLabel = null;
+	private JLabel jLanguageLabel = null;
+	
+	static {
+		newViewDocument.setLanguage("de");
+		newViewDocument.setViewType("browser");
+	}
+	
 	public PanSitesAdministration() {
 		try {
 			jbInit();
@@ -161,10 +173,11 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			cbxLanguage.addItem("se"); //Schweden
 			cbxLanguage.addItem("sa"); //Saudi-Arabien
 			cbxLanguage.addItem("pl"); //Polen
-			cbxLanguage.addItem("uae"); // Vereinigte Arabische Emirate
-			
+			cbxLanguage.addItem("uae"); // Vereinigte Arabische Emirate			
 			cbxViewType.addItem("browser");
-			cbxViewType.addItem("WAP");
+			cbxViewType.addItem("WAP");			
+			jViewTypeLabel.setText(rb.getString("panel.panelCmsViews.viewType"));
+			jLanguageLabel.setText(rb.getString("panel.panelCmsViews.viewLanguage"));			
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
@@ -172,6 +185,37 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 
 	void jbInit() throws Exception {
 		
+		GridBagConstraints gridBagConstraints28 = new GridBagConstraints();
+		gridBagConstraints28.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints28.gridy = 15;
+		gridBagConstraints28.weightx = 1.0;
+		gridBagConstraints28.gridwidth = 2;
+		gridBagConstraints28.insets = new Insets(5, 10, 0, 100);
+		gridBagConstraints28.gridx = 1;
+		GridBagConstraints gridBagConstraints26 = new GridBagConstraints();
+		gridBagConstraints26.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints26.gridy = 14;
+		gridBagConstraints26.weightx = 1.0;
+		gridBagConstraints26.gridwidth = 2;
+		gridBagConstraints26.insets = new Insets(5, 10, 0, 100);
+		gridBagConstraints26.gridx = 1;
+		GridBagConstraints gridBagConstraints25 = new GridBagConstraints();
+		gridBagConstraints25.gridx = 0;
+		gridBagConstraints25.anchor = GridBagConstraints.WEST;
+		gridBagConstraints25.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints25.insets = new Insets(5, 10, 0, 0);
+		gridBagConstraints25.gridy = 15;
+		jLanguageLabel = new JLabel();
+		jLanguageLabel.setText("Language");
+		GridBagConstraints gridBagConstraints24 = new GridBagConstraints();
+		gridBagConstraints24.gridx = 0;
+		gridBagConstraints24.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints24.anchor = GridBagConstraints.WEST;
+		gridBagConstraints24.insets = new Insets(5, 10, 0, 0);
+		gridBagConstraints24.gridy = 14;
+		jViewTypeLabel = new JLabel();
+		jViewTypeLabel.setText("ViewType");
+		jViewTypeLabel.setComponentOrientation(ComponentOrientation.UNKNOWN);
 		GridBagConstraints gridBagConstraints110 = new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0);
 		gridBagConstraints110.gridx = 1;
 		gridBagConstraints110.gridy = 1;
@@ -239,10 +283,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints_2.anchor = GridBagConstraints.SOUTH;
 		gridBagConstraints_2.fill = GridBagConstraints.BOTH;
 		gridBagConstraints_2.gridwidth = 4;
-		gridBagConstraints_2.gridy = 15;
+		gridBagConstraints_2.gridy = 17;
 		gridBagConstraints_2.gridx = 0;
-		panDetails.add(panel, gridBagConstraints_2);
-
 		btnReindexSite.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
 				reindexSite();
@@ -348,7 +390,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints16.gridy = 12;
 		gridBagConstraints12.gridy = 13;
 		gridBagConstraints13.gridy = 13;
-		gridBagConstraints11.gridy = 14;
+		gridBagConstraints11.gridy = 16;
 		gridBagConstraints19.gridx = 1;
 		gridBagConstraints19.gridy = 8;
 		gridBagConstraints19.weightx = 1.0;
@@ -370,6 +412,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			}
 		});
 		btnParametrize.setEnabled(false);
+		panDetails.add(panel, gridBagConstraints_2);
 		panDetails.add(txtSiteName, new GridBagConstraints(1, 1, 3, 1, 0.6, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
 		panDetails.add(txtSiteShort, new GridBagConstraints(1, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST,
@@ -433,6 +476,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		panDetails.add(btnParametrize, gridBagConstraints11);
 		panDetails.add(panConnectedUsers, new GridBagConstraints(4, 0, 1, 17, 0.4, 1.0, GridBagConstraints.CENTER,
 				GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 150, 0));
+		panDetails.add(jViewTypeLabel, gridBagConstraints24);
+		panDetails.add(jLanguageLabel, gridBagConstraints25);
+		panDetails.add(cbxViewType, gridBagConstraints26);
+		panDetails.add(cbxLanguage, gridBagConstraints28);
 		panConnectedUsers.add(jScrollPane2, BorderLayout.CENTER);
 		jScrollPane2.getViewport().add(tblUser, null);
 		setButtonsEnabled(false);
@@ -483,7 +530,13 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		resetInputsHighlight();
 		tblSiteModel = new SiteTableModel();
 		tblSiteSorter = new TableSorter(tblSiteModel, tblSite.getTableHeader());
-		tblSiteModel.addRows(comm.getAllSites());
+		SiteValue[] sites= comm.getAllSites();
+		for(SiteValue site:sites){
+			ViewDocumentValue defaultViewDocumentValue = comm.getDefaultViewDocument4Site(site.getSiteId());
+			tblSiteModel.addRow(site,defaultViewDocumentValue.getSiteId()==null?newViewDocument:defaultViewDocumentValue);
+		}
+		
+		
 		tblSite.getSelectionModel().clearSelection();
 		tblSite.setModel(tblSiteSorter);		
 		tblUserModel.setSelectedUsers(new String[0]);		
@@ -561,9 +614,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				vo.setPageNameFull(txtPageNameFull.getText());
 				vo.setPageNameSearch(txtPageNameSearch.getText());
 				if(validateSaveSite(vo)){
-					if (vo.getSiteId() == null || vo.getSiteId() <= 0) {
-						
+					if (vo.getSiteId() == null || vo.getSiteId() <= 0) {						
 						siteToSelect = comm.createSite(vo).getSiteId();
+						vo.setSiteId(siteToSelect);
 					} else {
 						comm.updateSite(vo);
 					}
@@ -587,15 +640,22 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 					dlgSiteparams.save(elm);
 					String siteCfg = XercesHelper.node2string(configEl);
 					comm.setSiteConfig(siteToSelect, siteCfg);
+					saveDefaultViewDocument(vo);
 					reloadSites();
 					selectSite(siteToSelect);
 				}
 				setButtonsEnabled(true);
 				setCursor(Cursor.getDefaultCursor());
 			}
+
+			
 		});
 	}
 
+	private void saveDefaultViewDocument(SiteValue vo) {				
+		comm.setDefaultViewDocument((String)cbxViewType.getSelectedItem(),(String)cbxLanguage.getSelectedItem(),vo.getSiteId());		
+	}
+	
 	private void chkLiveserverActionPerformed(ActionEvent e) {
 		boolean sel = chkLiveserver.isSelected() && chkLiveserver.isEnabled();
 		txtLiveserverPassword.setEnabled(sel);
@@ -614,7 +674,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				setButtonsEnabled(false);
 				setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				SiteValue vo = (SiteValue) tblSiteSorter.getValueAt(tblSite.getSelectedRow(), 2);
-				setValues(vo);
+				ViewDocumentValue activeViewDocument = (ViewDocumentValue)tblSiteSorter.getValueAt(tblSite.getSelectedRow(), 3);
+				setValues(vo,activeViewDocument);
 				if (vo.getSiteId() > 0) {
 					String[] connUsers = comm.getConnectedUsersForSite(vo.getSiteId());
 					tblUserModel.setSelectedUsers(connUsers);
@@ -647,6 +708,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		txtPageNameContent.setEnabled(val);
 		txtPageNameSearch.setEnabled(val);
 		txtHelpUrl.setEnabled(val);
+		cbxLanguage.setEnabled(val);
+		cbxViewType.setEnabled(val);
 		chkLiveserver.setEnabled(val);
 		if (!val) {
 			txtLiveserverPassword.setEnabled(val);
@@ -655,7 +718,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		}
 	}
 
-	private void setValues(SiteValue vo) {
+	private void setValues(SiteValue vo,ViewDocumentValue activeViewDocument) {
 		txtSiteName.setText(vo.getName());
 		txtSiteShort.setText(vo.getShortName());
 		txtMandatorDir.setText(vo.getMandatorDir());
@@ -663,10 +726,19 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			spCacheExpire.setValue(Integer.valueOf(vo.getCacheExpire()));
 		else
 			spCacheExpire.setValue(Integer.valueOf(0));
+		if(activeViewDocument == null){
+			activeViewDocument = newViewDocument;
+		}
+		
+		cbxLanguage.setSelectedItem(activeViewDocument.getLanguage());
+		cbxViewType.setSelectedItem(activeViewDocument.getViewType());
+		
 		//is not new or is a duplicate(-2) 
 		if (vo.getSiteId() > 0 || vo.getSiteId() == -2) {
-			ConfigReader cfg = new ConfigReader(comm.getSiteConfig(vo.getSiteId()), ConfigReader.CONF_NODE_DEFAULT);
-			
+			ConfigReader cfg = null;
+			if(vo.getSiteId() > 0){
+				cfg = new ConfigReader(comm.getSiteConfig(vo.getSiteId()), ConfigReader.CONF_NODE_DEFAULT);
+			}
 			if (this.isMigrated(vo)) {
 				this.btnMigrateConfig.setEnabled(false);
 				this.btnMigrateConfig.setVisible(false);
@@ -687,7 +759,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			}else{
 				lblSiteIdContent.setText(Integer.toString(vo.getSiteId()));
 			}
-			if (!cfg.getConfigNodeValue("liveServer/url").equalsIgnoreCase("")) {
+			if (cfg != null && !cfg.getConfigNodeValue("liveServer/url").equalsIgnoreCase("")) {
 				txtLiveserverPassword.setText(cfg.getConfigNodeValue("liveServer/password"));
 				txtLiveserverURL.setText(cfg.getConfigNodeValue("liveServer/url"));
 				txtLiveserverUser.setText(cfg.getConfigNodeValue("liveServer/username"));
@@ -774,7 +846,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		vo.setShortName("");
 		vo.setSiteId(-1);
 		vo.setWysiwygImageUrl("");
-		tblSiteModel.addRow(vo);
+		tblSiteModel.addRow(vo,newViewDocument);
 		tblSite.setRowSelectionInterval(tblSiteModel.getRowCount() - 1, tblSiteModel.getRowCount() - 1);
 	}
 	
@@ -815,7 +887,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		}else{
 			voDestination.setName(Messages.getString("panel.sitesAdministration.siteCopy",voSource.getName(),maxCopyNumber.toString()));
 		}
-		tblSiteModel.addRow(voDestination);
+		tblSiteModel.addRow(voDestination,newViewDocument);
 		tblSite.setRowSelectionInterval(tblSiteModel.getRowCount() - 1, tblSiteModel.getRowCount() - 1);
 	}
 
@@ -924,5 +996,5 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			
 		};
 	}
-
+		
 } //  @jve:decl-index=0:visual-constraint="10,10"
