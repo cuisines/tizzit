@@ -21,6 +21,8 @@ import static de.juwimm.cms.common.Constants.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -29,6 +31,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.w3c.dom.Document;
@@ -36,6 +39,7 @@ import org.w3c.dom.Element;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
+import de.juwimm.cms.gui.controls.DirtyInputListener;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
 import de.juwimm.cms.gui.table.SiteTableModel;
 import de.juwimm.cms.gui.table.SiteUserTableModel;
@@ -49,8 +53,6 @@ import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.util.XercesHelper;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import java.awt.ComponentOrientation;
@@ -65,7 +67,7 @@ import java.awt.ComponentOrientation;
  */
 public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private static final long serialVersionUID = 2978346578319967671L;
-	private static Logger log = Logger.getLogger(PanSitesAdministration.class);
+	private static Logger log = Logger.getLogger(PanSitesAdministration.class);  //  @jve:decl-index=0:
 	private final String newSiteName = rb.getString("panel.sitesAdministration.NEW_SITE_NAME");
 	private static ViewDocumentValue newViewDocument = new ViewDocumentValue(); 
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
@@ -126,6 +128,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private Color backgroundTextFieldError = new Color(0xed4044);
 	private JLabel jViewTypeLabel = null;
 	private JLabel jLanguageLabel = null;
+	private boolean isDirty = false;
+	PanelDirtyInputListener dirtyInputListener = new PanelDirtyInputListener(this);
 	
 	static {
 		newViewDocument.setLanguage("de");
@@ -137,10 +141,13 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			jbInit();
 			tblSite.getSelectionModel().addListSelectionListener(new SiteListSelectionListener());
 			tblSite.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tblUser.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tblUser.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 			btnDelete.setIcon(UIConstants.MODULE_DATABASECOMPONENT_DELETE);
+			btnDelete.setToolTipText(rb.getString("dialog.delete"));
 			btnCreateNew.setIcon(UIConstants.MODULE_DATABASECOMPONENT_ADD);
+			btnCreateNew.setToolTipText(rb.getString("dialog.new"));
 			btnDuplicate.setIcon(UIConstants.MNU_FILE_EDIT_COPY);
+			btnDuplicate.setToolTipText(rb.getString("panel.sitesAdministration.btnDudplicate"));
 			titledBorder2.setTitle(rb.getString("panel.sitesAdministration.frmConnectedUsers"));
 			btnSaveChanges.setText(rb.getString("dialog.save"));
 			btnReindexSite.setText(rb.getString("panel.sitesAdministration.btnReindexSite"));
@@ -177,7 +184,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			cbxViewType.addItem("browser");
 			cbxViewType.addItem("WAP");			
 			jViewTypeLabel.setText(rb.getString("panel.panelCmsViews.viewType"));
-			jLanguageLabel.setText(rb.getString("panel.panelCmsViews.viewLanguage"));			
+			jLanguageLabel.setText(rb.getString("panel.panelCmsViews.viewLanguage"));
+			initPanelListeners();
+			initDirtyInputListeners();
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
@@ -487,19 +496,23 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	}
 
 	public void reload() {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					setCursor(new Cursor(Cursor.WAIT_CURSOR));
-					setButtonsEnabled(false);
-					reloadUsers();
-					reloadSites();
-				} catch (Exception exe) {
-					log.error("Reloading Error", exe);
+		if(!isDirty){
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						setCursor(new Cursor(Cursor.WAIT_CURSOR));
+						setButtonsEnabled(false);
+						reloadUsers();
+						reloadSites();
+					} catch (Exception exe) {
+						log.error("Reloading Error", exe);
+					}
+					setCursor(Cursor.getDefaultCursor());
 				}
-				setCursor(Cursor.getDefaultCursor());
-			}
-		});
+			});
+			//initialization of inputs will make isDirty on true so..
+			setDirty(false);
+		}
 	}
 
 	public void unload() {
@@ -521,6 +534,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		tblUserModel.addRows(comm.getAllUsersForAllSites());
 		tblUser.getSelectionModel().clearSelection();
 		tblUser.setModel(tblUserSorter);
+		initDirtyInputListeners(tblUser);
 	}
 
 
@@ -579,6 +593,11 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			isValid = false;
 		}
 		if(isValid == false){
+			//if user tries to save when he switched to another tab and there is a validation error then 
+			//this tab will gain focus
+			if(!((JTabbedPane)this.getParent()).getSelectedComponent().equals(this)){			
+				((JTabbedPane)this.getParent()).setSelectedComponent(this);
+			}
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.sitesAdministration.save.missingFields"),
 					rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		}
@@ -643,9 +662,12 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 					saveDefaultViewDocument(vo);
 					reloadSites();
 					selectSite(siteToSelect);
+					//if the values are saved then the form is not dirty
+					setDirty(false);
 				}
 				setButtonsEnabled(true);
 				setCursor(Cursor.getDefaultCursor());
+				
 			}
 
 			
@@ -678,7 +700,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				setValues(vo,activeViewDocument);
 				if (vo.getSiteId() > 0) {
 					String[] connUsers = comm.getConnectedUsersForSite(vo.getSiteId());
-					tblUserModel.setSelectedUsers(connUsers);
+					tblUserModel.setSelectedUsers(connUsers);					
 				}
 				siteSelected(true);
 				setButtonsEnabled(true);
@@ -689,6 +711,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			}
 			chkLiveserverActionPerformed(null);
 			resetInputsHighlight();
+			//on select new site the inputs will be not dirty 
+			setDirty(false);
 		}
 	}
 
@@ -983,18 +1007,79 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	/**
 	 * @return
 	 */
-	public FocusListener getResetInputsHighlightFocusListener() {
-		return new FocusListener(){
-
-			public void focusGained(FocusEvent e) {				
-				
-			}
-
-			public void focusLost(FocusEvent e) {
-				resetInputsHighlight();				
-			}
+	public void initPanelListeners() {
 			
-		};
-	}
+		this.addComponentListener(new ComponentAdapter(){
+			//on change current tab check if exists unsaved information 
+			public void componentHidden(ComponentEvent e) {
+				if(isDirty == true){
+					JPanel panel = (JPanel)e.getSource();
+					JTabbedPane tabPane = (JTabbedPane)panel.getParent();
+					
+					
+						Object[] options = {rb.getString("dialog.yes"),
+											rb.getString("dialog.no"),
+											rb.getString("dialog.cancel")};
+						int n = JOptionPane.showOptionDialog(UIConstants.getMainFrame()
+							,rb.getString("dialog.wantToSave"),
+							rb.getString("dialog.title"),
+						    JOptionPane.YES_NO_CANCEL_OPTION,
+						    JOptionPane.QUESTION_MESSAGE,
+						    null,     
+						    options,  
+						    options[0]); //default button title
+						switch(n){
+							case JOptionPane.YES_OPTION://user wants to save and to move focus from tabpage
+								save();
+							break;	
+							case JOptionPane.NO_OPTION://user do not want to save and to move focus from tabpage								
+								resetInputsHighlight();								
+								setDirty(false);
+							break;													
+							case JOptionPane.CANCEL_OPTION://user want to go back to this tabpage						
+							default:							
+								tabPane.setSelectedComponent(panel);
+						}				
+				}
+								 
+			}
+		});
 		
-} //  @jve:decl-index=0:visual-constraint="10,10"
+	}
+	
+	private class PanelDirtyInputListener extends DirtyInputListener{
+		private PanSitesAdministration panel;
+		public PanelDirtyInputListener(PanSitesAdministration panel){
+			this.panel = panel;
+		}
+		@Override
+		public void onChangeValue() {
+			setDirty(true);
+		}
+		
+	}
+	
+	private void initDirtyInputListeners(){
+		initDirtyInputListeners(txtDcfUrl);
+		initDirtyInputListeners(spCacheExpire);
+		initDirtyInputListeners(cbxViewType);
+		initDirtyInputListeners(cbxLanguage);
+		initDirtyInputListeners(txtHelpUrl);
+		initDirtyInputListeners(txtImageUrl);
+		initDirtyInputListeners(txtMandatorDir);
+		initDirtyInputListeners(txtPageNameContent);
+		initDirtyInputListeners(txtPageNameFull);
+		initDirtyInputListeners(txtPageNameSearch);
+		initDirtyInputListeners(txtPreviewUrl);
+		initDirtyInputListeners(txtSiteName);
+		initDirtyInputListeners(txtSiteShort);
+		
+	}
+	private void initDirtyInputListeners(JComponent component){
+		DirtyInputListener.addDirtyInputListener(component,dirtyInputListener);
+	}
+	
+	private void setDirty(boolean dirty){
+		this.isDirty = dirty;
+	}
+}
