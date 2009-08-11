@@ -22,6 +22,10 @@ public class SpringPluginServerClassloadingHelper extends PluginServerClassloadi
 	 * @return
 	 */
 	public Object loadServerClass(String clazzName) {
+		if (log.isDebugEnabled()){
+			log.debug("loadServerClass - with parameter: "+clazzName);
+			log.debug("Thread " + Thread.currentThread().getId() + " \"" + Thread.currentThread().getName() + "\": ");
+		}
 		try {
 			if(urls == null) {
 				String parentDir = cqPropertiesBeanSpring.getCocoon().getComponentLibrariesParent() + File.separatorChar + "server" + File.separatorChar;

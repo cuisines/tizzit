@@ -63,9 +63,9 @@ public class PluginCacheAccessor {
 						log.debug("SITE SHORT " + siteShort);
 						log.debug("CLASSPATH " + pluginValue.getClasspath()[j]);
 						log.debug("URL " + myurl);
+						log.debug("Thread " + Thread.currentThread().getId() + " \"" + Thread.currentThread().getName() + "\": ");
 					}
 					url[j] = new URL(myurl);
-					
 					ConquestPlugin cp = (ConquestPlugin) springPluginServerClassloadingHelper.loadMandatorClass(pluginValue.getGeneratorClassname(), url);
 					plugins.put(pluginIdent, cp);
 					return cp;

@@ -36,7 +36,10 @@ public class PluginServerClassLoader extends URLClassLoader {
 	/** @see java.lang.ClassLoader#loadClass(java.lang.String) */
 	@Override
 	public Class< ? > loadClass(String name) throws ClassNotFoundException {
-		if (log.isDebugEnabled()) log.debug("loadClass (" + name + ")");
+		if (log.isDebugEnabled()){
+			log.debug("loadClass (" + name + ")");
+			log.debug("Thread " + Thread.currentThread().getId() + " \"" + Thread.currentThread().getName() + "\": ");
+		}
 		return super.loadClass(name);
 	}
 

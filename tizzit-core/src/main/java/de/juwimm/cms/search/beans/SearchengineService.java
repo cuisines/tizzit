@@ -626,8 +626,13 @@ public class SearchengineService {
 	
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void indexDocument(Integer documentId) {
-		if (log.isDebugEnabled()) log.debug("Index create / update for Document: " + documentId);
+		if (log.isDebugEnabled()){
+			log.debug("Index create / update for Document: " + documentId);
+		}
 		DocumentHbm document = getDocumentHbmDao().load(documentId);
+		if (log.isDebugEnabled()){
+			log.debug("Document " + document.getDocumentId() + " \"" + document.getDocumentName() + "\" \"" + document.getMimeType());
+		}
 		if (!documentResourceLocatorFactory.isSupportedFileFormat(document.getMimeType())) {
 			log.info("Document " + document.getDocumentId() + " \"" + document.getDocumentName() + "\" \"" + document.getMimeType() + "\" is not supported, skipping...");
 			document.setUpdateSearchIndex(false);
