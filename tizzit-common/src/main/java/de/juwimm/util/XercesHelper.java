@@ -460,6 +460,10 @@ public final class XercesHelper {
 	}
 		
 	public static String html2nodeUTF8(String html) throws Exception {
+		if(log.isDebugEnabled()){
+			log.debug("html2nodeUTF8 - with param: " + html.substring(0, (html.length()>20)?20:html.length()-1));
+			log.debug("Thread " + Thread.currentThread().getId() + " \"" + Thread.currentThread().getName() + "\": ");
+		}
         Tidy myTidy = new Tidy();
         myTidy.setQuoteNbsp(false);
         myTidy.setXmlOut(true);
