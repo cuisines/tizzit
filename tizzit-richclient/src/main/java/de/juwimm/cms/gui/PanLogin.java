@@ -94,7 +94,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 
 		lblLogo.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-		lblLogo.setIcon(new ImageIcon(getClass().getResource("/images/cms_450x121.png")));
+		lblLogo.setIcon(new ImageIcon(getClass().getResource("/images/tizzit_450x121.png")));
 		lblHeadline.setText("Benutzeranmeldung");
 		lblHeadline.setFont(new java.awt.Font("Dialog", 1, 20));
 		lblHeadline.setHorizontalAlignment(SwingConstants.CENTER);

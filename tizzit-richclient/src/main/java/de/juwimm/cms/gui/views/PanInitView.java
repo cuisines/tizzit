@@ -35,7 +35,7 @@ import de.juwimm.cms.gui.controls.UnloadablePanel;
  */
 public final class PanInitView extends JPanel implements UnloadablePanel {
 	private static Logger log = Logger.getLogger(PanInitView.class);
-	private JLabel lblIcon = new JLabel(new ImageIcon(getClass().getResource("/images/cms_450x121.png")));
+	private JLabel lblIcon = new JLabel(new ImageIcon(getClass().getResource("/images/tizzit_450x121.png")));
 	private static PanInitView pan = new PanInitView();
 
 	private PanInitView() {

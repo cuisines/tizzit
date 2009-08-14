@@ -68,7 +68,7 @@ public class FrmVersion extends JFrame {
 
 	private void jbInit() throws Exception {
 		lblBackground.setBounds(new Rectangle(0, 0, 450, 300));
-		lblBackground.setIcon(new ImageIcon(getClass().getResource("/images/cms_450x300.gif")));
+		lblBackground.setIcon(new ImageIcon(getClass().getResource("/images/tizzit_450x300.gif")));
 		lblBackground.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				disposeMe();
