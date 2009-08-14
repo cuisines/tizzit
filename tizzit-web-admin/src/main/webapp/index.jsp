@@ -4,19 +4,56 @@
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 <style type="text/css">
+
+body {
+	text-align: center;
+}
 #layout {
 	text-align:center;
 	position:relative;
 	padding-top:50px;
+	width: 547px;
+	margin: 0 auto;
 }
 
 #buttonArea {
 	position:absolute;
-	top:60px;
-	left:250px;
+	top:240px;
+	left:235px;
 	bottom:0px;
-	right:0px;
+	right:0px;	
 }
+
+a.webStartLink:link, a.webStartLink:visited,a.webStartLink:active {
+	background-image: url('splash/btn_start_tizzit.gif');	
+	background-position: 0px 0px; 
+	height: 29px;
+	width: 263px;
+	color: #fafbff;
+	text-decoration: none;
+	text-indent:50px;
+	line-height:29px;
+	display:block;
+	font-family: Tahoma;
+	font-size: 14px;
+	font-weight: bold;
+	}
+
+a.webStartLink:hover{
+	background-image: url('splash/btn_start_tizzit.gif') ;
+	background-position: 0px 29px;
+	display:block;
+	height: 29px;
+	width: 263px;
+	color: #fafbff;
+	text-decoration: none;
+	text-indent:50px;
+	line-height:29px;
+	font-family: Tahoma;
+	font-size: 14px;
+	font-weight: bold;
+ }
+ 
 </style>
 <script type="text/javascript">
 var javaVersion = "1.5"
@@ -74,7 +111,7 @@ End If
 //-->
 </script>
 </head>
-<body onload="MM_preloadImages('splash/btn_sel.gif')">
+<body>
 	<script language="JavaScript">
 	if (!javawsInstalled) {
 		if(isIE && isWindows) {
@@ -104,12 +141,12 @@ End If
 
 	<!-- Aufbau -->
 	<div id="layout">
+		
+		<img src="splash/page_animation_tizzit.gif">
 		<div id="buttonArea">
-			<a href="juwimm-cms-client.jnlp" onmouseout="MM_swapImgRestore()" type="application/x-java-jnlp-file">
-				<img src="splash/btn_desel.gif" name="Image1" id="Image1" onmouseover="MM_swapImage('Image1','','splash/btn_sel.gif',1)" border="0" height="29" width="162">
+			<a href="juwimm-cms-client.jnlp"  type="application/x-java-jnlp-file" class="webStartLink">Internetseiten bearbeiten				
 			</a>
 		</div>
-		<img src="logo_conquest.jpg">
 	</div>
 </body>
 </html>
