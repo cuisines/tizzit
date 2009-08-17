@@ -508,10 +508,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 						log.error("Reloading Error", exe);
 					}
 					setCursor(Cursor.getDefaultCursor());
+					//initialization of inputs will make isDirty on true so..
+					setDirty(false);
 				}
 			});
-			//initialization of inputs will make isDirty on true so..
-			setDirty(false);
 		}
 	}
 
