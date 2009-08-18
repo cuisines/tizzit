@@ -146,8 +146,8 @@ public class TinyButtonBorder extends AbstractBorder implements UIResource {
 				if(b.getModel().isPressed()) return;
 				
 				if(b.getModel().isRollover() && paintRollover) {
-					DrawRoutines.drawRolloverBorder(
-						g, Theme.buttonRolloverColor[Theme.style].getColor(), x, y, w, h);
+					///DrawRoutines.drawRolloverBorder(
+					//	g, Theme.buttonRolloverColor[Theme.style].getColor(), x, y, w, h);
 				}
 				else if(isDefault ||
 					(Theme.buttonFocusBorder[Theme.style] && b.isFocusOwner()))

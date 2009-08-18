@@ -92,6 +92,7 @@ public class Theme {
   	public static ColoredFont[] treeFont = new ColoredFont[4];
   	public static ColoredFont[] tabFont = new ColoredFont[4];
   	public static ColorReference[] tabFontColor = new ColorReference[4];
+	public static ColorReference[] tabSelectedFontColor = new ColorReference[4];
   	public static ColoredFont[] editorFont = new ColoredFont[4];
   	public static ColoredFont[] frameTitleFont = new ColoredFont[4];
   	public static ColoredFont[] internalFrameTitleFont = new ColoredFont[4];
@@ -270,11 +271,12 @@ public class Theme {
     public static ColorReference[] tabPaneDarkColor = new ColorReference[4];
     public static ColorReference[] tabPaneLightColor = new ColorReference[4];
     public static ColorReference[] tabNormalColor = new ColorReference[4];
-    public static ColorReference[] tabSelectedColor = new ColorReference[4];
+    public static ColorReference[] tabSelectedColor = new ColorReference[4];    
     public static ColorReference[] tabDisabledColor = new ColorReference[4];
     public static ColorReference[] tabDisabledSelectedColor = new ColorReference[4];
     public static ColorReference[] tabDisabledTextColor = new ColorReference[4];
     public static ColorReference[] tabBorderColor = new ColorReference[4];
+    public static ColorReference[] tabSelectedBorderColor = new ColorReference[4];
     public static ColorReference[] tabDarkColor = new ColorReference[4];
     public static ColorReference[] tabLightColor = new ColorReference[4];
     public static ColorReference[] tabRolloverColor = new ColorReference[4];
@@ -509,12 +511,12 @@ public class Theme {
 		
     	disColor[0] = new ColorReference(new Color(255, 199, 59), 0, 0, ColorReference.ABS_COLOR, true);
     	disColor[1] = new ColorReference(new Color(143, 141, 139), 0, 0, ColorReference.ABS_COLOR, true);
-    	disColor[2] = new ColorReference(new Color(143, 142, 139), 0, 0, ColorReference.ABS_COLOR, true);
+    	disColor[2] = new ColorReference(new Color(72, 72, 72), 0, 0, ColorReference.ABS_COLOR, true);
     	disColor[3] = new ColorReference(new Color(255, 199, 59), 0, 0, ColorReference.ABS_COLOR, true);
     	
     	backColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.ABS_COLOR, true);
     	backColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.ABS_COLOR, true);
-    	backColor[2] = new ColorReference(new Color(236, 233, 216), 0, 0, ColorReference.ABS_COLOR, true);
+    	backColor[2] = new ColorReference(new Color(225, 225, 225), 0, 0, ColorReference.ABS_COLOR, true);
     	backColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.ABS_COLOR, true);
     	
     	frameColor[0] = new ColorReference(new Color(255, 255, 255), 0, 0, ColorReference.ABS_COLOR, true);
@@ -572,6 +574,11 @@ public class Theme {
   		boldFont[1] = new ColoredFont("sansserif", Font.BOLD, 11);
   		boldFont[2] = new ColoredFont("Tahoma", Font.BOLD, 11);
 		boldFont[3] = new ColoredFont("sansserif", Font.BOLD, 11);
+		
+		buttonFontColor[0] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
+		buttonFontColor[1] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
+		buttonFontColor[2] = new ColorReference(new Color(255, 255, 255), 0, 0, ColorReference.ABS_COLOR);
+		buttonFontColor[3] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
 		
   		buttonFont[0] = new ColoredFont(buttonFontColor);
   		buttonFont[1] = new ColoredFont(buttonFontColor);
@@ -673,8 +680,14 @@ public class Theme {
 
   		tabFontColor[0] = new ColorReference(new Color(10, 50, 105));
   		tabFontColor[1] = new ColorReference(new Color(0, 0, 0));
-  		tabFontColor[2] = new ColorReference(new Color(0, 0, 0));
+  		tabFontColor[2] = new ColorReference(new Color(255, 255, 255));
   		tabFontColor[3] = new ColorReference(new Color(10, 50, 105));
+  		
+  		tabSelectedFontColor[0] = new ColorReference(new Color(10, 50, 105));
+  		tabSelectedFontColor[1] = new ColorReference(new Color(0, 0, 0));
+  		tabSelectedFontColor[2] = new ColorReference(new Color(0, 0, 0));
+  		tabSelectedFontColor[3] = new ColorReference(new Color(10, 50, 105));
+  		
   		tabFont[0] = new ColoredFont("sansserif", Font.BOLD, 11, tabFontColor);
   		tabFont[1] = new ColoredFont(tabFontColor);
   		tabFont[2] = new ColoredFont(tabFontColor);
@@ -853,13 +866,14 @@ public class Theme {
     	
     	buttonNormalColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
     	buttonNormalColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-    	buttonNormalColor[2] = new ColorReference(new Color(231, 232, 245), 0, 0, ColorReference.SUB3_COLOR);
+    	buttonNormalColor[2] = new ColorReference(new Color(92, 92, 92), 0, 0, ColorReference.SUB3_COLOR);
     	buttonNormalColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
     	
     	buttonRolloverBgColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
-    	buttonRolloverBgColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-    	buttonRolloverBgColor[2] = new ColorReference(new Color(239, 240, 248), 0, 33, ColorReference.SUB3_COLOR);
+    	buttonRolloverBgColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);    	
+    	buttonRolloverBgColor[2] = new ColorReference(new Color(228, 228, 228), 0, 33, ColorReference.SUB3_COLOR);
     	buttonRolloverBgColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
+    	
     	
     	buttonPressedColor[0] = new ColorReference(new Color(126, 126, 126), 0, 0, ColorReference.BACK_COLOR);
     	buttonPressedColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
@@ -873,8 +887,8 @@ public class Theme {
  
     	buttonBorderColor[0] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR);
     	buttonBorderColor[1] = new ColorReference(new Color(64, 64, 64), -100, -69, ColorReference.BACK_COLOR);
-    	buttonBorderColor[2] = new ColorReference(new Color(21, 61, 117), -30, -46, ColorReference.MAIN_COLOR);
-    	buttonBorderColor[3] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR);
+    	buttonBorderColor[2] = new ColorReference(new Color(56, 56, 56), -30, -46, ColorReference.MAIN_COLOR);
+    	buttonBorderColor[3] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR); 
     	
     	buttonDarkColor[0] = new ColorReference(new Color(119, 119, 119), 0, 0, ColorReference.BACK_COLOR);
     	buttonDarkColor[1] = new ColorReference(new Color(128, 128, 128), -100, -38, ColorReference.BACK_COLOR);
@@ -925,7 +939,7 @@ public class Theme {
 
     	buttonRolloverColor[0] = new ColorReference(new Color(255, 199, 59), 0, 0, ColorReference.BACK_COLOR);
     	buttonRolloverColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-    	buttonRolloverColor[2] = new ColorReference(new Color(248, 179, 48), 0, 0, ColorReference.SUB6_COLOR);
+    	buttonRolloverColor[2] = new ColorReference(new Color(159, 159, 159), 0, 0, ColorReference.SUB6_COLOR);
     	buttonRolloverColor[3] = new ColorReference(new Color(255, 199, 59), 0, 0, ColorReference.BACK_COLOR);
     	
     	buttonDefaultColor[0] = new ColorReference(new Color(255, 199, 59), 0, 0, ColorReference.BACK_COLOR);
@@ -957,7 +971,7 @@ public class Theme {
     	
     	buttonSpreadLight[0] = 20;
 		buttonSpreadLight[1] = 0;
-		buttonSpreadLight[2] = 20;
+		buttonSpreadLight[2] = 13;
 		buttonSpreadLight[3] = 20;
 		
 		buttonSpreadDark[0] = 3;
@@ -1126,7 +1140,7 @@ public class Theme {
 // Tabbed
     	tabPaneBorderColor[0] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR);
 		tabPaneBorderColor[1] = new ColorReference(new Color(64, 64, 64), -100, -69, ColorReference.BACK_COLOR);
-		tabPaneBorderColor[2] = new ColorReference(new Color(143, 160, 183), -78, 28, ColorReference.MAIN_COLOR);
+		tabPaneBorderColor[2] = new ColorReference(new Color(0, 0, 0), -78, 28, ColorReference.MAIN_COLOR);
 		tabPaneBorderColor[3] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR);
 		
 		tabPaneDarkColor[0] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR);
@@ -1141,12 +1155,12 @@ public class Theme {
 		
     	tabNormalColor[0] = new ColorReference(new Color(242, 240, 238), 0, 0, ColorReference.BACK_COLOR);
     	tabNormalColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-    	tabNormalColor[2] = new ColorReference(new Color(242, 240, 238), 0, 69, ColorReference.BACK_COLOR);
+    	tabNormalColor[2] = new ColorReference(new Color(127, 127, 127), 0, 69, ColorReference.BACK_COLOR);
     	tabNormalColor[3] = new ColorReference(new Color(242, 240, 238), 0, 0, ColorReference.BACK_COLOR);
     	
     	tabSelectedColor[0] = new ColorReference(new Color(251, 251, 250), 0, 0, ColorReference.BACK_COLOR);
     	tabSelectedColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-    	tabSelectedColor[2] = new ColorReference(new Color(251, 251, 250), 0, 91, ColorReference.BACK_COLOR);
+    	tabSelectedColor[2] = new ColorReference(new Color(225, 225, 225), 0, 91, ColorReference.BACK_COLOR);
     	tabSelectedColor[3] = new ColorReference(new Color(251, 251, 250), 0, 0, ColorReference.BACK_COLOR);
     	
     	// since 1.3
@@ -1168,8 +1182,14 @@ public class Theme {
     	
     	tabBorderColor[0] = new ColorReference(new Color(143, 160, 183), 0, 0, ColorReference.BACK_COLOR);
     	tabBorderColor[1] = new ColorReference(new Color(64, 64, 64), -100, -69, ColorReference.BACK_COLOR);
-    	tabBorderColor[2] = new ColorReference(new Color(143, 160, 183), -78, 28, ColorReference.MAIN_COLOR);
+    	tabBorderColor[2] = new ColorReference(new Color(82,82, 82), -78, 28, ColorReference.MAIN_COLOR);    	
     	tabBorderColor[3] = new ColorReference(new Color(143, 160, 183), 0, 0, ColorReference.BACK_COLOR);
+    	
+    	tabSelectedBorderColor[0] = new ColorReference(new Color(143, 160, 183), 0, 0, ColorReference.BACK_COLOR);
+    	tabSelectedBorderColor[1] = new ColorReference(new Color(64, 64, 64), -100, -69, ColorReference.BACK_COLOR);
+    	tabSelectedBorderColor[2] = new ColorReference(new Color(0, 0, 0), -78, 28, ColorReference.MAIN_COLOR);
+    	tabSelectedBorderColor[3] = new ColorReference(new Color(143, 160, 183), 0, 0, ColorReference.BACK_COLOR);
+    	
     	
     	tabDarkColor[0] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.BACK_COLOR);
 		tabDarkColor[1] = new ColorReference(new Color(128, 128, 128), -100, -38, ColorReference.BACK_COLOR);

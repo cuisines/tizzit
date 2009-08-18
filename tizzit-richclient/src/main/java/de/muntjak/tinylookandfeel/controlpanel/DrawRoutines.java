@@ -269,12 +269,12 @@ public class DrawRoutines {
 	}
 	
 	public static void drawSelectedXpTabBorder(
-		Graphics g, Color c, int x, int y, int w, int h, int tabPlacement)
+		Graphics g, Color c,Color higlightColor, int x, int y, int w, int h, int tabPlacement)
 	{
 		Color c2 = SBChooser.getAdjustedColor(
-			Theme.tabRolloverColor[Theme.style].getColor(), 20, -30);
-		g.setColor(c2);
-		Color c3 = ColorRoutines.getAverage(Theme.backColor[Theme.style].getColor(), c2);
+				higlightColor, 20, -30);
+		g.setColor(c);
+		Color c3 =c;//ColorRoutines.getAverage(Theme.backColor[Theme.style].getColor(),ColorRoutines.getAverage(Theme.backColor[Theme.style].getColor(),ColorRoutines.getAverage(Theme.backColor[Theme.style].getColor(), c2)));
 		
 		switch (tabPlacement) {
 			case SwingConstants.LEFT:
@@ -287,7 +287,7 @@ public class DrawRoutines {
 				g.drawLine(x + 2, y, x + 2, y);
 				g.drawLine(x + 2, y + h - 1, x + 2, y + h - 1);
 				
-				g.setColor(Theme.tabRolloverColor[Theme.style].getColor());
+				g.setColor(higlightColor);
 				g.drawLine(x + 1, y + 2, x + 1, y + h - 3);
 				g.drawLine(x + 2, y + 1, x + 2, y + h - 2);
 				
@@ -315,7 +315,7 @@ public class DrawRoutines {
 				g.drawLine(x + w - 3, y, x + w - 3, y);
 				g.drawLine(x + w - 3, y + h - 1, x + w - 3, y + h - 1);
 				
-				g.setColor(Theme.tabRolloverColor[Theme.style].getColor());
+				g.setColor(higlightColor);
 				g.drawLine(x + w - 2, y + 2, x + w - 2, y + h - 3);
 				g.drawLine(x + w - 3, y + 1, x + w - 3, y + h - 2);
 				
@@ -343,7 +343,7 @@ public class DrawRoutines {
 				g.drawLine(x + w - 2, y + h - 2, x + w - 2, y + h - 2);
 				g.drawLine(x, y + h - 3, x, y + h - 3);
 				g.drawLine(x + w - 1, y + h - 3, x + w - 1, y + h - 3);
-				g.setColor(Theme.tabRolloverColor[Theme.style].getColor());
+				g.setColor(higlightColor);
 				g.drawLine(x + 2, y + h - 2, x + w - 3, y + h - 2);
 				g.drawLine(x + 1, y + h - 3, x + w - 2, y + h - 3);
 				
@@ -370,7 +370,7 @@ public class DrawRoutines {
 				g.drawLine(x + w - 2, y + 1, x + w - 2, y + 1);
 				g.drawLine(x, y + 2, x, y + 2);
 				g.drawLine(x + w - 1, y + 2, x + w - 1, y + 2);
-				g.setColor(Theme.tabRolloverColor[Theme.style].getColor());
+				g.setColor(higlightColor);
 				g.drawLine(x + 2, y + 1, x + w - 3, y + 1);
 				g.drawLine(x + 1, y + 2, x + w - 2, y + 2);
 				

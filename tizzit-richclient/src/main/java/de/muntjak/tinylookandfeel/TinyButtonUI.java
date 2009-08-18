@@ -366,8 +366,12 @@ public class TinyButtonUI extends MetalButtonUI {
 		
 		// paint border background
 		Color bg = b.getParent().getBackground();
+		
 		g.setColor(bg);
 		g.drawRect(0, 0, w - 1, h - 1);
+
+		DrawRoutines.drawRoundedBorder(
+				g, Theme.buttonRolloverColor[Theme.style].getColor(), 1, 1, w - 2, h - 2);
 
 		int spread1 = Theme.buttonSpreadLight[Theme.style];
 		int spread2 = Theme.buttonSpreadDark[Theme.style];
@@ -381,7 +385,7 @@ public class TinyButtonUI extends MetalButtonUI {
 		int halfY = h / 2;
 		int yd;
 
-		for (int y = 1; y < h - 1; y++) {
+		for (int y = 2; y < h - 2; y++) {
 			if(y < halfY) {
 				yd = halfY - y;
 				g.setColor(ColorRoutines.lighten(c, (int)(yd * spreadStep1)));
@@ -394,8 +398,7 @@ public class TinyButtonUI extends MetalButtonUI {
 				g.setColor(ColorRoutines.darken(c, (int)(yd * spreadStep2)));
 			}
 
-			g.drawLine(2, y, w - 3, y);
-
+			g.drawLine(2, y, w - 3, y);			
 			if(y == 1) {
 				// left vertical line
 				g.drawLine(1, 1, 1, h - 2);
@@ -421,7 +424,8 @@ public class TinyButtonUI extends MetalButtonUI {
 			g.setColor(Theme.buttonDefaultColor[Theme.style].getColor());
 			g.drawLine(1, h - 2, 1, h - 2);
 			g.drawLine(w - 2, h - 2, w - 2, h - 2);
-		}
+		}		
+		
 	}
 
 	private void drawTinyToolBarButton(Graphics g, AbstractButton b, Color c, boolean isPressed) {
@@ -448,5 +452,19 @@ public class TinyButtonUI extends MetalButtonUI {
 		Color bg = b.getParent().getBackground();
 		g.setColor(bg);
 		g.drawRect(0, 0, w - 1, h - 1);
+	}
+	/* (non-Javadoc)
+	 * @see javax.swing.plaf.basic.BasicButtonUI#paintText(java.awt.Graphics, javax.swing.AbstractButton, java.awt.Rectangle, java.lang.String)
+	 */
+	@Override
+	protected void paintText(Graphics g, AbstractButton b, Rectangle textRect,
+			String text) {
+		ButtonModel model= b.getModel();
+		if(!model.isRollover()){
+			b.setForeground(Theme.buttonFontColor[Theme.style].getColor());
+		}else{
+			b.setForeground(Theme.buttonBorderColor[Theme.style].getColor());
+		}
+		super.paintText(g, b, textRect, text);
 	}
 }

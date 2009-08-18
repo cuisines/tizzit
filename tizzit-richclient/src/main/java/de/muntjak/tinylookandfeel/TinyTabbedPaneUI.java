@@ -10,6 +10,7 @@
 
 package de.muntjak.tinylookandfeel;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -19,8 +20,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -252,8 +251,64 @@ public class TinyTabbedPaneUI extends BasicTabbedPaneUI {
 				break;
 			case TOP :
 			default :
-				g.fillRect(x + 1, y + 1, w - 3, h - 1);
+				if(!isSelected){
+					drawRectTabBackground(g,x-1, y-1, w+1, h + 3);
+				}else{
+					g.fillRect(x + 1, y + 1, w - 3, h - 1);
+				}
+						
 		}
+	}
+	
+	private void drawRectTabBackground(Graphics g,int xx,int yy, int w, int h){
+		Color  c = Theme.tabNormalColor[Theme.style].getColor();
+		
+		int spread1 = Theme.buttonSpreadLight[Theme.style];
+		int spread2 = Theme.buttonSpreadDark[Theme.style];
+				
+		
+		float spreadStep1 = 10.0f * spread1 / (h - 3);
+		float spreadStep2 = 10.0f * spread2 / (h - 3);
+		int halfY = h / 2;
+		int yd;
+
+		for (int y = 2; y < h - 2; y++) {
+			if(y < halfY) {
+				yd = halfY - y;
+				g.setColor(ColorRoutines.lighten(c, (int)(yd * spreadStep1)));
+			}
+			else if(y == halfY) {
+				g.setColor(c);
+			}
+			else {
+				yd = y - halfY;
+				g.setColor(ColorRoutines.darken(c, (int)(yd * spreadStep2)));
+			}
+
+			g.drawLine(xx+2, yy+y, xx+w - 3, yy+y);			
+			if(y == 1) {
+				// left vertical line
+				g.drawLine(xx+1, yy+1, xx+1, yy+h - 2);
+				
+				/*if(isSelected ) {
+					// right vertical line
+					g.drawLine(xx+w - 2, yy+1, xx+w - 2, yy+h - 2);
+				}*/
+			}
+			else if(y == h - 2 /*&& !isSelected*/) {
+				// right vertical line
+				g.drawLine(xx+w - 2, yy+1, xx+w - 2, yy+h - 2);
+			}
+		}
+		
+		// 1 pixel away from each corner
+		/*
+		if(isSelected) {
+			g.setColor(Theme.buttonRolloverColor[Theme.style].getColor());
+			g.drawLine(xx+1, yy+h - 2, xx+1, yy+h - 2);
+			g.drawLine(xx+w - 2, yy+h - 2, xx+w - 2, yy+h - 2);
+		}
+		*/		
 	}
 
 	/**
@@ -410,10 +465,10 @@ public class TinyTabbedPaneUI extends BasicTabbedPaneUI {
 				Theme.tabBorderColor[Theme.style].getColor(), x, y, w, h, tabPlacement);
 		} else if(isSelected) {
 			DrawRoutines.drawSelectedXpTabBorder(g,
-				Theme.tabBorderColor[Theme.style].getColor(), x, y, w, h, tabPlacement);
+				Theme.tabSelectedBorderColor[Theme.style].getColor(),Theme.tabSelectedColor[Theme.style].getColor(), x, y, w, h, tabPlacement);
 		} else if(isRollover && Theme.tabRollover[Theme.style]) {
 			DrawRoutines.drawSelectedXpTabBorder(g,
-				Theme.tabBorderColor[Theme.style].getColor(), x, y, w, h, tabPlacement);
+				Theme.tabSelectedBorderColor[Theme.style].getColor(),Theme.tabBorderColor[Theme.style].getColor(), x, y, w, h, tabPlacement);
 		} else {
 			DrawRoutines.drawXpTabBorder(g,
 				Theme.tabBorderColor[Theme.style].getColor(), x, y, w, h, tabPlacement);
@@ -557,8 +612,11 @@ public class TinyTabbedPaneUI extends BasicTabbedPaneUI {
 			int mnemIndex = tabPane.getDisplayedMnemonicIndexAt(tabIndex);
 
 			if(tabPane.isEnabled() && tabPane.isEnabledAt(tabIndex)) {
-				g.setColor(tabPane.getForegroundAt(tabIndex));
-
+				if(isSelected){
+					g.setColor(Theme.tabSelectedFontColor[Theme.style].getColor());
+				}else{
+					g.setColor(Theme.tabFontColor[Theme.style].getColor());
+				}
 			}
 			else { // tab disabled
 				g.setColor(Theme.tabDisabledTextColor[Theme.style].getColor());
@@ -577,4 +635,5 @@ public class TinyTabbedPaneUI extends BasicTabbedPaneUI {
 			}
 		}
 	}
+		
 }
