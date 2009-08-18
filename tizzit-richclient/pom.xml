@@ -140,11 +140,9 @@
          <version>1.04.03-patched</version>
       </dependency>
 	  <dependency>	  
-		  <groupId>flamingo</groupId>
+		  <groupId>net.java.dev.flamingo</groupId>
 		  <artifactId>flamingo</artifactId>
-		  <version>1.0</version>
-		  <scope>system</scope>
-		  <systemPath>${pom.basedir}/src/main/resources/flamingo.jar</systemPath>
+		  <version>4.1</version>		
 	   </dependency>
    </dependencies>
    <build>
@@ -165,6 +163,26 @@
 	          </execution>
 	        </executions>
 	      </plugin>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-install-plugin</artifactId>
+			<version>2.3</version>
+			<executions>
+				<execution>
+					<phase>validate</phase>
+					<goals>
+					  <goal>install-file</goal>
+					</goals>
+					<configuration>
+						<file>${pom.basedir}/src/main/resources/flamingo.jar</file>
+						<artifactId>flamingo</artifactId>
+						<groupId>net.java.dev.flamingo</groupId>
+						<packaging>jar</packaging>
+						<version>4.1</version>
+					</configuration>
+				</execution>
+			</executions>
+		  </plugin>
          <plugin>
             <groupId>org.codehaus.mojo.webstart</groupId>
             <artifactId>webstart-maven-plugin</artifactId>
@@ -208,6 +226,7 @@
                      <include>javax.mail:mail</include>
                      <include>hsqldb:hsqldb</include> 
                      <include>ostermiller:ostermillerutils</include>
+					 <include>net.java.dev.flamingo:flamingo</include>					
                   </includes>
                </dependencies>
                <jnlp>
@@ -289,6 +308,7 @@
             </includes>
              <excludes>
              	<exclude>pom.xml</exclude>
+				<exclude>*.jar</exclude>
              </excludes>
          </resource> 
       </resources>
