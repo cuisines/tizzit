@@ -472,25 +472,34 @@
 	<insertInto table="role">
 		<field name="role_id">updatePageLastModifiedDate</field>
 	</insertInto>
-	<insertInto table="site">
+	<insertInto table="site"><!-- create a site -->
 		<field name="site_id">1</field>
 		<field name="site_name">www.test.de</field>
 		<field name="site_short">test</field>
 		<field name="root_unit_id_fk">1</field>
 	</insertInto>
-	<insertInto table="unit">
+	<insertInto table="unit"><!-- create a unit -->
 		<field name="unit_id">1</field>
 		<field name="name">erste rootunit</field>
 		<field name="site_id_fk">1</field>
 		<field name="last_modified_date">1</field>
 	</insertInto>
-	<insertInto table="usr">
-		<field name="user_id">cqroot</field>
-		<field name="first_name">ConQuest </field>
-		<field name="last_name">MasterRoot User</field>
-		<field name="email">sascha-matthias.kulawik@juwimm.com</field>
+	<insertInto table="usr"><!-- create a new user (username=admin, password=123 -->
+		<field name="user_id">admin</field>
+		<field name="first_name">Max</field>
+		<field name="last_name">Mustermann</field>
+		<field name="email">email@adresse.de</field>
 		<field name="active_site_id_fk">1</field>
 		<field name="passwd">QL0AFWMIX8NRZTKeof9cXsvbvu8=</field><!-- 123 -->
 		<field name="masterRoot">1</field>
+		<field name="login_date">0</field>
 	</insertInto>
+	<insertInto table="units2users"><!-- link the user with the unit -->
+		<field name="users_id_fk">admin</field>
+		<field name="units_id_fk">1</field>
+	</insertInto>
+	<insertInto table="sites2users"><!-- link the user with the site -->
+		<field name="users_id_fk">admin</field>
+		<field name="sites_id_fk">1</field>
+	</insertInto>	
 </sql>

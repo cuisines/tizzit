@@ -529,8 +529,17 @@ INSERT INTO role (role_id) VALUES ('changeXmlSearchIndexed');
 
 INSERT INTO role (role_id) VALUES ('updatePageLastModifiedDate');
 
+-- create a site
 INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name) VALUES ('1', '1', 'test', 'www.test.de');
 
+-- create a unit
 INSERT INTO unit (unit_id, last_modified_date, name, site_id_fk) VALUES ('1', '1', 'erste rootunit', '1');
 
+-- create a new user (username=admin, password=123)
+INSERT INTO usr (user_id, passwd, masterRoot, active_site_id_fk, email, last_name, first_name, login_date) VALUES ('admin', 'QL0AFWMIX8NRZTKeof9cXsvbvu8=', '1', '1', 'email@adresse.de', 'Mustermann', 'Max', '0');
 
+-- link the user with the unit
+INSERT INTO units2users (users_id_fk, units_id_fk) VALUES ('admin','1');
+
+-- link the user with the site
+INSERT INTO sites2users (users_id_fk, sites_id_fk) VALUES ('admin','1');
