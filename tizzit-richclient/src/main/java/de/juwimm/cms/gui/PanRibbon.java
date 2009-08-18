@@ -223,7 +223,6 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	        editViewButton.getActionModel().setSelected(true);
 	        editViewButton.getActionModel().addActionListener(new ActionListener(){
 
-				@Override
 				public void actionPerformed(ActionEvent e) {
 					 taskViewButton.getActionModel().setSelected(false);
 					 editViewButton.getActionModel().setSelected(true);
@@ -235,7 +234,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	        adminViewButton.setActionModel(new ActionToggleButtonModel(false));
 	        adminViewButton.getActionModel().addActionListener(new ActionListener(){
 
-				@Override
+				
 				public void actionPerformed(ActionEvent e) {
 					 taskViewButton.getActionModel().setSelected(false);
 					 editViewButton.getActionModel().setSelected(false);
@@ -248,7 +247,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	        taskViewButton.setActionModel(new ActionToggleButtonModel(false));
 	        taskViewButton.getActionModel().addActionListener(new ActionListener(){
 
-				@Override
+				
 				public void actionPerformed(ActionEvent e) {
 					 taskViewButton.getActionModel().setSelected(true);
 					 editViewButton.getActionModel().setSelected(false);
@@ -453,7 +452,6 @@ public class PanRibbon extends Ribbon implements ActionListener{
 			contentPopup = new JCommandPopupMenu();
 			contentPopup.setLayout(new GridBagLayout());
 		}
-		@Override
 		public JPopupPanel getPopupPanel(JCommandButton commandButton) {
 			loaded = true;
 			return contentPopup;
