@@ -139,6 +139,13 @@
          <artifactId>ostermillerutils</artifactId>
          <version>1.04.03-patched</version>
       </dependency>
+	  <dependency>	  
+		  <groupId>flamingo</groupId>
+		  <artifactId>flamingo</artifactId>
+		  <version>1.0</version>
+		  <scope>system</scope>
+		  <systemPath>${pom.basedir}/src/main/resources/flamingo.jar</systemPath>
+	   </dependency>
    </dependencies>
    <build>
       <plugins>   
