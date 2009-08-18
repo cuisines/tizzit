@@ -455,35 +455,7 @@ public class PanMenubar extends JMenuBar implements ActionListener, FinishedActi
 		} else if (e.getActionCommand().equals(CMS_RELOAD_DCF)) {
 			PanLogin.loadTemplates(false);
 			ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR));
-		} else if (e.getActionCommand().equals(CMS_LANG_DE)) {
-			try {
-				Constants.CMS_LOCALE = Locale.GERMAN;
-				Constants.CMS_LANGUAGE = Constants.CMS_LOCALE.getLanguage();
-				Constants.rb = ResourceBundle.getBundle("de.juwimm.cms.CMS", Constants.CMS_LOCALE);
-				UserConfig.getInstance().setConfigNodeValue(UserConfig.USERCONF_PREFERRED_LANGUAGE, Constants.CMS_LOCALE.toString());
-				UserConfig.getInstance().saveChanges();
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.firstRestartApp"), 
-						rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
-			} catch (Exception exe) {
-				if (log.isDebugEnabled()) {
-					log.debug(exe.getMessage());
-				}
-			}
-		} else if (e.getActionCommand().equals(CMS_LANG_EN)) {
-			try {
-				Constants.CMS_LOCALE = Locale.ENGLISH;
-				Constants.CMS_LANGUAGE = Constants.CMS_LOCALE.getLanguage();
-				Constants.rb = ResourceBundle.getBundle("de.juwimm.cms.CMS", Constants.CMS_LOCALE);
-				UserConfig.getInstance().setConfigNodeValue(UserConfig.USERCONF_PREFERRED_LANGUAGE, Constants.CMS_LOCALE.toString());
-				UserConfig.getInstance().saveChanges();
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.firstRestartApp"), 
-						rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
-			} catch (Exception exe) {
-				if (log.isDebugEnabled()) {
-					log.debug(exe.getMessage());
-				}
-			}
-		} else if (e.getActionCommand().equals(CMS_EXPORT_ALL)) {
+		}  else if (e.getActionCommand().equals(CMS_EXPORT_ALL)) {
 			new ExportFullThread().start();
 			//EXPORT ALL
 		} else if (e.getActionCommand().equals(CMS_IMPORT_ALL)) {
