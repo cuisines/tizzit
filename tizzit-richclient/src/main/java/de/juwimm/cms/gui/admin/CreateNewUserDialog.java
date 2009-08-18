@@ -30,10 +30,14 @@ import javax.swing.*;
 
 import org.apache.log4j.Logger;
 
+import sun.management.counter.Units;
+
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.exceptions.NeededFieldsMissingException;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
+import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.swing.DropDownHolder;
 
 /**
  * 
@@ -42,6 +46,7 @@ import de.juwimm.cms.util.UIConstants;
  */
 public class CreateNewUserDialog extends JFrame {
 	private static Logger log = Logger.getLogger(CreateNewUserDialog.class);
+	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private PanUser panUser = null;
 	private JPanel panMain = new JPanel();
 	private JButton btnOk = new JButton();
@@ -53,12 +58,16 @@ public class CreateNewUserDialog extends JFrame {
 	private JLabel lblEMail = new JLabel();
 	private JLabel lblPassword = new JLabel();
 	private JLabel lblPasswordRepeat = new JLabel();
+	private JLabel lblUnits=new JLabel();
 	private JTextField txtFirstName = new JTextField();
 	private JTextField txtLastName = new JTextField();
 	private JTextField txtEmail = new JTextField();
 	private JPasswordField pwdOne = new JPasswordField();
 	private JPasswordField pwdTwo = new JPasswordField();
-
+	private JComboBox cmbUnits=new JComboBox();
+	private DropDownHolder[] allUnits;
+	private UnitValue[] units;
+	
 	public CreateNewUserDialog(PanUser panUser) {
 		this.panUser = panUser;
 		try {
@@ -106,10 +115,20 @@ public class CreateNewUserDialog extends JFrame {
 		lblEMail.setText("eMail");
 		lblPassword.setText("Passwort");
 		lblPasswordRepeat.setText("Passwort wiederholen");
+		lblUnits.setText("Einrichtungen");
+		
+		units = comm.getUnits();
+		if (units != null) {
+			for (int i = units.length -1; i >= 0; i--) {
+				cmbUnits.addItem(units[i].getName());
+			}
+		}
+		
+		
 		getContentPane().add(panMain);
-		panMain.add(btnOk, new GridBagConstraints(0, 6, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTHWEST,
+		panMain.add(btnOk, new GridBagConstraints(0, 7, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTHWEST,
 				GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-		panMain.add(btnCancel, new GridBagConstraints(1, 6, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST,
+		panMain.add(btnCancel, new GridBagConstraints(1, 7, 1, 1, 1.0, 1.0, GridBagConstraints.SOUTHEAST,
 				GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
 		panMain.add(lblUserName, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 21), 0, 0));
@@ -125,6 +144,8 @@ public class CreateNewUserDialog extends JFrame {
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		panMain.add(lblPasswordRepeat, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		panMain.add(lblUnits, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		panMain.add(txtFirstName, new GridBagConstraints(1, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 		panMain.add(txtLastName, new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
@@ -134,6 +155,8 @@ public class CreateNewUserDialog extends JFrame {
 		panMain.add(pwdOne, new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 80), 0, 0));
 		panMain.add(pwdTwo, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 80), 0, 0));
+		panMain.add(cmbUnits, new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 80), 0, 0));
 	}
 
@@ -147,9 +170,10 @@ public class CreateNewUserDialog extends JFrame {
 		if (String.copyValueOf(pwdOne.getPassword()).equals(String.copyValueOf(pwdTwo.getPassword()))) {
 			Pattern p = Pattern.compile("^[A-Za-z_0-9\\.-]+@[A-Za-z_0-9\\.-]+\\.[a-zA-Z]+");
 			Matcher m = p.matcher(this.txtEmail.getText());
+			int selectedUnit=cmbUnits.getSelectedIndex();
 			if (m.matches() || this.txtEmail.getText().length() == 0) {
 				try {
-					((Communication) getBean(Beans.COMMUNICATION)).createUser(this.txtUsername.getText(), String.copyValueOf(pwdOne.getPassword()), this.txtFirstName.getText(), this.txtLastName.getText(), this.txtEmail.getText(), panUser.getLastSelectedUnit());
+					((Communication) getBean(Beans.COMMUNICATION)).createUser(this.txtUsername.getText(), String.copyValueOf(pwdOne.getPassword()), this.txtFirstName.getText(), this.txtLastName.getText(), this.txtEmail.getText(),units[selectedUnit].getUnitId());
 				} catch (NeededFieldsMissingException nfme) {
 					String msg = rb.getString("exception.NeededFieldsMissingException");
 					msg = msg + nfme.getMissingFieldsLocaleString();
