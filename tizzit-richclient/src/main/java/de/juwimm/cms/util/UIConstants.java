@@ -222,6 +222,38 @@ public final class UIConstants {
 	public static ImageIcon ICON_DECRYPTED;
 	public static ImageIcon ICON_ENCRYPTED;
 	public static ImageIcon ICON_PROXY;
+	
+	//Ribbon images
+	public static ImageIcon RIBBON_NEW;
+	public static ImageIcon RIBBON_CONTENT;
+	public static ImageIcon RIBBON_ACTION_TREE_NODE_APPEND;
+	public static ImageIcon RIBBON_ACTION_TREE_NODE_BEFORE;
+	public static ImageIcon RIBBON_ACTION_TREE_NODE_AFTER;
+	public static ImageIcon RIBBON_UP;
+	public static ImageIcon RIBBON_DOWN;
+	public static ImageIcon RIBBON_LEFT;
+	public static ImageIcon RIBBON_RIGHT;
+	public static ImageIcon RIBBON_CENTER;
+	public static ImageIcon RIBBON_MOVE;
+	public static ImageIcon RIBBON_ACTION_TREE_REFRESH;
+	public static ImageIcon RIBBON_TREE_NODE_DELETE;
+	public static ImageIcon RIBBON_TOOLBAR_SYMLINK;
+	public static ImageIcon RIBBON_TOOLBAR_JUMP;
+	public static ImageIcon RIBBON_TOOLBAR_LINK;
+	public static ImageIcon RIBBON_TOOLBAR_SEPARATOR;
+	public static ImageIcon RIBBON_RELEASE_SITE;
+	public static ImageIcon RIBBON_ACTION_DEPLOY;
+	public static ImageIcon RIBBON_ACTION_CHECKIN;
+	public static ImageIcon RIBBON_ACTION_CHECKOUT;
+	public static ImageIcon RIBBON_BTN_PREVIEW;
+	public static ImageIcon RIBBON_EDIT_VIEW;
+	public static ImageIcon RIBBON_TASK_VIEW;
+	public static ImageIcon RIBBON_ADMIN_VIEW;
+	public static ImageIcon RIBBON_LANGUAGE;
+	public static ImageIcon RIBBON_HELP;
+	public static ImageIcon RIBBON_LOGOUT;
+	public static ImageIcon RIBBON_EXIT;
+	public static ImageIcon RIBBON_OPTIONS;
 
 	private UIConstants() {
 	}
@@ -407,6 +439,41 @@ public final class UIConstants {
 		MODULE_DATABASECOMPONENT_DELETE = load("modules/databaseComponents/Delete.gif");
 		MODULE_DATABASECOMPONENT_ADD = load("modules/databaseComponents/Plus.gif");
 		MODULE_DATABASECOMPONENT_SAVE = load("modules/databaseComponents/Save.png");
+		
+		//Ribbon images
+		//new
+		RIBBON_NEW = load("ribbon/new_content.png");
+		RIBBON_CONTENT = load("ribbon/tra_content.png");
+		RIBBON_ACTION_TREE_NODE_APPEND = load("ribbon/tra_c_darunter_einfuegen.png");
+		RIBBON_ACTION_TREE_NODE_BEFORE = load("ribbon/tra_c_danach_einfuegen.png");
+		RIBBON_ACTION_TREE_NODE_AFTER = load("ribbon/tra_c_davor_einfuegen.png");
+		RIBBON_TOOLBAR_SYMLINK = load("ribbon/tra_symlink.png");
+		RIBBON_TOOLBAR_JUMP = load("ribbon/tra_jump.png");
+		RIBBON_TOOLBAR_LINK = load("ribbon/tra_link.png");
+		RIBBON_TOOLBAR_SEPARATOR = load("ribbon/tra_separator.png");
+		//move
+		RIBBON_UP = load("ribbon/up.png");
+		RIBBON_DOWN = load("ribbon/down.png");
+		RIBBON_LEFT = load("ribbon/left.png");
+		RIBBON_RIGHT = load("ribbon/right.png");
+		RIBBON_CENTER = load("ribbon/center.png");
+		RIBBON_MOVE = load("ribbon/move.png");
+		RIBBON_ACTION_TREE_REFRESH = load("ribbon/refresh.png");
+		RIBBON_TREE_NODE_DELETE = load("ribbon/tra_loesche_node.png");
+		RIBBON_RELEASE_SITE = load("ribbon/release.png");
+		RIBBON_ACTION_DEPLOY = load("ribbon/wizard_icon_20.png");
+		RIBBON_ACTION_CHECKIN = load("ribbon/tra_check_in.png");
+		RIBBON_ACTION_CHECKOUT = load("ribbon/tra_check_out.png");
+		RIBBON_BTN_PREVIEW = load("ribbon/preview.png");
+		RIBBON_EDIT_VIEW = load("ribbon/edit_view.png");
+		RIBBON_TASK_VIEW = load("ribbon/task_view.png");
+		RIBBON_ADMIN_VIEW = load("ribbon/admin_view.png");
+		RIBBON_LANGUAGE = load("ribbon/language.png");
+		RIBBON_HELP = load("ribbon/help.png");
+		RIBBON_EXIT = load("ribbon/exit.png");
+		RIBBON_LOGOUT = load("ribbon/logout.png");
+		RIBBON_OPTIONS = load("ribbon/options.png");		
+		
 	}
 
 	public static ImageIcon getWYSIWYGicon(String imgname) {

@@ -30,8 +30,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.swing.*;
 
@@ -39,7 +37,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.apache.log4j.net.SMTPAppender;
 import org.w3c.dom.Document;
 
 import com.Ostermiller.util.Browser;
@@ -79,6 +76,7 @@ public class Main extends JFrame implements ActionListener {
 	private Communication comm;
 	private PanMenubar panMenubar;
 	private PanToolbar panToolbar;
+	private PanRibbon panRibbon;
 	private PanStatusbar panStatusbar;
 	private PanLogin panLogin;
 	private PanAdministrationAdmin panAdmin;
@@ -348,7 +346,7 @@ public class Main extends JFrame implements ActionListener {
 
 	private void showAdminPanel() throws Exception {
 		Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_ADMIN;
-		panToolbar.setView(false);
+		panRibbon.setView(false);
 		panMenubar.setView(false);
 
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
@@ -380,7 +378,7 @@ public class Main extends JFrame implements ActionListener {
 
 	private void showToolPanel() throws Exception {
 		if (Constants.CMS_CLIENT_VIEW != Constants.CLIENT_VIEW_CONTENT) {
-			panToolbar.setView(true);
+			panRibbon.setView(true);
 			panMenubar.setView(true);
 			try {
 				panTool = PanTool.getInstance();
@@ -422,7 +420,7 @@ public class Main extends JFrame implements ActionListener {
 				panMenubar = new PanMenubar();
 				panMenubar.addActionListener(comm);
 				ActionHub.addActionListener(panMenubar);
-				this.setJMenuBar(panMenubar);
+//				/this.setJMenuBar(panMenubar);
 
 				if (panToolbar == null) {
 					panToolbar = new PanToolbar(comm);
@@ -431,13 +429,19 @@ public class Main extends JFrame implements ActionListener {
 					ActionHub.addActionListener(panToolbar);
 					ActionHub.addActionListener(panStatusbar);
 				}
+				
+				if(panRibbon == null){
+					this.setLayout(new BorderLayout());
+					panRibbon = new PanRibbon(this,comm);
+					ActionHub.addActionListener(panRibbon);
+				}
 
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR));
 
-				this.getJMenuBar().setVisible(true);
-				this.getContentPane().add(panToolbar, BorderLayout.NORTH);
+				//this.getJMenuBar().setVisible(true);				
+				//this.getContentPane().add(panToolbar, BorderLayout.NORTH);								
 				this.getContentPane().add(panStatusbar, BorderLayout.SOUTH);
-
+				
 				this.getRootPane().setDoubleBuffered(true);
 				this.getRootPane().validate();
 				this.getRootPane().repaint();
@@ -449,7 +453,7 @@ public class Main extends JFrame implements ActionListener {
 					panRoot = null;
 					panAdmin = null;
 					this.getContentPane().removeAll();
-					this.getJMenuBar().setVisible(false);
+					//this.getJMenuBar().setVisible(false);
 					comm.getDbHelper().autoEmptyCache();
 					PanContentView.getInstance().unloadAll();
 					setCenterPanel(panLogin);
