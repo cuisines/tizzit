@@ -2199,8 +2199,12 @@ public class Theme {
 
 		tableHeaderBackColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
 		tableHeaderBackColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-		tableHeaderBackColor[2] = new ColorReference(new Color(236, 233, 216), 0, 0, ColorReference.BACK_COLOR);
+		tableHeaderBackColor[2] = new ColorReference(new Color(55, 55, 55), 0, 0, ColorReference.BACK_COLOR);
 		tableHeaderBackColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
+		
+		
+		tableHeaderFontColor[2] = new ColorReference(new Color(250, 250, 250), 0, 0, ColorReference.BACK_COLOR);
+		
 		
 		tableHeaderRolloverBackColor[0] = new ColorReference(new Color(249, 248, 243), 0, 70, ColorReference.BACK_COLOR);
 		tableHeaderRolloverBackColor[1] = new ColorReference(new Color(249, 248, 243), 0, 70, ColorReference.BACK_COLOR);
@@ -2214,7 +2218,7 @@ public class Theme {
 		
 		tableGridColor[0] = new ColorReference(new Color(167, 166, 160), -50, -28, ColorReference.BACK_COLOR);
 		tableGridColor[1] = new ColorReference(new Color(168, 166, 163), -50, -20, ColorReference.BACK_COLOR);
-		tableGridColor[2] = new ColorReference(new Color(167, 166, 160), -50, -28, ColorReference.BACK_COLOR);
+		tableGridColor[2] = new ColorReference(new Color(0, 0, 0), -50, -28, ColorReference.BACK_COLOR);
 		tableGridColor[3] = new ColorReference(new Color(167, 166, 160), -50, -28, ColorReference.BACK_COLOR);
 		
 		tableHeaderArrowColor[0] = new ColorReference(new Color(167, 166, 160), -50, -28, ColorReference.BACK_COLOR);

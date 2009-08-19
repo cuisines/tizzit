@@ -10,10 +10,15 @@
 
 package de.muntjak.tinylookandfeel;
 
+
+import java.awt.Graphics;
+import java.util.Enumeration;
+
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicTableUI;
+import javax.swing.table.TableColumn;
 
 /**
  * TinyTableUI
@@ -22,23 +27,37 @@ import javax.swing.plaf.basic.BasicTableUI;
  * @author Hans Bickel
  */
 public class TinyTableUI extends BasicTableUI {
-
-	JTable table;
 	
 	public TinyTableUI() {
 		super();
+		
 	}
 	
 	public TinyTableUI(JComponent table) {
 		super();
-		this.table = (JTable)table;
+		this.table = (JTable)table;				
+				
 	}
 	
-	public static ComponentUI createUI(JComponent table) {
+	public static ComponentUI createUI(JComponent table) {		
+			
 		return new TinyTableUI(table);
 	}
 	
 	protected void installDefaults() {
 		super.installDefaults();
 	}
+	
+	@Override
+	public void paint(Graphics g, JComponent c) {
+		Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
+		if(columns != null){
+			TinyTableCellRenderer cellRenderer =  new TinyTableCellRenderer();
+			while(columns.hasMoreElements()){
+				columns.nextElement().setCellRenderer(cellRenderer);
+			}
+		}
+		super.paint(g, c);
+	}
+	
 }
