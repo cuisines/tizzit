@@ -37,6 +37,7 @@ import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.DlgPictureBrowser;
+import de.juwimm.cms.content.frame.DlgPictureEditor;
 import de.juwimm.cms.content.frame.helper.ImageFileView;
 import de.juwimm.cms.content.frame.helper.ImageFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
@@ -61,6 +62,7 @@ public class PanPicture extends JPanel {
 	private JButton btnUpload = new JButton();
 	private JPanel pnlPreview = new JPanel();
 	private JButton btnChoose = new JButton();
+	private JButton btnEdit = new JButton();
 	private JLabel lblPreview = new JLabel();
 	protected JLabel lblPictId = new JLabel();
 	private JLabel lblPictNo = new JLabel();
@@ -151,6 +153,7 @@ public class PanPicture extends JPanel {
 			this.lblPictId.setText(" ");
 			this.lblFileName.setText(" ");
 			this.txtAltText.setText(" ");
+			btnEdit.setEnabled(false);
 		}
 	}
 
@@ -221,6 +224,18 @@ public class PanPicture extends JPanel {
 				btnChooseActionPerformed(e);
 			}
 		});
+		btnEdit.setMaximumSize(new Dimension(95, 27));
+		btnEdit.setMinimumSize(new Dimension(95, 27));
+		btnEdit.setPreferredSize(new Dimension(95, 27));
+		btnEdit.setToolTipText(rb.getString("panel.content.picture.editPic.tooltiptext"));
+		btnEdit.setText(rb.getString("panel.content.picture.editPic"));
+		btnEdit.addActionListener(new java.awt.event.ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				btnEditActionPerformed(e);
+			}
+		});
+		btnEdit.setEnabled(false);
 		lblPreview.setToolTipText("");
 		lblPreview.setText(rb.getString("panel.content.picture.PicPreview"));
 		this.setLayout(new GridBagLayout());
@@ -255,6 +270,8 @@ public class PanPicture extends JPanel {
 				GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
 		this.add(btnUploadRoot, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
 				GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
+		this.add(btnEdit, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
+				GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
 		// lower part
 		this.add(lblDirection, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
@@ -265,9 +282,9 @@ public class PanPicture extends JPanel {
 		this.add(txtPictureSubtext, new GridBagConstraints(2, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
 				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 188, 2));
 		this.add(lblAltText, new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(9, 15, 20, 0), 7, 0));
+				GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
 		this.add(txtAltText, new GridBagConstraints(2, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 20, 6), 307, 2));
+				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
 	}
 
 	protected void btnUploadActionPerformed(ActionEvent e) {
@@ -421,6 +438,7 @@ public class PanPicture extends JPanel {
 		dlgPictureBrowser.addSaveActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				loadPreview(new Integer(ae.getActionCommand()).intValue());
+				btnEdit.setEnabled(true);
 			}
 		});
 		int frameHeight = 500;
@@ -428,6 +446,21 @@ public class PanPicture extends JPanel {
 		dlgPictureBrowser.setSize(frameWidth, frameHeight);
 		dlgPictureBrowser.setLocationRelativeTo(UIConstants.getMainFrame());
  		dlgPictureBrowser.setVisible(true);
+	}
+	
+	protected void btnEditActionPerformed(ActionEvent e) {
+		DlgPictureEditor dlgPictureEditor = new DlgPictureEditor(this.pictureId);
+		
+		dlgPictureEditor.addSaveActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				loadPreview(new Integer(ae.getActionCommand()).intValue());
+			}
+		});
+		int frameHeight = 600;
+		int frameWidth = 800;
+		dlgPictureEditor.setSize(frameWidth, frameHeight);
+		dlgPictureEditor.setLocationRelativeTo(UIConstants.getMainFrame());
+		dlgPictureEditor.setVisible(true);
 	}
 
 	public void loadPreview(int picture) {
@@ -451,8 +484,11 @@ public class PanPicture extends JPanel {
 				this.txtAltText.setText(pic.getAltText());
 				setPictureHeight(pic.getHeight());
 				setPictureWidth(pic.getWidth());
+				this.pictureId = picture;
+				btnEdit.setEnabled(true);
 			}
 		} catch (Exception ex) {
+			log.error("catched exception while loading ImagePreview of imageId: "+picture, ex);
 		}
 	}
 

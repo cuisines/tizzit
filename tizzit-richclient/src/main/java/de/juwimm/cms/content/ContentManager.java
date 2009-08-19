@@ -250,7 +250,7 @@ public final class ContentManager {
 			int rootViewComponentId = comm.getViewDocument().getViewId().intValue();
 			rootUnitId = comm.getUnit4ViewComponent(rootViewComponentId);
 		} catch (Exception exe) {
-			//log.error("Error returning rootUnitId", exe);
+			log.error("Error returning rootUnitId", exe);
 		}
 		return rootUnitId;
 	}
@@ -260,7 +260,7 @@ public final class ContentManager {
 			try {
 				actUnitId = comm.getUnit4ViewComponent(this.viewComponentValue.getViewComponentId());
 			} catch (Exception exe) {
-				//log.error("Error returning actUnitId", exe);
+				log.error("Error returning actUnitId", exe);
 			}
 		}
 		return actUnitId;

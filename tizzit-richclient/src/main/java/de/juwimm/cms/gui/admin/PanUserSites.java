@@ -243,7 +243,7 @@ public class PanUserSites extends JPanel implements ReloadablePanel {
 	private void setValues(SiteValue vo) {
 		txtSiteName.setText(vo.getName());
 		txtSiteShort.setText(vo.getShortName());
-		if (vo.getSiteId() > 0) {
+		if (vo.getSiteId() != null) {
 			lblSiteIdContent.setText(vo.getSiteId() + "");
 		} else {
 			lblSiteIdContent.setText(" ");
