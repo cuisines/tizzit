@@ -16,6 +16,7 @@
 package de.juwimm.cms.gui.views;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -28,9 +29,12 @@ import java.util.ResourceBundle;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.JCommandButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.views.menuentry.PanMenuentryInternallink;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.UIConstants;
@@ -51,15 +55,16 @@ public class PanSymlinkView extends JPanel implements LoadableViewComponentPanel
 	private JTabbedPane tab = new JTabbedPane();
 	private JPanel jPanel1 = new JPanel();
 	private PanMenuentryInternallink viewJump = new PanMenuentryInternallink(true);
-	private JButton btnSave = new JButton(UIConstants.BTN_SAVE);
-	private JButton btnCancel = new JButton(UIConstants.BTN_CLOSE);
+	private JCommandButton btnSave ;
+	private JCommandButton btnCancel;
 	private GridBagLayout gridBagLayout1 = new GridBagLayout();
 
 	public PanSymlinkView() {
 		try {
-			jbInit();
-			this.btnCancel.setText(rb.getString("dialog.cancel"));
-			this.btnSave.setText(rb.getString("dialog.save"));
+			
+			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
+			this.btnSave = new CommandButton( rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(),new Dimension(32,32)));
+			jbInit();			
 			tab.add("Symlink", viewJump);
 
 			ComponentInputMap im = new ComponentInputMap(this);

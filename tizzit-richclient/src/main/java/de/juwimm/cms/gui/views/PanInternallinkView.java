@@ -16,6 +16,7 @@
 package de.juwimm.cms.gui.views;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -27,9 +28,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.JCommandButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.views.menuentry.PanMenuentry;
 import de.juwimm.cms.gui.views.menuentry.PanMenuentryInternallink;
 import de.juwimm.cms.util.ActionHub;
@@ -50,8 +54,8 @@ public class PanInternallinkView extends JPanel implements LoadableViewComponent
 	private JTabbedPane tab = new JTabbedPane();
 	private PanMenuentryInternallink panViewJump = new PanMenuentryInternallink(false);
 	private JPanel jPanel1 = new JPanel();
-	private JButton cmdCancel = new JButton(UIConstants.BTN_CLOSE);
-	private JButton cmdSave = new JButton(UIConstants.BTN_SAVE);
+	private JCommandButton cmdCancel ;
+	private JCommandButton cmdSave ;
 
 	public PanInternallinkView() {
 		try {
@@ -77,13 +81,13 @@ public class PanInternallinkView extends JPanel implements LoadableViewComponent
 
 	void jbInit() throws Exception {
 		this.setLayout(borderLayout1);
-		cmdCancel.setText(Constants.rb.getString("dialog.cancel"));
+		this.cmdCancel = new CommandButton(Constants.rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
+		this.cmdSave = new CommandButton(Constants.rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(),new Dimension(32,32)));
 		cmdCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdCancelActionPerformed(e);
 			}
 		});
-		cmdSave.setText(Constants.rb.getString("dialog.save"));
 		cmdSave.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdSaveActionPerformed(e);

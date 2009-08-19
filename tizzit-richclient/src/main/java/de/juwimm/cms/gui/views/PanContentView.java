@@ -26,6 +26,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.JCommandButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
@@ -35,6 +37,7 @@ import de.juwimm.cms.exceptions.ViewComponentLinkNameAlreadyExisting;
 import de.juwimm.cms.exceptions.ViewComponentLinkNameIsEmptyException;
 import de.juwimm.cms.exceptions.ViewComponentNotFound;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.views.menuentry.PanMenuentryContent;
 import de.juwimm.cms.gui.views.page.PanelContent;
 import de.juwimm.cms.gui.views.page.PanelMetaData;
@@ -64,9 +67,9 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 	private JPanel panXmlData = new JPanel();
 	private PanelSafeGuard panSafeGuard;
 	private JPanel panBottom = new JPanel();
-	private JButton btnSave = new JButton(UIConstants.BTN_SAVE);
-	private JButton btnCancel = new JButton(UIConstants.BTN_CLOSE);
-	private JButton btnPreview = new JButton(UIConstants.BTN_PREVIEW);
+	private JCommandButton btnSave;
+	private JCommandButton btnCancel;
+	private JCommandButton btnPreview;
 	private JScrollPane spXmlText = new NoResizeScrollPane();
 	private JEditorPane txtEditor = new JEditorPane(); // for "XML"-Tab
 	private JRadioButton radioPreviewFrameset = new JRadioButton();
@@ -87,15 +90,15 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			panContent = new PanelContent(this);
 			panMetaData = new PanelMetaData();
 			panSafeGuard = new PanelSafeGuard();
+			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
+			this.btnSave = new CommandButton( rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(),new Dimension(32,32)));
+			this.btnPreview = new CommandButton(rb.getString("dialog.preview"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_PREVIEW.getImage(),new Dimension(32,32)));			
 			jbInit();
-			this.btnCancel.setText(rb.getString("dialog.cancel"));
-			this.btnSave.setText(rb.getString("dialog.save"));
-			this.btnPreview.setText(rb.getString("dialog.preview"));
 			this.radioPreviewFrameset.setText(rb.getString("panel.toolContent.previewInFrameset"));
 			this.radioPreviewWithoutFrame.setText(rb.getString("panel.toolContent.previewWithoutFrameset"));
-			btnSave.setMnemonic(KeyEvent.VK_S);
-			btnSave.setDisplayedMnemonicIndex(0);
-
+			//btnSave.setMnemonic(KeyEvent.VK_S);
+			//btnSave.setDisplayedMnemonicIndex(0);
+			
 			ComponentInputMap im = new ComponentInputMap(this);
 			im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "saveContent");
 			this.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, im);

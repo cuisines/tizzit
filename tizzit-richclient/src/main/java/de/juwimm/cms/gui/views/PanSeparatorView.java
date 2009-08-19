@@ -18,6 +18,7 @@ package de.juwimm.cms.gui.views;
 import static de.juwimm.cms.client.beans.Application.*;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -29,10 +30,13 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.JCommandButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.views.menuentry.PanMenuentrySeparator;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
@@ -51,8 +55,8 @@ public class PanSeparatorView extends JPanel implements LoadableViewComponentPan
 	private PanMenuentrySeparator panSeparator;
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private JPanel panMainButtons = new JPanel();
-	private JButton cmdSave = new JButton(UIConstants.BTN_SAVE);
-	private JButton cmdCancel = new JButton(UIConstants.BTN_CLOSE);
+	private JCommandButton cmdSave;
+	private JCommandButton cmdCancel;
 
 	public PanSeparatorView() {
 		try {
@@ -79,13 +83,13 @@ public class PanSeparatorView extends JPanel implements LoadableViewComponentPan
 	void jbInit() throws Exception {
 		this.setLayout(new BorderLayout());
 		panSeparator = new PanMenuentrySeparator(comm);
-		cmdSave.setText(Constants.rb.getString("dialog.save"));
+		this.cmdCancel = new CommandButton(Constants.rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
+		this.cmdSave = new CommandButton(Constants.rb.getString("dialog.save"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(), new Dimension(32,32)));
 		cmdSave.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdSaveActionPerformed(e);
 			}
 		});
-		cmdCancel.setText(Constants.rb.getString("dialog.cancel"));
 		cmdCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdCancelActionPerformed(e);

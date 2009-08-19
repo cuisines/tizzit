@@ -18,6 +18,7 @@ package de.juwimm.cms.gui.views;
 import static de.juwimm.cms.client.beans.Application.*;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -29,10 +30,13 @@ import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.JCommandButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.views.menuentry.PanMenuentryExternallink;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
@@ -54,8 +58,9 @@ public class PanExternallinkView extends JPanel implements LoadableViewComponent
 	private PanMenuentryExternallink panExternalLink;
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private JPanel jPanel1 = new JPanel();
-	private JButton cmdSave = new JButton(UIConstants.BTN_SAVE);
-	private JButton cmdCancel = new JButton(UIConstants.BTN_CLOSE);
+	private JCommandButton cmdSave;
+	private JCommandButton cmdCancel;
+	
 
 	public PanExternallinkView() {
 		try {
@@ -82,13 +87,13 @@ public class PanExternallinkView extends JPanel implements LoadableViewComponent
 	void jbInit() throws Exception {
 		this.setLayout(borderLayout1);
 		panExternalLink = new PanMenuentryExternallink(comm);
-		cmdSave.setText(Constants.rb.getString("dialog.save"));
+		this.cmdCancel = new CommandButton(Constants.rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
+		this.cmdSave = new CommandButton(Constants.rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(),new Dimension(32,32)));
 		cmdSave.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdSaveActionPerformed(e);
 			}
 		});
-		cmdCancel.setText(Constants.rb.getString("dialog.cancel"));
 		cmdCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdCancelActionPerformed(e);

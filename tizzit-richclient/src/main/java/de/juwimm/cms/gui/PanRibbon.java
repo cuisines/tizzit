@@ -71,10 +71,10 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	
 	private JCommandButton deleteNodeButton;
 	private JCommandButton releaseSiteButton;
+	private JCommandButton reviseSiteButton;	
 	private JCommandButton deployButton;
 	private JCommandButton checkInButton;
 	private JCommandButton checkOutButton;
-	private JCommandButton previewButton;
 	private JCommandButton editViewButton;
 	private JCommandButton taskViewButton;
 	private JCommandButton adminViewButton;
@@ -134,6 +134,8 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		adminViewButton.addActionListener(actionListener);
 		deployButton.addActionListener(actionListener);
 		releaseSiteButton.addActionListener(actionListener);
+		reviseSiteButton.addActionListener(actionListener);
+		optionsButton.addActionListener(actionListener);
 		
 		checkInButton.addActionListener(actionListener);
 		checkInButton.getActionModel().setActionCommand(Constants.ACTION_CHECKIN);
@@ -148,6 +150,9 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		taskViewButton.getActionModel().setActionCommand(Constants.ACTION_SHOW_TASK);
 		deployButton.getActionModel().setActionCommand(Constants.ACTION_DEPLOY);
 		releaseSiteButton.getActionModel().setActionCommand(Constants.ACTION_CONTENT_APPROVE);
+		reviseSiteButton.getActionModel().setActionCommand(Constants.ACTION_CONTENT_CANCEL_APPROVAL);
+		optionsButton.getActionModel().setActionCommand(Constants.ACTION_SHOW_OPTIONS);
+		
 				
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			adminViewButton.getActionModel().setActionCommand(Constants.ACTION_VIEW_ROOT);
@@ -193,10 +198,10 @@ public class PanRibbon extends Ribbon implements ActionListener{
         this.addButton(checkOutButton,5,editBand);
         this.addButton(checkInButton,6,editBand);       
         
-        this.addButton(releaseSiteButton,0,publishBand);
-        this.addButton(deployButton,1,publishBand);
-        this.addButton(previewButton,2,publishBand);
-        ;        
+        this.addButton(reviseSiteButton,1,publishBand);
+        this.addButton(releaseSiteButton,2,publishBand);
+        this.addButton(deployButton,3,publishBand);
+
         this.addButton(editViewButton,0,viewSelectBand);
         this.addButton(taskViewButton,1,viewSelectBand);
         this.addButton(adminViewButton,2,viewSelectBand);
@@ -262,10 +267,10 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		refreshTreeButton = createButton(Constants.rb.getString("ribbon.ACTION_TREE_REFRESH"),UIConstants.RIBBON_ACTION_TREE_REFRESH);
 		deleteNodeButton = createButton(Constants.rb.getString("dialog.delete"),UIConstants.RIBBON_TREE_NODE_DELETE);
 		releaseSiteButton = createButton(Constants.rb.getString("menubar.publish.release"),UIConstants.RIBBON_RELEASE_SITE);
+		reviseSiteButton = createButton(Constants.rb.getString("menubar.publish.revise"),UIConstants.RIBBON_REVISE_SITE);
 		deployButton = createButton(Constants.rb.getString("actions.ACTION_DEPLOY"),UIConstants.RIBBON_ACTION_DEPLOY);
 		checkInButton = createButton(Constants.rb.getString("actions.ACTION_CHECKIN"),UIConstants.RIBBON_ACTION_CHECKIN);
 		checkOutButton = createButton(Constants.rb.getString("actions.ACTION_CHECKOUT"),UIConstants.RIBBON_ACTION_CHECKOUT);
-		previewButton = createButton(Constants.rb.getString("dialog.preview"),UIConstants.RIBBON_BTN_PREVIEW);
 		languageButton = createButton(Constants.rb.getString("ribbon.language"),UIConstants.RIBBON_LANGUAGE);		
 		editViewButton = createButton(Constants.rb.getString("menubar.view.editor"),UIConstants.RIBBON_EDIT_VIEW);
 		taskViewButton = createButton(Constants.rb.getString("menubar.view.task"),UIConstants.RIBBON_TASK_VIEW);
@@ -303,15 +308,15 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		symLinkBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SYMLINK_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);						
 		symLinkAppend =  ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SYMLINK_ADD"),UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 		
-		internAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
+		internAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_AFTER"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
 		internBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);						
 		internAppend =  ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_ADD"),UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 		
-		externAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
+		externAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_AFTER"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
 		externBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);						
 		externAppend =  ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_ADD"),UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 		
-		separatorAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
+		separatorAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_AFTER"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
 		separatorBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);						
 		separatorAppend =  ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"),UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 		
@@ -353,13 +358,13 @@ public class PanRibbon extends Ribbon implements ActionListener{
 				addListener(symLinkBefore,comm,Constants.ACTION_TREE_SYMLINK_BEFORE);
 				addListener(symLinkAfter,comm,Constants.ACTION_TREE_SYMLINK_AFTER);
 				
-				addListener(internAfter,comm,Constants.ACTION_TREE_LINK_AFTER);
-				addListener(internBefore,comm,Constants.ACTION_TREE_LINK_BEFORE);
-				addListener(internAppend,comm,Constants.ACTION_TREE_LINK_ADD);
+				addListener(internAfter,comm,Constants.ACTION_TREE_JUMP_AFTER);
+				addListener(internBefore,comm,Constants.ACTION_TREE_JUMP_BEFORE);
+				addListener(internAppend,comm,Constants.ACTION_TREE_JUMP_ADD);
 				
-				addListener(externAfter,comm,Constants.ACTION_TREE_JUMP_AFTER);
-				addListener(externBefore,comm,Constants.ACTION_TREE_JUMP_BEFORE);
-				addListener(externAppend,comm,Constants.ACTION_TREE_JUMP_ADD);
+				addListener(externAfter,comm,Constants.ACTION_TREE_LINK_AFTER);
+				addListener(externBefore,comm,Constants.ACTION_TREE_LINK_BEFORE);
+				addListener(externAppend,comm,Constants.ACTION_TREE_LINK_ADD);
 				
 				addListener(separatorAfter,comm,Constants.ACTION_TREE_SEPARATOR_AFTER);
 				addListener(separatorBefore,comm,Constants.ACTION_TREE_SEPARATOR_BEFORE);
@@ -541,7 +546,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 			//TODO find these buttons
 			//mnuPublishLetRelease.setEnabled(false);
 			releaseSiteButton.setEnabled(false);
-			//mnuPublishRevise.setEnabled(false);
+			reviseSiteButton.setEnabled(false);
 		} else if (e.getActionCommand().equals(Constants.ENABLE_CHECKOUT)) {
 			checkInButton.setEnabled(false);
 			checkOutButton.setEnabled(true);
@@ -585,6 +590,9 @@ public class PanRibbon extends Ribbon implements ActionListener{
 					log.debug(exe.getMessage());
 				}
 			}
+		} else if(e.getActionCommand().equals(Constants.ACTION_SHOW_OPTIONS)){
+			OptionsDialog optionsDialog = new OptionsDialog();
+			optionsDialog.setVisible(true);
 		}
 	}
 	
@@ -670,7 +678,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		//TODO find these buttons
 //		mnuPublishLetRelease.setEnabled(false);
 		releaseSiteButton.setEnabled(false);
-//		mnuPublishRevise.setEnabled(false);
+		reviseSiteButton.setEnabled(false);
 
 		if (currentEntry instanceof PageNode) {			
 			switch (((PageNode) currentEntry).getStatus()) {
@@ -681,11 +689,11 @@ public class PanRibbon extends Ribbon implements ActionListener{
 						releaseSiteButton.setEnabled(true);
 					}
 //					mnuPublishLetRelease.setEnabled(true);
-//					mnuPublishRevise.setEnabled(false);
+					reviseSiteButton.setEnabled(false);
 					break;
 				case Constants.DEPLOY_STATUS_FOR_APPROVAL:
 //					mnuPublishLetRelease.setEnabled(false);
-//					mnuPublishRevise.setEnabled(true);
+					reviseSiteButton.setEnabled(true);
 
 					if (!comm.isUserInRole(UserRights.APPROVE)) {
 						releaseSiteButton.setEnabled(false);
@@ -696,7 +704,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 				default:
 //					mnuPublishLetRelease.setEnabled(false);
 					releaseSiteButton.setEnabled(false);
-//					mnuPublishRevise.setEnabled(false);
+					reviseSiteButton.setEnabled(false);
 					break;
 			}
 		}
@@ -708,12 +716,11 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		refreshTreeButton.setEnabled(state);
 		deleteNodeButton.setEnabled(state);		
 		releaseSiteButton.setEnabled(state);
+		reviseSiteButton.setEnabled(state);
 		deployButton.setEnabled(state);		
-		previewButton.setEnabled(state);
 		releaseSiteButton.setEnabled(state);		
 		//TODO
 //		mnuPublishLetRelease.setEnabled(false);
-//		mnuPublishRevise.setEnabled(false);
 			
 	}
 }
