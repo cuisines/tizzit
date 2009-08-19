@@ -242,6 +242,7 @@ public final class UIConstants {
 	public static ImageIcon RIBBON_TOOLBAR_LINK;
 	public static ImageIcon RIBBON_TOOLBAR_SEPARATOR;
 	public static ImageIcon RIBBON_RELEASE_SITE;
+	public static ImageIcon RIBBON_REVISE_SITE;
 	public static ImageIcon RIBBON_ACTION_DEPLOY;
 	public static ImageIcon RIBBON_ACTION_CHECKIN;
 	public static ImageIcon RIBBON_ACTION_CHECKOUT;
@@ -254,6 +255,9 @@ public final class UIConstants {
 	public static ImageIcon RIBBON_LOGOUT;
 	public static ImageIcon RIBBON_EXIT;
 	public static ImageIcon RIBBON_OPTIONS;
+	public static ImageIcon RIBBON_SAVE;
+	public static ImageIcon RIBBON_PREVIEW;
+	public static ImageIcon RIBBON_CLOSE;
 
 	private UIConstants() {
 	}
@@ -461,6 +465,7 @@ public final class UIConstants {
 		RIBBON_ACTION_TREE_REFRESH = load("ribbon/refresh.png");
 		RIBBON_TREE_NODE_DELETE = load("ribbon/tra_loesche_node.png");
 		RIBBON_RELEASE_SITE = load("ribbon/release.png");
+		RIBBON_REVISE_SITE = load("ribbon/revise.png");		
 		RIBBON_ACTION_DEPLOY = load("ribbon/wizard_icon_20.png");
 		RIBBON_ACTION_CHECKIN = load("ribbon/tra_check_in.png");
 		RIBBON_ACTION_CHECKOUT = load("ribbon/tra_check_out.png");
@@ -473,6 +478,9 @@ public final class UIConstants {
 		RIBBON_EXIT = load("ribbon/exit.png");
 		RIBBON_LOGOUT = load("ribbon/logout.png");
 		RIBBON_OPTIONS = load("ribbon/options.png");		
+		RIBBON_SAVE = load("ribbon/save.png");
+		RIBBON_PREVIEW = load("ribbon/preview.png");
+		RIBBON_CLOSE = load("ribbon/close.png");
 		
 	}
 
