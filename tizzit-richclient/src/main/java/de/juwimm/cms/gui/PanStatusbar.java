@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
 
@@ -74,7 +75,6 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		try {
 			setDoubleBuffered(true);
 			jbInit();
-//			/statusBorder = new BevelBorder(BevelBorder.RAISED,new Color(72,72,72),new Color(160,160,160));
 			lblMandant.setIcon(UIConstants.ICON_MANDANT);
 			lblUser.setIcon(UIConstants.ICON_USER);
 			this.progressBar.setValue(0);			
@@ -157,6 +157,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		this.add(panTask, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 		panTask.add(lblTask, BorderLayout.CENTER);
 		this.add(panMessage, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
+		lblMessage.setBorder(new EmptyBorder(0,4,0,0));
 		panMessage.add(lblMessage, BorderLayout.CENTER);
 		panMessage.add(progressBarPanel, BorderLayout.EAST);
 		progressBarPanel.add(progressBar, BorderLayout.CENTER);
