@@ -213,6 +213,7 @@ public final class Constants {
 	public static final String ACTION_LOGIN = "actionlogin";
 
 	public static final String ACTION_CHANGE_PASSWORD = "achp";
+	public static final String ACTION_SHOW_OPTIONS = "aso";
 
 	public static final String ACTION_DEPLOY = "ady";
 	public static final String ACTION_SEND2EDITOR = "as2e";
