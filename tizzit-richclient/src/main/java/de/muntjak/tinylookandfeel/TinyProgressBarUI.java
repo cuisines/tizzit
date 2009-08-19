@@ -173,8 +173,8 @@ public class TinyProgressBarUI extends BasicProgressBarUI {
 			// draw into image graphics
 			Color c = progressBar.getForeground();
 			Color c2 = ColorRoutines.lighten(c, 15);
-			Color c3 = ColorRoutines.lighten(c, 35);
-			Color c4 = ColorRoutines.lighten(c, 60);
+			Color c3 = ColorRoutines.lighten(c, 20);
+			Color c4 = ColorRoutines.lighten(c, 30);
 			
 			imgGraphics.setColor(c4);
 			imgGraphics.drawLine(0, 0, 5, 0);
@@ -475,9 +475,9 @@ public class TinyProgressBarUI extends BasicProgressBarUI {
 			
 			// draw into image graphics
 			Color c = progressBar.getForeground();
-			Color c2 = ColorRoutines.lighten(c, 15);
-			Color c3 = ColorRoutines.lighten(c, 35);
-			Color c4 = ColorRoutines.lighten(c, 60);
+			Color c2 = ColorRoutines.lighten(c, 10);
+			Color c3 = ColorRoutines.lighten(c, 20);
+			Color c4 = ColorRoutines.lighten(c, 30);
 			
 			imgGraphics.setColor(c4);
 			imgGraphics.drawLine(0, 0, 5, 0);

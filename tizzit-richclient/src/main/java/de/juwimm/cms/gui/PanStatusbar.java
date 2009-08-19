@@ -23,6 +23,9 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 import org.apache.log4j.Logger;
 
@@ -42,6 +45,7 @@ import de.juwimm.util.DateConverter;
  * @version $Id$
  */
 public class PanStatusbar extends JPanel implements ActionListener {
+	private static final long serialVersionUID = -555605650000102845L;
 	private static Logger log = Logger.getLogger(PanStatusbar.class);
 	private MessageDeleter messageDeleter;
 	private JPanel panMessage = new JPanel();
@@ -50,8 +54,8 @@ public class PanStatusbar extends JPanel implements ActionListener {
 	private JLabel lblDate = new JLabel();
 	private JPanel panTask = new JPanel();
 	private JLabel lblTask = new JLabel();
-	private JPanel jPanel5 = new JPanel();
-	private JProgressBar jProgressBar1 = new JProgressBar();
+	private JPanel progressBarPanel = new JPanel();
+	private JProgressBar progressBar = new JProgressBar();
 	private BorderLayout borderLayout5 = new BorderLayout();
 	private boolean worker = false;
 	private JPanel panUser = new JPanel();
@@ -62,14 +66,19 @@ public class PanStatusbar extends JPanel implements ActionListener {
 	private BorderLayout borderLayout2 = new BorderLayout();
 	private JPanel panMandant = new JPanel();
 	private JLabel lblMandant = new JLabel();
+	private static final Color statusBackgroundColor = new Color(140,140,140);
+	private static Border statusBorderLeft = new StatusBarBorder(StatusBarBorder.LEFT);
+	private static Border statusBorderRight = new StatusBarBorder(StatusBarBorder.RIGHT);
 
 	public PanStatusbar() {
 		try {
 			setDoubleBuffered(true);
 			jbInit();
+//			/statusBorder = new BevelBorder(BevelBorder.RAISED,new Color(72,72,72),new Color(160,160,160));
 			lblMandant.setIcon(UIConstants.ICON_MANDANT);
 			lblUser.setIcon(UIConstants.ICON_USER);
-			this.jProgressBar1.setValue(0);
+			this.progressBar.setValue(0);			
+			this.setBackground(statusBackgroundColor);			
 			lblDate.setText(DateConverter.getSql2String(new Date(System.currentTimeMillis())));
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
@@ -92,14 +101,14 @@ public class PanStatusbar extends JPanel implements ActionListener {
 
 		public void run() {
 			if (worker != enabled) {
-				jProgressBar1.setIndeterminate(enabled);
+				progressBar.setIndeterminate(enabled);
 				if (enabled) {
-					jProgressBar1.setValue(100);
+					progressBar.setValue(100);
 				} else {
-					jProgressBar1.setValue(0);
+					progressBar.setValue(0);
 				}
-				jProgressBar1.validate();
-				jProgressBar1.repaint();
+				progressBar.validate();
+				progressBar.repaint();
 				worker = enabled;
 			}
 		}
@@ -109,35 +118,38 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		java.awt.GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 		java.awt.GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		this.setLayout(new GridBagLayout());
-		panMessage.setBorder(BorderFactory.createLoweredBevelBorder());
+		panMessage.setBorder(statusBorderLeft);
 		panMessage.setMinimumSize(new Dimension(4, 21));
 		panMessage.setOpaque(false);
 		panMessage.setPreferredSize(new Dimension(4, 21));
 		panMessage.setLayout(borderLayout1);
-		lblDate.setBorder(BorderFactory.createLoweredBevelBorder());
+		lblDate.setBorder(statusBorderRight);
 		lblDate.setOpaque(false);
 		lblDate.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDate.setText("21.08.2003");
-		panTask.setBorder(BorderFactory.createLoweredBevelBorder());
+		panTask.setBorder(statusBorderLeft);
 		panTask.setMinimumSize(new Dimension(21, 21));
 		panTask.setOpaque(false);
 		panTask.setPreferredSize(new Dimension(21, 21));
 		panTask.setLayout(new BorderLayout());
+		panTask.setBackground(statusBackgroundColor);
 		lblTask.setHorizontalAlignment(SwingConstants.CENTER);
-		jPanel5.setLayout(borderLayout5);
-		jProgressBar1.setPreferredSize(new Dimension(100, 16));
-		jProgressBar1.setBorderPainted(false);
+		progressBarPanel.setLayout(borderLayout5);
+		progressBarPanel.setBackground(statusBackgroundColor);
+		progressBar.setBackground(new Color(160,160,160));		
+		progressBar.setBorderPainted(false);
 		panUser.setLayout(new BorderLayout());
 		lblUser.setOpaque(false);
 		lblUser.setRequestFocusEnabled(true);
 		lblUser.setToolTipText("");
 		lblUser.setHorizontalAlignment(SwingConstants.CENTER);
 		lblUser.setText("");
-		panUser.setBorder(BorderFactory.createLoweredBevelBorder());
+		panUser.setBorder(statusBorderLeft);
 		borderLayout2.setHgap(5);
 		borderLayout2.setVgap(5);
-		panMandant.setBorder(BorderFactory.createLoweredBevelBorder());
+		panMandant.setBorder(statusBorderLeft);
 		panMandant.setLayout(new BorderLayout());
+		panMandant.setBackground(statusBackgroundColor);
 		lblMandant.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMandant.setText(" ");
 		lblServername.setHorizontalAlignment(SwingConstants.CENTER);
@@ -146,8 +158,9 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		panTask.add(lblTask, BorderLayout.CENTER);
 		this.add(panMessage, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 		panMessage.add(lblMessage, BorderLayout.CENTER);
-		panMessage.add(jPanel5, BorderLayout.EAST);
-		jPanel5.add(jProgressBar1, BorderLayout.CENTER);
+		panMessage.add(progressBarPanel, BorderLayout.EAST);
+		progressBarPanel.add(progressBar, BorderLayout.CENTER);
+		panUser.setBackground(statusBackgroundColor);
 		this.add(panUser, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 		panUser.add(lblUser, BorderLayout.CENTER);
 		borderLayout1.setHgap(5);
@@ -169,7 +182,8 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		panSSL.setLayout(new GridBagLayout());
 		panSSL.add(lblProxy, gridBagConstraints2);
 		panSSL.add(lblServername, gridBagConstraints1);
-		panSSL.setBorder(BorderFactory.createLoweredBevelBorder());
+		panSSL.setBorder(statusBorderLeft);
+		panSSL.setBackground(statusBackgroundColor);
 		this.add(panSSL, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 	}
 
@@ -207,11 +221,10 @@ public class PanStatusbar extends JPanel implements ActionListener {
 				lblProxy.setToolTipText(Messages.getString("PanStatusbar.proxyConnected", hcl.getProxyServer()));
 			}
 			lblServername.setIcon(UIConstants.ICON_ENCRYPTED);
-			lblServername.setToolTipText(Messages.getString("panel.statusbar.ssl_yes.tooltip"));
-
+			lblServername.setToolTipText(Messages.getString("panel.statusbar.ssl_yes.tooltip"));			
 			lblServername.setText(Constants.SERVER_HOST);
 			Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-			lblUser.setText(comm.getUser().getUserName());
+			lblUser.setText(comm.getUser().getUserName());			
 			String siteDetails = null;
 			if (log.isDebugEnabled()) {
 				siteDetails = String.valueOf(comm.getSiteId()) + ": " + comm.getSiteName();
@@ -225,4 +238,37 @@ public class PanStatusbar extends JPanel implements ActionListener {
 	public boolean isTaskShown() {
 		return (lblTask.getIcon() != null) ? true : false;
 	}
-} //  @jve:decl-index=0:visual-constraint="10,304"
+} 
+
+class StatusBarBorder extends AbstractBorder{
+	private static final long serialVersionUID = 1978228083710165098L;
+	static final int LEFT = 0;
+	static final int RIGHT = 1;
+	
+	private int type = RIGHT;
+	
+	
+	StatusBarBorder(int type){
+		this.type = type;
+	}
+	
+	@Override
+	public void paintBorder(Component c, Graphics g, int x, int y, int w,int h) {
+		 Color color1 = new Color(72,72,72);
+		 Color color2 = new Color(160,160,160);
+		 g.translate(x, y);
+		 if(type == RIGHT){
+			 g.setColor(color1);
+		     g.drawLine(w-1, 0, w-1, h);
+		     g.setColor(color2);
+		     g.drawLine(w, 0, w, h);
+		 }else{
+			 g.setColor(color1);
+		     g.drawLine(0, 0, 0, h);
+		     g.setColor(color2);
+		     g.drawLine(1, 0, 1, h); 
+		 }
+	     g.translate(-x, -y);
+		
+	}
+}
