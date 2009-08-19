@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>ConQuest Content Management System</title>
+<title>Tizzit Content Management System</title>
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 <style type="text/css">
