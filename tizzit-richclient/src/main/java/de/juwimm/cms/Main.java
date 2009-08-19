@@ -113,7 +113,7 @@ public class Main extends JFrame implements ActionListener {
 			
 			Constants.CMS_VERSION = "V " + version;
 			
-			logSys("Starting ConQuest Version " + Constants.CMS_VERSION);
+			logSys("Starting Tizzit Version " + Constants.CMS_VERSION);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -136,7 +136,7 @@ public class Main extends JFrame implements ActionListener {
 				host = url.getHost();
 				Constants.SERVER_SSL = url.getProtocol().equalsIgnoreCase("https");
 				if(Constants.SERVER_SSL) {
-					JOptionPane.showMessageDialog(null, "Fehler beim Erstellen der SSL Verbindung!\nBitte wenden Sie sich an den ConQuest Support.", "ConQuest", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Fehler beim Erstellen der SSL Verbindung!\nBitte wenden Sie sich an den Tizzit Support.", "Tizzit", JOptionPane.ERROR_MESSAGE);
 					System.exit(-1);
 				}
 				Constants.SERVER_PORT = (url.getPort() == -1) ? ((Constants.SERVER_SSL) ? 443 : 80) : url.getPort();
@@ -239,7 +239,7 @@ public class Main extends JFrame implements ActionListener {
 			UIConstants.loadImages();
 
 		} catch (Exception exe) {
-			log.error("ConQuest will exit", exe);
+			log.error("Tizzit will exit", exe);
 			JOptionPane.showMessageDialog(this, exe.getMessage() + "\nCMS will exit.", "CMS", JOptionPane.ERROR_MESSAGE);
 		} finally {
 			//splash.disposeMe();

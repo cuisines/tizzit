@@ -274,7 +274,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		logoutButton = createButton(Constants.rb.getString("menubar.file.logoff"),UIConstants.RIBBON_LOGOUT);
 		exitButton = createButton(Constants.rb.getString("menubar.file.quit"),UIConstants.RIBBON_EXIT);
 		optionsButton = createButton(Constants.rb.getString("menubar.extras.options"),UIConstants.RIBBON_OPTIONS);
-		moveButton = createButton("Move",UIConstants.RIBBON_MOVE);
+		moveButton = createButton(Constants.rb.getString("menubar.file.move"),UIConstants.RIBBON_MOVE);
 		
 	}
 	
