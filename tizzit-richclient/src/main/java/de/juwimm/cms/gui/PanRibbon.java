@@ -29,6 +29,7 @@ import org.jvnet.flamingo.common.AbstractCommandButton;
 import org.jvnet.flamingo.common.CommandButtonDisplayState;
 import org.jvnet.flamingo.common.JCommandButton;
 import org.jvnet.flamingo.common.JCommandMenuButton;
+import org.jvnet.flamingo.common.RichTooltip;
 import org.jvnet.flamingo.common.icon.EmptyResizableIcon;
 import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 import org.jvnet.flamingo.common.model.ActionToggleButtonModel;
@@ -47,6 +48,7 @@ import de.juwimm.cms.gui.event.ViewComponentEvent;
 import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.ribbon.CommandMenuButton;
 import de.juwimm.cms.gui.ribbon.Ribbon;
+import de.juwimm.cms.gui.ribbon.RibbonBand;
 import de.juwimm.cms.gui.tree.PageNode;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.util.ActionHub;
@@ -83,6 +85,8 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	private JCommandButton exitButton;
 	private JCommandButton logoutButton;
 	private JCommandButton optionsButton;
+	private JCommandButton directHelpButton;
+	private JCommandButton infoButton;
 
 	private JRibbonBand editBand;
 	private JRibbonBand publishBand;
@@ -208,7 +212,9 @@ public class PanRibbon extends Ribbon implements ActionListener{
         
         this.addButton(languageButton,0,optionsBand);
         this.addButton(optionsButton,1,optionsBand);
-        this.addButton(helpButton,2,optionsBand);   
+        this.addButton(helpButton,2,optionsBand);
+        //this.addButton(directHelpButton,3,optionsBand);
+        //this.addButton(infoButton,4,optionsBand);
         
         this.addButton(logoutButton,3,exitBand);
         this.addButton(exitButton,4,exitBand);
@@ -276,10 +282,19 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		taskViewButton = createButton(Constants.rb.getString("menubar.view.task"),UIConstants.RIBBON_TASK_VIEW);
 		adminViewButton = createButton(Constants.rb.getString("menubar.view.admin"),UIConstants.RIBBON_ADMIN_VIEW);
 		helpButton = createButton(Constants.rb.getString("menubar.questionMark.help"),UIConstants.RIBBON_HELP);
+		directHelpButton = createButton(Constants.rb.getString("menubar.questionMark.contextHelp"),UIConstants.RIBBON_HELP);
+		infoButton = createButton(Constants.rb.getString("menubar.questionMark.about"),UIConstants.RIBBON_INFO);
+		
 		logoutButton = createButton(Constants.rb.getString("menubar.file.logoff"),UIConstants.RIBBON_LOGOUT);
 		exitButton = createButton(Constants.rb.getString("menubar.file.quit"),UIConstants.RIBBON_EXIT);
 		optionsButton = createButton(Constants.rb.getString("menubar.extras.options"),UIConstants.RIBBON_OPTIONS);
 		moveButton = createButton(Constants.rb.getString("menubar.file.move"),UIConstants.RIBBON_MOVE);
+		
+		RichTooltip tooltip = new RichTooltip();
+		tooltip.setTitle("Bearbeiten");
+		tooltip.addDescriptionSection("New");
+		
+		newContentButton.setActionRichTooltip(tooltip);
 		
 	}
 	
@@ -294,11 +309,11 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	    if (!comm.isUserInRole(UserRights.UNIT_ADMIN)) {
 			adminViewButton.setEnabled(true);
 		}
-		editBand = new JRibbonBand(Constants.rb.getString("ribbonBand.edit"), new EmptyResizableIcon(0));
-		publishBand = new JRibbonBand(Constants.rb.getString("ribbonBand.publish"), new EmptyResizableIcon(0));
-		viewSelectBand = new JRibbonBand(Constants.rb.getString("ribbonBand.view"), new EmptyResizableIcon(0));
-		optionsBand = new JRibbonBand(Constants.rb.getString("ribbonBand.options"), new EmptyResizableIcon(0));
-		exitBand = new JRibbonBand(Constants.rb.getString("ribbonBand.exit"), new EmptyResizableIcon(0));
+		editBand = new RibbonBand(Constants.rb.getString("ribbonBand.edit"), new EmptyResizableIcon(0));
+		publishBand = new RibbonBand(Constants.rb.getString("ribbonBand.publish"), new EmptyResizableIcon(0));
+		viewSelectBand = new RibbonBand(Constants.rb.getString("ribbonBand.view"), new EmptyResizableIcon(0));
+		optionsBand = new RibbonBand(Constants.rb.getString("ribbonBand.options"), new EmptyResizableIcon(0));
+		exitBand = new RibbonBand(Constants.rb.getString("ribbonBand.exit"), new EmptyResizableIcon(0));
 		
 		newAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_NODE_AFTER"),UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);										
 		newBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_NODE_BEFORE"),UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);						
@@ -591,7 +606,7 @@ public class PanRibbon extends Ribbon implements ActionListener{
 				}
 			}
 		} else if(e.getActionCommand().equals(Constants.ACTION_SHOW_OPTIONS)){
-			OptionsDialog optionsDialog = new OptionsDialog();
+			OptionsDialog optionsDialog = new OptionsDialog(comm);
 			optionsDialog.setVisible(true);
 		}
 	}
