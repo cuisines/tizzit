@@ -258,6 +258,7 @@ public final class UIConstants {
 	public static ImageIcon RIBBON_SAVE;
 	public static ImageIcon RIBBON_PREVIEW;
 	public static ImageIcon RIBBON_CLOSE;
+	public static ImageIcon RIBBON_INFO;
 
 	private UIConstants() {
 	}
@@ -481,6 +482,7 @@ public final class UIConstants {
 		RIBBON_SAVE = load("ribbon/save.png");
 		RIBBON_PREVIEW = load("ribbon/preview.png");
 		RIBBON_CLOSE = load("ribbon/close.png");
+		RIBBON_INFO = load("ribbon/info.png");
 		
 	}
 
@@ -571,6 +573,7 @@ public final class UIConstants {
 	}
 
 	private static boolean iAmWorking = false;
+	
 
 	public static void setWorker(boolean enable) {
 		try {
