@@ -498,12 +498,16 @@ public class PanPictureEditor extends JLayeredPane {
 	{
 		super.paint(g);
 		int offsetX = panImage.getVisibleRect().x;
-		int offsetY = panImage.getVisibleRect().y;
+		int offsetY = panImage.getVisibleRect().y;	
 		int thickness = 3;
 		if(selectStart != null)
 		{
+			int x = selection.x-offsetX;
+			int y = selection.y-offsetY;
+			int width = (panImage.getVisibleRect().width-x<selection.width)?panImage.getVisibleRect().width-x:selection.width;
+			int height = (panImage.getVisibleRect().height-y<selection.height)?panImage.getVisibleRect().height-y:selection.height;
 			for(int i=0; i<thickness; i++){
-				g.drawRect(selection.x+i-offsetX, selection.y+i-offsetY, selection.width, selection.height);
+				g.drawRect(x+i, y+i, width, height);
 			}
 		}
 	}
