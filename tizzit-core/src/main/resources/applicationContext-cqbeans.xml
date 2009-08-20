@@ -28,7 +28,7 @@
 		<aop:advisor advice-ref="noTxAdvice" pointcut-ref="webserviceSpring" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="clientService" />
 		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="contentService" />
-		<aop:advisor advice-ref="txAdvice" pointcut-ref="editionCronServicePointcut" /> 
+		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="editionCronServicePointcut" /> 
 	</aop:config>
 
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false" />

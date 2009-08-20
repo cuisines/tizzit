@@ -1,26 +1,25 @@
-******************* Prerequisits *************************
-JBOSS 4.2.2.GA with JDK 6
-
-***NEW AND VERY VERY IMPORTANT!!!!!****
+**************************************************** Prerequisits ******************************************************
+JBOSS 4.2.3.GA with JDK 6
 see: http://dev.juwimm.net/wiki/space/dev/java/JVM/Java+6
 Add this to the run.conf: -Dsun.lang.ClassLoader.allowArraySyntax=true
 
 ATTENTION: If you are starting JBoss from eclipse add the runtime parameter to your eclipse-jboss configuration! Eclipse
 does not use the run.bat/run.sh for sure.
 
+************************************************** Files in server/lib *************************************************
 - put ehcache-1.3.0.jar into server/conquest/lib (new version!)
 - put juwimm-cms-loginmodules-2.X.X.jar in server/conquest/lib
 - put JDBC-lib in server/conquest/lib
 
 - check valid conquest.properties! note the jms config part for cluster true/false
-********** J2EE 1.4 CLASS LOADING COMPATIBILITY **********
+***************************************** J2EE 1.4 CLASS LOADING COMPATIBILITY *****************************************
 http://docs.jboss.org/jbossas/whatsnew40/html_single/
 
-In JBoss AS 4.0.1, the default configuration is the same as the default configuration in JBoss AS 3.2. It starts all J2EE services in 
-JBoss's unified class loader. It has optimized performance, when the components are deployed in the same JVM. But the deployed 
-applications are less compartmentalized in this configuration. As a result, this configuration is not fully J2EE 1.4 compliant. 
-To make it J2EE complaint, you need to change the configuration settings as follows to enable the scoped class loading behavior and 
-call by value JNDI lookup behavior.
+In JBoss AS 4.0.1, the default configuration is the same as the default configuration in JBoss AS 3.2. It starts all 
+J2EE services in JBoss's unified class loader. It has optimized performance, when the components are deployed in the 
+same JVM. But the deployed applications are less compartmentalized in this configuration. As a result, this
+configuration is not fully J2EE 1.4 compliant. To make it J2EE complaint, you need to change the configuration settings 
+as follows to enable the scoped class loading behavior and call by value JNDI lookup behavior.
 
 First, edit the conf/jboss-service.xml file and set the NamingService CallByValue to true:
 
@@ -38,53 +37,18 @@ Second, edit the deploy/ear-deployer.xml file and set the Isolated and CallByVal
       <attribute name="CallByValue">true</attribute>
    </mbean>
 </server>
-**********************************************************
-
-************* JBoss 4.0-kind Transactions ****************
-Why: JBoss 4.2 Aruna Transactions are locking creation of EJB EditionImpl during deploy.
-This might be because of XA Datasource (needed by Aruna to get different EAR-overriding transactions running; juwimm-sequence/juwimm-cms)
-Fixable: Maybe with an update of Aruna, maybe with removing EJB-level in Conquest.
-
-To get it running:
-Replace the block "Transactions" with following (leave UserTransaction alone, this has not been changed):
-   <!-- ==================================================================== -->
-   <!-- Transactions                                                         -->
-   <!-- ==================================================================== -->
-
-   <!-- The configurable Xid factory.  For use with Oracle, set pad to true -->
-   <mbean code="org.jboss.tm.XidFactory"
-      name="jboss:service=XidFactory">
-      <!--attribute name="Pad">true</attribute-->
-   </mbean>
-
-   <!--
-      | The fast in-memory transaction manager.
-      | Deprecated in JBossAS v4.2. Use JBossTS JTA instead.
-    -->
-   <mbean code="org.jboss.tm.TransactionManagerService"
-      name="jboss:service=TransactionManager"
-      xmbean-dd="resource:xmdesc/TransactionManagerService-xmbean.xml">
-      <attribute name="TransactionTimeout">300</attribute>
-      <attribute name="GlobalIdsEnabled">true</attribute>
-      <depends optional-attribute-name="XidFactory">jboss:service=XidFactory</depends>
-
-    
-   </mbean>
-
-
-   <!-- JBoss Transactions JTA
+************************************************ Transaction Timeout ***************************************************
+Transaction Timeout is handled by applicationContext-cqbeans.xml, but the maximum value is depending on the transaction 
+managers settins. Lower settings are possible (and used), but for bigger imports and deployments 5 minutes might not be 
+enough. So you need do modify the transaction timeout in jboss-service.xml here:
+ 
    <mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"
       name="jboss:service=TransactionManager">
       <attribute name="TransactionTimeout">300</attribute>
       <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute> 
    </mbean>
- -->
 
- 
- Third. Edit conf/standardjbosscmp-jdbc.xml and add a type-mapping called "JuwiMM". Therefore copy an existing type-mapping which 
- corresponds to your database and change its name to JuwiMM.
-
-***********************************
+************************************************************************************************************************
 
 To make sure that the server can start even without connection to the internet, consider this:
 http://dev.juwimm.net/wiki/space/dev/JBoss/Offlinebetrieb+und+DTDs
