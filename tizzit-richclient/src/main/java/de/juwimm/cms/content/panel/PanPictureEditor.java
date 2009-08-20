@@ -399,17 +399,17 @@ public class PanPictureEditor extends JLayeredPane {
 		PlanarImage img;
 		ParameterBlock pb = new ParameterBlock();
 		pb.addSource(picture);
-		pb.add((float)selectStart.x);
-		pb.add((float)selectStart.y);
-		pb.add((float)(selectEnd.x-selectStart.x));
-		pb.add((float)(selectEnd.y-selectStart.y));
+		pb.add((float)selection.x);
+		pb.add((float)selection.y);
+		pb.add((float)selection.width);
+		pb.add((float)selection.height);
 		img = JAI.create("crop",pb, null);		
 		// croped Image would stay at the same place like in the original
 		// image - upper left corner has to be reseted to zero
 		pb = new ParameterBlock();  
 		pb.addSource(img);  
-		pb.add(-((float)selectStart.x));  
-		pb.add(-((float)selectStart.y));  
+		pb.add(-((float)selection.x));  
+		pb.add(-((float)selection.y));  
 		return JAI.create("translate",pb,null);	
 	}
 	
