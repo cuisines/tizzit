@@ -53,6 +53,7 @@ public class DlgPictureEditor extends JDialog {
 	
 	private  void init() throws Exception{
 		panPictureEditor = new PanPictureEditor(pictureId);
+		panPictureEditor.setOpaque(true);
 		this.setTitle("Picture Editor - Picture: " + pictureId);
 		this.setLayout(new BorderLayout());
 		this.add(panPictureEditor, BorderLayout.CENTER);

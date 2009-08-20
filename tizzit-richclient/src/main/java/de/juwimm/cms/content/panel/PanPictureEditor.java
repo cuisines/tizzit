@@ -4,44 +4,39 @@ import static de.juwimm.cms.client.beans.Application.getBean;
 import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.ByteArrayOutputStream;
 import java.text.NumberFormat;
 
 import javax.media.jai.InterpolationBilinear;
-import javax.media.jai.InterpolationNearest;
 import javax.media.jai.JAI;
 import javax.media.jai.PlanarImage;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -49,22 +44,29 @@ import org.apache.log4j.Logger;
 
 import com.sun.media.jai.widget.DisplayJAI;
 
-
 import de.juwimm.cms.client.beans.Beans;
+import de.juwimm.cms.content.frame.DlgSavePicture;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.PictureSlimValue;
-import de.juwimm.cms.vo.PictureValue;
 
 /**
  * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a> 
  * @version $Id: DlgPictureEditor.java 6 2009-07-30 14:05:05Z skulawik@gmail.com $
  */
 public class PanPictureEditor extends JLayeredPane {
+	static
+	{
+		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
+	} 
+	
+	private static final long serialVersionUID = -4307149141989890380L;
 	private static Logger log = Logger.getLogger(PanPicture.class);
 	protected Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private PictureSlimValue picSlimVal;
 	private PlanarImage picture;
-	private PlanarImage picturePreview;
-	private DisplayJAI rootPanel = null;
+	private PlanarImage scaledImage = null;
+	private PanDisplayJAIScrollable panImage = null;
 	private JButton btnCrop = new JButton();
 	private JButton btnOk = new JButton();
 	private JButton btnCancel = new JButton();
@@ -83,6 +85,9 @@ public class PanPictureEditor extends JLayeredPane {
 	private JPanel panResize = new JPanel();
 	private Point selectStart = null;
 	private Point selectEnd = null;
+	private Rectangle selection = null;
+	private enum ScaleKey {WIDTH, HEIGHT, PERCENT};
+	private boolean startedSizeCalculation = false;
 	
 	
 	public PanPictureEditor(int pictureID){
@@ -98,7 +103,7 @@ public class PanPictureEditor extends JLayeredPane {
 	
 	private void loadPicture(int pic) {
 		try {
-			PictureSlimValue picSlimVal = comm.getPicture(pic);
+			picSlimVal = comm.getPicture(pic);
 			byte[] picData = comm.getPictureData(pic);
 			Image img = new ImageIcon(picData).getImage();
 			ParameterBlock pb = new ParameterBlock();
@@ -130,7 +135,7 @@ public class PanPictureEditor extends JLayeredPane {
 		btnOk.setPreferredSize(new Dimension(95, 27));
 //		btnOk.setToolTipText(rb.getString("panel.content.pictureEditor.btnOk.tooltiptext"));
 		btnOk.setText("Speichern");
-		btnCrop.addActionListener(new java.awt.event.ActionListener() {
+		btnOk.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnOkActionPerformed(e);
 			}
@@ -140,23 +145,39 @@ public class PanPictureEditor extends JLayeredPane {
 		btnCancel.setPreferredSize(new Dimension(95, 27));
 //		btnCancel.setToolTipText(rb.getString("panel.content.pictureEditor.btnCancel.tooltiptext"));
 		btnCancel.setText("Abbrechen");
-		btnCrop.addActionListener(new java.awt.event.ActionListener() {
+		btnCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnCancelActionPerformed(e);
 			}
 		});		
-		panButtons.setLayout(new GridLayout(4,1));
-		panButtons.add(btnCrop);
-		panButtons.add(panResize);
-		panButtons.add(btnOk);
-		panButtons.add(btnCancel);
+		panButtons.setLayout(new GridBagLayout());
+		panButtons.setBorder(BorderFactory.createLoweredBevelBorder());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx=0;
+		c.gridy=0;
+		c.anchor=GridBagConstraints.FIRST_LINE_END;
+		c.insets=new Insets(20, 10, 10, 10);
+		panButtons.add(btnCrop, c);
+		c.gridy=1;
+		c.gridheight=6;
+		c.insets=new Insets(10, 10, 100, 10);
+		panButtons.add(panResize,c);
+		c.gridy=7;
+		c.gridheight=1;
+		c.insets=new Insets(100, 10, 5, 10);
+		c.anchor=GridBagConstraints.LAST_LINE_END;
+		panButtons.add(btnOk,c);
+		c.gridy=8;
+		c.insets=new Insets(5, 10, 20, 10);
+		panButtons.add(btnCancel,c);
 		
-		panButtons.setMaximumSize(new Dimension(100, 600));
-		panButtons.setMinimumSize(new Dimension(100, 600));
-		panButtons.setPreferredSize(new Dimension(100, 600));
+		panButtons.setMaximumSize(new Dimension(170, 600));
+		panButtons.setMinimumSize(new Dimension(170, 600));
+		panButtons.setPreferredSize(new Dimension(170, 600));
 				
-		rootPanel = new DisplayJAI(picture);
-		rootPanel.addMouseListener(new MouseListener(){
+		panImage = new PanDisplayJAIScrollable(picture, picture.getWidth()/10);
+		panImage.addMouseListener(new MouseListener(){
 			public void mousePressed(MouseEvent e) {
 				if(picture.getBounds().contains(e.getX(), e.getY())){
 					selectStart = new Point(e.getX(), e.getY());
@@ -179,19 +200,20 @@ public class PanPictureEditor extends JLayeredPane {
 				calculateMousePosition(0, 0);
 			}			
 		});
-		rootPanel.addMouseMotionListener(new MouseMotionListener(){
+		panImage.addMouseMotionListener(new MouseMotionListener(){
 			public void mouseDragged(MouseEvent e){
 				if(picture.getBounds().contains(e.getX(), e.getY())){
 					selectEnd.x = e.getX();
 					selectEnd.y = e.getY();
 					calculateSelection();
+					repaint();
 				}
 			}
 			public void mouseMoved(MouseEvent e) {
 				calculateMousePosition(e.getX(), e.getY());
 			}
 		});
-		JScrollPane spaRoot = new JScrollPane(rootPanel);
+		JScrollPane spaRoot = new JScrollPane(panImage);	
 		spaRoot.setMaximumSize(new Dimension(700, 400));
 		spaRoot.setMinimumSize(new Dimension(700, 400));
 		spaRoot.setPreferredSize(new Dimension(700, 400));
@@ -217,14 +239,23 @@ public class PanPictureEditor extends JLayeredPane {
 		calculateSelection();
 		lblSelectedSize.setToolTipText(rb.getString("panel.content.pictureEditor.selectedSize.toolTip"));
 		
-		panPostions.setLayout(new BorderLayout());
+		panPostions.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
 		panPostions.setBorder(BorderFactory.createLoweredBevelBorder());
-		panPostions.add(lblCurrentSize, BorderLayout.EAST);
-		panPostions.add(lblMousePosition, BorderLayout.WEST);
-		panPostions.add(lblSelectedSize, BorderLayout.CENTER);
-		panPostions.setMaximumSize(new Dimension(800, 27));
-		panPostions.setMinimumSize(new Dimension(800, 27));
-		panPostions.setPreferredSize(new Dimension(800, 27));
+		c.gridx=0;
+		c.gridy=0;
+		c.insets=new Insets(5, 20, 5, 75);
+		panPostions.add(lblMousePosition, c);
+		c.gridx=1;
+		c.insets=new Insets(5, 75, 5, 75);
+		panPostions.add(lblSelectedSize, c);
+		c.gridx=2;
+		c.insets=new Insets(5, 75, 5, 20);
+		panPostions.add(lblCurrentSize, c);		
+		panPostions.setMaximumSize(new Dimension(800, 30));
+		panPostions.setMinimumSize(new Dimension(800, 30));
+		panPostions.setPreferredSize(new Dimension(800, 30));
 	}
 	
 	private void initResizePanel(){
@@ -232,88 +263,68 @@ public class PanPictureEditor extends JLayeredPane {
 	
 		SpinnerModel spnModel = new SpinnerNumberModel(100, 1, 100, 1);
 		spnResizePercentalSize.setModel(spnModel);
-		spnResizePercentalSize.setMaximumSize(new Dimension(95, 27));
-		spnResizePercentalSize.setMinimumSize(new Dimension(95, 27));
-		spnResizePercentalSize.setPreferredSize(new Dimension(95, 27));
+		spnResizePercentalSize.setMaximumSize(new Dimension(100, 27));
+		spnResizePercentalSize.setMinimumSize(new Dimension(100, 27));
+		spnResizePercentalSize.setPreferredSize(new Dimension(100, 27));
 		spnResizePercentalSize.addChangeListener(new ChangeListener(){
 			public void stateChanged(ChangeEvent e) {
-				if(e.getSource().equals(spnResizePercentalSize))
-				{
-					txtResizeHeight.setText(""+(picture.getHeight()*(Integer)spnResizePercentalSize.getValue()/100));
-					txtResizeWidth.setText(""+(picture.getWidth()*(Integer)spnResizePercentalSize.getValue()/100));
-					
-					Thread resizer = new Thread(){
-						public void run(){
-							scalePreviewImage(((Integer)spnResizePercentalSize.getValue()).floatValue()/100);
-						}};
-					resizer.start();
-				}
+				calculatePictureSize(ScaleKey.PERCENT, ((Integer)spnResizePercentalSize.getValue()).longValue());
 			}	
 		});		
 		lblResizePercentalSize.setText(rb.getString("panel.content.pictureEditor.resize.percent"));
 		lblResizePercentalSize.setToolTipText(rb.getString("panel.content.pictureEditor.resize.percent.toolTip"));
-		lblResizePercentalSize.setMaximumSize(new Dimension(95, 27));
-		lblResizePercentalSize.setMinimumSize(new Dimension(95, 27));
-		lblResizePercentalSize.setPreferredSize(new Dimension(95, 27));
+		lblResizePercentalSize.setMaximumSize(new Dimension(50, 27));
+		lblResizePercentalSize.setMinimumSize(new Dimension(50, 27));
+		lblResizePercentalSize.setPreferredSize(new Dimension(50, 27));
 		
 		lblResizeWidth.setText(rb.getString("panel.content.pictureEditor.resize.width"));
 		lblResizeWidth.setToolTipText(rb.getString("panel.content.pictureEditor.resize.widht.toolTip"));
-		lblResizeWidth.setMaximumSize(new Dimension(95, 27));
-		lblResizeWidth.setMinimumSize(new Dimension(95, 27));
-		lblResizeWidth.setPreferredSize(new Dimension(95, 27));
+		lblResizeWidth.setMaximumSize(new Dimension(50, 27));
+		lblResizeWidth.setMinimumSize(new Dimension(50, 27));
+		lblResizeWidth.setPreferredSize(new Dimension(50, 27));
 		txtResizeWidth.setValue(picture.getWidth());
 		txtResizeWidth.addPropertyChangeListener("value", new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent evt) {
-				int newWidth = ((Long)evt.getNewValue()).intValue();
-				if(newWidth > picture.getWidth()){
-					newWidth = picture.getWidth();
-				}
-				int newHeight = newWidth*picture.getHeight()/picture.getWidth();
-				txtResizeHeight.setValue(new Integer(newHeight).longValue());
-				int newPercent = newHeight*100/picture.getHeight();
-				spnResizePercentalSize.setValue(newPercent);
-				
+				calculatePictureSize(ScaleKey.WIDTH, (Long)evt.getNewValue());
 			}		
-		});		
+		});
+		txtResizeWidth.setMaximumSize(new Dimension(50, 27));
+		txtResizeWidth.setMinimumSize(new Dimension(50, 27));
+		txtResizeWidth.setPreferredSize(new Dimension(50, 27));
+		
 		lblResizeHeight.setText(rb.getString("panel.content.pictureEditor.resize.height"));
 		lblResizeHeight.setToolTipText(rb.getString("panel.content.pictureEditor.resize.height.toolTip"));
-		lblResizeHeight.setMaximumSize(new Dimension(95, 27));
-		lblResizeHeight.setMinimumSize(new Dimension(95, 27));
-		lblResizeHeight.setPreferredSize(new Dimension(95, 27));
+		lblResizeHeight.setMaximumSize(new Dimension(50, 27));
+		lblResizeHeight.setMinimumSize(new Dimension(50, 27));
+		lblResizeHeight.setPreferredSize(new Dimension(50, 27));
 		txtResizeHeight.setValue(picture.getHeight());
 		txtResizeHeight.addPropertyChangeListener("value", new PropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent evt) {
-				int newHeight = ((Long)evt.getNewValue()).intValue();
-				if(newHeight > picture.getWidth()){
-					newHeight = picture.getWidth();
-				}
-				int newWidth = newHeight*picture.getHeight()/picture.getWidth();
-				txtResizeHeight.setValue(new Integer(newWidth).longValue());
-				int newPercent = newWidth*100/picture.getHeight();
-				spnResizePercentalSize.setValue(newPercent);
+				calculatePictureSize(ScaleKey.HEIGHT, (Long)evt.getNewValue());
 			}		
-		});		
+		});	
+		txtResizeHeight.setMaximumSize(new Dimension(50, 27));
+		txtResizeHeight.setMinimumSize(new Dimension(50, 27));
+		txtResizeHeight.setPreferredSize(new Dimension(50, 27));
+		
 		panResize.setLayout(new GridLayout(2,1));
+		//panResize.setBorder(BorderFactory.createLoweredBevelBorder());
 		panResize.add(lblResizeHeader);
-		JPanel innerResize = new JPanel();
-		innerResize.setLayout(new GridLayout(3,2));
-		innerResize.add(lblResizePercentalSize);
-		innerResize.add(spnResizePercentalSize);
-		innerResize.add(lblResizeWidth);
-		innerResize.add(txtResizeWidth);
-		innerResize.add(lblResizeHeight);
-		innerResize.add(txtResizeHeight);
-		panResize.add(innerResize);
-		panResize.setMaximumSize(new Dimension(150, 27));
-		panResize.setMinimumSize(new Dimension(150, 27));
-		panResize.setPreferredSize(new Dimension(150, 27));
+		JPanel innerPanel = new JPanel();
+		innerPanel.setLayout(new GridLayout(3,2));
+		innerPanel.add(lblResizePercentalSize);
+		innerPanel.add(spnResizePercentalSize);
+		innerPanel.add(lblResizeWidth);
+		innerPanel.add(txtResizeWidth);
+		innerPanel.add(lblResizeHeight);
+		innerPanel.add(txtResizeHeight);
+		panResize.add(innerPanel);
+		panResize.setMaximumSize(new Dimension(150, 150));
+		panResize.setMinimumSize(new Dimension(150, 150));
+		panResize.setPreferredSize(new Dimension(150, 150));
 	}
 	
-	private void scalePreviewImage(float scale){
-		if(scale < 0){
-			log.error("ScaleFactor expectet positiv - was :"+scale);
-			return;
-		}
+	private PlanarImage scalePreviewImage(float scale){
 		ParameterBlock pb = new ParameterBlock();
 		pb.addSource(picture);
 		pb.add(scale);
@@ -321,17 +332,50 @@ public class PanPictureEditor extends JLayeredPane {
 		pb.add(0.0f);
 		pb.add(0.0f);
 		pb.add(new InterpolationBilinear());
-		PlanarImage scaledImage = JAI.create("scale", pb);
-		rootPanel.set(scaledImage);
-		deleteSelection();
+		return JAI.create("scale", pb);
 	}
 	
-	private void deleteSelection()
+	private void calculatePictureSize(ScaleKey sk, long value)
 	{
-		lblSelectedSize.setText(" Markierung ");
-		selectStart = null;
-		selectEnd = null;
-		btnCrop.setEnabled(false);
+		if(startedSizeCalculation){
+			return;
+		}
+		startedSizeCalculation=true;
+		if(sk == ScaleKey.WIDTH){
+			long newWidth = value;
+			if(newWidth > picture.getWidth()){
+				newWidth = picture.getWidth();
+				txtResizeWidth.setValue(newWidth);
+			}
+			long newHeight = newWidth*picture.getHeight()/picture.getWidth();
+			txtResizeHeight.setValue(newHeight);
+			long newPercent = newHeight*100/picture.getHeight();
+			spnResizePercentalSize.setValue(new Long(newPercent).intValue());
+		}
+		if(sk == ScaleKey.HEIGHT){
+			long newHeight = value;
+			if(newHeight > picture.getHeight()){
+				newHeight = picture.getHeight();
+				txtResizeHeight.setValue(newHeight);
+			}
+			long newWidth = newHeight*picture.getWidth()/picture.getHeight();
+			txtResizeWidth.setValue(newWidth);
+			long newPercent = newWidth*100/picture.getWidth();
+			spnResizePercentalSize.setValue(new Long(newPercent).intValue());
+		}
+		if(sk == ScaleKey.PERCENT){
+			txtResizeHeight.setValue((picture.getHeight()*value/100));
+			txtResizeWidth.setValue((picture.getWidth()*value/100));
+		}	
+		Thread resizer = new Thread(){
+			public void run(){
+				PlanarImage img = scalePreviewImage(((Long)txtResizeWidth.getValue()).floatValue()/picture.getWidth());
+				panImage.set(img);
+				scaledImage = img;
+				deleteSelection();
+			}};
+		resizer.start();
+		startedSizeCalculation=false;
 	}
 	
 	private void resetSizes()
@@ -342,24 +386,32 @@ public class PanPictureEditor extends JLayeredPane {
 		txtResizeWidth.setValue(new Integer(picture.getWidth()).longValue());
 	}
 	
-	private void cropPreviewImage(){
+	private PlanarImage cropPreviewImage(){
+		PlanarImage img;
 		ParameterBlock pb = new ParameterBlock();
 		pb.addSource(picture);
 		pb.add((float)selectStart.x);
 		pb.add((float)selectStart.y);
 		pb.add((float)(selectEnd.x-selectStart.x));
 		pb.add((float)(selectEnd.y-selectStart.y));
-		picture = JAI.create("crop",pb, null);		
+		img = JAI.create("crop",pb, null);		
 		// croped Image would stay at the same place like in the original
 		// image - upper left corner has to be reseted to zero
 		pb = new ParameterBlock();  
-		pb.addSource(picture);  
+		pb.addSource(img);  
 		pb.add(-((float)selectStart.x));  
 		pb.add(-((float)selectStart.y));  
-		picture = JAI.create("translate",pb,null);		
-		rootPanel.set(picture);
-		deleteSelection();
-		resetSizes();
+		return JAI.create("translate",pb,null);	
+	}
+	
+	private PlanarImage createThumbnail()
+	{
+		if(picture.getHeight() <= 90){
+			return picture;
+		}
+		//thumbnail height sould be 90
+		float scale = 90f/picture.getHeight();
+		return scalePreviewImage(scale);	
 	}
 	
 	private void calculateMousePosition(int x, int y)
@@ -382,19 +434,64 @@ public class PanPictureEditor extends JLayeredPane {
 			int minY = (selectStart.y < selectEnd.y)?selectStart.y:selectEnd.y;
 			int maxY = (selectStart.y != minY)?selectStart.y:selectEnd.y;
 			text = text + (maxX - minX) + " x " + (maxY-minY);
+			selection = new Rectangle(minX, minY, maxX-minX, maxY-minY);
 		}
 		lblSelectedSize.setText(text);
 	}
 	
+	private void deleteSelection()
+	{
+		lblSelectedSize.setText(" Markierung ");
+		selectStart = null;
+		selectEnd = null;
+		selection = null;
+		btnCrop.setEnabled(false);
+		repaint();
+	}
+	
 	private void btnCropActionPerformed(ActionEvent e){
-		cropPreviewImage();
+		PlanarImage croped = cropPreviewImage();
+		panImage.set(croped);
+		picture = croped;
+		deleteSelection();
+		resetSizes();
+	}
+	
+	private byte[] planarImage2ByteArray(PlanarImage img){
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		JAI.create("encode", img, out, "PNG", null);
+		return out.toByteArray();
 	}
 
 	private void btnOkActionPerformed(ActionEvent e){
-		
+		if(scaledImage != null){
+			picture = scaledImage;
+		}
+		DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, planarImage2ByteArray(picture), 
+				planarImage2ByteArray(createThumbnail()));
+		int frameHeight = 180;
+		int frameWidth = 250;
+		saveDialog.setSize(frameWidth, frameHeight);
+		saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
+		saveDialog.setModal(true);
+		saveDialog.setVisible(true);
 	}
 
 	private void btnCancelActionPerformed(ActionEvent e){
 		
+	}
+	
+	public void paint(Graphics g)
+	{
+		super.paint(g);
+		int offsetX = panImage.getVisibleRect().x;
+		int offsetY = panImage.getVisibleRect().y;
+		int thickness = 3;
+		if(selectStart != null)
+		{
+			for(int i=0; i<thickness; i++){
+				g.drawRect(selection.x+i-offsetX, selection.y+i-offsetY, selection.width, selection.height);
+			}
+		}
 	}
 }
