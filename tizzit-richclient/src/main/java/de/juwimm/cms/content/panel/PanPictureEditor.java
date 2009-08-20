@@ -347,6 +347,9 @@ public class PanPictureEditor extends JLayeredPane {
 				newWidth = picture.getWidth();
 				txtResizeWidth.setValue(newWidth);
 			}
+			if(value == picture.getWidth()){
+				scaledImage = null;
+			}
 			long newHeight = newWidth*picture.getHeight()/picture.getWidth();
 			txtResizeHeight.setValue(newHeight);
 			long newPercent = newHeight*100/picture.getHeight();
@@ -358,12 +361,18 @@ public class PanPictureEditor extends JLayeredPane {
 				newHeight = picture.getHeight();
 				txtResizeHeight.setValue(newHeight);
 			}
+			if(value == picture.getHeight()){
+				scaledImage = null;
+			}
 			long newWidth = newHeight*picture.getWidth()/picture.getHeight();
 			txtResizeWidth.setValue(newWidth);
 			long newPercent = newWidth*100/picture.getWidth();
 			spnResizePercentalSize.setValue(new Long(newPercent).intValue());
 		}
 		if(sk == ScaleKey.PERCENT){
+			if(value == 100){
+				scaledImage = null;
+			}
 			txtResizeHeight.setValue((picture.getHeight()*value/100));
 			txtResizeWidth.setValue((picture.getWidth()*value/100));
 		}	
@@ -450,6 +459,10 @@ public class PanPictureEditor extends JLayeredPane {
 	}
 	
 	private void btnCropActionPerformed(ActionEvent e){
+		if(scaledImage != null){
+			picture = scaledImage;
+			scaledImage = null;
+		}
 		PlanarImage croped = cropPreviewImage();
 		panImage.set(croped);
 		picture = croped;
