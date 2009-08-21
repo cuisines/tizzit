@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 
 import org.apache.log4j.Logger;
 
@@ -47,6 +49,7 @@ public class DlgSavePicture extends JDialog {
 	private PictureSlimValue pictureValue;
 	private byte[] pictureData;
 	private byte[] pictureThumbnail;
+	private EventListenerList listenerList = new EventListenerList();
 	
 	public DlgSavePicture(PictureSlimValue psValue, byte[] picData, byte[] thumbnail){
 		pictureValue = psValue;
@@ -143,6 +146,7 @@ public class DlgSavePicture extends JDialog {
 	}
 	
 	private void btnSaveActionPerformed(ActionEvent e){
+		int pictureId = pictureValue.getPictureId();
 		if(btnFileNew.isSelected())
 		{
 			String fileName = txtFileName.getText().trim();
@@ -150,7 +154,7 @@ public class DlgSavePicture extends JDialog {
 			int unitId = ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getActUnitId();
 			if(!fileName.isEmpty() && Pattern.matches(filePattern, fileName) && validateFileName(unitId, fileName)){
 				try {	
-					comm.addPicture2Unit(unitId, pictureThumbnail, 
+					pictureId = comm.addPicture2Unit(unitId, pictureThumbnail, 
 							pictureData, "image/png",
 							pictureValue.getAltText(), fileName);
 				} catch (Exception ex) {
@@ -162,7 +166,16 @@ public class DlgSavePicture extends JDialog {
 				return;
 			}
 		}
-		this.dispose();
+		if(btnFileOverwrite.isSelected())
+		{
+			try {
+				comm.updatePictureData(pictureValue.getPictureId(), pictureData, "image/png",pictureThumbnail);
+			} catch (Exception ex) {
+				log.error("Could not update Picture: "+pictureValue.getPictureId(), ex);
+			}
+		}
+		this.fireSaveActionListener(new ActionEvent(this, pictureId, ""+pictureId));
+		this.setVisible(false);
 	}
 	
 	private boolean validateFileName(int unitId, String fileName)
@@ -182,5 +195,16 @@ public class DlgSavePicture extends JDialog {
 	
 	private void btnCancelActionPerformed(ActionEvent e){
 		this.dispose();
+	}
+	
+	public void addSaveActionListener(ActionListener al) {
+		this.listenerList.add(ActionListener.class, al);
+	}
+
+	public void fireSaveActionListener(ActionEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			((ActionListener) listeners[i + 1]).actionPerformed(e);
+		}
 	}
 }

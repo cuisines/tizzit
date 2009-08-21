@@ -1163,6 +1163,10 @@ public class Communication implements ExitListener, ActionListener {
 	public void updatePictureAltText(int pictureId, String altText) throws Exception {
 		getClientService().updatePictureAltText(Integer.valueOf(pictureId), altText);
 	}
+	
+	public void updatePictureData(int pictureId, byte[] picture,String mimeType, byte[] thumbnail) throws Exception {
+		getClientService().updatePictureData(Integer.valueOf(pictureId), picture, mimeType, thumbnail);
+	}
 
 	public byte[] getThumbnail(int pictureId) throws Exception {
 		String thumbPath = "ejbimage?typ=t&id=" + pictureId;

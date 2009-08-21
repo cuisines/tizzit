@@ -53,7 +53,17 @@ public class DlgPictureEditor extends JDialog {
 	
 	private  void init() throws Exception{
 		panPictureEditor = new PanPictureEditor(pictureId);
-		panPictureEditor.setOpaque(true);
+		panPictureEditor.addSaveActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				fireSaveActionListener(e);
+				setVisible(false);
+			}		
+		});
+		panPictureEditor.addCancelActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}		
+		});
 		this.setTitle("Picture Editor - Picture: " + pictureId);
 		this.setLayout(new BorderLayout());
 		this.add(panPictureEditor, BorderLayout.CENTER);
@@ -62,6 +72,8 @@ public class DlgPictureEditor extends JDialog {
 	public void addSaveActionListener(ActionListener al) {
 		this.listenerList.add(ActionListener.class, al);
 	}
+	
+	
 
 	public void fireSaveActionListener(ActionEvent e) {
 		Object[] listeners = listenerList.getListenerList();

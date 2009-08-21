@@ -14,6 +14,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -39,6 +40,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 
 import org.apache.log4j.Logger;
 
@@ -88,6 +90,7 @@ public class PanPictureEditor extends JLayeredPane {
 	private Rectangle selection = null;
 	private enum ScaleKey {WIDTH, HEIGHT, PERCENT};
 	private boolean startedSizeCalculation = false;
+	private EventListenerList cancelListenerList = new EventListenerList();
 	
 	
 	public PanPictureEditor(int pictureID){
@@ -482,6 +485,11 @@ public class PanPictureEditor extends JLayeredPane {
 		}
 		DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, planarImage2ByteArray(picture), 
 				planarImage2ByteArray(createThumbnail()));
+		saveDialog.addSaveActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				fireSaveActionListener(ae);
+			}
+		});
 		int frameHeight = 180;
 		int frameWidth = 250;
 		saveDialog.setSize(frameWidth, frameHeight);
@@ -491,7 +499,29 @@ public class PanPictureEditor extends JLayeredPane {
 	}
 
 	private void btnCancelActionPerformed(ActionEvent e){
-		
+		fireCancelActionListener(e);
+	}
+	
+	public void addSaveActionListener(ActionListener al) {
+		this.listenerList.add(ActionListener.class, al);
+	}
+
+	public void fireSaveActionListener(ActionEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			((ActionListener) listeners[i + 1]).actionPerformed(e);
+		}
+	}
+	
+	public void addCancelActionListener(ActionListener al) {
+		this.cancelListenerList.add(ActionListener.class, al);
+	}
+
+	public void fireCancelActionListener(ActionEvent e) {
+		Object[] listeners = cancelListenerList.getListenerList();
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			((ActionListener) listeners[i + 1]).actionPerformed(e);
+		}
 	}
 	
 	public void paint(Graphics g)
