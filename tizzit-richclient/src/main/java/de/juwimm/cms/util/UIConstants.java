@@ -259,6 +259,9 @@ public final class UIConstants {
 	public static ImageIcon RIBBON_PREVIEW;
 	public static ImageIcon RIBBON_CLOSE;
 	public static ImageIcon RIBBON_INFO;
+	
+	public static ImageIcon ICON_ARROW_RIGHT;
+	public static ImageIcon ICON_ARROW_DOWN;
 
 	private UIConstants() {
 	}
@@ -483,6 +486,9 @@ public final class UIConstants {
 		RIBBON_PREVIEW = load("ribbon/preview.png");
 		RIBBON_CLOSE = load("ribbon/close.png");
 		RIBBON_INFO = load("ribbon/info.png");
+		
+		ICON_ARROW_RIGHT = load("arrowRight.png");
+		ICON_ARROW_DOWN = load("arrowDown.png");
 		
 	}
 
