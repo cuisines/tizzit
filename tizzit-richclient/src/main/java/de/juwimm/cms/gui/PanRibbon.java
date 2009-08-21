@@ -140,6 +140,13 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		reviseSiteButton.addActionListener(actionListener);
 		//we don't want to show progressbar on showing options dialog
 		optionsButton.addActionListener(this);
+		infoButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				showVersion(e);				
+			}
+			
+		});
 		
 		checkInButton.addActionListener(actionListener);
 		checkInButton.getActionModel().setActionCommand(Constants.ACTION_CHECKIN);
@@ -213,8 +220,8 @@ public class PanRibbon extends Ribbon implements ActionListener{
         this.addButton(languageButton,0,optionsBand);
         this.addButton(optionsButton,1,optionsBand);
         this.addButton(helpButton,2,optionsBand);
-        //this.addButton(directHelpButton,3,optionsBand);
-        //this.addButton(infoButton,4,optionsBand);
+        this.addButton(directHelpButton,3,optionsBand);
+        this.addButton(infoButton,4,optionsBand);
         
         this.addButton(logoutButton,3,exitBand);
         this.addButton(exitButton,4,exitBand);
@@ -737,6 +744,17 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		//TODO
 //		mnuPublishLetRelease.setEnabled(false);
 			
+	}
+	
+	void showVersion(ActionEvent e) {
+		FrmVersion dialog = new FrmVersion(Constants.CMS_VERSION);
+		int height = 300;
+		int width = 450;
+		int midHeight = UIConstants.getMainFrame().getY() + (UIConstants.getMainFrame().getHeight() / 2);
+		int midWidth = UIConstants.getMainFrame().getX() + (UIConstants.getMainFrame().getWidth() / 2);
+		dialog.setSize(width, height);
+		dialog.setLocation(midWidth - width / 2, midHeight - height / 2);
+		dialog.setVisible(true);
 	}
 }
 
