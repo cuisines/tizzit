@@ -1237,4 +1237,16 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleUpdatePictureData(java.lang.Integer, byte[], byte[])
+	 */
+	@Override
+	protected void handleUpdatePictureData(Integer pictureId, byte[] picture, String mimeType,
+			byte[] thumbnail) throws Exception {
+		PictureHbm pic = getPictureHbmDao().load(pictureId);
+		pic.setMimeType(mimeType);
+		pic.setPicture(picture);
+		pic.setThumbnail(thumbnail);
+	}
+
 }

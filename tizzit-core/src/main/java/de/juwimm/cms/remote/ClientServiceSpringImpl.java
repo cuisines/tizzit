@@ -1745,4 +1745,14 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected ViewDocumentValue handleGetDefaultViewDocument4Site(Integer siteId) throws Exception {
 		return getViewServiceSpring().getDefaultViewDocument4Site(siteId);
 	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleUpdatePictureData(int, byte[], byte[])
+	 */
+	@Override
+	protected void handleUpdatePictureData(int pictureId, byte[] picture, String mimeType,
+			byte[] thumbnail) throws Exception {
+		getContentServiceSpring().updatePictureData(Integer.valueOf(pictureId),
+				picture, mimeType, thumbnail);	
+	}
 }
