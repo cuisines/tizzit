@@ -119,12 +119,11 @@ public class PanRibbon extends Ribbon implements ActionListener{
 	JCommandMenuButton leftItem;
 	JCommandMenuButton rightItem;
 	
-	public PanRibbon(JFrame mainFrame, Communication comm){
+	public PanRibbon(Communication comm){
 		this.comm = comm;
 		constructButtons();
 		arrangeButtons();
-		addListeners(comm);
-		mainFrame.add(this,BorderLayout.NORTH);
+		addListeners(comm);		
 	}
 	/**
 	 * 
@@ -139,7 +138,8 @@ public class PanRibbon extends Ribbon implements ActionListener{
 		deployButton.addActionListener(actionListener);
 		releaseSiteButton.addActionListener(actionListener);
 		reviseSiteButton.addActionListener(actionListener);
-		optionsButton.addActionListener(actionListener);
+		//we don't want to show progressbar on showing options dialog
+		optionsButton.addActionListener(this);
 		
 		checkInButton.addActionListener(actionListener);
 		checkInButton.getActionModel().setActionCommand(Constants.ACTION_CHECKIN);

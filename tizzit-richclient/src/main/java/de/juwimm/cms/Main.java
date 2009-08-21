@@ -411,6 +411,7 @@ public class Main extends JFrame implements ActionListener {
 					System.exit(0);
 				}
 			} else if (action.equals(Constants.ACTION_LOGIN)) {
+				this.setLayout(new BorderLayout());
 				Constants.CMS_CLIENT_VIEW = -1;
 				setCenterPanel(PanInitView.getInstance());
 
@@ -430,12 +431,12 @@ public class Main extends JFrame implements ActionListener {
 					ActionHub.addActionListener(panStatusbar);
 				}
 				
-				if(panRibbon == null){
-					this.setLayout(new BorderLayout());
-					panRibbon = new PanRibbon(this,comm);
+				if(panRibbon == null){					
+					panRibbon = new PanRibbon(comm);
 					ActionHub.addActionListener(panRibbon);
 				}
-
+				
+				this.add(panRibbon,BorderLayout.NORTH);				
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR));
 
 				//this.getJMenuBar().setVisible(true);				
