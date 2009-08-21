@@ -942,7 +942,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			vc.setLastModifiedDate(System.currentTimeMillis());
 			if (vc.getStatus() == Constants.DEPLOY_STATUS_APPROVED && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
 				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
-			}
+			}		
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -1343,28 +1343,20 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					break;
 				}
 			}
-			if(viewDocumentDefault == null){
-				if(site.getDefaultViewDocument()!=null){
-					//modify current active ViewDocument 
-					viewDocumentDefault = site.getDefaultViewDocument();
-					viewDocumentDefault.setLanguage(language);
-					viewDocumentDefault.setViewType(viewType);
-					getViewDocumentHbmDao().update(viewDocumentDefault);
-				}else{
-					//create
-					viewDocumentDefault = ViewDocumentHbm.Factory.newInstance();
-					viewDocumentDefault.setLanguage(language);
-					viewDocumentDefault.setViewType(viewType);
-					viewDocumentDefault.setSite(site);
-					ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
-					viewComponent.setReference("root");
-					viewComponent.setDisplayLinkName("root");
-					viewComponent.setLinkDescription("root");
-					viewDocumentDefault = getViewDocumentHbmDao().create(viewDocumentDefault);
-					viewComponent = getViewComponentHbmDao().create(viewDocumentDefault, "root", "root", "root", null);
-					viewDocumentDefault.setViewComponent(viewComponent);
-					getViewDocumentHbmDao().update(viewDocumentDefault);
-				}
+			if(viewDocumentDefault == null){				
+				//create
+				viewDocumentDefault = ViewDocumentHbm.Factory.newInstance();
+				viewDocumentDefault.setLanguage(language);
+				viewDocumentDefault.setViewType(viewType);
+				viewDocumentDefault.setSite(site);
+				ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
+				viewComponent.setReference("root");
+				viewComponent.setDisplayLinkName("root");
+				viewComponent.setLinkDescription("root");
+				viewDocumentDefault = getViewDocumentHbmDao().create(viewDocumentDefault);
+				viewComponent = getViewComponentHbmDao().create(viewDocumentDefault, "root", "root", "root", null);
+				viewDocumentDefault.setViewComponent(viewComponent);
+				getViewDocumentHbmDao().update(viewDocumentDefault);
 			}
 			site.setDefaultViewDocument(viewDocumentDefault);
 			getSiteHbmDao().update(site);
