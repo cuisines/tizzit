@@ -53,9 +53,9 @@ public class TinyTableUI extends BasicTableUI {
 		Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
 		if(columns != null){
 			TinyTableCellRenderer cellRenderer =  new TinyTableCellRenderer();
-			while(columns.hasMoreElements()){
-				columns.nextElement().setCellRenderer(cellRenderer);
-			}
+			//while(columns.hasMoreElements()){
+				//columns.nextElement().setCellRenderer(cellRenderer);
+			//}
 		}
 		super.paint(g, c);
 	}
