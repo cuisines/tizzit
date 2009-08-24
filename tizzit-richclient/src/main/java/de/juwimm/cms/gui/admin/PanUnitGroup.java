@@ -310,7 +310,19 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 					if (rv != null) {
 						int[] selIdx = new int[rv.length];
 						for (int i = 0; i < rv.length; i++) {
-							selIdx[i] = dlmRoles.indexOf(rv[i]);
+							//selIdx[i] = dlmRoles.indexOf(rv[i]);
+							Object[] dlmRolesArray = dlmRoles.toArray();
+							for(int li = 0; li<dlmRolesArray.length;li++)
+							{
+								RoleValue r = (RoleValue)dlmRolesArray[li];
+								if(r.getRoleId().equalsIgnoreCase(rv[i].getRoleId())){
+									selIdx[i]=li;
+									break;
+								}
+								else{
+									selIdx[i]=-1;
+								}
+							}
 						}
 						lstRoles.setSelectedIndices(selIdx);
 					} else {
