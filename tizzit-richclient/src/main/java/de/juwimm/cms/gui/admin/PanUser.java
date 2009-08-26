@@ -15,10 +15,15 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -32,7 +37,16 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.*;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
@@ -82,32 +96,24 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 	private TableSorter tblSorter = null;
 	private HashSet<String> userDeleted;
 	private HashSet<String> userEdited;
-	private JTable tblUser = new JTable();
-	private JLabel lblUsers = new JLabel();
-	private JButton cmdDelete = new JButton();
-	private JButton cmdAdd = new JButton();
-	private JButton cmdSave = new JButton();
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JComboBox cbxUnits = new JComboBox();
-	private JComboBox cbxGroups = new JComboBox();
-	private JLabel lblUnitFilter = new JLabel();
-	private JLabel lblGroupFilter = new JLabel();
-	private JButton cmdExport = new JButton();
-	private JButton cmdPasswd = new JButton();
-	private boolean mayUserSeeGroups = comm.isUserInRole(UserRights.SITE_ROOT);
+	private final JTable tblUser = new JTable();
+	private final JLabel lblUsers = new JLabel();
+	private final JButton cmdDelete = new JButton();
+	private final JButton cmdAdd = new JButton();
+	private final JButton cmdSave = new JButton();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JComboBox cbxUnits = new JComboBox();
+	private final JComboBox cbxGroups = new JComboBox();
+	private final JLabel lblUnitFilter = new JLabel();
+	private final JLabel lblGroupFilter = new JLabel();
+	private final JButton cmdExport = new JButton();
+	private final JButton cmdPasswd = new JButton();
+	private final boolean mayUserSeeGroups = comm.isUserInRole(UserRights.SITE_ROOT);
 
 	public PanUser() {
 		ActionHub.addExitListener(this);
 		try {
 			jbInit();
-			cmdDelete.setText(rb.getString("dialog.delete"));
-			cmdAdd.setText(rb.getString("dialog.add"));
-			cmdSave.setText(rb.getString("dialog.save"));
-			lblUsers.setText(rb.getString("panel.panelCmsUser.user"));
-			lblUnitFilter.setText(rb.getString("panel.panelCmsUser.filterUnits"));
-			lblGroupFilter.setText(rb.getString("panel.panelCmsUser.filterGroups"));
-			cmdExport.setText(rb.getString("panel.panelCmsUser.export"));
-			cmdPasswd.setText(rb.getString("panel.panelCmsUser.setPassword"));
 			setDoubleBuffered(true);
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
@@ -122,30 +128,30 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 		tblUser.setRowHeight(22);
 		tblUser.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		lblUsers.setText("Benutzer");
+		lblUsers.setText(rb.getString("panel.panelCmsUser.user"));
 		cmdDelete.setToolTipText("");
-		cmdDelete.setText("Löschen");
+		cmdDelete.setText(rb.getString("dialog.delete"));
 		cmdDelete.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdDeleteActionPerformed(e);
 			}
 		});
-		cmdAdd.setText("Hinzufügen");
+		cmdAdd.setText(rb.getString("dialog.add"));
 		cmdAdd.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdAddActionPerformed(e);
 			}
 		});
-		cmdSave.setText("Speichern");
+		cmdSave.setText(rb.getString("dialog.save"));
 		cmdSave.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				save();
 			}
 		});
-		lblUnitFilter.setText("Filter Einrichtung");
-		lblGroupFilter.setText("Filter Gruppen");
+		lblUnitFilter.setText(rb.getString("panel.panelCmsUser.filterUnits"));
+		lblGroupFilter.setText(rb.getString("panel.panelCmsUser.filterGroups"));
 		cmdExport.setRolloverEnabled(false);
-		cmdExport.setText("Export");
+		cmdExport.setText(rb.getString("panel.panelCmsUser.export"));
 		cmdExport.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdExportActionPerformed(e);
@@ -156,32 +162,21 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 				cmdPasswdActionPerformed(e);
 			}
 		});
-		cmdPasswd.setText("Passwort");
+		cmdPasswd.setText(rb.getString("panel.panelCmsUser.setPassword"));
 		cmdPasswd.setToolTipText("");
-		this.add(cmdAdd, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 0));
-		this.add(lblUsers, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 0), 0, 0));
-		this.add(new JScrollPane(tblUser), new GridBagConstraints(0, 1, 2, 3, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 10, 0, 0), 0, 0));
-		this.add(cmdDelete, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		this.add(cmdPasswd, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		this.add(lblUnitFilter, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 0), 0, 0));
-		this.add(cbxUnits, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0));
+		this.add(cmdAdd, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 0));
+		this.add(lblUsers, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 0), 0, 0));
+		this.add(new JScrollPane(tblUser), new GridBagConstraints(0, 1, 2, 3, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 0, 0), 0, 0));
+		this.add(cmdDelete, new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		this.add(cmdPasswd, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		this.add(lblUnitFilter, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 0), 0, 0));
+		this.add(cbxUnits, new GridBagConstraints(0, 5, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0));
 		if (this.mayUserSeeGroups) {
-			this.add(lblGroupFilter, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 0), 0, 0));
-			this.add(cbxGroups, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-					GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0));
+			this.add(lblGroupFilter, new GridBagConstraints(0, 6, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 0), 0, 0));
+			this.add(cbxGroups, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 0));
 		}
-		this.add(cmdSave, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST,
-				GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-		this.add(cmdExport, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
+		this.add(cmdSave, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+		this.add(cmdExport, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
 
 		cbxUnits.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -222,8 +217,7 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 		setEnabled(false);
 		fillTable(lastSelectedUnit.getUnitId(), (lastSelectedGroup == null ? -1 : lastSelectedGroup.getGroupId()));
 		setEnabled(true);
-		if (lastSelectedUnit.getName().equalsIgnoreCase(rb.getString("panel.panelCmsUser.showAll"))
-				&& !comm.isUserInRole(UserRights.SITE_ROOT)) {
+		if (lastSelectedUnit.getName().equalsIgnoreCase(rb.getString("panel.panelCmsUser.showAll")) && !comm.isUserInRole(UserRights.SITE_ROOT)) {
 			cmdAdd.setEnabled(false);
 			cmdAdd.setToolTipText(rb.getString("panel.panelCmsUser.btnAddToolTip"));
 		} else {
@@ -374,14 +368,14 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 			DefaultCellEditor ed3 = new DefaultCellEditor(new JTextField());
 			ed3.setClickCountToStart(1);
 			*/
-			
+
 			/*
 			tblUser.setDefaultEditor(tblUser.getColumnClass(0), ed0);
 			tblUser.setDefaultEditor(tblUser.getColumnClass(1), ed1);
 			tblUser.setDefaultEditor(tblUser.getColumnClass(2), ed2);
 			tblUser.setDefaultEditor(tblUser.getColumnClass(3), ed3);
 			*/
-			
+
 			TableColumn column = tblUser.getColumnModel().getColumn(0);
 			column.setPreferredWidth(50);
 			column = tblUser.getColumnModel().getColumn(1);
@@ -483,11 +477,11 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 				comm.updateUser(user);
 				it.remove();
 				userEdited.remove(user.getUserName());
-			} catch (Exception ex) {			
-				if(ex instanceof ClientServiceSpringException || ex.getCause() instanceof UserException){
-					String persmissionMessage = Messages.getString("user.noUpdatePermision.exception",user.getUserName());				
+			} catch (Exception ex) {
+				if (ex instanceof ClientServiceSpringException || ex.getCause() instanceof UserException) {
+					String persmissionMessage = Messages.getString("user.noUpdatePermision.exception", user.getUserName());
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), persmissionMessage, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-				}else{
+				} else {
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -528,8 +522,7 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 			userEdited.remove(id);
 		}
 		if (id.equals(comm.getUser().getUserName())) {
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.cantDeleteMyself"), 
-					rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.cantDeleteMyself"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		} else {
 			userDeleted.add(id);
 			int tmr = getTableModelRow4Username(id);
