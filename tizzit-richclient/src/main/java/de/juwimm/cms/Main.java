@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -31,7 +31,12 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.RepaintManager;
+import javax.swing.UIManager;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.io.IOUtils;
@@ -46,8 +51,15 @@ import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.exceptions.UserHasNoUnitsException;
-import de.juwimm.cms.gui.*;
+import de.juwimm.cms.gui.FrmVersion;
 import de.juwimm.cms.gui.LookAndFeel;
+import de.juwimm.cms.gui.PanLogin;
+import de.juwimm.cms.gui.PanMenubar;
+import de.juwimm.cms.gui.PanRibbon;
+import de.juwimm.cms.gui.PanStatusbar;
+import de.juwimm.cms.gui.PanTool;
+import de.juwimm.cms.gui.PanToolbar;
+import de.juwimm.cms.gui.PasswordDialog;
 import de.juwimm.cms.gui.admin.PanAdministrationAdmin;
 import de.juwimm.cms.gui.admin.PanAdministrationRoot;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
@@ -84,8 +96,8 @@ public class Main extends JFrame implements ActionListener {
 	private PanTool panTool;
 	private ResourceBundle rb;
 	private UnloadablePanel activePanel = null;
-	private final static String LOG4J_PROPERTIES_ARGUMENT ="clientMailAppenderProperties"; 
-	
+	private final static String LOG4J_PROPERTIES_ARGUMENT = "clientMailAppenderProperties";
+
 	public static void main(String[] argv) {
 		for (int i = 0; i < argv.length; i++) {
 			argv[i] = argv[i].trim();
@@ -102,30 +114,30 @@ public class Main extends JFrame implements ActionListener {
 		// instead of setting the system property "swing.bufferPerWindow" to false (does not work with JavaWebStart)
 		RepaintManager.setCurrentManager(new RepaintManager());
 
-		System.setProperty("swing.aatext","true"); 
+		System.setProperty("swing.aatext", "true");
 		try {
 			InputStream in = this.getClass().getResourceAsStream("/pom.xml");
 			String pom = IOUtils.toString(in);
 			Document doc = XercesHelper.string2Dom(pom);
-			
-			String version =  XercesHelper.getNodeValue(doc, "//conquest.version");
+
+			String version = XercesHelper.getNodeValue(doc, "//conquest.version");
 			System.setProperty("conquest.version", version);
-			
+
 			Constants.CMS_VERSION = "V " + version;
-			
+
 			logSys("Starting Tizzit Version " + Constants.CMS_VERSION);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		//SplashShell splash = new SplashShell();
 		FrmVersion splash = new FrmVersion();
 		int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		int frameHeight = 300;
 		int frameWidth = 450;
-		splash.setLocation((screenWidth / 2) - (frameWidth / 2), (screenHeight / 2) - (frameHeight / 2));		
-		splash.setIconImage(new ImageIcon(getClass().getResource("/images/cms_16x16.gif")).getImage());		
+		splash.setLocation((screenWidth / 2) - (frameWidth / 2), (screenHeight / 2) - (frameHeight / 2));
+		splash.setIconImage(new ImageIcon(getClass().getResource("/images/cms_16x16.gif")).getImage());
 		splash.setSize(frameWidth, frameHeight);
 		splash.setVisible(true);
 
@@ -135,13 +147,13 @@ public class Main extends JFrame implements ActionListener {
 				URL url = new URL(argv[1]);
 				host = url.getHost();
 				Constants.SERVER_SSL = url.getProtocol().equalsIgnoreCase("https");
-				if(Constants.SERVER_SSL) {
+				if (Constants.SERVER_SSL) {
 					JOptionPane.showMessageDialog(null, "Fehler beim Erstellen der SSL Verbindung!\nBitte wenden Sie sich an den Tizzit Support.", "Tizzit", JOptionPane.ERROR_MESSAGE);
 					System.exit(-1);
 				}
 				Constants.SERVER_PORT = (url.getPort() == -1) ? ((Constants.SERVER_SSL) ? 443 : 80) : url.getPort();
 			} catch (Exception exe) {
-			    log.error(exe);
+				log.error(exe);
 			}
 		} else if (argv.length == 1) {
 			host = argv[0];
@@ -161,21 +173,21 @@ public class Main extends JFrame implements ActionListener {
 		System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
 		System.setProperty("javax.xml.parsers.SAXParser", "org.apache.xerces.jaxp.SAXParserImpl"); //needed?
 		System.setProperty("org.xml.sax.driver", "org.apache.xerces.parsers.SAXParser"); //needed?
-		
-		initLog4J(host,argv);
-		
+
+		initLog4J(host, argv);
+
 		String testUrl = ((Constants.SERVER_SSL) ? "https://" : "http://") + Constants.SERVER_HOST + ":" + Constants.SERVER_PORT + "/admin/juwimm-cms-client.jnlp";
 		try {
 			URI desturi = new URI(testUrl);
 			ProxyHelper helper = new ProxyHelper();
 			helper.init(desturi, false);
-	
+
 		} catch (IllegalArgumentException ex) {
 			logSys("could not initialize the proxy settings for host " + host + ": " + ex);
 		} catch (URISyntaxException ex) {
 			logSys("could not initialize the proxy settings because URI from host " + host + ": " + ex);
 			// log.error("could not initialize the proxy settings because URI from host " + host + " : ", ex);
-		}		
+		}
 
 		try {
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", getClass().getClassLoader());
@@ -189,22 +201,21 @@ public class Main extends JFrame implements ActionListener {
 
 		splash.setStatusInfo("Getting Locale Settings...");
 		Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
-		
+
 		splash.setStatusInfo(Constants.rb.getString("splash.checkingSSL"));
 		HttpClientWrapper httpClientWrapper = HttpClientWrapper.getInstance();
-		
+
 		try {
 			httpClientWrapper.testAndConfigureConnection(testUrl);
 		} catch (HttpException exe) {
 			JOptionPane.showMessageDialog(null, exe.getMessage(), Constants.rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-		
-		
+
 		splash.setStatusInfo(Constants.rb.getString("splash.configBrowserSettings"));
 		Browser.init(); // only needs to be called once.
 		splash.setStatusInfo(Constants.rb.getString("splash.gettingTemplates"));
-		comm = ((Communication) getBean(Beans.COMMUNICATION));		
+		comm = ((Communication) getBean(Beans.COMMUNICATION));
 		splash.setStatusInfo(Constants.rb.getString("splash.locadingLocalCachingDatabase"));
 		comm.getDbHelper(); // check if there is already a programm running
 		ActionHub.addActionListener(this);
@@ -246,27 +257,27 @@ public class Main extends JFrame implements ActionListener {
 			splash.dispose();
 		}
 	}
-	
-	private void initLog4J(String host,String[] arguments){
+
+	private void initLog4J(String host, String[] arguments) {
 		Properties prop = new Properties();
-		String mailAppenderLog = initMailAppender(prop,arguments);
+		String mailAppenderLog = initMailAppender(prop, arguments);
 		String loggerLevel = "INFO";
-		
+
 		if ("true".equalsIgnoreCase(System.getProperty("debug"))) {
 			loggerLevel = "DEBUG";
 		}
 		String log4jRootLogger = prop.getProperty("log4j.rootLogger");
-		if(log4jRootLogger == null || log4jRootLogger.isEmpty()){
+		if (log4jRootLogger == null || log4jRootLogger.isEmpty()) {
 			prop.setProperty("log4j.rootLogger", "ERROR, STDOUT, CMSLOG");
-		}else{
-			prop.setProperty("log4j.rootLogger", "ERROR, STDOUT, CMSLOG, "+log4jRootLogger);
+		} else {
+			prop.setProperty("log4j.rootLogger", "ERROR, STDOUT, CMSLOG, " + log4jRootLogger);
 		}
 
 		prop.setProperty("log4j.category.org.apache", "WARN");
 		prop.setProperty("log4j.category.httpclient.wire", "WARN");
 		prop.setProperty("log4j.category.de.juwimm", loggerLevel);
 		prop.setProperty("log4j.category.org.apache.commons.httpclient", "ERROR");
-		
+
 		prop.setProperty("log4j.appender.STDOUT", "org.apache.log4j.ConsoleAppender");
 		prop.setProperty("log4j.appender.STDOUT.layout", "org.apache.log4j.PatternLayout");
 		prop.setProperty("log4j.appender.STDOUT.layout.ConversionPattern", "%d %-5p [%-16t] %c{1} - %m%n");
@@ -277,7 +288,7 @@ public class Main extends JFrame implements ActionListener {
 		prop.setProperty("log4j.appender.CMSLOG.MaxBackupIndex", "1");
 		prop.setProperty("log4j.appender.CMSLOG.layout", "org.apache.log4j.PatternLayout");
 		prop.setProperty("log4j.appender.CMSLOG.layout.ConversionPattern", "%d %-5p [%-16t] %c{1} - %m%n");
-				
+
 		PropertyConfigurator.configure(prop);
 		log = Logger.getLogger(Main.class);
 		log.debug(mailAppenderLog);
@@ -290,42 +301,38 @@ public class Main extends JFrame implements ActionListener {
 	 * @return message to be print in log 
 	 */
 	private String initMailAppender(Properties prop, String[] arguments) {
-		if(arguments == null || arguments.length == 0){
-			return "no mail appender log properties specified";
-		}
+		if (arguments == null || arguments.length == 0) { return "no mail appender log properties specified"; }
 		String log4jArguments = null;
-		for(String argument:arguments){
-			if(argument.contains(LOG4J_PROPERTIES_ARGUMENT)){
-				log4jArguments = argument.replace(LOG4J_PROPERTIES_ARGUMENT+"=", "");
-				log4jArguments = log4jArguments.replace("\"","");
+		for (String argument : arguments) {
+			if (argument.contains(LOG4J_PROPERTIES_ARGUMENT)) {
+				log4jArguments = argument.replace(LOG4J_PROPERTIES_ARGUMENT + "=", "");
+				log4jArguments = log4jArguments.replace("\"", "");
 				log4jArguments = log4jArguments.replace(";", "\n");
 				break;
 			}
 		}
-		
-		if(log4jArguments == null || log4jArguments.isEmpty()){
-			return "no mail appender log properties specified from server";
-		}
-		
+
+		if (log4jArguments == null || log4jArguments.isEmpty()) { return "no mail appender log properties specified from server"; }
+
 		//loads all the log4j properties into Properties object
 		//log4jArguments has format "v1=k1\nv2=k2\n ..."
 		InputStream is = new ByteArrayInputStream(log4jArguments.getBytes());
 		try {
-			prop.load(is);			
+			prop.load(is);
 		} catch (IOException e) {
 			return "can not load mail appender log properties";
 		}
-		if(prop.entrySet().size() > 0){			
+		if (prop.entrySet().size() > 0) {
 			prop.setProperty("log4j.appender.email", "org.apache.log4j.net.SMTPAppender");
 			prop.setProperty("log4j.appender.email.bufferSize", "3");
 			prop.setProperty("log4j.appender.email.layout", "org.apache.log4j.SimpleLayout");
 			prop.setProperty("log4j.appender.email.subject", "CQ Richclient Errors");
 			prop.setProperty("log4j.rootLogger", "email");
 			return "mail appender log properties loaded";
-		}else{
+		} else {
 			return "no mail appender log properties specified from server";
 		}
-		
+
 	}
 
 	private void setCenterPanel(UnloadablePanel pan) {
@@ -421,7 +428,7 @@ public class Main extends JFrame implements ActionListener {
 				panMenubar = new PanMenubar();
 				panMenubar.addActionListener(comm);
 				ActionHub.addActionListener(panMenubar);
-//				/this.setJMenuBar(panMenubar);
+				//		this.setJMenuBar(panMenubar);
 
 				if (panToolbar == null) {
 					panToolbar = new PanToolbar(comm);
@@ -430,19 +437,19 @@ public class Main extends JFrame implements ActionListener {
 					ActionHub.addActionListener(panToolbar);
 					ActionHub.addActionListener(panStatusbar);
 				}
-				
-				if(panRibbon == null){					
+
+				if (panRibbon == null) {
 					panRibbon = new PanRibbon(comm);
 					ActionHub.addActionListener(panRibbon);
 				}
-				
-				this.add(panRibbon,BorderLayout.NORTH);				
+
+				this.add(panRibbon, BorderLayout.NORTH);
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR));
 
-				//this.getJMenuBar().setVisible(true);				
-				//this.getContentPane().add(panToolbar, BorderLayout.NORTH);								
+				//		this.getJMenuBar().setVisible(true);
+				//		this.getContentPane().add(panToolbar, BorderLayout.NORTH);
 				this.getContentPane().add(panStatusbar, BorderLayout.SOUTH);
-				
+
 				this.getRootPane().setDoubleBuffered(true);
 				this.getRootPane().validate();
 				this.getRootPane().repaint();
@@ -453,6 +460,7 @@ public class Main extends JFrame implements ActionListener {
 					panLogin = new PanLogin();
 					panRoot = null;
 					panAdmin = null;
+					panRibbon = null;
 					this.getContentPane().removeAll();
 					//this.getJMenuBar().setVisible(false);
 					comm.getDbHelper().autoEmptyCache();
@@ -491,7 +499,7 @@ public class Main extends JFrame implements ActionListener {
 		PasswordDialog dialog = new PasswordDialog(comm.getUser().getUserName());
 		dialog.setVisible(true);
 	}
-	
+
 	public static void showProxies() {
 		StringBuffer text = new StringBuffer();
 		final String crlf = System.getProperty("line.separator");
@@ -499,11 +507,11 @@ public class Main extends JFrame implements ActionListener {
 		text.append("http.proxySet=" + System.getProperty("http.proxySet")).append(crlf);
 		text.append("http.proxyHost=" + System.getProperty("http.proxyHost")).append(crlf);
 		text.append("http.proxyPort=" + System.getProperty("http.proxyPort")).append(crlf);
-		
+
 		text.append("https.proxySet=" + System.getProperty("https.proxySet")).append(crlf);
 		text.append("https.proxyHost=" + System.getProperty("https.proxyHost")).append(crlf);
 		text.append("https.proxyPort=" + System.getProperty("https.proxyPort")).append(crlf);
-		
+
 		text.append("proxySet=" + System.getProperty("proxySet")).append(crlf);
 		text.append("proxyHost=" + System.getProperty("proxyHost")).append(crlf);
 		text.append("proxyPort=" + System.getProperty("proxyPort")).append(crlf);
