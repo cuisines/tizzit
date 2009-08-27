@@ -293,6 +293,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 			}
 		}
 		while ((temp = temp.getNextNode()) != null) {
+			if(log.isTraceEnabled()) log.trace("TRACE getAllChildrenOrderedAsDao: nextNode: " + temp.getViewComponentId());
 			if (currentDepth >= 0) {
 				try {
 					vec.addElement(temp.getDao(currentDepth));
