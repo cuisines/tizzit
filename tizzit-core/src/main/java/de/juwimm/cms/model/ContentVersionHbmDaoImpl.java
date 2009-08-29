@@ -73,22 +73,27 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		sb.append("<contentVersion id=\"");
 		sb.append(contentVersion.getContentVersionId());
 		sb.append("\">\n");
-		sb.append("\t<heading><![CDATA[").append(contentVersion.getHeading()).append("]]></heading>\n");
-		sb.append("\t<creator><userName>").append(contentVersion.getCreator()).append("</userName>").append("</creator>\n");
-		sb.append("\t<createDate>").append(DateConverter.getSql2String(new Date(contentVersion.getCreateDate()))).append("</createDate>\n");
+		sb.append("<heading><![CDATA[").append(contentVersion.getHeading()).append("]]></heading>\n");
+		sb.append("<creator><userName>").append(contentVersion.getCreator()).append("</userName>").append("</creator>\n");
+		sb.append("<createDate>").append(DateConverter.getSql2String(new Date(contentVersion.getCreateDate()))).append("</createDate>\n");
 		/* KICK the XML Banner out */
 		String xmlbanner = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
-		String txt = contentVersion.getText().trim();
+		String txt = contentVersion.getText();
+		if (txt != null) {
+			txt = txt.trim();
+		} else {
+			txt = ""; //$NON-NLS-1$
+		}
 		if (txt.length() >= xmlbanner.length() && txt.substring(0, xmlbanner.length()).equals(xmlbanner)) {
 			txt = txt.substring(xmlbanner.length());
 		}
 		txt = Base64.encodeString(txt, false);
-		sb.append("\t<text>").append(txt).append("</text>\n");
-		sb.append("\t<version>").append(contentVersion.getVersion()).append("</version>\n");
+		sb.append("<text>").append(txt).append("</text>\n");
+		sb.append("<version>").append(contentVersion.getVersion()).append("</version>\n");
 		sb.append("</contentVersion>\n");
 		return sb.toString();
 	}
-
+	
 	/**
 	 * @see de.juwimm.cms.model.ContentVersionHbm#getDao()
 	 */

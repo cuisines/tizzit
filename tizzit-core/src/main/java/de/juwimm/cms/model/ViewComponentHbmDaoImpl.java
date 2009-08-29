@@ -33,7 +33,6 @@ import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
-import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.util.DateConverter;
@@ -149,10 +148,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		out.print("<displaySettings>" + current.getDisplaySettings() + "</displaySettings>\n");
 		out.print("<viewDocumentViewType>" + (viewDocumentValue != null ? viewDocumentValue.getViewType() : "browser") + "</viewDocumentViewType>\n");
 		out.print("<language>" + (viewDocumentValue != null ? viewDocumentValue.getLanguage() : "deutsch") + "</language>\n");
-		try {
-			out.print("<userModifiedDate>" + sdf.format(new Date(current.getUserLastModifiedDate())) + "</userModifiedDate>\n");
-		} catch (Exception e) {
-		}
+		out.print("<userModifiedDate>" + current.getUserLastModifiedDate() + "</userModifiedDate>\n"); 
 
 		// this is for the edition
 		if (withContent) {
@@ -166,9 +162,9 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			try {
 				out.print("<modifiedDate>" + DateConverter.getSql2String(new Date(current.getLastModifiedDate())) + "</modifiedDate>\n");
 				out.print("<createDate>" + DateConverter.getSql2String(new Date(current.getCreateDate())) + "</createDate>\n");
-				if (current.getViewType() == Constants.VIEW_TYPE_CONTENT || current.getViewType() == Constants.VIEW_TYPE_UNIT || current.getViewType() == Constants.VIEW_TYPE_UNIT) {
+				if (current.getViewType() == Constants.VIEW_TYPE_CONTENT || current.getViewType() == Constants.VIEW_TYPE_UNIT) {
 					log.debug("GETTING CONTENT");
-					ContentHbm cl = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, new Integer(current.getReference()));
+					ContentHbm cl = getContentHbmDao().load(new Integer(current.getReference()));
 					out.print(getContentHbmDao().toXml(cl));
 				}
 			} catch (Exception exe) {
