@@ -55,6 +55,10 @@ import de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerRequestExecu
 public class AuthenticationStreamSupportingHttpInvokerRequestExecutor extends StreamSupportingHttpInvokerRequestExecutor {
 	private static final Log log = LogFactory.getLog(AuthenticationStreamSupportingHttpInvokerRequestExecutor.class);
 	private static boolean isErrorMessageShown = false;
+	
+	public AuthenticationStreamSupportingHttpInvokerRequestExecutor() {
+		setReadTimeout(10 * 60 * 60 * 1000);
+	}
 
 	protected PostMethod createPostMethodForStreaming(final HttpInvokerClientConfiguration config) throws IOException {
 		HttpClientWrapper.getInstance().setHostConfiguration(super.getHttpClient(), new URL(config.getServiceUrl()));
