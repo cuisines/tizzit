@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<html xmlns:ctmpl="http://www.conquest-cms.net/template">
+	<head>
+		<ctmpl:include name="meta"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<ctmpl:include name="css"/>
+        <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
+		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
+		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
+		<script language="JavaScript" type="text/javaScript">
+			<![CDATA[
+				Shadowbox.loadSkin('classic', '/httpd/js/skin');
+				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
+				Shadowbox.loadPlayer(['flv', 'html', 'iframe', 'img', 'qt', 'swf', 'wmp'], '/httpd/js/player');
+				window.onload = function(){
+					Shadowbox.init();
+				};
+			]]>
+		</script>
+	</head>
+	<body>
+		<div id="layout">
+			<div id="leftcol">
+				<ctmpl:include name="secondlevel"/>
+				<div class="clear">&#160;</div>
+			</div>
+			<div id="rightcol">
+				<ctmpl:include name="headline"/>
+				<ctmpl:include name="content"/>
+			</div>
+			<div class="clear">&#160;</div>
+		</div>
+		<!-- Please use our defined Templates below
+			logo 		<ctmpl:include name="logo"/>
+			firstlevel1 <ctmpl:include name="firstlevel1"/>
+			firstlevel2 <ctmpl:include name="firstlevel2"/>
+			secondlevel <ctmpl:include name="secondlevel"/>
+			breadcrumbs <ctmpl:include name="breadcrumbs"/>
+			headline 	<ctmpl:include name="headline"/>
+			thirdlevel 	<ctmpl:include name="thirdlevel"/>
+			content 	<ctmpl:include name="content"/>
+			footer 		<ctmpl:include name="footer"/>
+			image 		<ctmpl:include name="image"/>
+			language 	<ctmpl:include name="language"/>
+			minipage 	<ctmpl:include name="minipage"/>
+			teaser 		<ctmpl:include name="teaser"/>
+		-->
+	</body>
+</html>

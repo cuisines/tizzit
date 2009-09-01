@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page>
+	<cssresource>
+		<dynamic-link type="template" prefix="/css/"/>
+	</cssresource>
+
+	<contentresource>
+		<cached-include src="content.xhtml"/>
+	</contentresource>
+	
+</page>

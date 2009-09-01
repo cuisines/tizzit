@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<source>
+	<head/>
+	<all>
+		<stickyPad/>
+		<content>
+			<textfield name="prevtext" label="Text vor dem Formular"/>	    
+			<iteration descriptionDcfName="element">
+				<simpletextfield name="element" label="Elementbezeichung"/>
+				<simpletextfield name="label" label="Label des Formelements"/>
+				<requiredChoose/>
+				<simpletextfield name="validate" label="Nachricht bei nicht oder falsch ausgefülltem Feld"/>
+				<form-element-list/>
+				<textfield name="text" label="Text vor diesem Item" height="200"/>
+			</iteration>
+			<textfield name="aftertext" label="Text nach dem Formular"/>       
+		</content>      
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/> 	
+		<footer/>
+	</all>
+</source>

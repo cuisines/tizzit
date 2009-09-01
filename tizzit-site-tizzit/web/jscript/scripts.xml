@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<js>
+	<getNewRequest />
+	<popup/>
+	<zoom/>
+	<mailTo/>
+	<printView/>
+	<fastsearch/>
+	<toggle/>
+	<search/>
+</js>

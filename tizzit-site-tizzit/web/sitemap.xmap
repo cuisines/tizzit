@@ -1,0 +1,1006 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	<!-- =========================== Components ================================ -->
+
+	<map:components>
+		<map:generators default="file"/>
+		<map:transformers default="saxon">
+			<map:transformer name="sqltransformer"
+				src="de.juwimm.cms.cocoon.transformation.SQLTransformer">
+				<dsJndiName>java:RegistryDS</dsJndiName>
+			</map:transformer>
+			<!-- Transformer für die Registrierung (DB xuser) -->
+			<map:transformer name="registry-userinfo"
+				src="de.juwimm.cms.cocoon.transformation.GenericTransformer" pool-min="1"
+				pool-max="10" pool-grow="1">
+				<siteShort>register</siteShort>
+				<classname>de.juwimm.registry.cocoon.transformation.UserInformationTransformer</classname>
+				<classpath>
+					<jar>commons-beanutils-1.7.0.jar</jar>
+					<jar>juwimm-registry-cocoon-1.3.jar</jar>
+					<jar>juwimm-registry-remote-1.3.jar</jar>
+				</classpath>
+			</map:transformer>
+		</map:transformers>
+		<map:readers default="resource"/>
+
+		<map:serializers default="html">
+			<map:serializer name="js" mime-type="text/javascript" logger="sitemap.serializer.js"
+				src="org.apache.cocoon.serialization.TextSerializer">
+				<encoding>utf-8</encoding>
+			</map:serializer>
+			<!-- alternativ ist der js serializer auch mit mime type moeglich: mime-type="application/x-javascript"-->
+			<map:serializer logger="sitemap.serializer.xml" mime-type="text/xml" name="xml"
+				src="org.apache.cocoon.serialization.XMLSerializer">
+				<encoding>utf-8</encoding>
+			</map:serializer>
+			<map:serializer logger="sitemap.serializer.xml" mime-type="text/xml" name="xml-iso"
+				src="org.apache.cocoon.serialization.XMLSerializer">
+				<encoding>iso-8859-1</encoding>
+			</map:serializer>
+			<map:serializer name="html" mime-type="text/html" logger="sitemap.serializer.html"
+				src="org.apache.cocoon.serialization.HTMLSerializer">
+				<encoding>utf-8</encoding>
+			</map:serializer>
+			<map:serializer name="css" mime-type="text/css" logger="sitemap.serializer.css"
+				src="org.apache.cocoon.serialization.TextSerializer">
+				<encoding>utf-8</encoding>
+			</map:serializer>
+		</map:serializers>
+		<map:actions>
+			<map:action logger="sitemap.action.request" name="request"
+				src="org.apache.cocoon.acting.RequestParamAction"/>
+			<map:action name="safeguard.logout"
+				src="de.juwimm.cms.cocoon.acting.SafeguardLogoutAction"/>
+		</map:actions>
+		<map:matchers default="wildcard"/>
+		<map:selectors default="browser"/>
+		<map:pipelines default="caching"/>
+	</map:components>
+
+	<map:views>
+		<map:view name="content" from-label="content">
+			<map:serialize type="xml"/>
+		</map:view>
+	</map:views>
+
+	<map:resources>
+		<map:resource name="navresource">
+			<map:generate type="CmsContent"
+				src="{system-property:cqCmsTemplatesPath}navmodules/config/{module}.xml">
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="disableNavigation" value="false"/>
+				<map:parameter name="disableNavigationBackward" value="false"/>
+				<map:parameter name="disableNavigationAxis" value="false"/>
+				<map:parameter name="disableAggregations" value="true"/>
+				<map:parameter name="disableInternalLinks" value="true"/>
+				<map:parameter name="disableUnitInformation" value="false"/>
+				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableMeta" value="true"/>
+				<map:parameter name="disableHeadLine" value="true"/>
+				<map:parameter name="disableUnitList" value="true"/>
+				<map:parameter name="disableMembersList" value="true"/>
+			</map:generate>
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{filetype}"/>
+				<map:when test="xhtml">
+					<map:transform type="xalan"
+						src="{system-property:cqCmsTemplatesPath}navmodules/templates/{module}.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="defaultImage" value="/httpd/img/spacer.gif"/>						
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+					</map:transform>
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:when test="html">
+					<map:transform
+						src="{system-property:cqCmsTemplatesPath}navmodules/templates/{module}.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+					</map:transform>
+					<map:serialize type="html"/>
+				</map:when>
+				<map:otherwise test="xml">
+					<map:serialize type="xml"/>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+		
+		<map:resource name="navresourcetemplate">
+			<map:generate type="CmsContent"
+				src="{system-property:cqCmsTemplatesPath}navmodules/config/{module}.xml">
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="disableNavigation" value="false"/>
+				<map:parameter name="disableNavigationBackward" value="false"/>
+				<map:parameter name="disableNavigationAxis" value="false"/>
+				<map:parameter name="disableAggregations" value="true"/>
+				<map:parameter name="disableInternalLinks" value="true"/>
+				<map:parameter name="disableUnitInformation" value="false"/>
+				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableMeta" value="true"/>
+				<map:parameter name="disableHeadLine" value="true"/>
+				<map:parameter name="disableUnitList" value="true"/>
+				<map:parameter name="disableMembersList" value="true"/>
+			</map:generate>
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{filetype}"/>
+				<map:when test="xhtml">
+					<map:transform type="saxon"
+						src="{system-property:cqCmsTemplatesPath}navmodules/templates/{module}.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="defaultImage" value="/httpd/img/spacer.gif"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+					</map:transform>
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:otherwise test="xml">
+					<map:serialize type="xml"/>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+
+		<map:resource name="navresourcelocaltemplate">
+			<map:generate type="CmsContent" src="navmodules/config/{module}.xml">
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="disableNavigation" value="false"/>
+				<map:parameter name="disableNavigationBackward" value="false"/>
+				<map:parameter name="disableNavigationAxis" value="false"/>
+				<map:parameter name="disableAggregations" value="true"/>
+				<map:parameter name="disableInternalLinks" value="true"/>
+				<map:parameter name="disableUnitInformation" value="false"/>
+				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableMeta" value="true"/>
+				<map:parameter name="disableHeadLine" value="true"/>
+				<map:parameter name="disableUnitList" value="true"/>
+				<map:parameter name="disableMembersList" value="true"/>
+				<map:parameter name="disableContentInclude" value="false"/>
+			</map:generate>
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{filetype}"/>
+				<map:when test="xhtml">
+					<map:transform type="xalan" src="navmodules/templates/{module}.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="defaultImage" value="/httpd/img/spacer.gif"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+						<map:parameter name="color-session" value="{session-context:lms/lms/color}"
+						/>
+					</map:transform>
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:otherwise test="xml">
+					<map:serialize type="xml"/>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+
+		<map:resource name="navresourcelocal">
+			<map:generate type="CmsContent" src="navmodules/config/{module}.xml">
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="disableNavigation" value="false"/>
+				<map:parameter name="disableNavigationBackward" value="false"/>
+				<map:parameter name="disableAggregations" value="true"/>
+				<map:parameter name="disableInternalLinks" value="true"/>
+				<map:parameter name="disableUnitInformation" value="true"/>
+				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableMeta" value="true"/>
+				<map:parameter name="disableHeadLine" value="true"/>
+				<map:parameter name="disableUnitList" value="true"/>
+				<map:parameter name="disableMembersList" value="true"/>
+			</map:generate>
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{filetype}"/>
+				<map:when test="html">
+					<map:transform src="navmodules/templates/{module}.xsl">
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>						
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+					</map:transform>
+					<map:serialize type="html"/>
+				</map:when>
+				<map:when test="xhtml">
+					<map:transform src="navmodules/templates/{module}.xsl">
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>						
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+					</map:transform>
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:otherwise test="xml">
+					<map:serialize type="xml"/>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+
+		<map:resource name="contentresource">
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{template}"/>
+				<map:when test="functionalTesting">				
+					<map:generate type="CmsContent">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="disableAggregations" value="false"/>
+						<map:parameter name="disableInternalLinks" value="false"/>
+						<map:parameter name="disableUnitInformation" value="false"/>
+						<map:parameter name="disableFulltext" value="false"/>
+						<map:parameter name="disableNavigation" value="false"/>
+						<map:parameter name="disableMeta" value="false"/>
+						<map:parameter name="disableHeadLine" value="false"/>
+						<map:parameter name="disableNavigationBackward" value="false"/>
+						<map:parameter name="disableUnitList" value="false"/>
+						<map:parameter name="disableMembersList" value="false"/>
+						<map:parameter name="disableContentInclude" value="false"/>
+						<map:parameter name="disableTeaserInclude" value="false"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+						<!-- Start languageVersions -->
+						<map:parameter name="disableLanguageVersions" value="false"/>
+						<map:parameter name="viewType" value="browser"/>
+						<map:parameter name="language" value="{language}"/>
+						<!-- End languageVersions -->
+					</map:generate>
+				</map:when>
+				<map:otherwise>
+					<map:generate type="CmsContent">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="disableAggregations" value="false"/>
+						<map:parameter name="disableInternalLinks" value="false"/>
+						<map:parameter name="disableUnitInformation" value="true"/>
+						<map:parameter name="disableFulltext" value="true"/>
+						<map:parameter name="disableNavigation" value="false"/>
+						<map:parameter name="disableMeta" value="false"/>
+						<map:parameter name="disableHeadLine" value="false"/>
+						<map:parameter name="disableNavigationBackward" value="true"/>
+						<map:parameter name="disableUnitList" value="true"/>
+						<map:parameter name="disableMembersList" value="true"/>
+						<map:parameter name="disableContentInclude" value="false"/>
+						<map:parameter name="disableTeaserInclude" value="false"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+						<!-- Start languageVersions -->
+						<map:parameter name="disableLanguageVersions" value="false"/>
+						<map:parameter name="viewType" value="browser"/>
+						<map:parameter name="language" value="{language}"/>
+						<!-- End languageVersions -->
+					</map:generate>
+				</map:otherwise>
+			</map:select>
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{filetype}"/>
+				<map:when test="html">					
+					<map:call resource="generalContentTransformation">
+						<map:parameter name="template" value="{template}"/>
+					</map:call>
+					<map:transform src="templates/html/{template}.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="randomValue" value="{random:x}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+					</map:transform>						
+					<map:call resource="generalContentTransformation">
+						<map:parameter name="template" value="{template}"/>
+					</map:call>
+					<map:serialize type="html"/>
+				</map:when>
+				<map:when test="xhtml">
+					<map:call resource="generalContentTransformation">
+						<map:parameter name="template" value="{template}"/>
+					</map:call>
+					<map:transform src="templates/html/{template}.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="randomValue" value="{random:x}"/>
+						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+					</map:transform>
+					<!--formular cinclude -->
+					<map:select type="parameter">
+						<map:parameter name="parameter-selector-test" value="{template}"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+						<map:when test="cinclude4flow">
+							<map:transform type="cinclude"/>
+						</map:when>
+					</map:select>
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:when test="fo">
+					<map:transform src="templates/fo/standard.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="currentDate" value="{../currentDate}"/>
+						<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="template" value="{../template}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="contextRoot" value="{realpath:}/"/>
+						<map:parameter name="localImgDir" value="{global:clientCode}/httpd/img/"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+					</map:transform>
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:when test="pdf">
+					<map:transform src="templates/fo/standard.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="currentDate" value="{../currentDate}"/>
+						<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="template" value="{../template}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="contextRoot" value="{realpath:}/"/>
+						<map:parameter name="localImgDir" value="{global:clientCode}/httpd/img/"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+					</map:transform>
+					<map:serialize type="fo2pdf"/>
+				</map:when>
+				<map:otherwise>
+					<map:serialize type="xml"/>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+
+		<map:resource name="page">
+			<map:act type="cms.actions.template">
+				<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="language" value="{language}"/>
+				<map:parameter name="path" value="{url}"/>
+				<map:parameter name="viewType" value="browser"/>
+				<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+				<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
+				<map:transform src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
+					<map:parameter name="layout" value="{../layout}"/>
+					<map:parameter name="content-template" value="{template}"/>
+				</map:transform>
+				<map:transform src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl" label="content">
+					<map:parameter name="currentDate" value="{currentDate}"/>
+					<map:parameter name="language" value="{../language}"/>
+					<map:parameter name="url" value="{../url}"/>
+					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="template" value="{template}"/>
+					<map:parameter name="clientCode" value="{global:clientCode}"/>
+					<map:parameter name="disableLanguageVersions" value="false"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:parameter name="language" value="{language}"/>		
+					<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+				</map:transform>
+				<map:transform type="cinclude">
+					<map:parameter name="parallel" value="true"/>
+					<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+				</map:transform>
+				<map:select type="parameter">
+					<map:parameter name="parameter-selector-test" value="{safeguard}"/>
+					<map:when test="false">
+						<map:select type="parameter">
+							<map:parameter name="parameter-selector-test" value="{../filetype}"/>
+							<map:when test="html">
+								<map:transform src="{global:parentMandator}templates/layouts/master.xsl">
+									<map:parameter name="language" value="{../language}"/>
+									<map:parameter name="url" value="{../path}"/>
+									<map:parameter name="currentDate" value="{currentDate}"/>
+									<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+									<map:parameter name="use-request-parameters" value="true"/>
+									<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+									<map:parameter name="template" value="{template}"/>
+									<map:parameter name="content-template" value="{template}"/>
+									<map:parameter name="clientCode" value="{global:clientCode}"/>
+									<map:parameter name="layout" value="{../layout}"/>
+									<map:parameter name="disableLanguageVersions" value="false"/>
+									<map:parameter name="viewType" value="browser"/>
+									<map:parameter name="language" value="{language}"/>
+									<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+								</map:transform>
+								<map:transform
+									src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
+								<map:serialize type="xhtml"/>
+							</map:when>
+							<map:otherwise>
+								<map:serialize type="xml"/>
+							</map:otherwise>
+						</map:select>
+					</map:when>
+					<map:otherwise>
+						<map:redirect-to
+							uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"/>
+					</map:otherwise>
+				</map:select>
+			</map:act>
+		</map:resource>
+
+		<map:resource name="page-debugger">
+			<map:act type="cms.actions.template">
+				<map:parameter name="siteId"
+					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="language" value="{language}"/>
+				<map:parameter name="path" value="{url}"/>
+				<map:parameter name="viewType" value="browser"/>
+				<map:generate src="httpd/xml/dummy.xml"/>
+				<map:transform src="templates/layouts/aggregationGenerator.xsl">
+					<map:parameter name="layout" value="{../layout}"/>
+					<map:parameter name="content-template" value="{template}"/>
+				</map:transform>
+				<map:transform
+					src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation.xsl"
+					label="content">
+					<map:parameter name="currentDate" value="{currentDate}"/>
+					<map:parameter name="url" value="{../url}"/>
+					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="template" value="{template}"/>
+					<map:parameter name="clientCode" value="{global:clientCode}"/>
+					<map:parameter name="language" value="{language}"/>
+				</map:transform>
+				<map:select type="parameter">
+					<map:parameter name="parameter-selector-test" value="{../filetype}"/>
+					<map:when test="html">
+						<map:transform type="saxon"
+							src="{system-property:cqCmsTemplatesPath}/templates/aggregation-debugger.xsl"/>
+						<map:serialize type="xhtml"/>
+					</map:when>
+					<map:otherwise>
+						<map:serialize type="xml"/>
+					</map:otherwise>
+				</map:select>
+			</map:act>
+		</map:resource>
+		
+		
+		<map:resource name="generalContentTransformation">
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{template}"/>
+			</map:select>
+		</map:resource>
+
+
+		<map:resource name="form">
+			<map:act type="cms.actions.template">
+				<map:parameter name="siteId"
+					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="language" value="{language}"/>
+				<map:parameter name="path" value="{url}"/>
+				<map:parameter name="viewType" value="browser"/>
+				<map:generate type="CmsContent" label="content">
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+					<map:parameter name="disableAggregations" value="false"/>
+					<map:parameter name="disableUnitMembersList" value="false"/>
+					<map:parameter name="disableInternalLinks" value="false"/>
+					<map:parameter name="disableUnitInformation" value="false"/>
+					<map:parameter name="disableFulltext" value="false"/>
+					<map:parameter name="disableNavigation" value="false"/>
+					<map:parameter name="disableMeta" value="false"/>
+					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="disableHeadLine" value="true"/>
+					<map:parameter name="disableNavigationBackward" value="true"/>
+				</map:generate>
+			</map:act>
+			<map:transform src="templates/html/form{formtemplate}.xsl"/>
+			<map:serialize type="xml"/>
+		</map:resource>
+
+		<!-- resource by viewid and template -->
+		<map:resource name="contentbyviewid">
+			<map:generate type="CmsContent" label="content">
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="viewComponentId" value="{viewid}"/>
+				<map:parameter name="disableAggregations" value="false"/>
+				<map:parameter name="disableUnitMembersList" value="false"/>
+				<map:parameter name="disableInternalLinks" value="false"/>
+				<map:parameter name="disableUnitInformation" value="false"/>
+				<map:parameter name="disableFulltext" value="false"/>
+				<map:parameter name="disableNavigation" value="false"/>
+				<map:parameter name="disableMeta" value="false"/>
+				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="disableHeadLine" value="true"/>
+				<map:parameter name="disableNavigationBackward" value="false"/>
+			</map:generate>
+			<!-- serializer specific tranformations -->
+			<map:select type="parameter">
+				<map:parameter name="parameter-selector-test" value="{filetype}"/>
+				<map:when test="cleanxml">
+					<map:serialize type="xml"/>
+				</map:when>
+				<map:otherwise>
+					<map:serialize type="xml"/>
+				</map:otherwise>
+			</map:select>
+		</map:resource>
+	</map:resources>
+
+	<map:pipelines>
+		<map:component-configurations>
+			<global-variables>
+				<clientCode>tizzit</clientCode>
+			</global-variables>
+		</map:component-configurations>
+		
+		<map:pipeline type="noncaching">
+			<map:match pattern="cforms/**">
+				<map:mount check-reload="yes" src="cforms/" uri-prefix="cforms"/>
+			</map:match>
+			<map:match pattern="do-logout**">
+				<map:act type="safeguard.logout"/>
+				<map:redirect-to uri="/"/>
+			</map:match>
+			<!-- Form model und template-->
+			<map:match pattern="*/**/form*.*">
+				<map:call resource="form">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value="{2}"/>
+					<map:parameter name="formtemplate" value="{3}"/>
+					<map:parameter name="filetype" value="{4}"/>
+				</map:call>
+			</map:match>
+			<!-- content by viewid - must be internal because of security reasons -->
+			<map:match pattern="content-*.*">
+				<map:call resource="contentbyviewid">
+					<map:parameter name="viewid" value="{1}"/>
+					<map:parameter name="language" value="deutsch"/>
+					<map:parameter name="filetype" value="{2}"/>
+				</map:call>
+			</map:match>
+			
+			<!-- START File readers -->
+			<map:match pattern="xml/*.xml">
+				<map:read src="{global:parentMandator}xml/{1}.xml" mime-type="text/xml"/>
+			</map:match>
+			<map:match pattern="httpd/flash/*.swf">
+				<map:read src="httpd/flash/{1}.swf" mime-type="application/x-shockwave-flash"/>
+			</map:match>
+			<map:match pattern="httpd/html/*.html">
+				<map:read src="{global:parentMandator}httpd/html/{1}.html" mime-type="text/html"/>
+			</map:match>
+			<map:match pattern="httpd/html/**/*.html">
+				<map:read src="{global:parentMandator}httpd/html/{1}/{2}.html" mime-type="text/html"/>
+			</map:match>
+			<map:match pattern="erbitux/**.css">
+				<map:read src="../../merckserono-erbitux-prototype/html/{1}.css" mime-type="css"/>
+			</map:match>
+			<map:match pattern="erbitux/**">
+				<map:read src="../../merckserono-erbitux-prototype/html/{1}"/>
+			</map:match>
+			<map:match pattern="httpd/js/*.js">
+				<map:read src="{global:parentMandator}httpd/js/{1}.js" mime-type="javascript"/>
+			</map:match>
+			<map:match pattern="httpd/css/*.css">
+				<map:read src="{global:parentMandator}httpd/css/{1}.css" mime-type="css"/>
+			</map:match>
+			<map:match pattern="httpd/img/*.gif">
+				<map:read src="httpd/img/{1}.gif" mime-type="image/gif"/>
+			</map:match>
+			<map:match pattern="httpd/img/*.jpg">
+				<map:read src="httpd/img/{1}.jpg" mime-type="image/jpg"/>
+			</map:match>
+			<map:match pattern="httpd/img/*.png">
+				<map:read src="httpd/img/{1}.png" mime-type="image/png"/>
+			</map:match>
+			<map:match pattern="favicon.ico">
+				<map:read src="httpd/img/favicon.ico" mime-type="image/x-icon"/>
+			</map:match>
+			<map:match pattern="httpd/**.*">
+				<map:read src="{global:parentMandator}httpd/{1}.{2}"/>
+			</map:match>
+			<map:match pattern="img/ejbimage**">
+				<map:read type="imagereader"/>
+			</map:match>
+			<map:match pattern="img/ejbfile**">
+				<map:read type="filereader"/>
+			</map:match>
+			<!-- END File readers -->
+			
+			<map:match pattern="**/">
+				<map:redirect-to uri="page.html"/>
+			</map:match>
+			
+			<map:match pattern="">
+				<map:call resource="page">
+					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="html"/>
+					<map:parameter name="layout" value="default"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/page.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="{2}"/>
+					<map:parameter name="layout" value="default"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/**/page.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value="{2}"/>
+					<map:parameter name="filetype" value="{3}"/>
+					<map:parameter name="layout" value="default"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/print.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="{2}"/>
+					<map:parameter name="layout" value="print"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="print.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="{1}"/>
+					<map:parameter name="layout" value="print"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/**/print.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value="{2}"/>
+					<map:parameter name="filetype" value="{3}"/>
+					<map:parameter name="layout" value="print"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/popup.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="{2}"/>
+					<map:parameter name="layout" value="popup"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="popup.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="{1}"/>
+					<map:parameter name="layout" value="popup"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/**/popup.*">
+				<map:call resource="page">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value="{2}"/>
+					<map:parameter name="filetype" value="{3}"/>
+					<map:parameter name="layout" value="popup"/>
+				</map:call>
+			</map:match>
+			<!-- Shortlinks -->
+			<map:match pattern="*">
+				<map:call resource="page">
+					<map:parameter name="language" value="deutsch"/>
+					<map:parameter name="url" value="{1}"/>
+					<map:parameter name="filetype" value="html"/>
+					<map:parameter name="layout" value="default"/>
+				</map:call>
+			</map:match>
+			<!-- Contentresource for startpage -->
+			<map:match pattern="contentresource/*/*/*/*/content.*">
+				<map:call resource="contentresource">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="template" value="{2}"/>
+					<map:parameter name="currentDate" value="{3}"/>
+					<map:parameter name="language" value="{4}"/>
+					<map:parameter name="filetype" value="{5}"/>
+				</map:call>
+			</map:match>
+			<!-- Contentresource for all others -->
+			<map:match pattern="contentresource/*/*/*/*/**/content.*">
+				<map:call resource="contentresource">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="template" value="{2}"/>
+					<map:parameter name="currentDate" value="{3}"/>
+					<map:parameter name="language" value="{4}"/>
+					<map:parameter name="path" value="{5}"/>
+					<map:parameter name="filetype" value="{6}"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/**/content.*">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value="{2}"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:call resource="contentresource">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="language" value="{../1}"/>
+						<map:parameter name="path" value="{../2}"/>
+						<map:parameter name="filetype" value="{../3}"/>
+					</map:call>
+				</map:act>
+			</map:match>
+			<map:match pattern="*/content.*">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value=""/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:call resource="contentresource">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="language" value="{../1}"/>
+						<map:parameter name="path" value=""/>
+						<map:parameter name="filetype" value="{../2}"/>
+					</map:call>
+				</map:act>
+			</map:match>
+			<!-- Navresource für Startseite -->
+			<map:match pattern="navresource-*/*/*.*">
+				<map:call resource="navresource">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="language" value="{2}"/>
+					<map:parameter name="module" value="{3}"/>
+					<map:parameter name="filetype" value="{4}"/>
+				</map:call>
+			</map:match>
+			<!-- Navresource für für alle anderen -->
+			<map:match pattern="navresource-*/*/**/*.*">
+				<map:call resource="navresource">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="language" value="{2}"/>
+					<map:parameter name="url" value="{3}"/>
+					<map:parameter name="module" value="{4}"/>
+					<map:parameter name="filetype" value="{5}"/>
+				</map:call>
+			</map:match>
+			<!-- Navmodules für Startseite -->
+			<map:match pattern="navmodules/*/*.*">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value=""/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:call resource="navresource">
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="language" value="{../1}"/>
+						<map:parameter name="url" value=""/>
+						<map:parameter name="module" value="{../2}"/>
+						<map:parameter name="filetype" value="{../3}"/>
+					</map:call>
+				</map:act>
+			</map:match>
+			<!-- Navmodules für alle anderen -->
+			<map:match pattern="navmodules/*/**/*.*">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value="{2}"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:call resource="navresource">
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="language" value="{../1}"/>
+						<map:parameter name="url" value="{../2}"/>
+						<map:parameter name="module" value="{../3}"/>
+						<map:parameter name="filetype" value="{../4}"/>
+					</map:call>
+				</map:act>
+			</map:match>
+			<!-- Navresourcetemplate für Startseite -->
+			<map:match pattern="navresourcetemplate-*/*/*/*.*">
+				<map:call resource="navresourcetemplate">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="template" value="{2}"/>
+					<map:parameter name="language" value="{3}"/>
+					<map:parameter name="module" value="{4}"/>
+					<map:parameter name="filetype" value="{5}"/>
+				</map:call>
+			</map:match>
+			<!-- Navresourcetemplate für alle anderen -->
+			<map:match pattern="navresourcetemplate-*/*/*/**/*.*">
+				<map:call resource="navresourcetemplate">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="template" value="{2}"/>
+					<map:parameter name="language" value="{3}"/>
+					<map:parameter name="url" value="{4}"/>
+					<map:parameter name="module" value="{5}"/>
+					<map:parameter name="filetype" value="{6}"/>
+				</map:call>
+			</map:match>
+			<!-- Navresourcelocaltemplate für Startseite -->
+			<map:match pattern="navresourcelocaltemplate-*/*/*/*.*">
+				<map:call resource="navresourcelocaltemplate">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="template" value="{2}"/>
+					<map:parameter name="language" value="{3}"/>
+					<map:parameter name="module" value="{4}"/>
+					<map:parameter name="filetype" value="{5}"/>
+				</map:call>
+			</map:match>
+			<!-- Navresourcelocaltemplate für alle anderen -->
+			<map:match pattern="navresourcelocaltemplate-*/*/*/**/*.*">
+				<map:call resource="navresourcelocaltemplate">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="template" value="{2}"/>
+					<map:parameter name="language" value="{3}"/>
+					<map:parameter name="url" value="{4}"/>
+					<map:parameter name="module" value="{5}"/>
+					<map:parameter name="filetype" value="{6}"/>
+				</map:call>
+			</map:match>
+			<!-- Navmodulestemplate für Startseite -->
+			<map:match pattern="navmodulestemplate/*/*.*">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value="{2}"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:call resource="navresourcetemplate">
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="module" value="{../3}"/>
+						<map:parameter name="filetype" value="{../4}"/>
+					</map:call>
+				</map:act>
+			</map:match>
+			<!-- Navmodulestemplate für alle anderen -->
+			<map:match pattern="navmodulestemplate/*/**/*.*">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value="{2}"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:call resource="navresourcetemplate">
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="module" value="{../3}"/>
+						<map:parameter name="filetype" value="{../4}"/>
+					</map:call>
+				</map:act>
+			</map:match>
+			<!-- Navresourcelocal für Startseite -->
+			<map:match pattern="navresourcelocal-*/*/*.*">
+				<map:call resource="navresourcelocal">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="language" value="{2}"/>
+					<map:parameter name="module" value="{3}"/>
+					<map:parameter name="filetype" value="{4}"/>
+				</map:call>
+			</map:match>
+			<!-- Navresourcelocal für alle anderen -->
+			<map:match pattern="navresourcelocal-*/*/**/*.*">
+				<map:call resource="navresourcelocal">
+					<map:parameter name="viewComponentId" value="{1}"/>
+					<map:parameter name="language" value="{2}"/>
+					<map:parameter name="url" value="{3}"/>
+					<map:parameter name="module" value="{4}"/>
+					<map:parameter name="filetype" value="{5}"/>
+				</map:call>
+			</map:match>
+			<!--dynamic css-->
+			<map:match pattern="css/*.css">
+				<map:generate src="css/config/styles.xml"/>
+				<map:transform src="css/templates/{1}.xsl">
+					<map:parameter name="use-request-parameters" value="true"/>
+				</map:transform>
+				<map:serialize type="css"/>
+			</map:match>
+			<!--dynamic JS-->
+			<map:match pattern="jscript/*.js">
+				<map:generate type="file" src="{global:parentMandator}jscript/{1}.xml"/>
+				<map:transform src="{global:parentMandator}jscript/jssheet.xsl"/>
+				<map:serialize type="js"/>
+			</map:match>
+			<!-- pipeline for debugging -->
+			<map:match pattern="*/pagedeb.*">
+				<map:call resource="page-debugger">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value=""/>
+					<map:parameter name="filetype" value="{2}"/>
+					<map:parameter name="layout" value="default"/>
+				</map:call>
+			</map:match>
+			<map:match pattern="*/**/pagedeb.*">
+				<map:call resource="page-debugger">
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="url" value="{2}"/>
+					<map:parameter name="filetype" value="{3}"/>
+					<map:parameter name="layout" value="default"/>
+				</map:call>
+			</map:match>
+			
+			<map:handle-errors>				
+				<map:select type="exception">
+					<map:when test="not-found">
+						<map:generate type="notifying"/>
+						<map:transform src="templates/html/errorpages/common.xsl">
+							<map:parameter name="statusCode" value="404"/>
+							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+							<map:parameter name="requestURI" value="{request:requestURI}"/>
+							<map:parameter name="requestHost" value="{request:serverName}"/>
+							<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+						</map:transform>
+						<map:transform src="templates/layouts/master.xsl"/>
+						<map:serialize type="html" status-code="404"/>
+					</map:when>					
+					<map:when test="invalid-continuation">
+						<map:generate type="notifying"/>
+						<map:transform src="templates/html/errorpages/common.xsl">
+							<map:parameter name="statusCode" value="404"/>
+							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+							<map:parameter name="requestURI" value="{request:requestURI}"/>
+							<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+						</map:transform>
+						<map:transform src="templates/layouts/master.xsl"/>
+						<map:serialize type="html" status-code="404"/>
+					</map:when>					
+					<map:otherwise>
+						<map:generate type="notifying"/>
+						<map:transform src="templates/html/errorpages/common.xsl">
+							<map:parameter name="statusCode" value="500"/>
+							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+							<map:parameter name="requestURI" value="{request:requestURI}"/>
+							<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+						</map:transform>		
+						
+						<map:transform src="templates/layouts/master.xsl"/>
+						<map:serialize type="html" status-code="500"/>
+					</map:otherwise>
+				</map:select>					
+			</map:handle-errors>
+		</map:pipeline>
+	</map:pipelines>
+</map:sitemap>

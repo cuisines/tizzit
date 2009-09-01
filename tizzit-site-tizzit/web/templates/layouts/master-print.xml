@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<html xmlns:ctmpl="http://www.conquest-cms.net/template">
+	<head>
+		<ctmpl:include name="meta"/>
+		<ctmpl:include name="css"/>
+		<script language="JavaScript" src="/httpd/js/scripts.js"/>
+	</head>
+	<body bgcolor="#ffffff" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0">
+		<div class="print">
+			<div class="printlink">
+				<a href="javascript:this.print()">Drucken</a>
+				<hr/>
+			</div>			
+			<div class="contentarea">
+				<ctmpl:include name="headline"/>
+				<ctmpl:include name="content"/>
+			</div>
+			<div class="printlink">
+				<hr/>
+				<a href="javascript:this.print()">Drucken</a>
+			</div>
+		</div>
+	</body>
+</html>

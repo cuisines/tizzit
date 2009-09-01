@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<page xmlns:ft="http://apache.org/cocoon/forms/1.0#template" xmlns:fi="http://apache.org/cocoon/forms/1.0#instance"
+    xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+    <content>
+        <div>
+            Auf dieser Seite können Sie Ihre persönlichen Stammdaten bearbeiten.
+            Bitte geben Sie Ihre Änderungen in die entsprechenden Formularfelder
+            ein, und klicken Sie auf Speichern.
+        </div>
+        <ft:form-template action="" method="post">
+            <div class="title">Personendaten</div>
+            <!-- Vorname -->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="firstname"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="firstname"/>
+                </div>
+            </div>
+            <!-- Nachname-->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="lastname"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="lastname"/>
+                </div>
+            </div>
+            <!-- Strasse -->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="strasse"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="strasse"/>
+                </div>
+            </div>
+            <!-- PLZ -->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="plz"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="plz"/>
+                </div>
+            </div>
+            <!-- Stadt -->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="stadt"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="stadt"/>
+                </div>
+            </div>
+            <!-- Email-->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="email"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="email"/>
+                </div>
+            </div>
+            <!-- Abbrobationsnummer-->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="abbrobationsnummer"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="abbrobationsnummer"/>
+                </div>
+            </div>
+            <!-- Passwort u. PW-Confirmation  -->
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="passwd"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="passwd">
+                        <fi:styling type="password"/>
+                    </ft:widget>
+                </div>
+            </div>
+            <div class="widget">
+                <div class="widget-label">
+                    <ft:widget-label id="confirmpasswd"/>
+                </div>
+                <div class="widget-input">
+                    <ft:widget id="confirmpasswd">
+                        <fi:styling type="password"/>
+                    </ft:widget>
+                </div>
+            </div>
+            <ft:continuation-id/>
+            <input id="put" value="Abschicken" type="submit"/>
+        </ft:form-template>
+    </content>
+</page>

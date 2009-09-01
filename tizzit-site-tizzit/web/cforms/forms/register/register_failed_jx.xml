@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<page>
+  <finishedSucessfully>
+    Leider war Ihre Registrierung nicht erfolgreich.<br/>
+    <br/>
+    Grund: ${userExists}
+  </finishedSucessfully>
+</page>

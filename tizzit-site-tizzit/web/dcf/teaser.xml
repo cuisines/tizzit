@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<teaser>				
+			<simpletextfield name="teaserHeadline" label="Teaser Headline"/>
+			<iteration name="singleTeaser" descriptionDcfName="teaserSubline" label="Teaser">			
+				<picture label="Teaser Image"/>			
+				<simpletextfield name="teaserSubline" label="Teaser Subline"/>
+				<textfield name="teaserContent" label="Teaser Content" height="250"/>
+			</iteration>
+		</teaser>
+	</all>
+</source>

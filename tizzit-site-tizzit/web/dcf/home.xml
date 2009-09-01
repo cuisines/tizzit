@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<stickyPad/>
+		<textfield name="content" height="200"/>
+		<notice name="n_01">-- Bild 1 --</notice>
+		<internalLink label="Link 01" dcfname="01"/>
+		<picture dcfname="bg_01" label="Bild 01"/>
+		<notice name="n_02">-- Bild 2 --</notice>
+		<internalLink label="Link 02" dcfname="02"/>
+		<picture dcfname="bg_02" label="Bild 02"/>
+		<notice name="n_03">-- Bild 3 --</notice>
+		<internalLink label="Link 03" dcfname="03"/>
+		<picture dcfname="bg_03" label="Bild 03"/>
+		<footer/>
+	</all>
+</source>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<source xmlns:cinclude="http://apache.org/cocoon/include/1.0">
+    <head/>
+	<all>
+		<stickyPad/>
+		<content>
+			<simpletextfield label="URL für Formular include" name="includexml"/>				    
+            <iteration descriptionDcfName="param-name" name="params">
+		        <simpletextfield name="param-name" label="Parameter - Name"/>
+		        <simpletextfield name="param-value" label="Parameter - Wert"/>
+           </iteration>   
+       	</content>       
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>	
+		<footer/>
+	</all>
+</source>

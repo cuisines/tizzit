@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<page xmlns:ft="http://apache.org/cocoon/forms/1.0#template" xmlns:fi="http://apache.org/cocoon/forms/1.0#instance"
+    xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:jx="http://apache.org/cocoon/templates/jx/1.0">
+    <content>
+        <ft:form-template action="" method="post">
+            <div class="userdats">
+                <!-- Vorname -->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="firstname">
+                            <ft:widget-label id="firstname"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="firstname"/>
+                    </div>
+                </div>
+                <!-- Nachname-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="lastname">
+                            <ft:widget-label id="lastname"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="lastname"/>
+                    </div>
+                </div>
+                <!-- Strasse-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="strasse">
+                            <ft:widget-label id="strasse"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="strasse"/>
+                    </div>
+                </div>
+                <!-- Postleitzahl-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="plz">
+                            <ft:widget-label id="plz"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="plz"/>
+                    </div>
+                </div>
+                <!-- Stadt-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="stadt">
+                            <ft:widget-label id="stadt"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="stadt"/>
+                    </div>
+                </div>
+                <!-- E-Mail-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="email">
+                            <ft:widget-label id="email"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="email"/>
+                    </div>
+                </div>
+                <p>
+                    Bitte nennen Sie uns jetzt Ihren gewünschten  Benutzernamen und Ihr Passwort.
+                    Anschliessend müssen Sie Ihr Passwort noch einmal bestätigen.
+                </p>
+                <!-- Loginname-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="logname">
+                            <ft:widget-label id="logname"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="logname"/>
+                    </div>
+                </div>
+                <!-- Passwort-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="passwd">
+                            <ft:widget-label id="passwd"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="passwd">
+                            <fi:styling type="password" class="text"/>
+                        </ft:widget>
+                    </div>
+                </div>
+                <!-- Passwort Bestätigung-->
+                <div class="widget">
+                    <div class="widget-label">
+                        <label for="confirmpasswd">
+                            <ft:widget-label id="confirmpasswd"/>
+                        </label>
+                    </div>
+                    <div class="widget-input">
+                        <ft:widget id="confirmpasswd">
+                            <fi:styling type="password" class="text"/>
+                        </ft:widget>
+                    </div>
+                </div>
+            </div>
+            <p>
+                Nach dem ausfüllen Ihrer Daten klicken Sie bitte auf Absenden.
+                Ihnen wird dann eine E-Mail zugeschickt, die einen Link für die Fertigstellung
+                der Registrierung enthält.
+            </p>
+            <ft:continuation-id/>
+            <div class="widget">
+                <div class="submitButton">
+                    <input id="put" name="put" type="submit"/>
+                </div>
+            </div>
+        </ft:form-template>
+    </content>
+</page>

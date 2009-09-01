@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<stickyPad/>
+		<textfield name="content" height="200" label="Text vor dem Video"/>
+		<videoChooser dcfname="videoType" label="Auswahl des Videotypen">
+			<dcfConfig>
+				<classname>de.juwimm.cms.content.modules.SimpleDropDown</classname>
+				<mandatory>true</mandatory>
+				<property name="dropdownValues">
+					<name>Shadowbox</name>
+					<value>1</value>
+				</property>
+				<property name="dropdownValues">
+					<name>Content</name>
+					<value>2</value>
+				</property>
+			</dcfConfig>
+			<dcfInitial/>
+		</videoChooser>
+		<simpletextfield name="shadowBoxLinkTxt" label="Linktext zum öffnen des Videos (Shadowbox)"/>
+		<simpletextfield name="videoUrl" label="Pfad zum Video"/>
+		<simpletextfield name="videoWidth" label="Brete des Videos"/>
+		<simpletextfield name="videoHeight" label="Höhe des Videos"/>
+		<simpletextfield name="videoDownloadText" dcfname="videoDownloadText" label="Text für den Video Download"/>
+		<simpletextfield name="videoDownload" dcfname="videoDownload" label="URL zum Video Downlaod"/>
+		<picture label="Vorschaubild fürs Video"/>
+		<checkBox name="videoAutostart" label="Video automatisch starten?">
+			<box label="Ja" elementname="autostartSelect" selected="false">true</box>
+		</checkBox>	
+		<checkBox name="videoControlbar" label="controlbar anzeigen?">
+			<box label="Ja" elementname="videoControlbarSelect" selected="true">true</box>
+		</checkBox>	
+		<textfield name="contentAfterVideo" height="200" label="Text nach dem Video"/>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
+		<footer/>
+	</all>
+</source>

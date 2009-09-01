@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<stickyPad/>
+		<textfield name="content"/>
+		<footer/>
+	</all>
+</source>
