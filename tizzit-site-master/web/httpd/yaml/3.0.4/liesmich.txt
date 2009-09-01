@@ -1,0 +1,43 @@
+@charset "UTF-8";
+/**
+* "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+*
+* @copyright       Copyright 2005-2007, Dirk Jesse
+* @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+*                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+* @link            http://www.yaml.de
+* @package         yaml
+* @version         3.0.4
+* @revision        $Revision: 132 $
+* @lastmodified    $Date: 2007-10-05 20:24:42 +0200 (Fr, 05 Okt 2007) $
+*/
+
+
+Inhalt des Download-Paketes
+---------------------------
+
+  * documentation
+    Die Dokumentation steht unter http//www.yaml.de in den Sprachen Deutsch und Englisch als PDF-Datei 
+    gesondert zum Download zur Verfügung.
+  
+  * yaml
+    Dieses Verzeichnis beinhaltet alle Dateien des Frameworks. Zur Verwendung kopieren Sie es vollständig auf Ihren 
+    Webserver. 
+  
+  * tools
+    In diesem Verzeichnis finden Sie einige nützliche Hilfsmittel zur Erstellung YAML-basierter Webseiten.
+  
+  * examples
+    Dieses Verzeichnis beinhaltet eine umfangreiche Sammlung von Anwendungsbeispielen für den praktischen Einsatz des 
+    Frameworks. Wenn Sie bisher noch nicht mit YAML gearbeitet haben, sollten Sie sich hier erste Anregungen holen.
+
+
+Zur aktuellen Version 3.0.x
+---------------------------
+
+Ein frischer Webauftritt, viele neue Ideen, und eine umfassend überarbeitete neue Version des Frameworks.
+
+Wie es der Versionssprung von 2.5.2 auf 3.0 bereits vermuten lässt, bringt die neue Version zahlreiche Verbesserungen und auch einige Veränderungen mit sich. Der wohl wichtigste Punkt ist die vollständig überarbeitete, zweisprachige Dokumentation (deutsch/englisch) des Frameworks. Daneben bietet YAML 3 eine deutlich übersichtlichere Dateistruktur, verbesserte Robustheit und Barrierefreiheit der CSS-Bausteine, optimierte CSS-Bausteine für den produktiven Einsatz sowie zahlreiche neue Layoutbeispiele.
+
+Eine detaillierte Übersicht aller neuen Funktionen und Änderungen der neuen Version liefert das Changelog (http://www.yaml.de/de/dokumentation/changelog/version-3x.html).
+

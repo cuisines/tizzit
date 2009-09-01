@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<fd:form xmlns:fd="http://apache.org/cocoon/forms/1.0#definition" xmlns:i18n="http://apache.org/cocoon/i18n/2.1">
+    <fd:widgets>
+        
+    <fd:field id="anrede" required="true">
+      <fd:label>Anrede:</fd:label>
+      <fd:datatype base="string">
+          <fd:validation>
+          <fd:length min="2">
+             <fd:failmessage>Bitte wählen Sie eine Anrede aus.</fd:failmessage>    
+           </fd:length> 
+        </fd:validation>
+      </fd:datatype>
+      <fd:selection-list>
+         <fd:item value="">
+          <fd:label>Bitte auswählen</fd:label>
+        </fd:item>
+        <fd:item value="Herr">
+          <fd:label>Herr</fd:label>
+        </fd:item>
+        <fd:item value="Frau">
+          <fd:label>Frau</fd:label>
+        </fd:item>
+      </fd:selection-list>
+    </fd:field>
+          
+    <fd:field id="vorname" required="true">
+      <fd:label>Vorname:</fd:label>
+      <fd:datatype base="string">
+        <fd:validation>
+          <fd:length min="2">
+              <fd:failmessage>Bitte tragen Sie einen Vornamen ein.</fd:failmessage>    
+          </fd:length>    
+        </fd:validation>
+      </fd:datatype>
+    </fd:field>
+    
+    <fd:field id="name" required="true">
+      <fd:label>Name:</fd:label>
+      <fd:datatype base="string">
+        <fd:validation>
+          <fd:length min="2">
+             <fd:failmessage>Bitte tragen Sie einen Namen ein.</fd:failmessage>    
+           </fd:length> 
+        </fd:validation>
+      </fd:datatype>
+    </fd:field>
+    
+    <fd:field id="strasse" required="true">
+      <fd:label>Strasse:</fd:label>
+      <fd:datatype base="string">
+        <fd:validation>
+          <fd:length min="2">
+             <fd:failmessage>Bitte tragen Sie Ihren Strassennamen ein.</fd:failmessage>    
+           </fd:length> 
+        </fd:validation>
+      </fd:datatype>
+    </fd:field>
+    
+    <fd:field id="hausnr" required="true">
+      <fd:label>Hausnr.:</fd:label>
+      <fd:datatype base="string">
+        <fd:validation>
+          <fd:length min="1">
+             <fd:failmessage>Bitte tragen Sie Ihre Hausnummer ein.</fd:failmessage>    
+           </fd:length> 
+        </fd:validation>
+      </fd:datatype>
+    </fd:field>
+      
+    <fd:field id="email" required="true">
+      <fd:label>Email Adresse:</fd:label>
+      <fd:datatype base="string">
+        <fd:validation>
+          <fd:email>
+            <fd:failmessage>Bitte tragen Sie Ihre E-Mail Adresse ein.</fd:failmessage>    
+          </fd:email>
+        </fd:validation>
+      </fd:datatype>
+    </fd:field>
+        
+    <fd:field id="continue" required="false">
+        <fd:datatype base="string"/>
+    </fd:field>
+
+    <fd:field id="plz" required="true">
+        <fd:label>PLZ:</fd:label>
+        <fd:datatype base="string">
+            <fd:validation>
+                <fd:length min="5" max="5">
+                    <fd:failmessage>Bitte geben Sie eine fünfstellige PLZ ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:datatype>
+    </fd:field>
+ 
+        <fd:field id="geschlecht" required="true">
+            <fd:label>Geschlecht:</fd:label>
+            <fd:datatype base="string">
+                <fd:validation>
+                   <fd:length min="2">
+                        <fd:failmessage>Bitte geben Sie ihr Geschlecht an.</fd:failmessage>
+                    </fd:length>
+                </fd:validation>
+            </fd:datatype>
+        </fd:field>
+        
+        <fd:field id="gemName" required="true">
+            <fd:label>Gemeindename:</fd:label>
+            <fd:datatype base="string">
+                <fd:validation>
+                   <fd:length min="2">
+                        <fd:failmessage>Bitte geben Sie mindestens 2 Zeichen ein.</fd:failmessage>
+                    </fd:length>
+                </fd:validation>
+            </fd:datatype>
+        </fd:field>
+        
+      <fd:field id="url" required="true">
+        <fd:label>URL:</fd:label>
+        <fd:datatype base="string">
+          <fd:validation>
+            <fd:length min="2">
+              <fd:failmessage>Bitte geben Sie mindestens 2 Zeichen ein.</fd:failmessage>
+            </fd:length>
+          </fd:validation>
+        </fd:datatype>
+      </fd:field>
+      
+      <fd:field id="unit" required="true">
+        <fd:label>Einrichtung:</fd:label>
+        <fd:datatype base="string">
+          <fd:validation>
+            <fd:length min="2">
+              <fd:failmessage>Bitte geben Sie mindestens 2 Zeichen ein.</fd:failmessage>
+            </fd:length>
+          </fd:validation>
+        </fd:datatype>
+      </fd:field>
+      
+      <fd:field id="anzahl" required="true">
+        <fd:label>Anzahl der Exemplare:</fd:label>
+        <fd:datatype base="string">
+          <fd:validation>
+            <fd:length min="2">
+              <fd:failmessage>Bitte geben Sie die Anzahl der Exemplare ein.</fd:failmessage>
+            </fd:length>
+          </fd:validation>
+        </fd:datatype>
+      </fd:field>
+        
+      <fd:booleanfield id="ginsenginfo"> 
+          <fd:label>Infos:</fd:label>
+        <fd:datatype base="string">
+          <fd:validation>
+            <fd:length min="2">
+              <fd:failmessage>Bitte fühlen Sie dieses Feld aus.</fd:failmessage>    
+            </fd:length> 
+          </fd:validation>
+        </fd:datatype>
+        <fd:selection-list>
+          <fd:item value="">
+            <fd:label>Ginsenginformation erhalten</fd:label>
+          </fd:item>
+        </fd:selection-list>
+      </fd:booleanfield>
+      
+      <fd:field id="ffwoher" required="true">
+        <fd:label>Woher kennen Sie Uns:</fd:label>
+        <fd:datatype base="string">
+          <fd:validation>
+            <fd:length min="2">
+              <fd:failmessage>Bitte fühlen Sie dieses Feld aus.</fd:failmessage>    
+            </fd:length> 
+          </fd:validation>
+        </fd:datatype>
+        <fd:selection-list>
+          <fd:item value="">
+            <fd:label>Bitte auswählen</fd:label>
+          </fd:item>
+          <fd:item value="Besuch auf der Flora Farm">
+            <fd:label>Besuch auf der Flora Farm</fd:label>
+          </fd:item>
+          <fd:item value="Biowellcare">
+            <fd:label>Biowellcare</fd:label>
+          </fd:item>
+          <fd:item value="Messebuch">
+            <fd:label>Messebuch</fd:label>
+          </fd:item>
+          <fd:item value="Zeitungsartikel">
+            <fd:label>Zeitungsartikel</fd:label>
+          </fd:item>
+          <fd:item value="Fernsehbericht">
+            <fd:label>Fernsehbericht</fd:label>
+          </fd:item>
+          <fd:item value="Anzeige">
+            <fd:label>Anzeige</fd:label>
+          </fd:item>
+          <fd:item value="Suchmaschiene">
+            <fd:label>Suchmaschine</fd:label>
+          </fd:item>
+          <fd:item value="Sonstiges">
+            <fd:label>Sonstiges</fd:label>
+          </fd:item>
+        </fd:selection-list>
+      </fd:field>              
+    </fd:widgets>
+    
+</fd:form>

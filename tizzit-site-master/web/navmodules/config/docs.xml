@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+In der Navigation dürfen nur VC angezeigt werden, die WIRKLICH visible sind!
+
+depth
+-----
+0 -> alle tiefen
+1 -> nur die aktuelle ebene
+2 -> mit den 1. kind-elementen
+usw.
+
+since
+-----
+me			 		-> Die erste VC ist sie selber
+parent				-> DIe erste VC ist die Mutter (z.B. Traverse Menu)
+root				-> Sitemap & Top / Bottom
+lastNavigationRoot 	-> Ersatz für Unit, für Menu.html
+
+ifDistanceToNavigationRoot
+--------------------------
+Ist optional und funktioniert bei allen "since"
+
+PARAMETER FÜR ContentGenerator:
+Integer-Parameter:
+viewComponentId
+Boolean-Parameter (true, false - Default ist false für alle):
+disableAggregations
+disableUnitMembersList
+disableInternalLinks
+disableUnitInformation
+disableFulltext
+disableNavigation
+disableMeta
+disableHeadLine
+disableNavigationBackward
+liveserver
+
+-->
+
+<jökeldings>
+	<navigation since="parent" depth="1"/>
+</jökeldings>
+<ansgar>
+	<navigation since="lastNavigationRoot" depth="0" />
+</ansgar>
+
+<statusBar>
+
+<navigation since="me" since="lastNavigationRoot" since="parent" since="root"
+		depth="0" depth="1" depth="2" 
+		ifDistanceToNavigationRoot="2"
+		unitImageId="557">
+	<viewcomponent id="212" unitId="12" prev="1" next="23" parent="2">
+		<status/>
+		<showType/>
+		<viewType/>
+		<linkName/>
+		<statusInfo/>
+		<viewLevel/>
+		<viewIndex/>
+		<onlineStart/>
+		<onlineStop/>
+		<reference/>
+		<metaData/>
+		<!--
+		<content id="">
+			<template/>
+			<status/>
+			<contentVersion ...
+		</content>
+		-->
+		<!-- ++ -->
+		<url>Unternehmen/Leitung</url>
+		<!-- wenn externer link, dann: -->
+		<extUrl>http://...</extUrl>
+		<!-- ++ -->
+	</viewcomponent>
+</navigation>
+<!--Einen History bar kann man so erzeugen:-->
+<navigationBackward since="lastNavigationRoot" dontShowFirst="2"/>
+

@@ -1,0 +1,45 @@
+@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) Variation of screen layout (basemod.css) for layout example "3col_3-2-1"
+ * (de) Variation des Screenlayouts (basemod.css) f�r Layoutbeispiel "3col_3-2-1"
+ *
+ * @copyright       Copyright 2005-2007, Dirk Jesse
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.0.4
+ * @revision        $Revision: 134 $
+ * @lastmodified    $Date: 2007-10-12 20:31:37 +0200 (Fr, 12 Okt 2007) $
+ */
+
+@media screen
+{
+  /**
+   * (en) Repositioning content container
+   * (de) Neupositionierung der Content Container
+   *
+   * |-------------------------------|
+   * | #header                       |
+   * |-------------------------------|
+   * | #col3   | #col2     | #col1   |
+   * | flexible| 50%       | 25%     |
+   * |-------------------------------|
+   * | #footer                       |
+   * |-------------------------------|
+   */
+
+  /* #col1 becomes the right column | #col1 wird zur rechten Spalte */
+  #col1 { width: 25%; float:right; margin: 0;}
+  #col1_content { padding-left: 10px; padding-right: 20px }
+
+  /* #col2 becomes the middle column | #col2 wird zur mittleren Spalte */
+  #col2 { width: 50%; margin: 0;}
+  #col2_content { padding-left: 10px; padding-right: 10px }
+
+  /* #col3 becomes the left column |  #col3 wird zur linken Spalten */
+  #col3 { margin-left: 0; margin-right: 75%; }
+  #col3_content { padding-left: 20px; padding-right: 10px }
+}

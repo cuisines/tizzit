@@ -1,0 +1,30 @@
+@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) Variation of screen layout (basemod.css) - graphic free backgrounds "3col_column_backgrounds"
+ * (de) Variation des Screenlayouts (basemod.css) - Grafikfreie Spaltenhintergründe "3col_column_backgrounds"
+ *
+ * @copyright       Copyright 2005-2007, Dirk Jesse
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.0.4
+ * @revision        $Revision: 43 $
+ * @lastmodified    $Date: 2007-06-11 16:09:28 +0200 (Mo, 11 Jun 2007) $
+ */
+
+@media screen
+{
+  #main {padding:0; }
+  #footer { margin: 0; padding: 1em}
+
+  #col1, #col2 { width: 200px; }
+
+  #col3 {
+    margin: 0; padding:0;
+    border-left: 200px #f1e0e0 solid;
+    border-right: 200px #e0e1f1 solid;
+  }
+}

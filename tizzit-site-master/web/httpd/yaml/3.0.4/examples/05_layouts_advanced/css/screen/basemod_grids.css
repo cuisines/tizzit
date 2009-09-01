@@ -1,0 +1,39 @@
+﻿@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) Variation of screen layout (basemod.css) for layout example "flexible_grids"
+ * (de) Variation des Screenlayouts (basemod.css) für Layoutbeispiel "flexible_grids"
+ *
+ * @copyright       Copyright 2007, Sven Kausche
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.0.4
+ * @revision        $Revision: 01 $
+ * @lastmodified    $Date: 2007-07-06 21:44:55 +0200 (Fr, 06 Jul 2007) $
+ */
+
+@media screen
+{
+  
+  #footer { 
+    color:#666; 
+    background: #efefef;
+    padding: 15px;
+  	margin: 0 20px;
+    border-top: 5px #dfdfdf solid;
+  }
+   
+  .coolsubcol {
+    color:#666; 
+    background: #f9f9f9;
+    padding-top:15px;
+    border-top: 2px #efefef solid;
+  }
+  
+  .coolsubcol .subcl {padding: 0 0 0 10px}
+  .coolsubcol .subcr {padding: 0 10px 0 10px}
+    
+}

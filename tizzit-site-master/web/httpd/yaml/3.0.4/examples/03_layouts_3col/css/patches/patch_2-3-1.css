@@ -1,0 +1,64 @@
+@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) IE-Patch stylesheet for "3col_2-3-1" layout example
+ * (de) IE-Korrektur-Stylesheet für das "3col_2-3-1" Beispiellayout
+ *
+ * @copyright       Copyright 2005-2007, Dirk Jesse
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.0.4
+ * @revision        $Revision: 130 $
+ * @lastmodified    $Date: 2007-10-05 19:05:21 +0200 (Fr, 05 Okt 2007) $
+ */
+
+/* Layout-independent adjustments | Layout-unabhängige Anpassungen ----------------------------------- */
+@import url(../../../../yaml/core/iehacks.css);
+
+/* Layout-dependent adjustments | Layout-abhängige Anpassungen --------------------------------------- */
+@media screen
+{
+  /*-----------------------------------------------------------------------------------------------------*/
+
+  /**
+   * Bugfix for IE 3-Pixel-Jog Bug
+   *
+   * @bugfix
+   * @affected   IE 5.x/Win, IE6
+   * @css-for    IE 5.x/Win, IE6
+   * @valid      yes
+   */
+
+  * html #col3 {height: 1%;}        /* Activate hack for 3-Pixel-Jog Bug | Hack für 3-Pixel-Jog Bug aktivieren */
+  * html #col1 {margin-left: -3px;}
+  * html #col2 {margin-right: -3px;}
+  * html #col3 { margin-left: 24%; margin-right: 24%; }
+
+  /*-----------------------------------------------------------------------------------------------------*/
+
+  /**
+   * (en) Simulate min-width / max-width for IE by using JS-Expressions
+   * (de) Über JS-Expressions können die Eigenschaften min-width / max-width im IE simuliert werden
+   *
+   * @workaround
+   * @affected   IE 5.x/Win, IE6
+   * @css-for    IE 5.x/Win, IE6
+   * @valid      no
+   */
+
+  * html #page_margins {
+  /* Fallback if no Javascript enabled */
+  width: 80em;
+
+  /* min-width & max-width width JS-Expressions */
+  width: expression((document.documentElement && document.documentElement.clientHeight) ?
+    (document.documentElement.clientWidth < 740) ? "740px" : (( document.documentElement.clientWidth > (80 * parseInt(document.documentElement.currentStyle.fontSize))) ? "80em" : "auto") :
+
+    (document.body.clientWidth < 740) ? "740px" : (( document.body.clientWidth > (80 * parseInt(document.body.currentStyle.fontSize))) ? "80em" : "auto")
+ );
+  }
+  /*-----------------------------------------------------------------------------------------------------*/
+}

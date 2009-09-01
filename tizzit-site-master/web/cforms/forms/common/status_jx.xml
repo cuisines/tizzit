@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<status>
+  <success>${success}</success>
+  <returnValue>${returnValue}</returnValue>
+  <msg>${msg}</msg>
+  <code>${code}</code>
+</status>

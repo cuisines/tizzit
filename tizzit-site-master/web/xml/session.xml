@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns:session="http://apache.org/cocoon/session/1.0">
+    <session:getxml context="lms" path="/"/>
+</resource>

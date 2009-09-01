@@ -1,0 +1,57 @@
+﻿@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) Variation of screen layout (basemod.css) for layout example "2col_fixed_seo"
+ * (de) Variation des Screenlayouts (basemod.css) für Layoutbeispiel "3col_fixed_seo"
+ *
+ * @copyright       Copyright 2005-2007, Dirk Jesse
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.0.4
+ * @revision        $Revision: 149 $
+ * @lastmodified    $Date: 2007-11-27 14:04:47 +0100 (Di, 27 Nov 2007) $
+ */
+
+@media screen
+{
+  /**
+   * (en) Repositioning content container
+   * (de) Neupositionierung der Content Container
+   *
+   * |-------------------------------|
+   * | #header                       |
+   * | 960px                         |
+   * |-------------------------------|
+   * | #col2   | #col1     | #col3   |
+   * | 240px   | 480px     | 240px   |
+   * |-------------------------------|
+   * | #footer                       |
+   * |-------------------------------|
+   */
+
+  #page_margins {width: 980px; min-width: 980px; max-width:none }
+
+  #main { 
+  	float:left;
+	width: 100%;
+    background-color: transparent;
+    background-image: url(../../images/bg_pattern.png);
+    background-repeat:repeat-y;
+    background-position:left;
+  }
+
+  /* #col1 becomes the middle column | #col1 wird zur mittleren Spalte */
+  #col1 { width: 480px; float:left; margin-left: 240px; }
+  #col1_content {padding-left: 10px; padding-right: 10px}
+
+  /* #col2 becomes the left column | #col2 wird zur linken Spalte */
+  #col2 { width: 240px; float:left;  margin-left: -720px; }
+  #col2_content {padding-left: 20px; padding-right: 10px }
+
+  /* #col3 becomes the right column | #col3 wird zur rechten Spalte */
+  #col3 { margin-left: -5px; margin-right: 0; width: 240px; float:right;}
+  #col3_content {padding-left: 10px; padding-right: 20px}
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	<!-- =========================== Components ================================ -->
+	<map:components>
+		<map:generators default="file">
+		</map:generators>
+		<map:transformers default="xalan"/>
+		<map:readers default="resource">
+		</map:readers>
+		<map:serializers default="html">
+			<map:serializer name="html" mime-type="text/html" logger="sitemap.serializer.html" src="org.apache.cocoon.serialization.HTMLSerializer">
+				<encoding>iso-8859-1</encoding>
+			</map:serializer>
+			<map:serializer mime-type="image/png" name="svg2png" src="org.apache.cocoon.serialization.SVGSerializer"/>
+			<map:serializer name="js" mime-type="text/javascript" logger="sitemap.serializer.js" src="org.apache.cocoon.serialization.TextSerializer">
+				<encoding>iso-8859-1</encoding>
+			</map:serializer>
+			<!-- alternativ ist der js serializer auch mit mime type moeglich: mime-type="application/x-javascript"-->
+			<map:serializer logger="sitemap.serializer.xml" mime-type="text/xml" name="xml" src="org.apache.cocoon.serialization.XMLSerializer">
+				<encoding>iso-8859-1</encoding>
+			</map:serializer>
+			<map:serializer name="html" mime-type="text/html" logger="sitemap.serializer.html" src="org.apache.cocoon.serialization.HTMLSerializer">
+				<encoding>iso-8859-1</encoding>
+			</map:serializer>
+		</map:serializers>
+		<map:actions>
+		</map:actions>
+		<map:matchers default="wildcard"/>
+		<map:selectors default="browser"/>
+		<map:pipelines default="caching"/>
+	</map:components>
+
+	<map:pipelines>
+		<map:pipeline>
+			<!-- ================  general images for the CMS =========================== -->
+
+
+			<map:match pattern="img/svg*.*">
+				<map:generate src="svg/dummy.xml"/>
+				<map:transform src="svg/{1}.xsl">
+					<map:parameter name="text" value="{2}"/>
+				</map:transform>
+				<map:serialize type="svg2png"/>
+			</map:match>
+
+			<map:match pattern="img/*.gif">
+				<map:read src="img/{1}.gif" mime-type="image/gif"/>
+			</map:match>
+
+			<map:match pattern="img/*.jpg">
+				<map:read src="img/{1}.jpg" mime-type="image/jpg"/>
+			</map:match>
+
+
+			<map:match pattern="*/img/*.gif">
+				<map:read src="{1}/img/{2}.gif" mime-type="image/gif"/>
+			</map:match>
+
+			<map:match pattern="*/img/*.jpg">
+				<map:read src="{1}/img/{2}.jpg" mime-type="image/jpg"/>
+			</map:match>
+
+			<map:match pattern="img/**/*.gif">
+				<map:read src="img/{1}/{2}.gif" mime-type="image/gif"/>
+			</map:match>
+
+			<map:match pattern="img/**/*.jpg">
+				<map:read src="img/{1}/{2}.jpg" mime-type="image/jpg"/>
+			</map:match>
+
+			<map:match pattern="img/ejbimage**">
+				<map:read type="imagereader"/>
+			</map:match>
+
+			<map:match pattern="img/ejbfile**">
+				<map:read type="filereader"/>
+			</map:match>
+
+			<map:match pattern="popup/*/**/content.html">
+				<map:act type="cms.actions.template">
+					<map:parameter name="siteId" value="1"/>
+					<map:parameter name="parameters" value="true"/>
+					<map:parameter name="language" value="{1}"/>
+					<map:parameter name="path" value="{2}"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:generate type="CmsContent">
+						<map:parameter name="parameters" value="true"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+					</map:generate>
+					<map:transform src="templates/popup.xsl">
+						<map:parameter name="language" value="{../1}"/>
+						<map:parameter name="url" value="{../2}"/>
+						<map:parameter name="use-request-parameters" value="true"/>
+					</map:transform>
+				</map:act>
+				<map:serialize type="html"/>
+			</map:match>
+		</map:pipeline>
+		
+		<map:pipeline>
+			<map:match pattern="dynamic/**">
+				<map:mount check-reload="yes" src="dynamic/" uri-prefix="dynamic"/>
+			</map:match>
+
+		
+		<!-- read the rest-->
+			<map:match pattern="**">
+				<map:read src="{1}" />
+			</map:match>
+		</map:pipeline>		
+	</map:pipelines>
+</map:sitemap>

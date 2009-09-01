@@ -1,0 +1,10 @@
+Download Documentation | Dokumentation herunterladen
+----------------------------------------------------
+
+(en) The full documentation is available for download at the YAML website. The documentation comes 
+as a PDF file in German and English.
+
+(de) Die vollständige Dokumentation steht auf der YAML-Projekthomepage in den Sprachen Deutsch und Englisch 
+als PDF-Datei gesondert zum Download zur Verfügung.
+
+URL: http://www.yaml.de/

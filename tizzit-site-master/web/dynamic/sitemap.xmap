@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0" xmlns:session="http://apache.org/cocoon/session/1.0">
+	<map:components>
+		<map:generators default="file"/>
+		<map:transformers default="xalan"/>
+		<map:readers default="resource"/>
+		<map:serializers default="html">
+			<map:serializer name="html" mime-type="text/html" logger="sitemap.serializer.html" src="org.apache.cocoon.serialization.HTMLSerializer">
+				<encoding>UTF-8</encoding>
+			</map:serializer>
+			<map:serializer mime-type="image/png" name="svg2png" src="org.apache.cocoon.serialization.SVGSerializer"/>
+			<map:serializer name="js" mime-type="text/javascript" logger="sitemap.serializer.js" src="org.apache.cocoon.serialization.TextSerializer">
+				<encoding>UTF-8</encoding>
+			</map:serializer>
+			<map:serializer logger="sitemap.serializer.xml" mime-type="text/xml" name="xml" src="org.apache.cocoon.serialization.XMLSerializer">
+				<encoding>UTF-8</encoding>
+			</map:serializer>
+			<map:serializer name="html" mime-type="text/html" logger="sitemap.serializer.html" src="org.apache.cocoon.serialization.HTMLSerializer">
+				<encoding>UTF-8</encoding>
+			</map:serializer>
+		</map:serializers>
+		<map:actions/>
+		<map:matchers default="wildcard"/>
+		<map:selectors default="browser">
+			<map:selector name="parameter" logger="sitemap.selector.parameter" src="org.apache.cocoon.selection.ParameterSelector"/>
+		</map:selectors>
+		<map:pipelines default="caching"/>
+	</map:components>
+
+	<map:pipelines>
+
+		<map:pipeline>
+			<map:match pattern="request/**">
+				<map:mount check-reload="yes" src="request/" uri-prefix="request"/>
+			</map:match>
+		</map:pipeline>
+	</map:pipelines>
+</map:sitemap>

@@ -1,0 +1,52 @@
+@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) Variation of screen layout (basemod.css) for layout example "3col_fullheight"
+ * (de) Variation des Screenlayouts (basemod.css) für Layoutbeispiel "3col_fullheight"
+ *
+ * @copyright       Copyright 2005-2009, Dirk Jesse
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.1
+ * @revision        $Revision: 343 $
+ * @lastmodified    $Date: 2009-01-19 23:41:32 +0100 (Mo, 19. Jan 2009) $
+ */
+
+@media screen, projection
+{
+  body, html { height: 100% !important; padding: 0;}
+
+  .page_margins {
+  position:relative !important;
+  min-height:100%; /* real browsers */
+  height: auto !important;
+  background: #fff;
+  }
+  * html .page_margins { height:100% !important; }
+
+  /* allocate space for footer ... */
+  .page { padding-bottom: 70px; }
+
+
+  #footer {
+    position:relative !important;
+    margin: 0 auto;
+    /* move #footer to its position ... */
+    margin: -70px auto 0;
+    background: #fff;
+    border: 0 none;
+    padding: 0;
+  }
+
+  #footer_content {
+    text-align: left;
+    color:#666;
+    background: #f9f9f9;
+    padding: 10px 20px;
+    border-top: 5px #efefef solid;
+    margin: 0 10px;
+  }
+}

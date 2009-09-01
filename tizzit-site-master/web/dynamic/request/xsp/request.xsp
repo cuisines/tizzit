@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp"
+						  xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+						  xmlns:log="http://apache.org/xsp/log/2.0"
+						  xmlns:capture="http://apache.org/cocoon/capture/1.0"
+						  xmlns:esql="http://apache.org/cocoon/SQL/v2"
+						  xmlns:sendmail="http://apache.org/cocoon/sendmail/1.0">
+	<!--converting request-parameters to xml-tree-->
+	<reqpar>
+		<log:logger filename="presse.log" name="xsp-presse"/>
+		<log:debug>Processing the page</log:debug>
+		<xsp:logic><![CDATA[
+		  // parameters from request
+
+		  	java.util.Enumeration param = request.getParameterNames();
+
+			try {
+				org.w3c.dom.Document domDoc = de.juwimm.util.XercesHelper.getNewDocument();
+				org.w3c.dom.Element root = domDoc.createElement("requestparams");
+			    org.apache.cocoon.xml.dom.DOMStreamer dos = new org.apache.cocoon.xml.dom.DOMStreamer(contentHandler);
+
+				while(param.hasMoreElements()) {
+					String key = java.net.URLDecoder.decode((String) param.nextElement(), "UTF-8");
+					String[] values = request.getParameterValues(key);
+					try {
+						for(int i = 0; i < values.length; i++) {
+							org.w3c.dom.Element k = domDoc.createElement(key);
+							k.appendChild(domDoc.createTextNode(java.net.URLDecoder.decode(values[i], "UTF-8")));
+							root.appendChild(k);
+						}
+					}
+					catch (Exception e) {
+						System.out.println("***Fehler aufgetreten***");
+						System.out.println("Ursache: "+e.getMessage());
+						e.printStackTrace();
+					}
+				}
+				domDoc.appendChild(root);
+				//System.out.println("Dokument: "+de.juwimm.util.XercesHelper.doc2String(domDoc));
+			    dos.stream(domDoc.getDocumentElement());
+			    contentHandler.endDocument();
+			}
+			catch (Exception e) {
+				System.out.println("***Fehler aufgetreten***");
+				System.out.println("Ursache: "+e.getMessage());
+				e.printStackTrace();
+			}
+
+
+		]]></xsp:logic>
+		<log:debug>Processing the end of the page</log:debug>
+	</reqpar>
+</xsp:page>

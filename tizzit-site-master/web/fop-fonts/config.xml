@@ -1,0 +1,61 @@
+
+<!--<!DOCTYPE configuration SYSTEM "config.dtd">-->
+<!-- 
+     this file contains templates which allow an user easy 
+     configuration of Fop. Actually normally you don't need this configuration 
+     file, but if you need to change configuration, you should
+     always use this file and *not* config.xml. 
+     Usage: java org.apache.fop.apps.Fop -c userconfig.xml -fo fo-file -pdf pdf-file
+-->
+<configuration>
+	<!--  
+baseDir: normally the base directory is the directory where the fo file is 
+         located. if you want to specify your own, uncomment this entry.
+         This value can also be a URL. Actually, the value is converted to 
+         a URL.
+-->
+	<!-- 
+  <entry>
+    <key>baseDir</key>
+    <value></value>
+  </entry>
+-->
+	<!--  
+fontBaseDir: Similar to baseDir, except that this value is used for fonts. If
+         it isn't specified, the value from baseDir is used.
+-->
+
+<!--	<entry>
+		<key>fontBaseDir</key>
+		<value>/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts</value>
+	</entry>-->
+	<!--
+************************************************************************
+  Add fonts here
+************************************************************************
+-->
+
+	<fonts>
+
+		<font metrics-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/arial.xml" kerning="yes" embed-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/arial.ttf">
+			<font-triplet name="Arial" style="normal" weight="normal"/>
+			<font-triplet name="ArialMT" style="normal" weight="normal"/>
+		</font>
+		<font metrics-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/arialbd.xml" kerning="yes" embed-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/arialbd.ttf">
+			<font-triplet name="Arial" style="normal" weight="bold"/>
+			<font-triplet name="ArialMT" style="normal" weight="bold"/>
+		</font>
+		<font metrics-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/ariali.xml" kerning="yes" embed-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/ariali.ttf">
+			<font-triplet name="Arial" style="italic" weight="normal"/>
+			<font-triplet name="ArialMT" style="italic" weight="normal"/>
+		</font>
+		<font metrics-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/arialbi.xml" kerning="yes" embed-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/arialbi.ttf">
+			<font-triplet name="Arial" style="italic" weight="bold"/>
+			<font-triplet name="ArialMT" style="italic" weight="bold"/>
+		</font>
+	  <font metrics-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/code39.xml" kerning="yes" embed-file="/conquest/data/applications/juwimm-cms.ear/cocoon.war/cms/fop-fonts/code39.ttf">
+    	    <font-triplet name="code39" style="normal" weight="normal"/>
+    	    <font-triplet name="code 3 de 9" style="normal" weight="normal"/>
+    	</font>
+	</fonts>
+</configuration>

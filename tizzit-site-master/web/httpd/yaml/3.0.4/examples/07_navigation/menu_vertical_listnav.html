@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>YAML | Example &quot;menu_vertical_listnav&quot;</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<!-- (en) Add your meta data here -->
+<!-- (de) Fuegen Sie hier ihre Meta-Daten ein -->
+<link href="css/layout_vertical_listnav.css" rel="stylesheet" type="text/css"/>
+<!--[if lte IE 7]>
+<link href="css/patches/patch_vertical_listnav.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+</head>
+<body>
+<div id="page_margins">
+	<div id="page">
+		<div id="header">
+			<div id="topnav">
+				<!-- start: skip link navigation -->
+				<a class="skip" href="#navigation" title="skip link">Skip to the navigation</a><span class="hideme">.</span>
+				<a class="skip" href="#content" title="skip link">Skip to the content</a><span class="hideme">.</span>
+				<!-- end: skip link navigation -->
+				<span><a href="#">Login</a> | <a href="#">Contact</a> | <a href="#">Imprint</a></span> </div>
+			<h1>Example | Beispiel <em>&quot;menu_vertical_listnav&quot;</em> </h1>
+			<span>YAML &#8226; (X)HTML/CSS Framework</span></div>
+		<!-- begin: main navigation #nav -->
+		<div id="nav"> <a id="navigation" name="navigation"></a>
+			<!-- skip anchor: navigation -->
+			<div id="nav_main">
+				<ul>
+					<li id="current"><a href="#">Button 1</a></li>
+					<li><a href="#">Button 2</a></li>
+					<li><a href="#">Button 3</a></li>
+					<li><a href="#">Button 4</a></li>
+					<li><a href="#">Button 5</a></li>
+				</ul>
+			</div>
+		</div>
+		<!-- end: main navigation -->
+		<!-- begin: main content area #main -->
+		<div id="main">
+			<!-- begin: #col1 - first float column -->
+			<div id="col1">
+				<div id="col1_content" class="clearfix">
+					<ul id="submenu">
+						<li id="title">Navigation Title </li>
+						<li><a href="#">Item 1</a></li>
+						<li><a href="#">Item 2 </a>
+							<ul>
+								<li><a href="#">Item 2.1 </a>
+									<ul>
+										<li><a href="#">Item 2.1.1 </a></li>
+										<li><a href="#">Item 2.2.2 </a>
+											<ul>
+												<li id="active">Current 2.1.1.1</li>
+												<li><a href="#">Item 2.2.2.2 </a></li>
+											</ul>
+										</li>
+										<li><a href="#">Item 2.2.3 </a></li>
+										<li><a href="#">Item 2.2.4 </a></li>
+									</ul>								
+								</li>
+								<li><a href="#">Item 2.2 </a></li>
+							</ul>
+						</li>
+						<li><a href="#">Item 3 </a></li>
+						<li><a href="#">Item 4 </a></li>
+					</ul>
+				</div>
+			</div>
+			<!-- end: #col1 -->
+			<!-- begin: #col2 second float column -->
+			<div id="col2">
+				<div id="col2_content" class="clearfix">
+					<h2>Column  #col2</h2>
+					<p>Integer condimentum, justo a venenatis vulputate, enim pede porttitor eros, non   pretium lorem orci id tortor. Nulla a ligula. Mauris nulla arcu, luctus vel,   consequat non, luctus eu, nisi. Mauris volutpat, nunc eget pretium blandit,   ligula quam commodo nisl, ac fermentum nibh pede et nulla. In condimentum   bibendum nisi. Vestibulum risus. </p>
+					<p>Nullam placerat varius nibh. Quisque tellus   sapien, placerat sed, aliquam sit amet, scelerisque sit amet, nisi. Pellentesque   eget leo vitae felis laoreet dictum. Duis pellentesque porttitor sapien. Fusce   leo. Nulla leo. Donec mattis, justo nec gravida euismod, massa mi posuere   mauris.</p>
+				</div>
+			</div>
+			<!-- end: #col2 -->
+			<!-- begin: #col3 static column -->
+			<div id="col3">
+				<div id="col3_content" class="clearfix"> <a id="content" name="content"></a>
+					<!-- Skiplink-Anker: Content -->
+					<h2>Column  #col3</h2>
+					<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam malesuada   suscipit pede. Nullam ipsum lacus, varius vel, nonummy in, consequat ut, neque.   Vivamus viverra. Duis dolor arcu, lacinia sit amet, sollicitudin sed, aliquet   vel, quam. Pellentesque molestie laoreet tortor. Aenean quam. Pellentesque magna   metus.</p>
+					<blockquote>
+						<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nullam malesuada   suscipit pede. Nullam ipsum lacus, varius vel, nonummy in, consequat ut, neque.   Vivamus viverra. Duis dolor arcu, lacinia sit amet, sollicitudin sed, aliquet   vel, quam. Pellentesque molestie laoreet tortor. Aenean quam. Pellentesque magna   metus, venenatis sit amet, congue nec, dictum in, est. Aliquam nibh. Integer   congue nisl in mauris. Ut risus diam, ornare eget, interdum id, tincidunt at,   eros.</p>
+					</blockquote>
+					<p>Nulla vitae mauris. Phasellus vel ligula quis dolor bibendum egestas. Duis a   massa ut orci varius placerat. Sed leo nulla, tempor nec, commodo in, fringilla   vel, nibh. Cras nibh. Pellentesque venenatis felis. Cum sociis natoque penatibus   et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum fringilla   gravida nunc. Mauris neque. Cras gravida metus eget sapien. Sed faucibus, turpis   ut pretium hendrerit, turpis mauris scelerisque tellus, vel convallis metus   massa in neque.</p>
+				</div>
+				<!-- IE column clearing -->
+				<div id="ie_clearing">&nbsp;</div>
+			</div>
+			<!-- end: #col3 -->
+		</div>
+		<!-- end: #main -->
+		<!-- begin: #footer -->
+		<div id="footer">Footer with copyright notice and status information<br />
+Layout based on <a href="http://www.yaml.de/">YAML</a></div>
+		<!-- end: #footer -->
+	</div>
+</div>
+</body>
+</html>

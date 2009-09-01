@@ -1,0 +1,24 @@
+@charset "UTF-8";
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
+ *
+ * (en) Variation of screen layout (basemod.css) for layout example "flexible_grids"
+ * (de) Variation des Screenlayouts (basemod.css) für Layoutbeispiel "flexible_grids"
+ *
+ * @copyright       Copyright 2007, Sven Kausche
+ * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
+ *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
+ * @link            http://www.yaml.de
+ * @package         yaml
+ * @version         3.0.4
+ * @revision        $Revision: 01 $
+ * @lastmodified    $Date: 2007-07-06 21:44:55 +0200 (Fr, 06 Jul 2007) $
+ */
+
+@media screen
+{
+  /* (en) Repeat the main color from the header above the navigation */
+  /* (de) Wiederholung der Hauptfarbe aus dem Header oberhalb der Navigation */
+  #header { background: #edf2f8 url("../../images/bg_header.gif") repeat-x bottom left;}
+  #nav_main {background-color: #c8ddf3}
+}

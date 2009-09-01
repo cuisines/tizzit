@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<thirdlevel>
+		<navigation since="me" depth="2" ifDistanceToNavigationRoot="2"></navigation>
+</thirdlevel>
