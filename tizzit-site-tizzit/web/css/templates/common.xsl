@@ -201,28 +201,30 @@
 			text-decoration:none;
 			font-size:17px;
 			display:block;
-			padding:5px 8px 12px 8px;
+			padding:5px 8px 13px 8px;
 		}
 		.firstlevel2 .firstlink .fl_bg_l {
-			background-image:url('/httpd/img/nav_bg_left.gif');
+			background-image:url('/httpd/img/navi/nav_bg_left.gif');
 			background-repeat:no-repeat;
+			width:4px;
 		}
 		.firstlevel2 .firstlink .fl_bg {
-			background-image:url('/httpd/img/nav_bg_right.gif');
+			background-image:url('/httpd/img/navi/nav_bg_right.gif');
 			background-repeat:no-repeat;
+			width:4px;
 		}
 		.firstlevel2 .firstlink .flm_bg {
-			background-image:url('/httpd/img/nav_bg_middle.gif');
+			background-image:url('/httpd/img/navi/nav_bg_middle.gif');
 			background-repeat:repeat-x;
 		}
-		.firstlevel2 .firstlink .actualClicked a {
-			background-image:url('/httpd/img/nav_bg_bottom.gif');
+		.firstlevel2 .firstlink .actualClicked a, .firstlevel2 .firstlink .clicked a {
+			background-image:url('/httpd/img/navi/nav_bg_bottom.gif');
 			background-repeat:no-repeat;
 			background-position:center 29px;
 			color:#fff;
 		}
 		.firstlevel2 .firstlink a:hover {
-			color:#fff;
+			color:#96cf48;
 		}
 		
 
