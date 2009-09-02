@@ -7,8 +7,9 @@
     <xsl:template match="styles" mode="template" priority="1">
         
         #contentcontainer {
-            background-image:url('/httpd/img/underwater.jpg');
-            background-repeat:no-repeat;
+            margin-top: 37px!important;
+            margin-top: 10px;
+            padding:0 30px 0 0;
         }
         .kwicks {  
             list-style: none;  

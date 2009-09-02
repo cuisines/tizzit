@@ -50,7 +50,15 @@
 								<ctmpl:include name="tagcloud"/>
 								<ctmpl:include name="content"/>
 							</div>
-							<div id="bottom">&#160;</div>
+							<div id="information_1">&#160;</div>
+						</div>
+						<div id="information_2">&#160;</div>
+						<div id="footer">
+							<div id="f_content">
+								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
+								<div class="twitter">twitter</div>
+								<div class="clear">&#160;</div>
+							</div>
 						</div>
 					</div>
 				</div>

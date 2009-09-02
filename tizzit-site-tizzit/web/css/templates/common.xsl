@@ -112,6 +112,21 @@
 			background-repeat: repeat-x;
 			background-position: 0 195px;
 		}
+		#information_1 {
+			height: 320px;
+		}
+		#information_2 {
+			background-image:url('/httpd/img/informations_repeat.jpg');
+			background-repeat: repeat-x;
+			background-position: 0 bottom;
+			height: 410px;
+		}
+		#footer {
+			background-image:url('/httpd/img/footer_repeat.jpg');
+			background-repeat: repeat-x;
+			background-position: 0 bottom;
+			height:60px;
+		}
 		#header {
 			background-image:url('/httpd/img/header_logo.jpg');
 			background-repeat:no-repeat;
@@ -125,11 +140,9 @@
 			height:34px;
 		}
 		#contentcontainer {
-			width:994px;
-			height:375px;
 			margin-top: 37px!important;
 			margin-top: 10px;
-			padding:0 30px 0 0;
+			padding:30px 50px 30px 310px;
 		}
 		#toparea {
 			float:right;
@@ -164,7 +177,20 @@
 			color:#fff;
 			font-size:0px;
 		}
-		.secondlevel, #search_area, #search_button, #search_container {
+		#f_content {
+			color: #aeb9bf;
+			font-size:11px;
+			margin:0 auto;
+			font-family:Tahoma;
+			width:950px;
+			padding:17px 0 0 0;
+		}
+		.twitter {
+			float:right;
+		}
+		.secondlevel, #search_area, #search_button, #search_container, .copyright,
+		.firstlevel2 .firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
+		.fl_bg_l, .fl_bg, .flm_bg{
 			float:left;
 		}
 		.firstlevel2 {
@@ -185,10 +211,6 @@
 		}
 		.secondlevel .firstlink a:hover, .secondlevel .first-of-firstlink a:hover {
 			text-decoration:underline;
-		}
-		.firstlevel2 .firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
-		.fl_bg_l, .fl_bg, .flm_bg {
-			float:left;
 		}
 		.fl_bg_l, .fl_bg {
 			height:29px;

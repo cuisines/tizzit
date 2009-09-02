@@ -4,6 +4,7 @@
 		<availableTemplates>
 			<item filename="standard">Standard</item>
 			<item filename="home">Startseite</item>
+			<item filename="images">Bilder</item>
 			<item filename="video">Video</item>
 			<item filename="cinclude4flow">Verweis aufs Formular</item>
 			<item filename="formular">Formular</item>
