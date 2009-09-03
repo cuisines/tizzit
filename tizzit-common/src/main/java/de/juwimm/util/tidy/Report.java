@@ -49,6 +49,7 @@ package de.juwimm.util.tidy;
  */
 
 import java.text.MessageFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.io.PrintWriter;
@@ -144,14 +145,6 @@ public class Report {
 
 	private static ResourceBundle res = null;
 
-	static {
-		try {
-			res = ResourceBundle.getBundle("/TidyMessages");
-		} catch (MissingResourceException e) {
-			throw new Error(e.toString());
-		}
-	}
-
 	public static void tidyPrint(PrintWriter p, String msg) {
 		p.print(msg);
 	}
@@ -188,7 +181,7 @@ public class Report {
 	public static void unknownOption(String option) {
 		optionerrors++;
 		try {
-			System.err.println(MessageFormat.format(res.getString("unknown_option"), new Object[] { option}));
+			System.err.println(MessageFormat.format(getRes().getString("unknown_option"), new Object[] {option}));
 		} catch (MissingResourceException e) {
 			System.err.println(e.toString());
 		}
@@ -198,7 +191,7 @@ public class Report {
 	public static void badArgument(String option) {
 		optionerrors++;
 		try {
-			System.err.println(MessageFormat.format(res.getString("bad_argument"), new Object[] { option}));
+			System.err.println(MessageFormat.format(getRes().getString("bad_argument"), new Object[] {option}));
 		} catch (MissingResourceException e) {
 			System.err.println(e.toString());
 		}
@@ -208,13 +201,11 @@ public class Report {
 		try {
 			/* Change formatting to be parsable by GNU Emacs */
 			if (lexer.configuration.Emacs) {
-				tidyPrint(lexer.errout, MessageFormat.format(res.getString("emacs_format"), new Object[] { currentFile,
-						new Integer(lexer.lines), new Integer(lexer.columns)}));
+				tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("emacs_format"), new Object[] {currentFile, new Integer(lexer.lines), new Integer(lexer.columns)}));
 				tidyPrint(lexer.errout, " ");
 			} else /* traditional format */
 			{
-				tidyPrint(lexer.errout, MessageFormat.format(res.getString("line_column"), new Object[] {
-						new Integer(lexer.lines), new Integer(lexer.columns)}));
+				tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("line_column"), new Object[] {new Integer(lexer.lines), new Integer(lexer.columns)}));
 			}
 		} catch (MissingResourceException e) {
 			lexer.errout.println(e.toString());
@@ -230,8 +221,7 @@ public class Report {
 			if (code == WINDOWS_CHARS) {
 				lexer.badChars |= WINDOWS_CHARS;
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("illegal_char"),
-							new Object[] { new Integer(c)}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("illegal_char"), new Object[] {new Integer(c)}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -249,21 +239,19 @@ public class Report {
 
 			if (code == MISSING_SEMICOLON) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("missing_semicolon"),
-							new Object[] { entity}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("missing_semicolon"), new Object[] {entity}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == UNKNOWN_ENTITY) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("unknown_entity"),
-							new Object[] { entity}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("unknown_entity"), new Object[] {entity}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == UNESCAPED_AMPERSAND) {
 				try {
-					tidyPrint(lexer.errout, res.getString("unescaped_ampersand"));
+					tidyPrint(lexer.errout, getRes().getString("unescaped_ampersand"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -290,102 +278,95 @@ public class Report {
 
 			if (code == UNKNOWN_ATTRIBUTE) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("unknown_attribute"),
-							new Object[] { attr}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("unknown_attribute"), new Object[] {attr}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MISSING_ATTRIBUTE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("missing_attribute"),
-							new Object[] { attr}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("missing_attribute"), new Object[] {attr}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MISSING_ATTR_VALUE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("missing_attr_value"),
-							new Object[] { attr}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("missing_attr_value"), new Object[] {attr}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MISSING_IMAGEMAP) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, res.getString("missing_imagemap"));
+					tidyPrint(lexer.errout, getRes().getString("missing_imagemap"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				lexer.badAccess |= MISSING_IMAGE_MAP;
 			} else if (code == BAD_ATTRIBUTE_VALUE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("bad_attribute_value"),
-							new Object[] { attr}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("bad_attribute_value"), new Object[] {attr}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == XML_ATTRIBUTE_VALUE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("xml_attribute_value"),
-							new Object[] { attr}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("xml_attribute_value"), new Object[] {attr}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == UNEXPECTED_GT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("error"));
+					tidyPrint(lexer.errout, getRes().getString("error"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, res.getString("unexpected_gt"));
+					tidyPrint(lexer.errout, getRes().getString("unexpected_gt"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
-				lexer.errors++;
-				;
+				lexer.errors++;;
 			} else if (code == UNEXPECTED_QUOTEMARK) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, res.getString("unexpected_quotemark"));
+					tidyPrint(lexer.errout, getRes().getString("unexpected_quotemark"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == REPEATED_ATTRIBUTE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, res.getString("repeated_attribute"));
+					tidyPrint(lexer.errout, getRes().getString("repeated_attribute"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == PROPRIETARY_ATTR_VALUE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("proprietary_attr_value"),
-							new Object[] { attr}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("proprietary_attr_value"), new Object[] {attr}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == UNEXPECTED_END_OF_FILE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("unexpected_end_of_file"));
+					tidyPrint(lexer.errout, getRes().getString("unexpected_end_of_file"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == ID_NAME_MISMATCH) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 					tag(lexer, node);
-					tidyPrint(lexer.errout, res.getString("id_name_mismatch"));
+					tidyPrint(lexer.errout, getRes().getString("id_name_mismatch"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -395,15 +376,14 @@ public class Report {
 		} else if (code == UNEXPECTED_GT) {
 			position(lexer);
 			try {
-				tidyPrint(lexer.errout, res.getString("error"));
+				tidyPrint(lexer.errout, getRes().getString("error"));
 				tag(lexer, node);
-				tidyPrint(lexer.errout, res.getString("unexpected_gt"));
+				tidyPrint(lexer.errout, getRes().getString("unexpected_gt"));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
 			tidyPrintln(lexer.errout);
-			lexer.errors++;
-			;
+			lexer.errors++;;
 		}
 	}
 
@@ -427,134 +407,121 @@ public class Report {
 
 			if (code == MISSING_ENDTAG_FOR) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("missing_endtag_for"),
-							new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("missing_endtag_for"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MISSING_ENDTAG_BEFORE) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("missing_endtag_before"),
-							new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("missing_endtag_before"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 			} else if (code == DISCARDING_UNEXPECTED) {
 				try {
-					tidyPrint(lexer.errout, res.getString("discarding_unexpected"));
+					tidyPrint(lexer.errout, getRes().getString("discarding_unexpected"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 			} else if (code == NESTED_EMPHASIS) {
 				try {
-					tidyPrint(lexer.errout, res.getString("nested_emphasis"));
+					tidyPrint(lexer.errout, getRes().getString("nested_emphasis"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 			} else if (code == COERCE_TO_ENDTAG) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("coerce_to_endtag"),
-							new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("coerce_to_endtag"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == NON_MATCHING_ENDTAG) {
 				try {
-					tidyPrint(lexer.errout, res.getString("non_matching_endtag_1"));
+					tidyPrint(lexer.errout, getRes().getString("non_matching_endtag_1"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("non_matching_endtag_2"),
-							new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("non_matching_endtag_2"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == TAG_NOT_ALLOWED_IN) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("tag_not_allowed_in"),
-							new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("tag_not_allowed_in"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == DOCTYPE_AFTER_TAGS) {
 				try {
-					tidyPrint(lexer.errout, res.getString("doctype_after_tags"));
+					tidyPrint(lexer.errout, getRes().getString("doctype_after_tags"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MISSING_STARTTAG) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("missing_starttag"),
-							new Object[] { node.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("missing_starttag"), new Object[] {node.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == UNEXPECTED_ENDTAG) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("unexpected_endtag"),
-							new Object[] { node.element}));
-					if (element != null)
-							tidyPrint(lexer.errout, MessageFormat.format(res.getString("unexpected_endtag_suffix"),
-									new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("unexpected_endtag"), new Object[] {node.element}));
+					if (element != null) tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("unexpected_endtag_suffix"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == TOO_MANY_ELEMENTS) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("too_many_elements"),
-							new Object[] { node.element}));
-					if (element != null)
-							tidyPrint(lexer.errout, MessageFormat.format(res.getString("too_many_elements_suffix"),
-									new Object[] { element.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("too_many_elements"), new Object[] {node.element}));
+					if (element != null) tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("too_many_elements_suffix"), new Object[] {element.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == USING_BR_INPLACE_OF) {
 				try {
-					tidyPrint(lexer.errout, res.getString("using_br_inplace_of"));
+					tidyPrint(lexer.errout, getRes().getString("using_br_inplace_of"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 			} else if (code == INSERTING_TAG) {
 				try {
-					tidyPrint(lexer.errout, MessageFormat.format(res.getString("inserting_tag"),
-							new Object[] { node.element}));
+					tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("inserting_tag"), new Object[] {node.element}));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == CANT_BE_NESTED) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 				try {
-					tidyPrint(lexer.errout, res.getString("cant_be_nested"));
+					tidyPrint(lexer.errout, getRes().getString("cant_be_nested"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == PROPRIETARY_ELEMENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 				try {
-					tidyPrint(lexer.errout, res.getString("proprietary_element"));
+					tidyPrint(lexer.errout, getRes().getString("proprietary_element"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -567,114 +534,114 @@ public class Report {
 			} else if (code == OBSOLETE_ELEMENT) {
 				try {
 					if (element.tag != null && (element.tag.model & Dict.CM_OBSOLETE) != 0)
-						tidyPrint(lexer.errout, res.getString("obsolete_element"));
+						tidyPrint(lexer.errout, getRes().getString("obsolete_element"));
 					else
-						tidyPrint(lexer.errout, res.getString("replacing_element"));
+						tidyPrint(lexer.errout, getRes().getString("replacing_element"));
 
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, element);
 				try {
-					tidyPrint(lexer.errout, res.getString("by"));
+					tidyPrint(lexer.errout, getRes().getString("by"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 			} else if (code == TRIM_EMPTY_ELEMENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("trim_empty_element"));
+					tidyPrint(lexer.errout, getRes().getString("trim_empty_element"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, element);
 			} else if (code == MISSING_TITLE_ELEMENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("missing_title_element"));
+					tidyPrint(lexer.errout, getRes().getString("missing_title_element"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == ILLEGAL_NESTING) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, element);
 				try {
-					tidyPrint(lexer.errout, res.getString("illegal_nesting"));
+					tidyPrint(lexer.errout, getRes().getString("illegal_nesting"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == NOFRAMES_CONTENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("warning"));
+					tidyPrint(lexer.errout, getRes().getString("warning"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 				tag(lexer, node);
 				try {
-					tidyPrint(lexer.errout, res.getString("noframes_content"));
+					tidyPrint(lexer.errout, getRes().getString("noframes_content"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == INCONSISTENT_VERSION) {
 				try {
-					tidyPrint(lexer.errout, res.getString("inconsistent_version"));
+					tidyPrint(lexer.errout, getRes().getString("inconsistent_version"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MALFORMED_DOCTYPE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("malformed_doctype"));
+					tidyPrint(lexer.errout, getRes().getString("malformed_doctype"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == CONTENT_AFTER_BODY) {
 				try {
-					tidyPrint(lexer.errout, res.getString("content_after_body"));
+					tidyPrint(lexer.errout, getRes().getString("content_after_body"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == MALFORMED_COMMENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("malformed_comment"));
+					tidyPrint(lexer.errout, getRes().getString("malformed_comment"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == BAD_COMMENT_CHARS) {
 				try {
-					tidyPrint(lexer.errout, res.getString("bad_comment_chars"));
+					tidyPrint(lexer.errout, getRes().getString("bad_comment_chars"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == BAD_XML_COMMENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("bad_xml_comment"));
+					tidyPrint(lexer.errout, getRes().getString("bad_xml_comment"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == BAD_CDATA_CONTENT) {
 				try {
-					tidyPrint(lexer.errout, res.getString("bad_cdata_content"));
+					tidyPrint(lexer.errout, getRes().getString("bad_cdata_content"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == INCONSISTENT_NAMESPACE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("inconsistent_namespace"));
+					tidyPrint(lexer.errout, getRes().getString("inconsistent_namespace"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == DTYPE_NOT_UPPER_CASE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("dtype_not_upper_case"));
+					tidyPrint(lexer.errout, getRes().getString("dtype_not_upper_case"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			} else if (code == UNEXPECTED_END_OF_FILE) {
 				try {
-					tidyPrint(lexer.errout, res.getString("unexpected_end_of_file"));
+					tidyPrint(lexer.errout, getRes().getString("unexpected_end_of_file"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -697,35 +664,32 @@ public class Report {
 
 		if (code == SUSPECTED_MISSING_QUOTE) {
 			try {
-				tidyPrint(lexer.errout, res.getString("suspected_missing_quote"));
+				tidyPrint(lexer.errout, getRes().getString("suspected_missing_quote"));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
 		} else if (code == DUPLICATE_FRAMESET) {
 			try {
-				tidyPrint(lexer.errout, res.getString("duplicate_frameset"));
+				tidyPrint(lexer.errout, getRes().getString("duplicate_frameset"));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
 		} else if (code == UNKNOWN_ELEMENT) {
 			try {
-				tidyPrint(lexer.errout, res.getString("error"));
+				tidyPrint(lexer.errout, getRes().getString("error"));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
 			tag(lexer, node);
 			try {
-				tidyPrint(lexer.errout, res.getString("unknown_element"));
+				tidyPrint(lexer.errout, getRes().getString("unknown_element"));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
 		} else if (code == UNEXPECTED_ENDTAG) {
 			try {
-				tidyPrint(lexer.errout, MessageFormat.format(res.getString("unexpected_endtag"),
-						new Object[] { node.element}));
-				if (element != null)
-						tidyPrint(lexer.errout, MessageFormat.format(res.getString("unexpected_endtag_suffix"),
-								new Object[] { element.element}));
+				tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("unexpected_endtag"), new Object[] {node.element}));
+				if (element != null) tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("unexpected_endtag_suffix"), new Object[] {element.element}));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
@@ -737,14 +701,13 @@ public class Report {
 	public static void errorSummary(Lexer lexer) {
 		/* adjust badAccess to that its null if frames are ok */
 		if ((lexer.badAccess & (USING_FRAMES | USING_NOFRAMES)) != 0) {
-			if (!(((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0)))
-					lexer.badAccess &= ~(USING_FRAMES | USING_NOFRAMES);
+			if (!(((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0))) lexer.badAccess &= ~(USING_FRAMES | USING_NOFRAMES);
 		}
 
 		if (lexer.badChars != 0) {
 			if ((lexer.badChars & WINDOWS_CHARS) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badchars_summary"));
+					tidyPrint(lexer.errout, getRes().getString("badchars_summary"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -753,7 +716,7 @@ public class Report {
 
 		if (lexer.badForm != 0) {
 			try {
-				tidyPrint(lexer.errout, res.getString("badform_summary"));
+				tidyPrint(lexer.errout, getRes().getString("badform_summary"));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
@@ -762,7 +725,7 @@ public class Report {
 		if (lexer.badAccess != 0) {
 			if ((lexer.badAccess & MISSING_SUMMARY) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badaccess_missing_summary"));
+					tidyPrint(lexer.errout, getRes().getString("badaccess_missing_summary"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -770,7 +733,7 @@ public class Report {
 
 			if ((lexer.badAccess & MISSING_IMAGE_ALT) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badaccess_missing_image_alt"));
+					tidyPrint(lexer.errout, getRes().getString("badaccess_missing_image_alt"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -778,7 +741,7 @@ public class Report {
 
 			if ((lexer.badAccess & MISSING_IMAGE_MAP) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badaccess_missing_image_map"));
+					tidyPrint(lexer.errout, getRes().getString("badaccess_missing_image_map"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -786,7 +749,7 @@ public class Report {
 
 			if ((lexer.badAccess & MISSING_LINK_ALT) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badaccess_missing_link_alt"));
+					tidyPrint(lexer.errout, getRes().getString("badaccess_missing_link_alt"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -794,15 +757,14 @@ public class Report {
 
 			if (((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0)) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badaccess_frames"));
+					tidyPrint(lexer.errout, getRes().getString("badaccess_frames"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
 			}
 
 			try {
-				tidyPrint(lexer.errout, MessageFormat.format(res.getString("badaccess_summary"),
-						new Object[] { ACCESS_URL}));
+				tidyPrint(lexer.errout, MessageFormat.format(getRes().getString("badaccess_summary"), new Object[] {ACCESS_URL}));
 			} catch (MissingResourceException e) {
 				lexer.errout.println(e.toString());
 			}
@@ -811,7 +773,7 @@ public class Report {
 		if (lexer.badLayout != 0) {
 			if ((lexer.badLayout & USING_LAYER) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badlayout_using_layer"));
+					tidyPrint(lexer.errout, getRes().getString("badlayout_using_layer"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -819,7 +781,7 @@ public class Report {
 
 			if ((lexer.badLayout & USING_SPACER) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badlayout_using_spacer"));
+					tidyPrint(lexer.errout, getRes().getString("badlayout_using_spacer"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -827,7 +789,7 @@ public class Report {
 
 			if ((lexer.badLayout & USING_FONT) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badlayout_using_font"));
+					tidyPrint(lexer.errout, getRes().getString("badlayout_using_font"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -835,7 +797,7 @@ public class Report {
 
 			if ((lexer.badLayout & USING_NOBR) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badlayout_using_nobr"));
+					tidyPrint(lexer.errout, getRes().getString("badlayout_using_nobr"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -843,7 +805,7 @@ public class Report {
 
 			if ((lexer.badLayout & USING_BODY) != 0) {
 				try {
-					tidyPrint(lexer.errout, res.getString("badlayout_using_body"));
+					tidyPrint(lexer.errout, getRes().getString("badlayout_using_body"));
 				} catch (MissingResourceException e) {
 					lexer.errout.println(e.toString());
 				}
@@ -853,8 +815,7 @@ public class Report {
 
 	public static void unknownOption(PrintWriter errout, char c) {
 		try {
-			tidyPrintln(errout, MessageFormat.format(res.getString("unrecognized_option"), new Object[] { new String(
-					new char[] { c})}));
+			tidyPrintln(errout, MessageFormat.format(getRes().getString("unrecognized_option"), new Object[] {new String(new char[] {c})}));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -862,7 +823,7 @@ public class Report {
 
 	public static void unknownFile(PrintWriter errout, String program, String file) {
 		try {
-			tidyPrintln(errout, MessageFormat.format(res.getString("unknown_file"), new Object[] { program, file}));
+			tidyPrintln(errout, MessageFormat.format(getRes().getString("unknown_file"), new Object[] {program, file}));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -870,7 +831,7 @@ public class Report {
 
 	public static void needsAuthorIntervention(PrintWriter errout) {
 		try {
-			tidyPrintln(errout, res.getString("needs_author_intervention"));
+			tidyPrintln(errout, getRes().getString("needs_author_intervention"));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -878,7 +839,7 @@ public class Report {
 
 	public static void missingBody(PrintWriter errout) {
 		try {
-			tidyPrintln(errout, res.getString("missing_body"));
+			tidyPrintln(errout, getRes().getString("missing_body"));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -886,7 +847,7 @@ public class Report {
 
 	public static void reportNumberOfSlides(PrintWriter errout, int count) {
 		try {
-			tidyPrintln(errout, MessageFormat.format(res.getString("slides_found"), new Object[] { new Integer(count)}));
+			tidyPrintln(errout, MessageFormat.format(getRes().getString("slides_found"), new Object[] {new Integer(count)}));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -894,7 +855,7 @@ public class Report {
 
 	public static void generalInfo(PrintWriter errout) {
 		try {
-			tidyPrintln(errout, res.getString("general_info"));
+			tidyPrintln(errout, getRes().getString("general_info"));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -904,7 +865,7 @@ public class Report {
 		currentFile = filename; /* for use with Gnu Emacs */
 
 		try {
-			tidyPrintln(errout, MessageFormat.format(res.getString("hello_message"), new Object[] { date, filename}));
+			tidyPrintln(errout, MessageFormat.format(getRes().getString("hello_message"), new Object[] {date, filename}));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -918,7 +879,7 @@ public class Report {
 
 		try {
 			if (doctype != null) {
-				tidyPrint(errout, MessageFormat.format(res.getString("doctype_given"), new Object[] { filename}));
+				tidyPrint(errout, MessageFormat.format(getRes().getString("doctype_given"), new Object[] {filename}));
 
 				for (i = doctype.start; i < doctype.end; ++i) {
 					c = (int) doctype.textarray[i];
@@ -937,8 +898,7 @@ public class Report {
 				errout.print('"');
 			}
 
-			tidyPrintln(errout, MessageFormat.format(res.getString("report_version"), new Object[] { filename,
-					(vers != null ? vers : "HTML proprietary")}));
+			tidyPrintln(errout, MessageFormat.format(getRes().getString("report_version"), new Object[] {filename, (vers != null ? vers : "HTML proprietary")}));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
@@ -947,14 +907,13 @@ public class Report {
 	public static void reportNumWarnings(PrintWriter errout, Lexer lexer) {
 		if (lexer.warnings > 0) {
 			try {
-				tidyPrintln(errout, MessageFormat.format(res.getString("num_warnings"), new Object[] { new Integer(
-						lexer.warnings)}));
+				tidyPrintln(errout, MessageFormat.format(getRes().getString("num_warnings"), new Object[] {new Integer(lexer.warnings)}));
 			} catch (MissingResourceException e) {
 				errout.println(e.toString());
 			}
 		} else {
 			try {
-				tidyPrintln(errout, res.getString("no_warnings"));
+				tidyPrintln(errout, getRes().getString("no_warnings"));
 			} catch (MissingResourceException e) {
 				errout.println(e.toString());
 			}
@@ -963,7 +922,7 @@ public class Report {
 
 	public static void helpText(PrintWriter out, String prog) {
 		try {
-			tidyPrintln(out, MessageFormat.format(res.getString("help_text"), new Object[] { prog, RELEASE_DATE}));
+			tidyPrintln(out, MessageFormat.format(getRes().getString("help_text"), new Object[] {prog, RELEASE_DATE}));
 		} catch (MissingResourceException e) {
 			out.println(e.toString());
 		}
@@ -971,10 +930,26 @@ public class Report {
 
 	public static void badTree(PrintWriter errout) {
 		try {
-			tidyPrintln(errout, res.getString("bad_tree"));
+			tidyPrintln(errout, getRes().getString("bad_tree"));
 		} catch (MissingResourceException e) {
 			errout.println(e.toString());
 		}
+	}
+
+	private static void setRes(ResourceBundle res) {
+		Report.res = res;
+	}
+
+	private static ResourceBundle getRes() {
+		if (res == null) {
+			try {
+				res = ResourceBundle.getBundle("TidyMessages");
+			} catch (MissingResourceException e) {
+				e.printStackTrace();
+				throw new Error(e.toString());
+			}
+		}
+		return res;
 	}
 
 }
