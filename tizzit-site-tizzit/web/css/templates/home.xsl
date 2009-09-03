@@ -10,6 +10,8 @@
             margin-top: 37px!important;
             margin-top: 10px;
             padding:0 30px 0 0;
+            background-image:url('/httpd/img/underwater.jpg');
+            background-repeat:no-repeat;
         }
         .kwicks {  
             list-style: none;  
@@ -70,6 +72,61 @@
         }
         .content {
             padding: 15px 0px 30px 300px;
+        }
+        .container { 
+            <!--width:500px;--> 
+            height:315px; 
+            overflow:hidden;
+            position:relative; 
+            cursor:pointer; 
+        }
+        .slides { 
+            position:absolute; 
+            top:0; 
+            left:0; 
+        }
+        .slides div { 
+            position:absolute; 
+            top:0; 
+            <!--width:1000px;--> 
+            <!--display:none; -->
+        }
+        a.previous { 
+            position:absolute; 
+            top:370px; 
+            left:278px; 
+        }
+        a.next { 
+            position:absolute; 
+            top:370px; 
+            right:0px; 
+        }
+        ul.pagination { 
+            list-style-type:none; 
+            margin:0; 
+            padding:0; 
+            margin:9px auto; 
+            width:85px; 
+        }
+        ul.pagination li { 
+            float:left; 
+            margin:0 5px; 
+        }	
+        ul.pagination a { 
+            display:block; 
+            width:16px; 
+            padding-top:16px; 
+            height:0; 
+            overflow:hidden; 
+            background-image:url('/httpd/img/home/pagination.png'); 
+            background-position:-18px 0; 
+            background-repeat:no-repeat;
+        }
+        ul.pagination li.active a {
+            background-position:0px 0;
+        }
+        #video_container {
+            margin:30px 0 0 93px;
         }
         
     </xsl:template>
