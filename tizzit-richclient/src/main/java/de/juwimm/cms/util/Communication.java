@@ -15,13 +15,24 @@
  */
 package de.juwimm.cms.util;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -40,12 +51,27 @@ import org.w3c.dom.Element;
 import com.Ostermiller.util.Browser;
 
 import de.juwimm.cms.Messages;
-import de.juwimm.cms.authorization.vo.*;
+import de.juwimm.cms.authorization.vo.GroupValue;
+import de.juwimm.cms.authorization.vo.RoleValue;
+import de.juwimm.cms.authorization.vo.UserLoginValue;
+import de.juwimm.cms.authorization.vo.UserUnitsGroupsValue;
+import de.juwimm.cms.authorization.vo.UserValue;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
-import de.juwimm.cms.components.vo.*;
+import de.juwimm.cms.components.vo.AddressValue;
+import de.juwimm.cms.components.vo.DepartmentValue;
+import de.juwimm.cms.components.vo.PersonValue;
+import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.content.frame.DlgModal;
-import de.juwimm.cms.exceptions.*;
+import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
+import de.juwimm.cms.exceptions.InvalidUsernameException;
+import de.juwimm.cms.exceptions.NeededFieldsMissingException;
+import de.juwimm.cms.exceptions.NoSitesException;
+import de.juwimm.cms.exceptions.UnitnameIsAlreadyUsedException;
+import de.juwimm.cms.exceptions.UserException;
+import de.juwimm.cms.exceptions.ViewComponentLinkNameAlreadyExisting;
+import de.juwimm.cms.exceptions.ViewComponentLinkNameIsEmptyException;
+import de.juwimm.cms.exceptions.ViewComponentNotFound;
 import de.juwimm.cms.gui.PanCheckInPages;
 import de.juwimm.cms.gui.event.ExitEvent;
 import de.juwimm.cms.gui.event.ExitListener;
@@ -53,11 +79,28 @@ import de.juwimm.cms.gui.table.ModifiedPagesTableModel;
 import de.juwimm.cms.gui.tree.CmsTreeModel;
 import de.juwimm.cms.gui.tree.PageNode;
 import de.juwimm.cms.http.HttpClientWrapper;
-import de.juwimm.cms.remote.AdministrationServiceSpring;
 import de.juwimm.cms.remote.ClientServiceSpring;
-import de.juwimm.cms.safeguard.vo.*;
+import de.juwimm.cms.safeguard.vo.ActiveRealmValue;
+import de.juwimm.cms.safeguard.vo.RealmJaasValue;
+import de.juwimm.cms.safeguard.vo.RealmJdbcValue;
+import de.juwimm.cms.safeguard.vo.RealmLdapValue;
+import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
+import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 import de.juwimm.cms.search.vo.XmlSearchValue;
-import de.juwimm.cms.vo.*;
+import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.ContentVersionValue;
+import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.EditionValue;
+import de.juwimm.cms.vo.HostValue;
+import de.juwimm.cms.vo.PictureSlimValue;
+import de.juwimm.cms.vo.PictureSlimstValue;
+import de.juwimm.cms.vo.ShortLinkValue;
+import de.juwimm.cms.vo.SiteGroupValue;
+import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.TaskValue;
+import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.cms.vo.compound.ViewIdAndInfoTextValue;
 import de.juwimm.cms.vo.compound.ViewIdAndUnitIdValue;
 import de.juwimm.util.ArraySorter;
@@ -88,11 +131,10 @@ public class Communication implements ExitListener, ActionListener {
 	private ClientServiceSpring clientService;
 
 	public Communication() {
-		
+
 	}
-	
-	public Communication initialize()
-	{
+
+	public Communication initialize() {
 		if (!isSessionInitialized) {
 			ActionHub.addExitListener(this);
 			isSessionInitialized = true;
@@ -294,8 +336,7 @@ public class Communication implements ExitListener, ActionListener {
 
 	public boolean exitPerformed(ExitEvent e) {
 		log.info("Exit-event started");
-		int result = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), rb.getString("dialog.exit.text"),
-				rb.getString("dialog.exit"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int result = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), rb.getString("dialog.exit.text"), rb.getString("dialog.exit"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (result == JOptionPane.YES_OPTION) {
 			if (!checkOutPages.isEmpty()) {
 				ArrayList<ContentValue> pageList = new ArrayList<ContentValue>();
@@ -307,8 +348,7 @@ public class Communication implements ExitListener, ActionListener {
 					} catch (Exception ex) {
 						String msg = Messages.getString("exception.checkingInAllRemainingPages", Integer.toString(checkOutPages.size()));
 						log.info(msg);
-						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"),
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 						UIConstants.getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						while (it.hasNext()) {
 							Integer contentId = (Integer) it.next();
@@ -481,8 +521,8 @@ public class Communication implements ExitListener, ActionListener {
 
 	public void changePassword(String userName, String passwdNew) throws Exception {
 		getClientService().changePassword4User(userName, passwdNew, passwdNew);
-		if(userName.equals(user.getUser().getUserName())) {
-			getSites(userName, passwdNew); 
+		if (userName.equals(user.getUser().getUserName())) {
+			getSites(userName, passwdNew);
 		}
 	}
 
@@ -506,9 +546,9 @@ public class Communication implements ExitListener, ActionListener {
 		}
 	}
 
-	public void createUnit(String unitName) throws UnitnameIsAlreadyUsedException, UserException {
+	public Integer createUnit(String unitName) throws UnitnameIsAlreadyUsedException, UserException {
 		try {
-			getClientService().createUnit(unitName);
+			return getClientService().createUnit(unitName);
 		} catch (Exception ue) {
 			/*
 			 * if (this.isExceptionOfType(ue, "UnitnameIsAlreadyUsedException")) {
@@ -696,15 +736,15 @@ public class Communication implements ExitListener, ActionListener {
 	public boolean isNewTask4User() throws Exception {
 		return getClientService().isNewTask4User();
 	}
-	
+
 	public void reindexSite(Integer siteId) throws Exception {
 		getClientService().reindexSite(siteId);
 	}
-	
+
 	public void reindexContent(Integer vcId) throws Exception {
 		getClientService().reindexPage(vcId);
 	}
-	
+
 	public UserValue[] getAllUser(int groupId) throws Exception {
 		return getClientService().getAllUser(Integer.valueOf(groupId));
 	}
@@ -760,8 +800,7 @@ public class Communication implements ExitListener, ActionListener {
 				if (!isUserInRole(UserRights.SITE_ROOT)) {
 					// dazwischen, damit sparen wir uns das zweite...
 					String msg = Messages.getString("comm.removevc.containsunitsandcannotremove", units);
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"),
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				units = Messages.getString("comm.removevc.header_units", units);
@@ -804,7 +843,7 @@ public class Communication implements ExitListener, ActionListener {
 						stringBuilder.insert(0, resultRootStartElement);
 						stringBuilder.append(resultRootEndElement);
 						Document doc = XercesHelper.string2Dom(stringBuilder.toString());
-						Iterator<Element> teaserIterator = (Iterator<Element>) XercesHelper.findNodes(doc, "searchTeaserResult/teaserRef");	
+						Iterator<Element> teaserIterator = (Iterator<Element>) XercesHelper.findNodes(doc, "searchTeaserResult/teaserRef");
 						while (teaserIterator.hasNext()) {
 							Element element = (Element) teaserIterator.next();
 							String viewComponentIdValue = element.getAttribute("viewComponentId");
@@ -832,8 +871,7 @@ public class Communication implements ExitListener, ActionListener {
 
 			String msgstr = msgHeader + units + refVcs + teaserText;
 
-			int i = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), msgstr, rb.getString("dialog.title"),
-					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int i = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), msgstr, rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 			if (i == JOptionPane.YES_OPTION) {
 				if (onlineState == Constants.ONLINE_STATUS_UNDEF || onlineState == Constants.ONLINE_STATUS_OFFLINE) {
@@ -1081,10 +1119,7 @@ public class Communication implements ExitListener, ActionListener {
 			return cdao;
 		} catch (Exception exception) {
 			if (exception instanceof AlreadyCheckedOutException) { throw (AlreadyCheckedOutException) exception; }
-			if (exception.getCause() != null &&
-					exception.getCause() instanceof AlreadyCheckedOutException) {
-				throw (AlreadyCheckedOutException) exception.getCause();
-			}
+			if (exception.getCause() != null && exception.getCause() instanceof AlreadyCheckedOutException) { throw (AlreadyCheckedOutException) exception.getCause(); }
 			UserException ue = new UserException("Error checking out: " + exception.getMessage());
 			log.error("Error checking out ", exception);
 			throw ue;
@@ -1163,8 +1198,8 @@ public class Communication implements ExitListener, ActionListener {
 	public void updatePictureAltText(int pictureId, String altText) throws Exception {
 		getClientService().updatePictureAltText(Integer.valueOf(pictureId), altText);
 	}
-	
-	public void updatePictureData(int pictureId, byte[] picture,String mimeType, byte[] thumbnail) throws Exception {
+
+	public void updatePictureData(int pictureId, byte[] picture, String mimeType, byte[] thumbnail) throws Exception {
 		getClientService().updatePictureData(Integer.valueOf(pictureId), picture, mimeType, thumbnail);
 	}
 
@@ -1203,7 +1238,7 @@ public class Communication implements ExitListener, ActionListener {
 	public void removePicture(int pictureId) throws Exception {
 		getClientService().removePicture(Integer.valueOf(pictureId));
 	}
- 
+
 	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
 		return getClientService().addPicture2Unit(Integer.valueOf(unitId), thumbnail, picture, mimeType, altText, pictureName);
 	}
@@ -1920,7 +1955,7 @@ public class Communication implements ExitListener, ActionListener {
 	public void addLdapRealmToVC(Integer viewComponentId, Integer ldapRealmId, String neededRole, Integer loginPageId) {
 		try {
 			if (loginPageId == null) loginPageId = new Integer(-1);
-			getClientService().addLdapRealmToVC(viewComponentId ,ldapRealmId, neededRole, loginPageId);
+			getClientService().addLdapRealmToVC(viewComponentId, ldapRealmId, neededRole, loginPageId);
 		} catch (Exception ex) {
 			log.error(ex.getMessage());
 		}
@@ -1969,7 +2004,7 @@ public class Communication implements ExitListener, ActionListener {
 	public void addJaasRealmToVC(Integer viewComponentId, Integer jaasRealmId, String neededRole, Integer loginPageId) {
 		try {
 			if (loginPageId == null) loginPageId = new Integer(-1);
-			getClientService().addJaasRealmToVC(viewComponentId,jaasRealmId, neededRole, loginPageId);
+			getClientService().addJaasRealmToVC(viewComponentId, jaasRealmId, neededRole, loginPageId);
 		} catch (Exception ex) {
 			log.error(ex.getMessage());
 		}
@@ -2253,15 +2288,14 @@ public class Communication implements ExitListener, ActionListener {
 	public void exportXlsPersonData(File outputFile) {
 		try {
 			log.info("exportXlsPersonData");
-			  ClientServiceSpring cs = (ClientServiceSpring) getClientService();
-			  InputStream is = cs.exportXlsPersonData();
-			  FileOutputStream fos = new FileOutputStream(outputFile);
-			  int read = 0;
-			  while((read = is.read()) != -1)
-			  {
-				  fos.write(read);
-			  }
-			  fos.close();
+			ClientServiceSpring cs = (ClientServiceSpring) getClientService();
+			InputStream is = cs.exportXlsPersonData();
+			FileOutputStream fos = new FileOutputStream(outputFile);
+			int read = 0;
+			while ((read = is.read()) != -1) {
+				fos.write(read);
+			}
+			fos.close();
 		} catch (Exception exe) {
 			log.error("Error exporting PersonData", exe);
 		}
@@ -2314,12 +2348,16 @@ public class Communication implements ExitListener, ActionListener {
 			IOUtils.closeQuietly(fis);
 		}
 	}
-	
-	public void setDefaultViewDocument(String viewType,String language,Integer siteId){
-		getClientService().setDefaultViewDocument(viewType,language,siteId);
+
+	public void setDefaultViewDocument(String viewType, String language, Integer siteId) {
+		getClientService().setDefaultViewDocument(viewType, language, siteId);
 	}
-	
-	public ViewDocumentValue getDefaultViewDocument4Site(Integer siteId){
+
+	public ViewDocumentValue getDefaultViewDocument4Site(Integer siteId) {
 		return getClientService().getDefaultViewDocument4Site(siteId);
+	}
+
+	public ViewComponentValue[] getViewComponentChildren(Integer viewComponentId) {
+		return getClientService().getViewComponentChildren(viewComponentId);
 	}
 }
