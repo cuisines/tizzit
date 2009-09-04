@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -26,7 +26,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.Collator;
 
-import javax.swing.*;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -156,32 +165,20 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 		btnDelGroup.setText("L�schen");
 		btnSave.setText("Speichern");
 		*/
-		this.add(panGroups, new GridBagConstraints(1, 0, 1, 1, 0.6, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
-		this.add(panUnits, new GridBagConstraints(0, 0, 1, 1, 0.4, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(10, 10, 10, 0), 0, 0));
-		panUnits.add(btnUnitAdd, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 10, 10), 0, 0));
-		panUnits.add(btnUnitEdit, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 10, 10), 0, 0));
-		panUnits.add(btnUnitDelete, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 10, 10), 0, 0));
-		panUnits.add(scrollPane, new GridBagConstraints(0, 0, 1, 3, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 0, 0));
+		this.add(panGroups, new GridBagConstraints(1, 0, 1, 1, 0.6, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
+		this.add(panUnits, new GridBagConstraints(0, 0, 1, 1, 0.4, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 0), 0, 0));
+		panUnits.add(btnUnitAdd, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 10, 10), 0, 0));
+		panUnits.add(btnUnitEdit, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 10, 10), 0, 0));
+		panUnits.add(btnUnitDelete, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 10, 10), 0, 0));
+		panUnits.add(scrollPane, new GridBagConstraints(0, 0, 1, 3, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 0, 0));
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
-			panUnits.add(btnExportPersonData, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-					GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0));
+			panUnits.add(btnExportPersonData, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0));
 		}
-		panGroups.add(scrollRoles, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.6, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 10, 10, 0), 0, 0));
-		panGroups.add(scrollGroups, new GridBagConstraints(0, 0, 2, 2, 1.0, 0.4, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 10, 10, 0), 0, 0));
-		panGroups.add(btnAddGroup, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 4, 0));
-		panGroups.add(btnDelGroup, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0));
-		panGroups.add(btnSave, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 0));
+		panGroups.add(scrollRoles, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.6, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 10, 0), 0, 0));
+		panGroups.add(scrollGroups, new GridBagConstraints(0, 0, 2, 2, 1.0, 0.4, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 10, 0), 0, 0));
+		panGroups.add(btnAddGroup, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 4, 0));
+		panGroups.add(btnDelGroup, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 0));
+		panGroups.add(btnSave, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 0));
 	}
 
 	public void reload() {
@@ -288,7 +285,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -310,15 +307,13 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 					if (rv != null) {
 						int[] selIdx = new int[rv.length];
 						for (int i = 0; i < rv.length; i++) {
-							for(int li = 0; li<dlmRoles.size();li++)
-							{
-								RoleValue r = (RoleValue)dlmRoles.get(li);
-								if(r.getRoleId().equalsIgnoreCase(rv[i].getRoleId())){
-									selIdx[i]=li;
+							for (int li = 0; li < dlmRoles.size(); li++) {
+								RoleValue r = (RoleValue) dlmRoles.get(li);
+								if (r.getRoleId().equalsIgnoreCase(rv[i].getRoleId())) {
+									selIdx[i] = li;
 									break;
-								}
-								else{
-									selIdx[i]=-1;
+								} else {
+									selIdx[i] = -1;
 								}
 							}
 						}
@@ -344,27 +339,21 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 
 	private void addUnitActionPerformed(ActionEvent e) {
 		String unitName;
-		unitName = JOptionPane.showInputDialog(UIConstants.getMainFrame(), 
-				rb.getString("panel.panelCmsUnit.addNewUnitMessage"), rb.getString("dialog.title"),
-				JOptionPane.PLAIN_MESSAGE);
+		unitName = JOptionPane.showInputDialog(UIConstants.getMainFrame(), rb.getString("panel.panelCmsUnit.addNewUnitMessage"), rb.getString("dialog.title"), JOptionPane.PLAIN_MESSAGE);
 
 		if (unitName != null) {
 			if (unitName.trim().equals("")) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), 
-						rb.getString("panel.panelCmsUnit.addNewUnitEmptyMessage"), rb.getString("dialog.title"),
-						JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelCmsUnit.addNewUnitEmptyMessage"), rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 			} else {
 				try {
-					comm.createUnit(unitName.trim());
+					int unitId = comm.createUnit(unitName.trim());
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							fillUnits();
 						}
 					});
 				} catch (UnitnameIsAlreadyUsedException uia) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), 
-							rb.getString("exception.UnitnameIsAlreadyUsed"), rb.getString("dialog.title"),
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.UnitnameIsAlreadyUsed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				} catch (Exception exe) {
 					log.error("Error adding unit", exe);
 				}
@@ -392,15 +381,13 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 		try {
 			String oldName = ((DropDownHolder) this.getLstUnits().getSelectedValue()).toString();
 			String unitName = null;
-			unitName = JOptionPane.showInputDialog(UIConstants.getMainFrame(),
-					rb.getString("panel.panelCmsUnit.addNewUnitMessage"),
-					((DropDownHolder) this.getLstUnits().getSelectedValue()).toString());
+			unitName = JOptionPane.showInputDialog(UIConstants.getMainFrame(), rb.getString("panel.panelCmsUnit.addNewUnitMessage"), ((DropDownHolder) this.getLstUnits().getSelectedValue()).toString());
 
 			if (unitName != null && !unitName.trim().equalsIgnoreCase("") && !unitName.trim().equals(oldName)) {
 				UnitValue unit = (UnitValue) ((DropDownHolder) this.getLstUnits().getSelectedValue()).getObject();
 				unit.setName(unitName.trim());
 				comm.updateUnit(unit);
-	
+
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						fillUnits();
@@ -414,8 +401,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 	}
 
 	private void btnAddGroupActionPerformed(ActionEvent e) {
-		String groupName = JOptionPane.showInputDialog(UIConstants.getMainFrame(), 
-				rb.getString("panel.panelCmsUnit.addNewGroupMessage"), rb.getString("dialog.title"), JOptionPane.PLAIN_MESSAGE);
+		String groupName = JOptionPane.showInputDialog(UIConstants.getMainFrame(), rb.getString("panel.panelCmsUnit.addNewGroupMessage"), rb.getString("dialog.title"), JOptionPane.PLAIN_MESSAGE);
 		if (groupName != null && !groupName.equalsIgnoreCase("")) {
 			try {
 				GroupValue gv = comm.createGroup(groupName);
@@ -502,8 +488,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 				});
 			} catch (Exception exe) {
 				log.error("Error filling groups", exe);
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), exe.getMessage(), rb.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), exe.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
