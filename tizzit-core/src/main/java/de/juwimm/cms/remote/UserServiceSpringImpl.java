@@ -67,7 +67,7 @@ import de.juwimm.cms.vo.UnitValue;
  */
 public class UserServiceSpringImpl extends UserServiceSpringBase {
 	private static Log log = LogFactory.getLog(UserServiceSpringImpl.class);
-	private JbossFlushAuthCache authCache = new JbossFlushAuthCache();
+	private final JbossFlushAuthCache authCache = new JbossFlushAuthCache();
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
@@ -98,20 +98,13 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void handleCreateUser(String userName, String passwd,
-			String firstName, String lastName, String email,
-			Integer initialUnitId) throws Exception {
-		if (log.isDebugEnabled())
-			log.debug("begin createUser");
+	protected void handleCreateUser(String userName, String passwd, String firstName, String lastName, String email, Integer initialUnitId) throws Exception {
+		if (log.isDebugEnabled()) log.debug("begin createUser");
 		ArrayList<String> assertFields = new ArrayList<String>(6);
-		if (userName == null || userName.equalsIgnoreCase(""))
-			assertFields.add("user.userName");
-		if (firstName == null || firstName.equalsIgnoreCase(""))
-			assertFields.add("user.firstName");
-		if (lastName == null || lastName.equalsIgnoreCase(""))
-			assertFields.add("user.lastName");
-		if (passwd == null || passwd.equalsIgnoreCase(""))
-			assertFields.add("user.passwd");
+		if (userName == null || userName.equalsIgnoreCase("")) assertFields.add("user.userName");
+		if (firstName == null || firstName.equalsIgnoreCase("")) assertFields.add("user.firstName");
+		if (lastName == null || lastName.equalsIgnoreCase("")) assertFields.add("user.lastName");
+		if (passwd == null || passwd.equalsIgnoreCase("")) assertFields.add("user.passwd");
 		// Bug 4078 if (email == null || email.equalsIgnoreCase(""))
 		// assertFields.add("user.email");
 		if (assertFields.size() > 0) {
@@ -122,8 +115,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 				}
 				list.append(assertFields.get(i));
 			}
-			throw new UserException("NeededFieldsMissingException"
-					+ list.toString());
+			throw new UserException("NeededFieldsMissingException" + list.toString());
 		}
 		try {
 			UserHbm user = new UserHbmImpl();
@@ -137,16 +129,12 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 					UnitHbm unit = super.getUnitHbmDao().load(initialUnitId);
 					user.addUnit(unit);
 				} catch (Exception exe) {
-					log.error("Can't attach User " + userName + " to Unit "
-							+ initialUnitId
-							+ " while creating the User because of: "
-							+ exe.getMessage());
+					log.error("Can't attach User " + userName + " to Unit " + initialUnitId + " while creating the User because of: " + exe.getMessage());
 					log.error("Error occured", exe);
 				}
 			}
 			// adding new user to site of called user
-			UserHbm caller = getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm caller = getUserHbmDao().load(AuthenticationHelper.getUserName());
 			SiteHbm callerSite = caller.getActiveSite();
 			user.setActiveSite(callerSite);
 			user.getSites().add(callerSite);
@@ -183,19 +171,15 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.String, java.lang.Integer, java.lang.String, byte)
 	 */
 	@Override
-	protected Integer handleCreateTask(String receiverUserId,
-			String receiverRole, Integer unitId, String comment, byte taskType)
-			throws Exception {
+	protected Integer handleCreateTask(String receiverUserId, String receiverRole, Integer unitId, String comment, byte taskType) throws Exception {
 		TaskHbm task = new TaskHbmImpl();
 
 		TaskValue taskValue = new TaskValue();
 		taskValue.setComment(comment);
-		taskValue
-				.setUnit(super.getUnitHbmDao().load(unitId).getUnitSlimValue());
+		taskValue.setUnit(super.getUnitHbmDao().load(unitId).getUnitSlimValue());
 		taskValue.setTaskType(taskType);
 		try {
-			task.setSender(super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName()));
+			task.setSender(super.getUserHbmDao().load(AuthenticationHelper.getUserName()));
 			if (receiverUserId != null) {
 				UserHbm receiver = super.getUserHbmDao().load(receiverUserId);
 				task.setReceiver(receiver);
@@ -224,35 +208,19 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.Integer[])
 	 */
 	@Override
-	protected void handleAddViewComponentsToTask(Integer taskId, Integer[] vcIds)
-			throws Exception {
+	protected void handleAddViewComponentsToTask(Integer taskId, Integer[] vcIds) throws Exception {
 		UserHbm user = null;
 		TaskHbm task = null;
 		try {
-			user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			task = super.getTaskHbmDao().load(taskId);
 			if (task != null) {
 
-				if (!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-						user.getActiveSite())
-						&& !user.equals(task.getReceiver())
-						&& !user.equals(task.getSender())
-						&& !getUserHbmDao().isInRole(user,
-								task.getReceiverRole(), user.getActiveSite())) {
-					throw new SecurityException(
-							"User is not responsible to change this Task. RECEIVER:"
-									+ task.getReceiver() + " SENDER:"
-									+ task.getSender() + " RECEIVERROLE:"
-									+ task.getReceiverRole() + " THIS USER:"
-									+ user.getUserId());
-				}
+				if (!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite()) && !user.equals(task.getReceiver()) && !user.equals(task.getSender()) && !getUserHbmDao().isInRole(user, task.getReceiverRole(), user.getActiveSite())) { throw new SecurityException("User is not responsible to change this Task. RECEIVER:" + task.getReceiver() + " SENDER:" + task.getSender() + " RECEIVERROLE:" + task.getReceiverRole() + " THIS USER:" + user.getUserId()); }
 
-				Collection<ViewComponentHbm> coll = (Collection<ViewComponentHbm>) task
-						.getViewComponents();
+				Collection<ViewComponentHbm> coll = task.getViewComponents();
 				for (int i = 0; i < vcIds.length; i++) {
-					ViewComponentHbm vc = super.getViewComponentHbmDao().load(
-							vcIds[i]);
+					ViewComponentHbm vc = super.getViewComponentHbmDao().load(vcIds[i]);
 					coll.add(vc);
 				}
 				task.setViewComponents(coll);
@@ -276,34 +244,18 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.Integer[])
 	 */
 	@Override
-	protected void handleRemoveViewComponentsFromTask(Integer taskId,
-			Integer[] vcIds) throws Exception {
+	protected void handleRemoveViewComponentsFromTask(Integer taskId, Integer[] vcIds) throws Exception {
 		UserHbm user = null;
 		TaskHbm task = null;
 		try {
-			user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			task = super.getTaskHbmDao().load(taskId);
 			if (task != null) {
-				if (!!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-						user.getActiveSite())
-						&& !user.equals(task.getReceiver())
-						&& !user.equals(task.getSender())
-						&& !!getUserHbmDao().isInRole(user,
-								task.getReceiverRole(), user.getActiveSite())) {
-					throw new SecurityException(
-							"User is not responsible to change this Task. RECEIVER:"
-									+ task.getReceiver() + " SENDER:"
-									+ task.getSender() + " RECEIVERROLE:"
-									+ task.getReceiverRole() + " THIS USER:"
-									+ user.getUserId());
-				}
+				if (!!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite()) && !user.equals(task.getReceiver()) && !user.equals(task.getSender()) && !!getUserHbmDao().isInRole(user, task.getReceiverRole(), user.getActiveSite())) { throw new SecurityException("User is not responsible to change this Task. RECEIVER:" + task.getReceiver() + " SENDER:" + task.getSender() + " RECEIVERROLE:" + task.getReceiverRole() + " THIS USER:" + user.getUserId()); }
 				try {
-					Collection<ViewComponentHbm> coll = task
-							.getViewComponents();
+					Collection<ViewComponentHbm> coll = task.getViewComponents();
 					for (int i = 0; i < vcIds.length; i++) {
-						ViewComponentHbm vc = super.getViewComponentHbmDao()
-								.load(vcIds[i]);
+						ViewComponentHbm vc = super.getViewComponentHbmDao().load(vcIds[i]);
 						coll.remove(vc);
 					}
 					task.setViewComponents(coll);
@@ -339,14 +291,11 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		}
 		UserValue[] itarr = null;
 		try {
-			UserHbm user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
-			if (getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-					user.getActiveSite())) {
+			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+			if (getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite())) {
 				Collection coll = null;
 				int siz = 0;
-				coll = super.getUserHbmDao().findAll(
-						user.getActiveSite().getSiteId());
+				coll = super.getUserHbmDao().findAll(user.getActiveSite().getSiteId());
 				siz = coll.size();
 				itarr = new UserValue[siz];
 				if (siz > 0) {
@@ -392,10 +341,8 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		Collection coll = null;
 		int siz = 0;
 		try {
-			UserHbm user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
-			coll = super.getGroupHbmDao().findAll(
-					user.getActiveSite().getSiteId());
+			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+			coll = super.getGroupHbmDao().findAll(user.getActiveSite().getSiteId());
 			siz = coll.size();
 			GroupValue[] itarr = new GroupValue[siz];
 			if (siz > 0) {
@@ -419,8 +366,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 * @see de.juwimm.cms.remote.UserServiceSpring#getAllGroupsUsedInUnit(java.lang.Integer)
 	 */
 	@Override
-	protected GroupValue[] handleGetAllGroupsUsedInUnit(Integer unitId)
-			throws Exception {
+	protected GroupValue[] handleGetAllGroupsUsedInUnit(Integer unitId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("begin getAllGroupsUsedInUnit");
 		}
@@ -428,16 +374,14 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		try {
 			UnitHbm unit = super.getUnitHbmDao().load(unitId);
 			Iterator<UserHbm> usIt = unit.getUsers().iterator();
-			UserHbm principal = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm principal = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			if (log.isDebugEnabled()) {
 				log.debug("Principal: " + principal);
 			}
 			UserHbm user = null;
 			while (usIt.hasNext()) {
-				user = (UserHbm) usIt.next();
-				Iterator<GroupHbm> grpIt = super.getUserHbmDao()
-						.getGroups4ActiveSite(user).iterator();
+				user = usIt.next();
+				Iterator<GroupHbm> grpIt = super.getUserHbmDao().getGroups4ActiveSite(user).iterator();
 				GroupHbm grp = null;
 				GroupValue gv = null;
 				while (grpIt.hasNext()) {
@@ -468,12 +412,10 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	@Override
 	protected GroupValue handleCreateGroup(String groupName) throws Exception {
 		try {
-			UserHbm caller = getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm caller = getUserHbmDao().load(AuthenticationHelper.getUserName());
 			GroupHbm temp = new GroupHbmImpl();
 			temp.setGroupName(groupName);
-			temp.setGroupId(sequenceHbmDao
-					.getNextSequenceNumber("group.group_id"));
+			temp.setGroupId(sequenceHbmDao.getNextSequenceNumber("group.group_id"));
 			temp.setSite(caller.getActiveSite());
 			return super.getGroupHbmDao().create(temp).getGroupValue();
 		} catch (Exception e) {
@@ -517,8 +459,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			Set<RoleHbm> vec = new HashSet<RoleHbm>();
 			try {
 				for (int i = 0; i < gv.getRoles().length; i++) {
-					vec.add(super.getRoleHbmDao().load(
-							gv.getRoles()[i].getRoleId()));
+					vec.add(super.getRoleHbmDao().load(gv.getRoles()[i].getRoleId()));
 				}
 			} catch (Exception e) {
 				log.info("No Roles to set");
@@ -574,11 +515,8 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 * @see de.juwimm.cms.remote.UserServiceSpring#getAllUser4Group(java.lang.Integer)
 	 */
 	@Override
-	protected UserValue[] handleGetAllUser4Group(Integer groupId)
-			throws Exception {
-		if (groupId == null) {
-			return getAllUser();
-		}
+	protected UserValue[] handleGetAllUser4Group(Integer groupId) throws Exception {
+		if (groupId == null) { return getAllUser(); }
 		try {
 			GroupHbm group = super.getGroupHbmDao().load(groupId);
 			Collection coll = group.getUsers();
@@ -611,20 +549,16 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.Integer)
 	 */
 	@Override
-	protected UserValue[] handleGetAllUser4GroupAndUnit(Integer groupId,
-			Integer unitId) throws Exception {
+	protected UserValue[] handleGetAllUser4GroupAndUnit(Integer groupId, Integer unitId) throws Exception {
 		Vector<UserValue> vec = new Vector<UserValue>();
 		try {
-			UserHbm userMe = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm userMe = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			if (getUserHbmDao().isInUnit(unitId, userMe)) {
 				UnitHbm unit = super.getUnitHbmDao().load(unitId);
 				Iterator it = unit.getUsers().iterator();
 				while (it.hasNext()) {
 					UserHbm user = (UserHbm) it.next();
-					if (user.isInGroup(groupId)
-							&& !!getUserHbmDao().isInRole(user,
-									UserRights.SITE_ROOT, user.getActiveSite())) {
+					if (user.isInGroup(groupId) && !!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite())) {
 						vec.addElement(user.getUserValue());
 					}
 				}
@@ -646,14 +580,12 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 * @see de.juwimm.cms.remote.UserServiceSpring#getGroups4User(java.lang.String)
 	 */
 	@Override
-	protected GroupValue[] handleGetGroups4User(String userName)
-			throws Exception {
+	protected GroupValue[] handleGetGroups4User(String userName) throws Exception {
 		try {
 			UserHbm user = super.getUserHbmDao().load(userName);
 			Collection coll = null;
 			if (user.isMasterRoot()) {
-				coll = super.getGroupHbmDao().findAll(
-						user.getActiveSite().getSiteId());
+				coll = super.getGroupHbmDao().findAll(user.getActiveSite().getSiteId());
 			} else {
 				coll = super.getUserHbmDao().getGroups4ActiveSite(user);
 			}
@@ -684,8 +616,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		UserHbm user = super.getUserHbmDao().load(userName);
 		Collection coll = null;
 		if (user.isMasterRoot() && user.getActiveSite() != null) {
-			coll = super.getUnitHbmDao().findAll(
-					user.getActiveSite().getSiteId());
+			coll = super.getUnitHbmDao().findAll(user.getActiveSite().getSiteId());
 		} else {
 			coll = super.getUserHbmDao().getUnits4ActiveSite(user);
 		}
@@ -713,15 +644,11 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 * @see de.juwimm.cms.remote.UserServiceSpring#getAllUser4Unit(java.lang.Integer)
 	 */
 	@Override
-	protected UserValue[] handleGetAllUser4Unit(Integer unitId)
-			throws Exception {
-		if (unitId == null) {
-			return new UserValue[0];
-		}
+	protected UserValue[] handleGetAllUser4Unit(Integer unitId) throws Exception {
+		if (unitId == null) { return new UserValue[0]; }
 		Vector<UserValue> userValues = new Vector<UserValue>();
 		try {
-			UserHbm userMe = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm userMe = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			if (getUserHbmDao().isInUnit(unitId, userMe)) {
 				UnitHbm unit = super.getUnitHbmDao().load(unitId);
 				userValues.addAll(this.getUsers4Unit(userMe, unit));
@@ -738,13 +665,11 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			Collection connectedUsers = unit.getSite().getUsers();
 			Iterator<UserHbm> it = unit.getUsers().iterator();
 			UserHbm currentUser = null;
-			UserHbm principal = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm principal = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			while (it.hasNext()) {
 				currentUser = it.next();
 				if (connectedUsers.contains(currentUser)) {
-					if (super.getUserHbmDao().isInRole(user,
-							UserRights.SITE_ROOT, principal.getActiveSite())) {
+					if (super.getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, principal.getActiveSite())) {
 						usersList.add(currentUser.getUserValue());
 					}
 				}
@@ -765,16 +690,12 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	protected TaskValue[] handleGetAllTasks() throws Exception {
 		UserHbm user = null;
 		try {
-			user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			int siz = 0;
 			Iterator it = null;
-			if (!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-					user.getActiveSite())) {
-				if (log.isDebugEnabled())
-					log.debug("SiteRoot requested All Tasks");
-				Collection coll = super.getTaskHbmDao().findAll(
-						user.getActiveSite().getSiteId());
+			if (!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite())) {
+				if (log.isDebugEnabled()) log.debug("SiteRoot requested All Tasks");
+				Collection coll = super.getTaskHbmDao().findAll(user.getActiveSite().getSiteId());
 				siz = coll.size();
 				it = coll.iterator();
 				TaskValue[] itarr = new TaskValue[siz];
@@ -785,20 +706,14 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 				}
 				return itarr;
 			}
-			if (log.isDebugEnabled())
-				log.debug("User requested Tasks");
+			if (log.isDebugEnabled()) log.debug("User requested Tasks");
 			Vector<TaskValue> vec = new Vector<TaskValue>();
-			Collection coll = super.getTaskHbmDao().findAll(
-					user.getActiveSite().getSiteId());
+			Collection coll = super.getTaskHbmDao().findAll(user.getActiveSite().getSiteId());
 			it = coll.iterator();
 
 			while (it.hasNext()) {
 				TaskHbm task = (TaskHbm) it.next();
-				if (user.equals(task.getReceiver())
-						|| (!getUserHbmDao().isInRole(user,
-								task.getReceiverRole(), user.getActiveSite()) && (task
-								.getUnit() == null || getUserHbmDao().isInUnit(
-								task.getUnit().getUnitId(), user)))) {
+				if (user.equals(task.getReceiver()) || (!getUserHbmDao().isInRole(user, task.getReceiverRole(), user.getActiveSite()) && (task.getUnit() == null || getUserHbmDao().isInUnit(task.getUnit().getUnitId(), user)))) {
 					vec.add(task.getTaskValue());
 				}
 			}
@@ -825,28 +740,15 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		if (task != null) {
 			UserHbm user = null;
 			try {
-				user = super.getUserHbmDao().load(
-						AuthenticationHelper.getUserName());
+				user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			} catch (Exception exe) {
-				log.error("Error thrown while returning logged in user: "
-						+ exe.getMessage());
+				log.error("Error thrown while returning logged in user: " + exe.getMessage());
 				// context.setRollbackOnly();
-				throw new UserException(
-						"Can't find the actual logged in user. Check the logs and retry");
+				throw new UserException("Can't find the actual logged in user. Check the logs and retry");
 			}
-			if (!!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-					user.getActiveSite())
-					&& !user.equals(task.getReceiver())
-					&& !user.equals(task.getSender())
-					&& !!getUserHbmDao().isInRole(user, task.getReceiverRole(),
-							user.getActiveSite())) {
+			if (!!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite()) && !user.equals(task.getReceiver()) && !user.equals(task.getSender()) && !!getUserHbmDao().isInRole(user, task.getReceiverRole(), user.getActiveSite())) {
 				// context.setRollbackOnly();
-				throw new SecurityException(
-						"User is not responsible to delete this Task. RECEIVER:"
-								+ task.getReceiver().getUserId() + " SENDER:"
-								+ task.getSender().getUserId()
-								+ " RECEIVERROLE:" + task.getReceiverRole()
-								+ " THIS USER:" + user.getUserId());
+				throw new SecurityException("User is not responsible to delete this Task. RECEIVER:" + task.getReceiver().getUserId() + " SENDER:" + task.getSender().getUserId() + " RECEIVERROLE:" + task.getReceiverRole() + " THIS USER:" + user.getUserId());
 			}
 			try {
 				super.getTaskHbmDao().remove(task);
@@ -871,23 +773,10 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		try {
 			UserHbm user = null;
 			TaskHbm task = null;
-			user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			task = super.getTaskHbmDao().load(taskId);
 			if (task != null) {
-				if (!!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-						user.getActiveSite())
-						&& !user.equals(task.getReceiver())
-						&& !user.equals(task.getSender())
-						&& !!getUserHbmDao().isInRole(user,
-								task.getReceiverRole(), user.getActiveSite())) {
-					throw new SecurityException(
-							"User is not responsible to change this Task. RECEIVER:"
-									+ task.getReceiver() + " SENDER:"
-									+ task.getSender() + " RECEIVERROLE:"
-									+ task.getReceiverRole() + " THIS USER:"
-									+ user.getUserId());
-				}
+				if (!!getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite()) && !user.equals(task.getReceiver()) && !user.equals(task.getSender()) && !!getUserHbmDao().isInRole(user, task.getReceiverRole(), user.getActiveSite())) { throw new SecurityException("User is not responsible to change this Task. RECEIVER:" + task.getReceiver() + " SENDER:" + task.getSender() + " RECEIVERROLE:" + task.getReceiverRole() + " THIS USER:" + user.getUserId()); }
 				task.setStatus(Constants.TASK_STATUS_VIEWED);
 			}
 		} catch (Exception e) {
@@ -910,9 +799,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		try {
 			TaskValue[] td = this.getAllTasks();
 			for (int i = 0; i < td.length; i++) {
-				if (td[i].getStatus() == Constants.TASK_STATUS_NEW) {
-					return new Boolean(true);
-				}
+				if (td[i].getStatus() == Constants.TASK_STATUS_NEW) { return new Boolean(true); }
 			}
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -947,17 +834,12 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 					user.setFirstName(userValue.getFirstName());
 					user.setLastName(userValue.getLastName());
 					user.setEmail(userValue.getEmail());
-					if (userValue.getConfigXML() != null
-							&& !userValue.getConfigXML().equals("")) {
+					if (userValue.getConfigXML() != null && !userValue.getConfigXML().equals("")) {
 						user.setConfigXML(userValue.getConfigXML());
 					}
 					this.authCache.flushAuthCache();
 				} else {
-					throw new SecurityException(
-							"Not enough permissions to change the user:"
-									+ userValue.getUserName()
-									+ " with credential:"
-									+ AuthenticationHelper.getUserName());
+					throw new SecurityException("Not enough permissions to change the user:" + userValue.getUserName() + " with credential:" + AuthenticationHelper.getUserName());
 				}
 			}
 		} catch (Exception e) {
@@ -985,25 +867,17 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	private boolean hasRightsForChangeUser(UserHbm userGiven) {
 		UserHbm userMe = null;
 		try {
-			userMe = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			userMe = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 		} catch (Exception exe) {
-			log.error("Unknown error while resolving myown user: "
-					+ AuthenticationHelper.getUserName());
+			log.error("Unknown error while resolving myown user: " + AuthenticationHelper.getUserName());
 		}
 		boolean hasRights = false;
-		if ((!getUserHbmDao().isInRole(userMe, UserRights.SITE_ROOT,
-				userMe.getActiveSite()) && !userGiven.isMasterRoot())
-				|| userMe.isMasterRoot()) {
+		if ((!getUserHbmDao().isInRole(userMe, UserRights.SITE_ROOT, userMe.getActiveSite()) && !userGiven.isMasterRoot()) || userMe.isMasterRoot()) {
 			hasRights = true;
 		}
 		if (!hasRights) {
-			if (userGiven.isMasterRoot() && !userMe.isMasterRoot()) {
-				return false;
-			}
-			if (!getUserHbmDao().isInRole(userGiven, UserRights.SITE_ROOT,
-					userGiven.getActiveSite())) {
-				return false; // don't edit a user with higher rights
+			if (userGiven.isMasterRoot() && !userMe.isMasterRoot()) { return false; }
+			if (!getUserHbmDao().isInRole(userGiven, UserRights.SITE_ROOT, userGiven.getActiveSite())) { return false; // don't edit a user with higher rights
 			}
 		}
 		if (!hasRights) {
@@ -1034,23 +908,17 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.String)
 	 */
 	@Override
-	protected void handleAddUserToGroup(GroupValue groupValue, String userName)
-			throws Exception {
+	protected void handleAddUserToGroup(GroupValue groupValue, String userName) throws Exception {
 		try {
 			UserHbm user = null;
 			user = super.getUserHbmDao().load(userName);
 			if (user != null) {
 				if (this.hasRightsForChangeUser(user)) {
-					GroupHbm group = super.getGroupHbmDao().load(
-							groupValue.getGroupId());
-					super.getUserHbmDao().addGroup(group,
-							AuthenticationHelper.getUserName(), userName);
+					GroupHbm group = super.getGroupHbmDao().load(groupValue.getGroupId());
+					super.getUserHbmDao().addGroup(group, AuthenticationHelper.getUserName(), userName);
 					this.authCache.flushAuthCache();
 				} else {
-					throw new SecurityException(
-							"Not enough permissions to change the user:"
-									+ userName + " with credential:"
-									+ AuthenticationHelper.getUserName());
+					throw new SecurityException("Not enough permissions to change the user:" + userName + " with credential:" + AuthenticationHelper.getUserName());
 				}
 			}
 		} catch (Exception e) {
@@ -1071,8 +939,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.String)
 	 */
 	@Override
-	protected void handleRemoveUserFromGroup(GroupValue gv, String userName)
-			throws Exception {
+	protected void handleRemoveUserFromGroup(GroupValue gv, String userName) throws Exception {
 		try {
 			UserHbm user = null;
 			user = super.getUserHbmDao().load(userName);
@@ -1082,10 +949,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 					user.dropGroup(gl);
 					this.authCache.flushAuthCache();
 				} else {
-					throw new SecurityException(
-							"Not enough permissions to change the user:"
-									+ userName + " with credential:"
-									+ AuthenticationHelper.getUserName());
+					throw new SecurityException("Not enough permissions to change the user:" + userName + " with credential:" + AuthenticationHelper.getUserName());
 				}
 			}
 		} catch (Exception e) {
@@ -1131,23 +995,19 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected boolean handleChangePassword4User(String userName,
-			String oldPassword, String newPassword) throws Exception {
-		if (log.isDebugEnabled())
-			log.debug("begin changePassword for anotherone");
+	protected boolean handleChangePassword4User(String userName, String oldPassword, String newPassword) throws Exception {
+		if (log.isDebugEnabled()) log.debug("begin changePassword for anotherone");
 
 		UserHbm userGiven = super.getUserHbmDao().load(userName);
 		String newPasswdEncoded = userGiven.encrypt(newPassword);
 
 		if (hasRightsForChangeUser(userGiven)) {
 			userGiven.setPasswd(newPasswdEncoded);
-			if (log.isDebugEnabled())
-				log.debug("end changePassword succ");
+			if (log.isDebugEnabled()) log.debug("end changePassword succ");
 			return true;
 		}
 
-		if (log.isDebugEnabled())
-			log.debug("end changePassword nosucc");
+		if (log.isDebugEnabled()) log.debug("end changePassword nosucc");
 		return false;
 	}
 
@@ -1161,25 +1021,20 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		}
 		SiteValue[] itarr = null;
 		try {
-			UserHbm user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
-			if (super.getUserHbmDao().isInRole(user, UserRights.SITE_ROOT,
-					user.getActiveSite())) {
+			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+			if (super.getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite())) {
 				Collection coll = null;
 				Collection<SiteValue> sites = new ArrayList<SiteValue>();
 				try {
 					coll = user.getSites();
 					// coll = getSiteHbmDao().findAll4User(user.getUserId());
 				} catch (Exception exe) {
-					log
-							.warn("Error while executing the finder \"findAll4User\" in getAllSites4CurrentUser: "
-									+ exe.getMessage());
+					log.warn("Error while executing the finder \"findAll4User\" in getAllSites4CurrentUser: " + exe.getMessage());
 				}
 				Iterator it = coll.iterator();
 				while (it.hasNext()) {
 					SiteHbm currentSite = (SiteHbm) it.next();
-					if (this.isUserInRole(user.getUserId(), currentSite
-							.getSiteId(), "siteRoot")) {
+					if (this.isUserInRole(user.getUserId(), currentSite.getSiteId(), "siteRoot")) {
 						sites.add((currentSite).getSiteValue());
 					}
 				}
@@ -1191,22 +1046,15 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		return itarr;
 	}
 
-	private boolean isUserInRole(String userName, Integer siteId, String role)
-			throws Exception {
-		if (userName == null) {
-			return false;
-		}
+	private boolean isUserInRole(String userName, Integer siteId, String role) throws Exception {
+		if (userName == null) { return false; }
 		UserHbm user = super.getUserHbmDao().load(userName);
-		if (user.isMasterRoot()) {
-			return true;
-		}
+		if (user.isMasterRoot()) { return true; }
 		try {
 			GroupValue[] gv = this.getGroups4UserInSite(userName, siteId);
 			for (int i = 0; i < gv.length; i++) {
 				for (int j = 0; j < gv[i].getRoles().length; j++) {
-					if (gv[i].getRoles()[j].getRoleId().equalsIgnoreCase(role)) {
-						return true;
-					}
+					if (gv[i].getRoles()[j].getRoleId().equalsIgnoreCase(role)) { return true; }
 				}
 			}
 		} catch (Exception exe) {
@@ -1225,8 +1073,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		HashSet<UserValue> userSet = new HashSet<UserValue>();
 		try {
 			for (int i = (mySites.length - 1); i >= 0; i--) {
-				Collection users = super.getUserHbmDao().findAll(
-						mySites[i].getSiteId());
+				Collection users = super.getUserHbmDao().findAll(mySites[i].getSiteId());
 				Iterator it = users.iterator();
 				while (it.hasNext()) {
 					UserHbm user = (UserHbm) it.next();
@@ -1247,8 +1094,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.Integer)
 	 */
 	@Override
-	protected GroupValue[] handleGetGroups4UserInSite(String userName,
-			Integer siteId) throws Exception {
+	protected GroupValue[] handleGetGroups4UserInSite(String userName, Integer siteId) throws Exception {
 		GroupValue[] gvarr = null;
 		try {
 			UserHbm user = super.getUserHbmDao().load(userName);
@@ -1256,8 +1102,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			if (user.isMasterRoot()) {
 				coll = super.getGroupHbmDao().findAll(siteId);
 			} else {
-				coll = super.getGroupHbmDao().findByUserAndSite(userName,
-						siteId);
+				coll = super.getGroupHbmDao().findByUserAndSite(userName, siteId);
 			}
 			gvarr = new GroupValue[coll.size()];
 			Iterator it = coll.iterator();
@@ -1275,8 +1120,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 * @see de.juwimm.cms.remote.UserServiceSpring#getConnectedUsers4Site(java.lang.Integer)
 	 */
 	@Override
-	protected String[] handleGetConnectedUsers4Site(Integer siteId)
-			throws Exception {
+	protected String[] handleGetConnectedUsers4Site(Integer siteId) throws Exception {
 		Collection coll = null;
 		int siz = 0;
 		try {
@@ -1284,9 +1128,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			coll = site.getUsers();
 			siz = coll.size();
 		} catch (Exception exe) {
-			log
-					.warn("Error while executing the finder \"findAll\" in getConnectedUsersForSite: "
-							+ exe.getMessage());
+			log.warn("Error while executing the finder \"findAll\" in getConnectedUsersForSite: " + exe.getMessage());
 		}
 		ArrayList<String> al = new ArrayList<String>(siz);
 		if (siz > 0) {
@@ -1306,8 +1148,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 *      java.lang.String[])
 	 */
 	@Override
-	protected void handleSetConnectedUsers4Site(Integer siteId, String[] userIds)
-			throws Exception {
+	protected void handleSetConnectedUsers4Site(Integer siteId, String[] userIds) throws Exception {
 		Collection<UserHbm> usersIn = null;
 		Collection<String> usersRemove = new ArrayList<String>();
 		Collection<String> usersNew = new ArrayList<String>();
@@ -1324,9 +1165,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			usersIn = site.getUsers();
 
 		} catch (Exception exe) {
-			log
-					.warn("Error while executing the finder \"findAll\" in getConnectedUsersForSite: "
-							+ exe.getMessage());
+			log.warn("Error while executing the finder \"findAll\" in getConnectedUsersForSite: " + exe.getMessage());
 		}
 
 		// compare old user list with new one -> element in both means stay,
@@ -1353,45 +1192,36 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	}
 
 	@Override
-	protected SiteValue[] handleGetAllSites4CurrentUserWithRole(
-			String requestedRole) throws Exception {
+	protected SiteValue[] handleGetAllSites4CurrentUserWithRole(String requestedRole) throws Exception {
 		if (log.isDebugEnabled()) {
-			log
-					.debug("begin getAllSites4CurrentUserWithRole: "
-							+ requestedRole);
+			log.debug("begin getAllSites4CurrentUserWithRole: " + requestedRole);
 		}
 		SiteValue[] itarr = null;
 		try {
-			UserHbm user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
-			if (super.getUserHbmDao().isInRole(user, requestedRole,
-					user.getActiveSite())) {
+			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+			if (super.getUserHbmDao().isInRole(user, requestedRole, user.getActiveSite())) {
 				Collection<SiteHbm> coll = null;
 				Collection<SiteValue> sites = new ArrayList<SiteValue>();
 				try {
 					if (user.isMasterRoot()) {
 						coll = super.getSiteHbmDao().findAll();
 					} else {
-						coll = super.getSiteHbmDao().findAll4User(
-								user.getUserId());
+						coll = super.getSiteHbmDao().findAll4User(user.getUserId());
 					}
 				} catch (Exception exe) {
-					log
-							.warn("Error while executing the finder \"findAll4User\" in getAllSites4CurrentUserWithRole: "
-									+ exe.getMessage());
+					log.warn("Error while executing the finder \"findAll4User\" in getAllSites4CurrentUserWithRole: " + exe.getMessage());
 				}
 				Iterator it = coll.iterator();
 				while (it.hasNext()) {
 					SiteHbm currentSite = (SiteHbm) it.next();
-					if (this.isUserInRole(user.getUserId(), currentSite
-							.getSiteId(), requestedRole)) {
+					if (this.isUserInRole(user.getUserId(), currentSite.getSiteId(), requestedRole)) {
 						sites.add((currentSite).getSiteValue());
 					}
 				}
 				itarr = sites.toArray(new SiteValue[0]);
 			} else {
 				// at least add current site
-				itarr = new SiteValue[] { user.getActiveSite().getSiteValue() };
+				itarr = new SiteValue[] {user.getActiveSite().getSiteValue()};
 			}
 		} catch (Exception exe) {
 			log.error("Error occured", exe);
@@ -1401,8 +1231,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 
 	private Integer getActiveSiteId() throws UserException {
 		try {
-			UserHbm user = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
+			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			return user.getActiveSite().getSiteId();
 		} catch (Exception e) {
 			if (log.isErrorEnabled()) {
@@ -1414,19 +1243,14 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	}
 
 	@Override
-	protected UserUnitsGroupsValue[] handleGetUserUnitsGroups4UnitAndGroup(
-			Integer unitId, Integer groupId) throws Exception {
+	protected UserUnitsGroupsValue[] handleGetUserUnitsGroups4UnitAndGroup(Integer unitId, Integer groupId) throws Exception {
 		Vector<UserUnitsGroupsValue> vec = new Vector<UserUnitsGroupsValue>();
 		try {
 			ArrayList<UserHbm> userList = new ArrayList<UserHbm>();
 
-			UserHbm userLogged = super.getUserHbmDao().load(
-					AuthenticationHelper.getUserName());
-			if ((!userLogged.isMasterRoot())
-					&& (!isUserInRole(userLogged.getUserId(), this
-							.getActiveSiteId(), UserRights.SITE_ROOT))) {
-				if (isUserInRole(userLogged.getUserId(),
-						this.getActiveSiteId(), UserRights.UNIT_ADMIN)) {
+			UserHbm userLogged = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+			if (!isUserInRole(userLogged.getUserId(), this.getActiveSiteId(), UserRights.SITE_ROOT)) {
+				if (isUserInRole(userLogged.getUserId(), this.getActiveSiteId(), UserRights.UNIT_ADMIN)) {
 					Iterator unitsIt = userLogged.getUnits().iterator();
 					while (unitsIt.hasNext()) {
 						UnitHbm unit = (UnitHbm) unitsIt.next();
@@ -1434,24 +1258,23 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 						Iterator<UserHbm> userIt = users.iterator();
 						while (userIt.hasNext()) {
 							UserHbm current = userIt.next();
-							userList.add(current);
+							//not allowed to see user in higher roles than himself 
+							if (!isUserInRole(current.getUserId(), this.getActiveSiteId(), UserRights.SITE_ROOT)) {
+								userList.add(current);
+							}
 						}
 					}
 				}
 
 			} else {
-				if (unitId != null && unitId.intValue() > 0 && groupId != null
-						&& groupId.intValue() > 0) {
-					userList.addAll(super.getUserHbmDao().findAll4UnitAndGroup(
-							unitId, groupId));
+				if (unitId != null && unitId.intValue() > 0 && groupId != null && groupId.intValue() > 0) {
+					userList.addAll(super.getUserHbmDao().findAll4UnitAndGroup(unitId, groupId));
 				} else if (unitId != null && unitId.intValue() > 0) {
 					userList.addAll(super.getUserHbmDao().findAll4Unit(unitId));
 				} else if (groupId != null && groupId.intValue() > 0) {
-					userList.addAll(super.getUserHbmDao()
-							.findAll4Group(groupId));
+					userList.addAll(super.getUserHbmDao().findAll4Group(groupId));
 				} else {
-					userList.addAll(super.getUserHbmDao().findAll(
-							this.getActiveSiteId()));
+					userList.addAll(super.getUserHbmDao().findAll(this.getActiveSiteId()));
 				}
 			}
 			Iterator<UserHbm> it = userList.iterator();
@@ -1469,9 +1292,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	@Override
 	protected TaskValue handleGetTaskForId(Integer taskId) throws Exception {
 		TaskHbm tvHbm = getTaskHbmDao().load(taskId);
-		if (tvHbm != null) {
-			return tvHbm.getTaskValue();
-		}
+		if (tvHbm != null) { return tvHbm.getTaskValue(); }
 		return null;
 	}
 

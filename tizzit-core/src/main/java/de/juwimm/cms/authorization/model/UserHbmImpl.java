@@ -20,12 +20,9 @@
  */
 package de.juwimm.cms.authorization.model;
 
-import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.ejb.EJBException;
 
@@ -33,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.juwimm.cms.authorization.vo.UserValue;
-import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.util.Base64;
 
 /**
@@ -49,6 +45,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#addUnit(de.juwimm.cms.model.UnitHbm)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void addUnit(de.juwimm.cms.model.UnitHbm unit) {
 		unit.getUsers().add(this);
@@ -58,6 +55,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#dropUnit(de.juwimm.cms.model.UnitHbm)
 	 */
+	@Override
 	public void dropUnit(de.juwimm.cms.model.UnitHbm unit) {
 		unit.getUsers().remove(this);
 		getUnits().remove(unit);
@@ -66,6 +64,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#isInGroup(java.lang.Integer)
 	 */
+	@Override
 	public boolean isInGroup(java.lang.Integer groupId) { //TODO inefficent! solve per HBM query
 		Collection c = getGroups();
 		Iterator it = c.iterator();
@@ -80,6 +79,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#dropGroup(de.juwimm.cms.authorization.model.GroupHbm)
 	 */
+	@Override
 	public void dropGroup(de.juwimm.cms.authorization.model.GroupHbm group) {
 		try {
 			getGroups().remove(group);
@@ -93,6 +93,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	 * @return UserValue Object
 	 * @see de.juwimm.cms.authorization.model.UserHbm#getUserValue()
 	 */
+	@Override
 	public de.juwimm.cms.authorization.vo.UserValue getUserValue() {
 		UserValue value = new UserValue();
 		try {
@@ -112,6 +113,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#setUserValue(de.juwimm.cms.authorization.vo.UserValue)
 	 */
+	@Override
 	public void setUserValue(de.juwimm.cms.authorization.vo.UserValue value) {
 		try {
 			setFirstName(value.getFirstName());
@@ -136,6 +138,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#setUserLoginValue(de.juwimm.cms.authorization.vo.UserLoginValue)
 	 */
+	@Override
 	public void setUserLoginValue(de.juwimm.cms.authorization.vo.UserLoginValue value) {
 		setFirstName(value.getUser().getFirstName());
 		setLastName(value.getUser().getLastName());
@@ -144,7 +147,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 		setLoginDate(value.getUser().getLoginDate());
 	}
 
-
+	@Override
 	public String encrypt(String x) {
 		String passwd = null;
 		try {

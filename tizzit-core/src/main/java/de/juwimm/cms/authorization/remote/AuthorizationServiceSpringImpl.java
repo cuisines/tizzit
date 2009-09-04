@@ -25,7 +25,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 
 import org.apache.commons.logging.Log;
@@ -239,7 +243,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 	 * 
 	 */
 	private class InternalCallbackHandler implements CallbackHandler {
-		private String passwd;
+		private final String passwd;
 
 		public InternalCallbackHandler(String passwd) {
 			this.passwd = passwd;
