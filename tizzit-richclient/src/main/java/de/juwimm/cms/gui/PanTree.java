@@ -15,22 +15,38 @@
  */
 package de.juwimm.cms.gui;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -64,7 +80,15 @@ import de.juwimm.cms.exceptions.UserHasNoUnitsException;
 import de.juwimm.cms.gui.event.ChooseTemplateListener;
 import de.juwimm.cms.gui.event.ViewComponentEvent;
 import de.juwimm.cms.gui.event.ViewComponentListener;
-import de.juwimm.cms.gui.tree.*;
+import de.juwimm.cms.gui.tree.CmsTreeModel;
+import de.juwimm.cms.gui.tree.CmsTreeRenderer;
+import de.juwimm.cms.gui.tree.PageContentNode;
+import de.juwimm.cms.gui.tree.PageExternallinkNode;
+import de.juwimm.cms.gui.tree.PageInternallinkNode;
+import de.juwimm.cms.gui.tree.PageNode;
+import de.juwimm.cms.gui.tree.PageSeparatorNode;
+import de.juwimm.cms.gui.tree.PageSymlinkNode;
+import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.Parameters;
@@ -115,7 +139,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
 	private String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
 	private HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
-	
+
 	//private DragSource dragSource = null;
 
 	/*
@@ -578,7 +602,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				cbxUnits.addItem(new DropDownHolder(uv[i], uv[i].getName()));
 			}
 		} else {
-			if(cbxViewDocuments.getSelectedItem() ==null){
+			if (cbxViewDocuments.getSelectedItem() == null) {
 				PanTree.tree.setModel(new CmsTreeModel(new TreeNode(rb.getString("exception.SiteTreeIsEmpty"))));
 			}
 			loadView4ViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
@@ -835,7 +859,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					if (Parameters.getBooleanParameter(Parameters.PARAM_USER_CHANGE_PAGE_MODIFIED_DATE)) {
 						if (log.isDebugEnabled()) log.debug("Site is configured to permit user-changes of lastModifiedDate");
 						if (comm.isUserInRole(UserRights.PAGE_UPDATE_LAST_MODIFIED_DATE)) {
-							if (log.isDebugEnabled()) log.debug("User \"" + comm.getUser().getUserName() +  "\" is allowed to change lastModifiedDate");
+							if (log.isDebugEnabled()) log.debug("User \"" + comm.getUser().getUserName() + "\" is allowed to change lastModifiedDate");
 							ArrayList<ViewComponentValue> approvedViewComponentsList = new ArrayList<ViewComponentValue>();
 							Iterator it = data.iterator();
 							while (it.hasNext()) {
@@ -845,8 +869,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 							if (!approvedViewComponentsList.isEmpty()) {
 								DlgChangePageLastModified dlg = new DlgChangePageLastModified(approvedViewComponentsList);
 								int result = dlg.showDialog();
-								
-								
+
 								if (result == JOptionPane.CANCEL_OPTION) return;
 								it = dlg.getSelectedPages().iterator();
 								while (it.hasNext()) {
@@ -855,7 +878,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 								}
 							}
 						} else {
-							if (log.isDebugEnabled()) log.debug("User \"" + comm.getUser().getUserName() +  "\" is NOT allowed to change lastModifiedDate, setting date automatically");
+							if (log.isDebugEnabled()) log.debug("User \"" + comm.getUser().getUserName() + "\" is NOT allowed to change lastModifiedDate, setting date automatically");
 							Iterator it = data.iterator();
 							while (it.hasNext()) {
 								ViewComponentValue view = (ViewComponentValue) it.next();
@@ -875,7 +898,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					log.error("Error", exe);
 				}
 			}
-		} if (action.equals(Constants.ACTION_TREE_REFRESH)) {
+		}
+		if (action.equals(Constants.ACTION_TREE_REFRESH)) {
 			// get current tree (viewdocument)
 			ViewDocumentValue selectedVD = (ViewDocumentValue) ((DropDownHolder) this.cbxViewDocuments.getSelectedItem()).getObject();
 			// reload tree
@@ -939,7 +963,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			}
 		}
 	}
-	
+
 	private String getUnitName(Integer unitId) {
 		String unitName = this.unitNamesMap.get(unitId);
 		if (unitName == null) {
@@ -950,7 +974,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			if (unitName == null) unitName = "";
 			this.unitNamesMap.put(unitId, unitName);
 		}
-		
+
 		return unitName;
 	}
 
@@ -991,6 +1015,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			contentDao.setContentText(ct);
 			contentDao.setTemplate(template);
 			contentDao = comm.createContent(contentDao);
+			ViewDocumentValue vDocV = comm.getViewDocument();
 
 			ViewComponentValue vc = addViewComponent("content:" + contentDao.getContentId(), parentEntry, position, "", "[neuer Content]", "");
 			vc.setDisplayLinkName("[new Content]"); //THIS NAME WILL BE CHECKED ON SERVERSIDE ! DO NOT!!!! CHANGE!
@@ -1356,8 +1381,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			if (log.isDebugEnabled()) log.debug("" + view.getDeployCommand());
 			if (view.getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE || view.getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
 				if (log.isDebugEnabled()) log.debug("DELETE ViewComponent " + view.getViewComponentId());
-				if (comm.removeViewComponent(view.getViewComponentId().intValue(), view.getDisplayLinkName(), Constants.ONLINE_STATUS_OFFLINE))
-					treeModel.removeNodeFromParent(entry);
+				if (comm.removeViewComponent(view.getViewComponentId().intValue(), view.getDisplayLinkName(), Constants.ONLINE_STATUS_OFFLINE)) treeModel.removeNodeFromParent(entry);
 			} else {
 				view.setStatus(Constants.DEPLOY_STATUS_APPROVED);
 				comm.updateStatus4ViewComponent(view);
