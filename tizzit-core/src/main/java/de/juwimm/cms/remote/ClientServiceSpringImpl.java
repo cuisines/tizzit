@@ -30,9 +30,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
-import de.juwimm.cms.authorization.vo.*;
+import de.juwimm.cms.authorization.vo.GroupValue;
+import de.juwimm.cms.authorization.vo.RoleValue;
+import de.juwimm.cms.authorization.vo.UserLoginValue;
+import de.juwimm.cms.authorization.vo.UserUnitsGroupsValue;
+import de.juwimm.cms.authorization.vo.UserValue;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.components.vo.*;
+import de.juwimm.cms.components.vo.AddressValue;
+import de.juwimm.cms.components.vo.DepartmentValue;
+import de.juwimm.cms.components.vo.PersonValue;
+import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
@@ -40,10 +47,28 @@ import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.remote.AlreadyExistsException;
-import de.juwimm.cms.safeguard.vo.*;
+import de.juwimm.cms.safeguard.vo.ActiveRealmValue;
+import de.juwimm.cms.safeguard.vo.RealmJaasValue;
+import de.juwimm.cms.safeguard.vo.RealmJdbcValue;
+import de.juwimm.cms.safeguard.vo.RealmLdapValue;
+import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
+import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
-import de.juwimm.cms.vo.*;
+import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.ContentVersionValue;
+import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.EditionValue;
+import de.juwimm.cms.vo.HostValue;
+import de.juwimm.cms.vo.PictureSlimValue;
+import de.juwimm.cms.vo.PictureSlimstValue;
+import de.juwimm.cms.vo.ShortLinkValue;
+import de.juwimm.cms.vo.SiteGroupValue;
+import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.TaskValue;
+import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.cms.vo.compound.ViewIdAndInfoTextValue;
 import de.juwimm.cms.vo.compound.ViewIdAndUnitIdValue;
 import de.juwimm.util.Comparer;
@@ -60,12 +85,12 @@ import de.juwimm.util.Comparer;
 public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	private static final long serialVersionUID = 7966414209973090698L;
 	private static Log log = LogFactory.getLog(ClientServiceSpringImpl.class);
-	
+
 	@Autowired
 	private SearchengineService searchengineService;
-	
+
 	@Override
-	protected void handleReindexPage(Integer viewComponentId) throws Exception {	
+	protected void handleReindexPage(Integer viewComponentId) throws Exception {
 		Integer content = null;
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
@@ -1358,7 +1383,7 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		}
 		return null;
 	}
-	
+
 	@Override
 	protected void handleImportEditionFromImport(InputStream fis, Integer unitId) throws Exception {
 		try {
@@ -1737,8 +1762,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected ViewDocumentValue handleSetDefaultViewDocument(String viewType,String language,Integer siteId) throws Exception {
-		return getViewServiceSpring().setDefaultViewDocument(viewType,language,siteId);
+	protected ViewDocumentValue handleSetDefaultViewDocument(String viewType, String language, Integer siteId) throws Exception {
+		return getViewServiceSpring().setDefaultViewDocument(viewType, language, siteId);
 	}
 
 	@Override
@@ -1750,9 +1775,12 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleUpdatePictureData(int, byte[], byte[])
 	 */
 	@Override
-	protected void handleUpdatePictureData(int pictureId, byte[] picture, String mimeType,
-			byte[] thumbnail) throws Exception {
-		getContentServiceSpring().updatePictureData(Integer.valueOf(pictureId),
-				picture, mimeType, thumbnail);	
+	protected void handleUpdatePictureData(int pictureId, byte[] picture, String mimeType, byte[] thumbnail) throws Exception {
+		getContentServiceSpring().updatePictureData(Integer.valueOf(pictureId), picture, mimeType, thumbnail);
+	}
+
+	@Override
+	protected ViewComponentValue[] handleGetViewComponentChildren(Integer viewComponentId) throws Exception {
+		return getViewServiceSpring().getViewComponentChildren(viewComponentId);
 	}
 }
