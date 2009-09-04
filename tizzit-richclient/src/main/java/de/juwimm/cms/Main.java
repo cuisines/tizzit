@@ -120,8 +120,8 @@ public class Main extends JFrame implements ActionListener {
 			String pom = IOUtils.toString(in);
 			Document doc = XercesHelper.string2Dom(pom);
 
-			String version = XercesHelper.getNodeValue(doc, "//conquest.version");
-			System.setProperty("conquest.version", version);
+			String version = XercesHelper.getNodeValue(doc, "//tizzit.version");
+			System.setProperty("tizzit.version", version);
 
 			Constants.CMS_VERSION = "V " + version;
 

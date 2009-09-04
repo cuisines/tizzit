@@ -176,7 +176,11 @@ public class PanPicture extends JPanel {
 	}
 
 	public String getType() {
-		return ((CboModel) this.cboDirection.getSelectedItem()).getValue();
+		if(this.cboDirection.getSelectedItem() != null) {
+			return ((CboModel) this.cboDirection.getSelectedItem()).getValue();
+		} else {
+			return "";
+		}
 	}
 
 	private void jbInit() throws Exception {

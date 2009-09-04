@@ -352,6 +352,8 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD) || (comm.getUser().isMasterRoot())) && (panTab.getSelectedIndex() == 4)) {
 			// || (comm.isUserInRole(UserRights.SITE_ROOT)) at present no customer may see this tab !!!
 			panSafeGuard.load(value);
+		} else {
+			panSafeGuard.load(null); // reset panel (needed that the panel wont be saved for a wrong vc)
 		}
 	}
 

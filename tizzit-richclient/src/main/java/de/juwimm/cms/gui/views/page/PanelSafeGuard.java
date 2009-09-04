@@ -225,88 +225,95 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 	}
 
 	public void save() throws Exception {
-		if (log.isDebugEnabled()) log.debug("save");
-		if (rbNoRealm.isSelected()) {
-			if (log.isDebugEnabled()) log.debug("no realm selected");
-			comm.deleteRealmAtVC(Integer.valueOf(this.viewComponentId));
-		} else if (rbSimplePw.isSelected()) {
-			if (log.isDebugEnabled()) log.debug("SimplePwRealm selected");
-			int pk;
-			try{
-			pk = panSimplePwRealm.getSelectedRealm().intValue();
-			}catch(Exception e){
-				noSelectedProtectionMessage();
-				return;
-			}			
-			String loginPage = panSimplePwRealm.getLoginPageViewComponentId();
-			Integer loginPageId = null;
-			try {
-				loginPageId = Integer.valueOf(loginPage);
-			} catch (Exception e) {
+		// panel has not been loaded; just needs to be saved if user has clicked on the protection pane
+		if (viewComponentId > 0) {
+			if (log.isDebugEnabled()) log.debug("save");
+			if (rbNoRealm.isSelected()) {
+				if (log.isDebugEnabled()) log.debug("no realm selected");
+				comm.deleteRealmAtVC(Integer.valueOf(this.viewComponentId));
+			} else if (rbSimplePw.isSelected()) {
+				if (log.isDebugEnabled()) log.debug("SimplePwRealm selected");
+				int pk;
+				try {
+					pk = panSimplePwRealm.getSelectedRealm().intValue();
+				} catch (Exception e) {
+					noSelectedProtectionMessage();
+					return;
+				}
+				String loginPage = panSimplePwRealm.getLoginPageViewComponentId();
+				Integer loginPageId = null;
+				try {
+					loginPageId = Integer.valueOf(loginPage);
+				} catch (Exception e) {
+				}
+				String requiredRole = panSimplePwRealm.getRequiredRole();
+				comm.addSimplePwRealmToVC(new Integer(pk), new Integer(this.viewComponentId), requiredRole, loginPageId);
+			} else if (rbJdbc.isSelected()) {
+				if (log.isDebugEnabled()) log.debug("JdbcRealm selected");
+				int pk;
+				try {
+					pk = panJdbcRealm.getSelectedRealm().intValue();
+				} catch (Exception e) {
+					noSelectedProtectionMessage();
+					return;
+				}
+				String loginPage = panJdbcRealm.getLoginPageViewComponentId();
+				Integer loginPageId = null;
+				try {
+					loginPageId = Integer.valueOf(loginPage);
+				} catch (Exception e) {
+				}
+				String requiredRole = panJdbcRealm.getRequiredRole();
+				comm.addSqlDbRealmToVC(new Integer(pk), new Integer(this.viewComponentId), requiredRole, loginPageId);
+			} else if (rbLdap.isSelected()) {
+				if (log.isDebugEnabled()) log.debug("LdapRealm selected");
+				int pk;
+				try {
+					pk = panLdapRealm.getSelectedRealm().intValue();
+				} catch (Exception e) {
+					noSelectedProtectionMessage();
+					return;
+				}
+				String loginPage = panLdapRealm.getLoginPageViewComponentId();
+				Integer loginPageId = null;
+				try {
+					loginPageId = Integer.valueOf(loginPage);
+				} catch (Exception e) {
+				}
+				String requiredRole = panLdapRealm.getRequiredRole();
+				comm.addLdapRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
+			} else if (rbJaas.isSelected()) {
+				if (log.isDebugEnabled()) log.debug("JaasRealm selected");
+				int pk;
+				try {
+					pk = panJaasRealm.getSelectedRealm().intValue();
+				} catch (Exception e) {
+					noSelectedProtectionMessage();
+					return;
+				}
+				String loginPage = panJaasRealm.getLoginPageViewComponentId();
+				Integer loginPageId = null;
+				try {
+					loginPageId = Integer.valueOf(loginPage);
+				} catch (Exception e) {
+				}
+				String requiredRole = panJaasRealm.getRequiredRole();
+				comm.addJaasRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
+			} else {
+				if (log.isDebugEnabled()) log.debug("unknown realm selected?");
 			}
-			String requiredRole = panSimplePwRealm.getRequiredRole();
-			comm.addSimplePwRealmToVC(new Integer(pk), new Integer(this.viewComponentId), requiredRole, loginPageId);
-		} else if (rbJdbc.isSelected()) {
-			if (log.isDebugEnabled()) log.debug("JdbcRealm selected");
-			int pk;
-			try{
-				pk = panJdbcRealm.getSelectedRealm().intValue();
-			}catch(Exception e){
-				noSelectedProtectionMessage();
-				return;
-			}
-			String loginPage = panJdbcRealm.getLoginPageViewComponentId();
-			Integer loginPageId = null;
-			try {
-				loginPageId = Integer.valueOf(loginPage);
-			} catch (Exception e) {
-			}
-			String requiredRole = panJdbcRealm.getRequiredRole();
-			comm.addSqlDbRealmToVC(new Integer(pk), new Integer(this.viewComponentId), requiredRole, loginPageId);
-		} else if (rbLdap.isSelected()) {
-			if (log.isDebugEnabled()) log.debug("LdapRealm selected");
-			int pk;
-			try{
-			pk = panLdapRealm.getSelectedRealm().intValue();
-			}catch(Exception e){
-				noSelectedProtectionMessage();
-				return;
-			}
-			String loginPage = panLdapRealm.getLoginPageViewComponentId();
-			Integer loginPageId = null;
-			try {
-				loginPageId = Integer.valueOf(loginPage);
-			} catch (Exception e) {
-			}
-			String requiredRole = panLdapRealm.getRequiredRole();
-			comm.addLdapRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
-		} else if (rbJaas.isSelected()) {
-			if (log.isDebugEnabled()) log.debug("JaasRealm selected");
-			int pk;
-			try{
-				pk = panJaasRealm.getSelectedRealm().intValue();
-			}catch(Exception e){
-				noSelectedProtectionMessage();
-				return;
-			}
-			String loginPage = panJaasRealm.getLoginPageViewComponentId();
-			Integer loginPageId = null;
-			try {
-				loginPageId = Integer.valueOf(loginPage);
-			} catch (Exception e) {
-			}
-			String requiredRole = panJaasRealm.getRequiredRole();
-			comm.addJaasRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
-		} else {
-			if (log.isDebugEnabled()) log.debug("unknown realm selected?");
+			this.setActiveRealm(this.viewComponentId);
 		}
-		this.setActiveRealm(this.viewComponentId);
 	}
 
 	public void load(ViewComponentValue viewComponent) {
 		if (log.isDebugEnabled()) log.debug("load");
-		this.viewComponentId = viewComponent.getViewComponentId();
-		this.setActiveRealm(this.viewComponentId);
+		if(viewComponent == null) {
+			viewComponentId = -1;
+		} else {
+			this.viewComponentId = viewComponent.getViewComponentId();
+			this.setActiveRealm(this.viewComponentId);
+		}
 	}
 
 	public void unload() {
@@ -508,10 +515,9 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 	void btnJumpActionPerformed(Integer viewComponentId) {
 		ActionHub.fireActionPerformed(new ActionEvent(viewComponentId.toString(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_JUMP));
 	}
-	protected void noSelectedProtectionMessage(){
-		JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelView.safeguard.noSelectedProtection"),
-				rb.getString("dialog.title"),
-				JOptionPane.INFORMATION_MESSAGE);
+
+	protected void noSelectedProtectionMessage() {
+		JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelView.safeguard.noSelectedProtection"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
 } //  @jve:decl-index=0:visual-constraint="10,10"
