@@ -15,16 +15,31 @@
  */
 package de.juwimm.cms.gui.views.menuentry;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
@@ -97,6 +112,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 			jbInit();
 			txtDisplayedLinkName.addKeyListener(ActionHub.getContentEditKeyListener());
 			txtLinkDescription.addKeyListener(ActionHub.getContentEditKeyListener());
+			txtUrlLinkName.addKeyListener(ActionHub.getContentEditKeyListener());
 			optSelectShow.addMouseListener(ActionHub.getContentEditMouseListener());
 			chkSetInvisible.addKeyListener(ActionHub.getContentEditKeyListener());
 			chkSetInvisible.addMouseListener(ActionHub.getContentEditMouseListener());
@@ -292,6 +308,14 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		}
 
 		this.createUrlLinkName();
+		txtUrlLinkName.setBackground(Color.white);
+		String urlName = txtUrlLinkName.getText();
+		if (!checkUrlLinkNameUnique(urlName)) {
+			ActionHub.showMessageDialog(rb.getString("panel.panelView.dlgUniqueUrl.msg"), JOptionPane.INFORMATION_MESSAGE);
+			txtUrlLinkName.setBackground(Color.red);
+			txtUrlLinkName.requestFocus();
+			return;
+		}
 		viewComponent.setDisplayLinkName(txtDisplayedLinkName.getText());
 		viewComponent.setLinkDescription(txtLinkDescription.getText());
 		viewComponent.setUrlLinkName(txtUrlLinkName.getText());
@@ -389,6 +413,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		txtDisplayedLinkName.setText(viewComponent.getDisplayLinkName());
 		txtLinkDescription.setText(viewComponent.getLinkDescription());
 		txtUrlLinkName.setText(viewComponent.getUrlLinkName());
+		txtUrlLinkName.setBackground(Color.white);
 
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
@@ -695,6 +720,26 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		}
 	}
 
+	/**
+	 * Checks for unique urlLinkName for a level
+	 * @return boolean
+	 */
+	private boolean checkUrlLinkNameUnique(String urlName) {
+		boolean flag = true;
+		try {
+			ViewComponentValue[] children = communication.getViewComponentChildren(viewComponent.getParentId());
+
+			for (ViewComponentValue viewComponentValue : children) {
+				if ((viewComponentValue.getUrlLinkName().equalsIgnoreCase(urlName)) && (viewComponent.getViewComponentId().intValue() != viewComponentValue.getViewComponentId().intValue())) {
+					flag = false;
+				}
+			}
+		} catch (Exception e) {
+
+		}
+		return flag;
+	}
+
 	public JLabel getLblUrlLinkName() {
 		return lblUrlLinkName;
 	}
@@ -737,6 +782,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		newUrl = newUrl.replaceAll("ß", "ss");
 		return newUrl.replaceAll("[^A-Za-z_0-9\\.-]", "");
 	}
+
 	/**
 	 * @return
 	 */
