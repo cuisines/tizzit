@@ -90,7 +90,7 @@
          <groupId>org.springframework</groupId>
          <artifactId>spring-webmvc</artifactId>
          <version>${spring.version}</version>
-      </dependency> 
+      </dependency>
       <dependency>
          <groupId>oro</groupId>
          <artifactId>oro</artifactId>
@@ -246,6 +246,12 @@
       <dependency>
          <groupId>cocoon</groupId>
          <artifactId>cocoon-xsp</artifactId>
+         <version>2.1.9</version>
+      </dependency>
+      <!-- JIRA: TIZZIT-155 -->
+      <dependency>
+         <groupId>cocoon</groupId>
+         <artifactId>cocoon-captcha</artifactId>
          <version>2.1.9</version>
       </dependency>
       <dependency>

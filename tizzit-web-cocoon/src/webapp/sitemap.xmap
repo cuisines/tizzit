@@ -199,6 +199,8 @@
 			<map:reader name="imagereader" src="de.juwimm.cms.cocoon.reading.CmsImageReader" />
 			<map:reader name="filereader" src="de.juwimm.cms.cocoon.reading.CmsFileReader" />
 			<map:reader logger="sitemap.reader.image" name="image" src="org.apache.cocoon.reading.ImageReader" />
+			<!-- JIRA: TIZZIT-155 -->
+			<map:reader logger="sitemap.reader.captcha" name="captcha" src="org.apache.cocoon.reading.CaptchaReader" />
 		</map:readers>
 		<!--+
 			| Matchers are executed during pipeline setup. They decide if a
@@ -427,7 +429,7 @@
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.jar" />
 				-->
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
-				
+
 			</map:match>
 			<map:match pattern="*/dcf/*.xml">
 				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" />
