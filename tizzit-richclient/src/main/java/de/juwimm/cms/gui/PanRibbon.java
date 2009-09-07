@@ -188,11 +188,15 @@ public class PanRibbon extends Ribbon implements ActionListener {
 
 	}
 
-	private void addButton(JComponent component, int index, JRibbonBand band) {
+	private void addButton(JCommandButton component, int index, JRibbonBand band) {
 		GridBagConstraints compnentConstraints = new GridBagConstraints();
 		compnentConstraints.gridx = index;
 		compnentConstraints.gridy = 0;
-		band.addCommandButton((AbstractCommandButton) component, RibbonElementPriority.TOP);
+		RichTooltip tooltip = new RichTooltip();
+		tooltip.setTitle(band.getTitle());
+		tooltip.addDescriptionSection(component.getText());
+		component.setActionRichTooltip(tooltip);
+		band.addCommandButton( component, RibbonElementPriority.TOP);
 	}
 
 	private void arrangeButtons() {
@@ -293,13 +297,9 @@ public class PanRibbon extends Ribbon implements ActionListener {
 		optionsButton = createButton(Constants.rb.getString("menubar.extras.options"), UIConstants.RIBBON_OPTIONS);
 		moveButton = createButton(Constants.rb.getString("menubar.file.move"), UIConstants.RIBBON_MOVE);
 
-		RichTooltip tooltip = new RichTooltip();
-		tooltip.setTitle("Bearbeiten");
-		tooltip.addDescriptionSection("New");
-
-		newContentButton.setActionRichTooltip(tooltip);
-
-	}
+		
+		
+	}		
 
 	private JCommandButton createButton(String text, ImageIcon img) {
 		return new CommandButton(text, ImageWrapperResizableIcon.getIcon(img.getImage(), new Dimension(img.getIconWidth(), img.getIconHeight())));
