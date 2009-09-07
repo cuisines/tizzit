@@ -15,15 +15,32 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
@@ -49,19 +66,19 @@ public class PanViews extends JPanel implements ReloadablePanel {
 	private ViewTableModel tblModel = null;
 	private Hashtable<Long, Long> viewsDeleted;
 	private Hashtable<Long, Long> viewsNew;
-	private JButton cmdSave = new JButton();
+	private final JButton cmdSave = new JButton();
 	private JScrollPane jScrollPane1;
-	private JTable tblView = new JTable();
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JButton cmdAdd = new JButton();
-	private JLabel jLabel3 = new JLabel();
-	private JComboBox cbxViewType = new JComboBox();
-	private JComboBox cbxLanguage = new JComboBox();
-	private JLabel jLabel4 = new JLabel();
-	private JButton cmdDelete = new JButton();
-	private GridBagLayout gridBagLayout1 = new GridBagLayout();
-	private JPanel panAddEntry = new JPanel();
-	private GridBagLayout gridBagLayout2 = new GridBagLayout();
+	private final JTable tblView = new JTable();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JButton cmdAdd = new JButton();
+	private final JLabel jLabel3 = new JLabel();
+	private final JComboBox cbxViewType = new JComboBox();
+	private final JComboBox cbxLanguage = new JComboBox();
+	private final JLabel jLabel4 = new JLabel();
+	private final JButton cmdDelete = new JButton();
+	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
+	private final JPanel panAddEntry = new JPanel();
+	private final GridBagLayout gridBagLayout2 = new GridBagLayout();
 
 	public PanViews() {
 		try {
@@ -85,18 +102,14 @@ public class PanViews extends JPanel implements ReloadablePanel {
 			cbxViewType.addItem("browser");
 			cbxViewType.addItem("WAP");
 
-			cmdSave.setText(rb.getString("dialog.save"));
-			cmdAdd.setText(rb.getString("dialog.add"));
-			cmdDelete.setText(rb.getString("dialog.delete"));
-			jLabel3.setText(rb.getString("panel.panelCmsViews.viewType"));
-			jLabel4.setText(rb.getString("panel.panelCmsViews.viewLanguage"));
-
 			tblView.addMouseListener(new MouseAdapter() {
+				@Override
 				public void mousePressed(MouseEvent me) {
 					itemSelected();
 				}
 			});
 			tblView.addKeyListener(new KeyAdapter() {
+				@Override
 				public void keyPressed(KeyEvent e) {
 					itemSelected();
 				}
@@ -116,7 +129,6 @@ public class PanViews extends JPanel implements ReloadablePanel {
 		jScrollPane1 = new JScrollPane(tblView);
 
 		this.setLayout(gridBagLayout1);
-		cmdSave.setText("Speichern");
 		cmdSave.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DefaultCellEditor ed = (DefaultCellEditor) tblView.getCellEditor();
@@ -135,10 +147,12 @@ public class PanViews extends JPanel implements ReloadablePanel {
 				cmdAddActionPerformed(e);
 			}
 		});
-		cmdAdd.setText("Hinzufügen");
-		jLabel3.setText("Darstellungsart");
-		jLabel4.setText("Sprache");
-		cmdDelete.setText("Löschen");
+		cmdSave.setText(rb.getString("dialog.save"));
+		cmdAdd.setText(rb.getString("dialog.add"));
+		cmdDelete.setText(rb.getString("dialog.delete"));
+		jLabel3.setText(rb.getString("panel.panelCmsViews.viewType"));
+		jLabel4.setText(rb.getString("panel.panelCmsViews.viewLanguage"));
+
 		cmdDelete.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdDeleteActionPerformed(e);
@@ -147,24 +161,15 @@ public class PanViews extends JPanel implements ReloadablePanel {
 
 		panAddEntry.setBorder(BorderFactory.createEtchedBorder());
 		panAddEntry.setLayout(gridBagLayout2);
-		this.add(jScrollPane1, new GridBagConstraints(0, 0, 2, 2, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), -69, -181));
-		this.add(cmdSave, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST,
-				GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0));
-		this.add(cmdDelete, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		this.add(panAddEntry, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 0), 0, 0));
-		panAddEntry.add(jLabel3, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0));
-		panAddEntry.add(cbxViewType, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		panAddEntry.add(jLabel4, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		panAddEntry.add(cmdAdd, new GridBagConstraints(1, 3, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-		panAddEntry.add(cbxLanguage, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		this.add(jScrollPane1, new GridBagConstraints(0, 0, 2, 2, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), -69, -181));
+		this.add(cmdSave, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0));
+		this.add(cmdDelete, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		this.add(panAddEntry, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 0), 0, 0));
+		panAddEntry.add(jLabel3, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0));
+		panAddEntry.add(cbxViewType, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		panAddEntry.add(jLabel4, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		panAddEntry.add(cmdAdd, new GridBagConstraints(1, 3, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
+		panAddEntry.add(cbxLanguage, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
 
 		viewsDeleted = new Hashtable<Long, Long>(3);
 		viewsNew = new Hashtable<Long, Long>(3);
@@ -181,8 +186,7 @@ public class PanViews extends JPanel implements ReloadablePanel {
 	public void unload() {
 		try {
 			if (viewsDeleted.size() != 0 || viewsNew.size() != 0) {
-				int i = JOptionPane.showConfirmDialog(this, rb.getString("dialog.wantToSave"), rb
-						.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				int i = JOptionPane.showConfirmDialog(this, rb.getString("dialog.wantToSave"), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
 				if (i == JOptionPane.YES_OPTION) {
 					save();
@@ -234,8 +238,7 @@ public class PanViews extends JPanel implements ReloadablePanel {
 					viewsDeleted.remove(viewDocumentId);
 					UIConstants.setStatusInfo(rb.getString("panel.panelCmsViews.succDeleted"));
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb
-							.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -250,8 +253,7 @@ public class PanViews extends JPanel implements ReloadablePanel {
 					viewsNew.remove(id);
 					UIConstants.setStatusInfo(rb.getString("panel.panelCmsViews.succAdded"));
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb
-							.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -259,8 +261,7 @@ public class PanViews extends JPanel implements ReloadablePanel {
 			Long vdDefault = tblModel.getDefault();
 			comm.setDefaultViewDocument(vdDefault.intValue());
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"),
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -286,11 +287,8 @@ public class PanViews extends JPanel implements ReloadablePanel {
 		String viewType = (String) cbxViewType.getSelectedItem();
 
 		for (int i = 0; i < tblView.getRowCount(); i++) {
-			if (((String) tblModel.getValueAt(i, 0)).equals(viewType)
-					&& ((String) tblModel.getValueAt(i, 1)).equals(language)) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb
-						.getString("panel.panelCmsViews.combAlreadyAvailable"), rb.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+			if (((String) tblModel.getValueAt(i, 0)).equals(viewType) && ((String) tblModel.getValueAt(i, 1)).equals(language)) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelCmsViews.combAlreadyAvailable"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
