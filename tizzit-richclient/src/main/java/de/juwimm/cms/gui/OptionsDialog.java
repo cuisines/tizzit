@@ -102,9 +102,9 @@ public class OptionsDialog extends JDialog implements ActionListener{
 		this.setMinimumSize(size);
 		this.setResizable(false);
 		
-		generalOption = new CommandButton("General",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_OPTIONS.getImage(), new Dimension(32,32)));
-		importExportOption = new CommandButton("Import/Export",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_OPTIONS.getImage(), new Dimension(32,32)));
-		userInformationOption = new CommandButton("User options",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_OPTIONS.getImage(), new Dimension(32,32)));
+		generalOption = new CommandButton("General",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_GENERAL_OPTIONS.getImage(), new Dimension(32,32)));
+		importExportOption = new CommandButton("Import/Export",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_IMPORT_EXPORT_OPTIONS.getImage(), new Dimension(32,32)));
+		userInformationOption = new CommandButton("User options",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_USER_OPTIONS.getImage(), new Dimension(32,32)));
 		
 		initOptionsRibbonsListeners();
 		ribbonBandContainer = new JPanel();
