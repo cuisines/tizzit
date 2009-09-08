@@ -15,15 +15,34 @@
  */
 package de.juwimm.cms.gui.views;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.ComponentInputMap;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
 import org.jvnet.flamingo.common.JCommandButton;
@@ -42,7 +61,11 @@ import de.juwimm.cms.gui.views.menuentry.PanMenuentryContent;
 import de.juwimm.cms.gui.views.page.PanelContent;
 import de.juwimm.cms.gui.views.page.PanelMetaData;
 import de.juwimm.cms.gui.views.page.PanelSafeGuard;
-import de.juwimm.cms.util.*;
+import de.juwimm.cms.util.ActionHub;
+import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.Parameters;
+import de.juwimm.cms.util.PropertyConfigurationEvent;
+import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.NoResizeScrollPane;
 
@@ -76,6 +99,9 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 	private JRadioButton radioPreviewWithoutFrame = new JRadioButton();
 	private ButtonGroup bGrp = new ButtonGroup();
 	private static PanContentView instance = null;
+	private boolean saveStatus = true;
+	private TreePath treeNode;
+	private boolean isFromSaveButton = false;
 
 	public static PanContentView getInstance() {
 		if (instance == null) {
@@ -90,15 +116,15 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			panContent = new PanelContent(this);
 			panMetaData = new PanelMetaData();
 			panSafeGuard = new PanelSafeGuard();
-			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
-			this.btnSave = new CommandButton( rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(),new Dimension(32,32)));
-			this.btnPreview = new CommandButton(rb.getString("dialog.preview"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_PREVIEW.getImage(),new Dimension(32,32)));			
+			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32, 32)));
+			this.btnSave = new CommandButton(rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(), new Dimension(32, 32)));
+			this.btnPreview = new CommandButton(rb.getString("dialog.preview"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_PREVIEW.getImage(), new Dimension(32, 32)));
 			jbInit();
 			this.radioPreviewFrameset.setText(rb.getString("panel.toolContent.previewInFrameset"));
 			this.radioPreviewWithoutFrame.setText(rb.getString("panel.toolContent.previewWithoutFrameset"));
 			//btnSave.setMnemonic(KeyEvent.VK_S);
 			//btnSave.setDisplayedMnemonicIndex(0);
-			
+
 			ComponentInputMap im = new ComponentInputMap(this);
 			im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK), "saveContent");
 			this.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, im);
@@ -146,6 +172,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				btnSave.setEnabled(false);
 				Constants.EDIT_CONTENT = false;
 				Constants.SHOW_CONTENT_FROM_DROPDOWN = true;
+				isFromSaveButton = true;
 				save();
 				btnSave.setEnabled(true);
 			}
@@ -213,6 +240,9 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				int i = JOptionPane.showConfirmDialog(panTab, rb.getString("dialog.wantToSave"), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (i == JOptionPane.YES_OPTION) {
 					panContent.save();
+					if (!getSaveStatus()) {
+
+					return; }
 				}
 				Constants.EDIT_CONTENT = false;
 			}
@@ -220,10 +250,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-			 panMenuentry.unload();
-			 } else if (lastIndex == 2) {
-			 panMetaData.unload();
-			 }*/
+																																																											 panMenuentry.unload();
+																																																											 } else if (lastIndex == 2) {
+																																																											 panMetaData.unload();
+																																																											 }*/
 
 			String strTabName = "";
 			try {
@@ -249,20 +279,33 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		}
 	}
 
+	public boolean getSaveStatus() {
+		return saveStatus;
+	}
+
 	public synchronized void save() {
 		UIConstants.setActionStatus(rb.getString("statusinfo.content.save"));
 		btnSave.setEnabled(false);
 		ActionHub.configureProperty(PanelContent.PROP_CHECKIN, PropertyConfigurationEvent.PROP_ENABLE, "false");
 		ActionHub.configureProperty(PanelContent.PROP_CHECKOUT, PropertyConfigurationEvent.PROP_ENABLE, "false");
-		
+
 		Constants.EDIT_CONTENT = false;
 		try {
+			// Menu entry
+			panMenuentry.save();
+			saveStatus = true;
+			if (!panMenuentry.getSaveStatus()) {
+				saveStatus = false;
+				if (!isFromSaveButton) {
+					ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_CLICK_NODE));
+				}
+				return;
+			}
 			// Metadata
 			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
 				panMetaData.save();
 			}
-			// Menu entry
-			panMenuentry.save();
+
 			if (panTab.getSelectedIndex() == 0) {
 				int maxLinkNameLength = 255;
 				try {
@@ -270,9 +313,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				} catch (Exception e) {
 				}
 				if (panMenuentry.getTxtText().getText().length() > maxLinkNameLength) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("panel.panelView.content.linkNameTooLongWarning", new String[] {Integer.toString(maxLinkNameLength)}),
-							rb.getString("dialog.title"),
-							JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("panel.panelView.content.linkNameTooLongWarning", new String[] {Integer.toString(maxLinkNameLength)}), rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 				}
 			}
 			if (panTab.getSelectedIndex() == 3) {
@@ -292,68 +333,66 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				viewComponent = comm.saveViewComponent(viewComponent);
 				ActionHub.fireActionPerformed(new ActionEvent(viewComponent, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
 			} catch (ViewComponentLinkNameAlreadyExisting vc) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentLinkNameAlreadyExisting"),
-						rb.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentLinkNameAlreadyExisting"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			} catch (ViewComponentNotFound vn) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentNotFound"), 
-						rb.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentNotFound"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			} catch (ViewComponentLinkNameIsEmptyException ve) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentLinkNameIsEmpty"), 
-						rb.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentLinkNameIsEmpty"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 			panSafeGuard.save();
 		} catch (Exception exe) {
 			log.error("Save Error", exe);
-		} 
+		}
 		btnSave.setEnabled(true);
 		ActionHub.configureProperty(PanelContent.PROP_CHECKIN, PropertyConfigurationEvent.PROP_ENABLE, "true");
 		UIConstants.setActionStatus("");
 	}
 
 	public synchronized void load(ViewComponentValue value) {
-		boolean showFrameset = Parameters.getBooleanParameter(Parameters.PARAM_SHOW_PREVIEW_FRAMESET);
-		radioPreviewFrameset.setVisible(showFrameset);
-		radioPreviewWithoutFrame.setVisible(showFrameset);
+		if (getSaveStatus()) {
+			boolean showFrameset = Parameters.getBooleanParameter(Parameters.PARAM_SHOW_PREVIEW_FRAMESET);
+			radioPreviewFrameset.setVisible(showFrameset);
+			radioPreviewWithoutFrame.setVisible(showFrameset);
 
-		panTab.setSelectedIndex(0);
+			panTab.setSelectedIndex(0);
 
-		btnSave.setEnabled(false);
-		viewComponent = value;
-		if (panTab.getSelectedIndex() == 1) {
-			panContent.setEditorPane(txtEditor);
-			panContent.load(value, false);
+			btnSave.setEnabled(false);
+			viewComponent = value;
+			if (panTab.getSelectedIndex() == 1) {
+				panContent.setEditorPane(txtEditor);
+				panContent.load(value, false);
+			} else {
+				btnSave.setEnabled(true);
+			}
+			panMenuentry.load(value);
+			if (panMenuentry.shouldBeEdtiable()) {
+				panMenuentry.setEnabled(true);
+				panTab.setEnabledAt(1, true); //Content
+				if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
+					panTab.setEnabledAt(2, true); //metadata
+				}
+			} else {
+				panTab.setSelectedIndex(0);
+				panMenuentry.setEnabled(false);
+				// the button for changing the template is invisible if user doesn't have the right to change
+				panMenuentry.setTemplateButtonEnabled(true);
+				this.btnSave.setEnabled(false);
+				panTab.setEnabledAt(1, false); //Content
+				if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
+					panTab.setEnabledAt(2, false); //metadata
+				}
+			}
+			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
+				panMetaData.load(value);
+			}
+			if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD) || (comm.getUser().isMasterRoot())) && (panTab.getSelectedIndex() == 4)) {
+				// || (comm.isUserInRole(UserRights.SITE_ROOT)) at present no customer may see this tab !!!
+				panSafeGuard.load(value);
+			} else {
+				panSafeGuard.load(null); // reset panel (needed that the panel wont be saved for a wrong vc)
+			}
 		} else {
 			btnSave.setEnabled(true);
-		}
-		panMenuentry.load(value);
-		if (panMenuentry.shouldBeEdtiable()) {
-			panMenuentry.setEnabled(true);
-			panTab.setEnabledAt(1, true); //Content
-			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
-				panTab.setEnabledAt(2, true); //metadata
-			}
-		} else {
-			panTab.setSelectedIndex(0);
-			panMenuentry.setEnabled(false);
-			// the button for changing the template is invisible if user doesn't have the right to change
-			panMenuentry.setTemplateButtonEnabled(true);
-			this.btnSave.setEnabled(false);
-			panTab.setEnabledAt(1, false); //Content
-			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
-				panTab.setEnabledAt(2, false); //metadata
-			}
-		}
-		if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
-			panMetaData.load(value);
-		}
-		if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD) || (comm.getUser().isMasterRoot())) && (panTab.getSelectedIndex() == 4)) {
-			// || (comm.isUserInRole(UserRights.SITE_ROOT)) at present no customer may see this tab !!!
-			panSafeGuard.load(value);
-		} else {
-			panSafeGuard.load(null); // reset panel (needed that the panel wont be saved for a wrong vc)
 		}
 	}
 
@@ -398,8 +437,14 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			btnSave.setEnabled(false);
 		} else if (ae.getActionCommand().equals(Constants.ACTION_SAVE)) {
 			if (log.isDebugEnabled()) log.debug("actionPerformed::ACTION_SAVE");
+			isFromSaveButton = false;
 			save();
+		} else if (ae.getActionCommand().equals(Constants.ACTION_TREE_SET_NODE)) {
+			treeNode = (TreePath) ae.getSource();
+		} else if (ae.getActionCommand().equals(Constants.ACTION_TREE_RESET_CONSTANTS_CONTENT_VIEW)) {
+			saveStatus = true;
 		}
+
 	}
 
 }
