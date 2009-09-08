@@ -30,7 +30,13 @@
  */
 package de.juwimm.cms.search.res.pdf;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
@@ -117,7 +123,6 @@ public final class LucenePDFDocument {
 	private DateTools.Resolution dateTimeResolution = DateTools.Resolution.SECOND;
 
 	private PDFTextStripper stripper = null;
-
 
 	/**
 	 * Set the text stripper that will be used during extraction.

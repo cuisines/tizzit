@@ -1,8 +1,16 @@
 package de.juwimm.cms.search.beans;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -18,8 +26,14 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.WildcardQuery;
-import org.compass.core.*;
+import org.compass.core.Compass;
+import org.compass.core.CompassHit;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassQuery;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
+import org.compass.core.Property;
+import org.compass.core.Resource;
 import org.compass.core.CompassQueryBuilder.CompassBooleanQueryBuilder;
 import org.compass.core.lucene.util.LuceneHelper;
 import org.compass.core.support.search.CompassSearchCommand;
@@ -29,11 +43,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Node;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentHbmDao;
+import de.juwimm.cms.model.ContentVersionHbm;
+import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.DocumentHbmDao;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.SiteHbmDao;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.UnitHbmDao;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewComponentHbmDao;
+import de.juwimm.cms.model.ViewDocumentHbm;
+import de.juwimm.cms.model.ViewDocumentHbmDao;
 import de.juwimm.cms.search.res.DocumentResourceLocatorFactory;
 import de.juwimm.cms.search.res.HtmlResourceLocator;
 import de.juwimm.cms.search.vo.LinkDataValue;
@@ -41,8 +65,6 @@ import de.juwimm.cms.search.vo.SearchResultValue;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.search.xmldb.XmlDb;
 import de.juwimm.util.XercesHelper;
-import de.juwimm.util.tidy.Configuration;
-import de.juwimm.util.tidy.Tidy;
 
 /**
  * 
@@ -51,9 +73,9 @@ import de.juwimm.util.tidy.Tidy;
  * @version $Id$
  * @since cqcms-core 03.07.2009
  */
-@Transactional(isolation=Isolation.READ_COMMITTED, propagation=Propagation.REQUIRED)
+@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
 public class SearchengineService {
-	private static Logger log = Logger.getLogger(SearchengineService.class); 
+	private static Logger log = Logger.getLogger(SearchengineService.class);
 	private static final String LUCENE_ESCAPE_CHARS = "[\\\\!\\(\\)\\:\\^\\]\\{\\}\\~]";
 	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
 	private static final String REPLACEMENT_STRING = "\\\\$0";
@@ -73,9 +95,9 @@ public class SearchengineService {
 	private ContentHbmDao contentHbmDao;
 	private ViewDocumentHbmDao viewDocumentHbmDao;
 	private UnitHbmDao unitHbmDao;
-	
-	private HttpClient client = new HttpClient();
-	
+
+	private final HttpClient client = new HttpClient();
+
 	public void setViewComponentHbmDao(ViewComponentHbmDao viewComponentHbmDao) {
 		this.viewComponentHbmDao = viewComponentHbmDao;
 	}
@@ -98,7 +120,7 @@ public class SearchengineService {
 
 	public void setUnitHbmDao(UnitHbmDao unitHbmDao) {
 		this.unitHbmDao = unitHbmDao;
-	} 
+	}
 
 	public ViewComponentHbmDao getViewComponentHbmDao() {
 		return viewComponentHbmDao;
@@ -127,7 +149,7 @@ public class SearchengineService {
 	/**
 	 * @see de.juwimm.cms.search.remote.SearchengineServiceSpring#searchXML(java.lang.Integer, java.lang.String)
 	 */
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public XmlSearchValue[] searchXML(Integer siteId, String xpathQuery) throws Exception {
 		XmlSearchValue[] retString = null;
 		retString = xmlDb.searchXml(siteId, xpathQuery);
@@ -162,7 +184,7 @@ public class SearchengineService {
 		if (log.isDebugEnabled()) log.debug("Starting reindexing site " + siteId);
 		CompassSession session = compass.openSession();
 		CompassQuery query = session.queryBuilder().term("siteId", siteId);
-		if (log.isDebugEnabled()) log.debug("delete sites with siteId: "+siteId+" with query: " + query.toString());
+		if (log.isDebugEnabled()) log.debug("delete sites with siteId: " + siteId + " with query: " + query.toString());
 		session.delete(query);
 		session.close();
 		Date start = new Date();
@@ -249,7 +271,7 @@ public class SearchengineService {
 		return linkDataList.toArray(new LinkDataValue[0]);
 	}
 
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public XmlSearchValue[] searchXmlByUnit(Integer unitId, Integer viewDocumentId, String xpathQuery, boolean parentSearch) throws Exception {
 		XmlSearchValue[] retString = null;
 
@@ -267,9 +289,8 @@ public class SearchengineService {
 		retString = xmlDb.searchXmlByUnit(unitId, viewDocumentId, xpathQuery);
 		return retString;
 	}
-	
-	@Transactional(readOnly=true)
-	
+
+	@Transactional(readOnly = true)
 	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber) throws Exception {
 		return searchWeb(siteId, searchItem, pageSize, pageNumber, null);
 	}
@@ -281,28 +302,30 @@ public class SearchengineService {
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
 		try {
-			
-			if (log.isDebugEnabled()){ log.debug("search for: \"" + searchItem + "\"");}
-			
+
+			if (log.isDebugEnabled()) {
+				log.debug("search for: \"" + searchItem + "\"");
+			}
+
 			//TODO: find calls of searchWeb and ADD exception handling 
 			//special chars with a meaning in Lucene have to be escaped - there is a mechanism for
 			//that in Lucene - QueryParser.escape but I don't want to replace '*','?','+','-' in searchItem 
 			String searchItemEsc = LUCENE_PATTERN.matcher(searchItem).replaceAll(REPLACEMENT_STRING);
 			String searchUrlEsc = null;
-			if(searchUrl != null){
+			if (searchUrl != null) {
 				searchUrlEsc = LUCENE_PATTERN.matcher(searchUrl).replaceAll(REPLACEMENT_STRING);
 			}
-			
-			if (log.isDebugEnabled() && !searchItem.equalsIgnoreCase(searchItemEsc)){ 
+
+			if (log.isDebugEnabled() && !searchItem.equalsIgnoreCase(searchItemEsc)) {
 				log.debug("search for(escaped form): \"" + searchItemEsc + "\"");
 			}
-			
+
 			CompassSession session = compass.openSession();
 
 			//per default searchItems get connected by AND (compare CompassSettings.java)
 			CompassQuery query = buildRatedWildcardQuery(session, siteId, searchItemEsc, searchUrlEsc);
-			if(log.isDebugEnabled()){
-				log.debug("search for query: "+query.toString());
+			if (log.isDebugEnabled()) {
+				log.debug("search for query: " + query.toString());
 			}
 			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
 				@Override
@@ -392,9 +415,7 @@ public class SearchengineService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId, String searchItem, String searchUrl) 
-						throws 	IOException, ParseException, 
-								InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId, String searchItem, String searchUrl) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Analyzer analyzer = null;
 		CompassBooleanQueryBuilder queryBuilder = session.queryBuilder().bool();
 		IndexReader ir = LuceneHelper.getLuceneInternalSearch(session).getReader();
@@ -409,23 +430,23 @@ public class SearchengineService {
 			log.error("Error while instantiating search analyzer from compass settings - going on with StandardAnalyzer");
 			analyzer = new StandardAnalyzer();
 		}
-		if(searchUrl != null){
+		if (searchUrl != null) {
 			if (log.isDebugEnabled()) log.debug("to search all hosts and subpages attaching * at start and end of urlString...");
 			// search on this side and all sub sites on all hosts
-			searchUrl = "*"+searchUrl+"*";
-			if(log.isDebugEnabled()) log.debug("urlString before parsing: "+searchUrl);
+			searchUrl = "*" + searchUrl + "*";
+			if (log.isDebugEnabled()) log.debug("urlString before parsing: " + searchUrl);
 			parser = new QueryParser("url", analyzer);
 			parser.setAllowLeadingWildcard(true);
 			query = parser.parse(searchUrl).rewrite(ir);
-			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));		
+			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
 		}
 		query = new QueryParser("siteId", analyzer).parse(siteId.toString());
 		queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
-		
+
 		CompassBooleanQueryBuilder subQueryBuilder = session.queryBuilder().bool();
-		String searchFields[] = {"metadata", "url", "title", "contents"};		
+		String searchFields[] = {"metadata", "url", "title", "contents"};
 		for (int i = 0; i < searchFields.length; i++) {
-			if(i == (searchFields.length-1) && searchUrl != null){
+			if (i == (searchFields.length - 1) && searchUrl != null) {
 				searchItem = searchItem + " " + searchUrl;
 			}
 			parser = new QueryParser(searchFields[i], analyzer);
@@ -438,8 +459,8 @@ public class SearchengineService {
 		queryBuilder.addMust(subQueryBuilder.toQuery());
 		return queryBuilder.toQuery();
 	}
-	
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void indexPage(Integer contentId) {
 		ContentHbm content = getContentHbmDao().load(contentId);
 		ContentVersionHbm contentVersion = content.getLastContentVersion();
@@ -496,7 +517,7 @@ public class SearchengineService {
 		}
 		content.setUpdateSearchIndex(false);
 	}
-	
+
 	private void indexPage4Lucene(ViewComponentHbm viewComponent, String contentText) {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index create / update for VC " + viewComponent.getViewComponentId());
 		ViewDocumentHbm vdl = viewComponent.getViewDocument();
@@ -623,14 +644,14 @@ public class SearchengineService {
 		method.releaseConnection();
 		return retVal;
 	}
-	
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void indexDocument(Integer documentId) {
-		if (log.isDebugEnabled()){
+		if (log.isDebugEnabled()) {
 			log.debug("Index create / update for Document: " + documentId);
 		}
 		DocumentHbm document = getDocumentHbmDao().load(documentId);
-		if (log.isDebugEnabled()){
+		if (log.isDebugEnabled()) {
 			log.debug("Document " + document.getDocumentId() + " \"" + document.getDocumentName() + "\" \"" + document.getMimeType());
 		}
 		if (!documentResourceLocatorFactory.isSupportedFileFormat(document.getMimeType())) {
