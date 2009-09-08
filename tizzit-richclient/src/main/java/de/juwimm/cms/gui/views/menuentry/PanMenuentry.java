@@ -105,6 +105,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 	private JLabel lblLastModifiedData = new JLabel();
 	private JLabel lblUserLastModifiedText = new JLabel();
 	private JLabel lblUserLastModifiedData = new JLabel();
+	private boolean saveStatus;
 
 	public PanMenuentry() {
 		try {
@@ -298,15 +299,19 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		return panOptPan;
 	}
 
+	public boolean getSaveStatus() {
+		return saveStatus;
+	}
+
 	public void save() throws Exception {
 		boolean edited = false;
+		saveStatus = true;
 		Date onlineStart = DateConverter.getString2Sql(txtOnlineStart.getDateTextField());
 		Date onlineStop = DateConverter.getString2Sql(txtOnlineStop.getDateTextField());
 
 		if (!txtDisplayedLinkName.getText().equals(viewComponent.getDisplayLinkName()) || !txtLinkDescription.getText().equals(viewComponent.getLinkDescription()) || !txtUrlLinkName.getText().equals(viewComponent.getUrlLinkName())) {
 			edited = true;
 		}
-
 		this.createUrlLinkName();
 		txtUrlLinkName.setBackground(Color.white);
 		String urlName = txtUrlLinkName.getText();
@@ -314,6 +319,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 			ActionHub.showMessageDialog(rb.getString("panel.panelView.dlgUniqueUrl.msg"), JOptionPane.INFORMATION_MESSAGE);
 			txtUrlLinkName.setBackground(Color.red);
 			txtUrlLinkName.requestFocus();
+			saveStatus = false;
 			return;
 		}
 		viewComponent.setDisplayLinkName(txtDisplayedLinkName.getText());
