@@ -33,7 +33,12 @@ import de.juwimm.cms.gui.controls.UnloadablePanel;
 import de.juwimm.cms.gui.tree.PageNode;
 import de.juwimm.cms.gui.tree.PageOtherUnitNode;
 import de.juwimm.cms.gui.tree.TreeNode;
-import de.juwimm.cms.gui.views.*;
+import de.juwimm.cms.gui.views.PanContentView;
+import de.juwimm.cms.gui.views.PanExternallinkView;
+import de.juwimm.cms.gui.views.PanInitView;
+import de.juwimm.cms.gui.views.PanInternallinkView;
+import de.juwimm.cms.gui.views.PanSeparatorView;
+import de.juwimm.cms.gui.views.PanSymlinkView;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.vo.TaskValue;
 import de.juwimm.cms.vo.ViewComponentValue;
@@ -113,10 +118,10 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 
 	public void reload() throws Exception {
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		try{
+		try {
 			panContent.reload();
 			panTree.reload();
-		}catch(Exception e){
+		} catch (Exception e) {
 			this.setCursor(Cursor.getDefaultCursor());
 			throw e;
 		}
@@ -140,8 +145,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if ((e.getActionCommand().equals(Constants.ACTION_TREE_SELECT))
-				|| (e.getActionCommand().equals(Constants.ACTION_TREE_SELECT_SAVE))) {
+		if ((e.getActionCommand().equals(Constants.ACTION_TREE_SELECT)) || (e.getActionCommand().equals(Constants.ACTION_TREE_SELECT_SAVE))) {
 			setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			TreeNode treeNode = (TreeNode) e.getSource();
 			if (treeNode instanceof PageNode) {
@@ -171,7 +175,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 				} else if (vc.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
 					updateRightComponent(panSymlink);
 					panSymlink.load(vc);
-				} 
+				}
 			} else {
 				updateRightComponent(panInit);
 			}
@@ -205,8 +209,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 			}
 			pnlLeft.add(panTask, BorderLayout.CENTER);
 			updateRightComponent(panInit);
-		} else if (e.getActionCommand().equals(Constants.ACTION_SHOW_CONTENT)
-				|| e.getActionCommand().equals(Constants.ACTION_VIEW_EDITOR)) {
+		} else if (e.getActionCommand().equals(Constants.ACTION_SHOW_CONTENT) || e.getActionCommand().equals(Constants.ACTION_VIEW_EDITOR)) {
 			try {
 				pnlLeft.remove(panTask);
 			} catch (Exception exe) {
