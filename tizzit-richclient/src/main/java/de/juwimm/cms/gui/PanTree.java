@@ -139,6 +139,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
 	private String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
 	private HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
+	private TreePath previousTreeNodePath = null;
+	private boolean stop = true;
 
 	//private DragSource dragSource = null;
 
@@ -401,6 +403,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			public void mousePressed(MouseEvent e) {
 				int selRow = tree.getRowForLocation(e.getX(), e.getY());
 				TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+				TreeNode treeNode = (TreeNode) tree.getLastSelectedPathComponent();
+				ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_RESET_CONSTANTS_CONTENT_VIEW));
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					try {
 						if (e.getClickCount() == 2) {
@@ -484,7 +488,11 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 						save = true;
 					}
 				}
+				if (previousTreeNodePath != null) {
+					ActionHub.fireActionPerformed(new ActionEvent(previousTreeNodePath, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_SET_NODE));
+				}
 				TreeNode treeNode = (TreeNode) e.getPath().getLastPathComponent();
+				previousTreeNodePath = e.getPath();
 				if (!save) {
 					if (log.isDebugEnabled()) log.debug("TreeSelectRunner::fireActionPerformed(ACTION_TREE_SELECT)");
 					Constants.EDIT_CONTENT = false;
@@ -717,6 +725,12 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			msg = Messages.getString("actions.ACTION_ROOT_EXPORT_UNIT", "");
 			miRootExportUnit.setText(msg);
 			miContentApprove.setEnabled(false);
+		}
+		if (action.equals(Constants.ACTION_TREE_CLICK_NODE)) {
+			TreePath localTreePath = (TreePath) e.getSource();
+			tree.setSelectionPath(localTreePath);
+			stop = false;
+
 		}
 		// This is specific for one type
 		if (treeNode instanceof PageNode) {
