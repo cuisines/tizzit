@@ -75,12 +75,12 @@
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjrt</artifactId>
 		    <version>1.6.2</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 		    <groupId>org.aspectj</groupId>
 		    <artifactId>aspectjweaver</artifactId>
 		    <version>1.6.2</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
@@ -107,12 +107,12 @@
 			<artifactId>hibernate</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>pdfbox</groupId>
+		    <groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
 			<version>0.8.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>fontbox</groupId>
+		    <groupId>org.apache.pdfbox</groupId>
 			<artifactId>fontbox</artifactId>
 			<version>0.8.0-SNAPSHOT</version>
 		</dependency>
@@ -188,9 +188,9 @@
 					  <goal>install-file</goal>
 					</goals>
 					<configuration>
-						<file>${pom.basedir}/src/main/resources/pdfbox.jar</file>
-						<artifactId>org.apache.pdfbox</artifactId>
-						<groupId>pdfbox</groupId>
+					    <file>${pom.basedir}/src/main/resources/pdfbox.jar</file>
+					    <groupId>org.apache.pdfbox</groupId>
+					    <artifactId>pdfbox</artifactId>
 						<packaging>jar</packaging>
 						<version>0.8.0-SNAPSHOT</version>
 					</configuration>
@@ -202,9 +202,9 @@
 					  <goal>install-file</goal>
 					</goals>
 					<configuration>
-						<file>${pom.basedir}/src/main/resources/fontbox.jar</file>
+					    <file>${pom.basedir}/src/main/resources/fontbox.jar</file>
+					    <groupId>org.apache.pdfbox</groupId>
 						<artifactId>fontbox</artifactId>
-						<groupId>fontbox</groupId>
 						<packaging>jar</packaging>
 						<version>0.8.0-SNAPSHOT</version>
 					</configuration>
