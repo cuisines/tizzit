@@ -125,17 +125,19 @@ public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFi
 		lblAnchor.setHorizontalTextPosition(SwingConstants.CENTER);
 
 		getOptPan().setLayout(new GridBagLayout());
-		panLinkProperties.add(cbNewWindow, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 5));
-		panLinkProperties.add(cmdJump, new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		panLinkProperties.add(lblPath, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 5));
-
-		panLinkProperties.add(lblAnchorDesc, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
-		panLinkProperties.add(lblAnchor, new GridBagConstraints(3, 0, 1, 1, 0.5, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 5, 0, 10), 0, 0));
-
-		panLinkProperties.add(btnChange, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		panLinkProperties.add(cbReferrToCompleteDir, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 0));
-		getOptPan().add(component1, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
-		getOptPan().add(panLinkProperties, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(8, 8, 8, 8), 0, 0));
+		//row 1
+		panLinkProperties.add(lblPath, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(4, 10, 0, 10), 0, 0));
+		panLinkProperties.add(lblAnchorDesc, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(4, 0, 0, 0), 0, 0));
+		panLinkProperties.add(lblAnchor, new GridBagConstraints(3, 0, 1, 1, 0.5, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(4, 5, 0, 10), 0, 0));
+		//row 2
+		panLinkProperties.add(cbNewWindow, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTH, GridBagConstraints.HORIZONTAL, new Insets(4, 10, 4, 10), 0, 0));
+		panLinkProperties.add(cmdJump, new GridBagConstraints(2, 1, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 10, 4, 10), 0, 0));
+		panLinkProperties.add(btnChange, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 10, 4, 10), 0, 0));
+		//row 3
+		panLinkProperties.add(cbReferrToCompleteDir, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 4, 10), 0, 0));
+		
+		getOptPan().add(component1, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(8, 0, 0, 0), 0, 0));
+		getOptPan().add(panLinkProperties, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(8, 8, 4, 8), 0, 0));
 	}
 
 	public void save() throws Exception {
