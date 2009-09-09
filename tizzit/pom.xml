@@ -52,6 +52,17 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
+		<developer>
+			<id>sieberte</id>
+			<name>Eduard Siebert</name>
+			<email>eduard.siebert@juwimm.com</email>
+			<organization>Juwi MacMillan Group GmbH</organization>
+			<organizationUrl>http://www.juwimm.com</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
 	</developers>
 	<dependencyManagement>
 		<dependencies>
@@ -351,7 +362,7 @@
 						<artifactId>spring-support</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency> 
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
@@ -468,12 +479,12 @@
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
 				<version>3.1-FINAL</version>
-			</dependency> 
+			</dependency>
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-scratchpad</artifactId>
 				<version>3.1-FINAL</version>
-			</dependency> 
+			</dependency>
 			<dependency>
 				<groupId>quartz</groupId>
 				<artifactId>quartz</artifactId>
@@ -510,7 +521,7 @@
 		<plugins>
 			<!-- This one really sucks. I tried it but changing the content of the licence file
 				 a replacement of all existing headers is happening. If this might be solved we
-				 can try it again. 
+				 can try it again.
 			<plugin>
 				<groupId>com.google.code.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
@@ -596,6 +607,8 @@
 		<module>../tizzit-core</module>
 		<module>../tizzit-webstart</module>
 		<module>../tizzit-web-cocoon</module>
+		<module>../tizzit-cocoon22-components</module>
+		<module>../tizzit-web-cocoon22</module>
 		<module>../tizzit-richclient</module>
 		<module>../tizzit-web-admin</module>
 		<module>../tizzit-loginmodules</module>
@@ -609,7 +622,7 @@
 		-->
 
 		<!--
-      
+
 -->
 	</modules>
 	<properties>
