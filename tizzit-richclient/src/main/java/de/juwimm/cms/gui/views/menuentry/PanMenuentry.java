@@ -44,6 +44,8 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 
+import com.toedter.calendar.JDateChooser;
+
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
@@ -306,8 +308,8 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 	public void save() throws Exception {
 		boolean edited = false;
 		saveStatus = true;
-		Date onlineStart = DateConverter.getString2Sql(txtOnlineStart.getDateTextField());
-		Date onlineStop = DateConverter.getString2Sql(txtOnlineStop.getDateTextField());
+		Date onlineStart = txtOnlineStart.getDate();
+		Date onlineStop = txtOnlineStop.getDate();
 
 		if (!txtDisplayedLinkName.getText().equals(viewComponent.getDisplayLinkName()) || !txtLinkDescription.getText().equals(viewComponent.getLinkDescription()) || !txtUrlLinkName.getText().equals(viewComponent.getUrlLinkName())) {
 			edited = true;
@@ -431,14 +433,14 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		//lblLastModifiedData.setText(viewComponent.g)
 
 		if (viewComponent.getOnlineStart() > 0) {
-			txtOnlineStart.setDateTextField(DateConverter.getSql2String(viewComponent.getOnlineStart()));
+			txtOnlineStart.setDateTextField(viewComponent.getOnlineStart());
 		} else {
-			txtOnlineStart.setDateTextField("");
+			txtOnlineStart.setDateTextField((Date)null);
 		}
 		if (viewComponent.getOnlineStop() > 0) {
-			txtOnlineStop.setDateTextField(DateConverter.getSql2String(viewComponent.getOnlineStop()));
+			txtOnlineStop.setDateTextField(viewComponent.getOnlineStop());
 		} else {
-			txtOnlineStop.setDateTextField("");
+			txtOnlineStop.setDateTextField((Date)null);
 		}
 
 		optSelectShow.setVisible(false);

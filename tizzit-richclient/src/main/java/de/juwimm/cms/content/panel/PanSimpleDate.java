@@ -16,7 +16,8 @@
 package de.juwimm.cms.content.panel;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -25,10 +26,9 @@ import javax.swing.event.DocumentListener;
 
 import org.apache.log4j.Logger;
 
+import com.toedter.calendar.JDateChooser;
+
 import de.juwimm.cms.Messages;
-import de.juwimm.cms.content.frame.DlgSimpleDate;
-import de.juwimm.cms.util.UIConstants;
-import de.juwimm.util.DateConverter;
 
 /**
  * <p>Title: </p>
@@ -41,11 +41,11 @@ import de.juwimm.util.DateConverter;
  * @version $Id$
  */
 public class PanSimpleDate extends JPanel {
+	private static final long serialVersionUID = -8614407644532085680L;
 	private Logger log = Logger.getLogger(PanSimpleDate.class);
-	private DlgSimpleDate frmSimpleDate = null;
 	private JPanel panMain = new JPanel();
-	private JButton dateButton = new JButton();
-	private JTextField dateDisplayLabel = new JTextField();
+	private JLabel dateLabel = new JLabel();
+	private JDateChooser dateChooser = new JDateChooser();
 
 	public PanSimpleDate() {
 		try {
@@ -56,35 +56,14 @@ public class PanSimpleDate extends JPanel {
 	}
 
 	void jbInit() throws Exception {
-		frmSimpleDate = new DlgSimpleDate(this);
-		frmSimpleDate.setLocationRelativeTo(UIConstants.getMainFrame());
 		this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
-		dateButton.setText(Messages.getString("PanSimpleDate.dateButton"));
-		dateButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dateActionPerformed(e);
-			}
-		});
+		dateLabel.setText(Messages.getString("PanSimpleDate.dateButton"));
+		dateChooser.getJCalendar().getDayChooser().setDecorationBackgroundColor(new Color(92, 92, 92));		
 		panMain.setLayout(new GridBagLayout());
-		dateDisplayLabel.setEnabled(true);
-		dateDisplayLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-		dateDisplayLabel.setMinimumSize(new Dimension(70, 25));
-		dateDisplayLabel.setPreferredSize(new Dimension(70, 25));
-		dateDisplayLabel.setToolTipText("");
-		dateDisplayLabel.setEditable(false);
-		dateDisplayLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		this.add(panMain, null);
-		panMain.add(dateButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0));
-		panMain.add(dateDisplayLabel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
-	}
-
-	private void dateActionPerformed(ActionEvent e) {
-		if ((dateDisplayLabel.getText().trim()).length() != 0) {
-			Calendar cal = DateConverter.getString2Calendar(dateDisplayLabel.getText());
-			setCalendar(cal);
-		}
-		frmSimpleDate.setVisible(true);
+		panMain.add(dateLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0));
+		panMain.add(dateChooser, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 5, 0), 0, 0));
 	}
 
 	/**
@@ -93,7 +72,7 @@ public class PanSimpleDate extends JPanel {
 	 * @param txt
 	 */
 	public void setCalendar(Calendar cal) {
-		frmSimpleDate.setCalendar(cal);
+		dateChooser.setCalendar(cal);
 	}
 
 	/**
@@ -102,15 +81,48 @@ public class PanSimpleDate extends JPanel {
 	 * @param txt
 	 */
 	public Calendar getCalendar() {
-		return frmSimpleDate.getCalendar();
+		
+		if(dateChooser.getDate() == null){
+			Calendar emptyCalendar = Calendar.getInstance();
+			emptyCalendar.setTimeInMillis(0);
+			return emptyCalendar;
+		}
+		
+		return dateChooser.getCalendar();
+	}
+	public Date getDate() {
+		if(dateChooser.getDate() == null){
+			return new Date(0);
+		}
+		return dateChooser.getDate();
 	}
 
 	/**
 	 * Funtion to set the date in the TextField.
 	 * @param txt
 	 */
-	public void setDateTextField(String txt) {
-		dateDisplayLabel.setText(txt);
+	public void setDateTextField(Calendar calendar) {
+		dateChooser.setCalendar(calendar);
+	}
+	
+	public void setDateTextField(Date date) {
+		dateChooser.setDate(date);
+	}
+	
+	public void setDateTextField(long time) {
+		dateChooser.setDate(new Date(time));
+	}
+	
+	public void setDateTextField(String date){
+		if(date == null || date.isEmpty()){
+			dateChooser.setDate((Date)null);
+			return;
+		}
+		try {
+			dateChooser.setDate(new SimpleDateFormat().parse(date));
+		} catch (ParseException e) {			
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -118,7 +130,7 @@ public class PanSimpleDate extends JPanel {
 	 * @param txt
 	 */
 	public void addDocumentListener(DocumentListener listener) {
-		this.dateDisplayLabel.getDocument().addDocumentListener(listener);
+		((JFormattedTextField)this.dateChooser.getComponent(1)).getDocument().addDocumentListener(listener);
 	}
 
 	/**
@@ -126,12 +138,8 @@ public class PanSimpleDate extends JPanel {
 	 * @param txt
 	 */
 	public String getDateTextField() {
-		return dateDisplayLabel.getText();
-	}
-
-	public Date getSelectedDate() {
-		return this.frmSimpleDate.getCalendar().getTime();
-	}
+		return new SimpleDateFormat("dd.MM.yyyy").format(dateChooser.getCalendar());
+	}	
 
 	/**
 	 * Funtion to set the label date button, so that different
@@ -141,19 +149,11 @@ public class PanSimpleDate extends JPanel {
 	 * @param txt
 	 */
 	public void setDateButtonText(String txt) {
-		dateButton.setText(txt);
+		dateLabel.setText(txt);
 	}
 
 	public void setDateButtonEnabled(boolean enabled) {
-		this.dateButton.setEnabled(enabled);
-	}
-
-	public void showDialog() {
-		if ((dateDisplayLabel.getText().trim()).length() != 0) {
-			Calendar cal = DateConverter.getString2Calendar(dateDisplayLabel.getText());
-			setCalendar(cal);
-		}
-		frmSimpleDate.setVisible(true);
+		this.dateChooser.setEnabled(enabled);
 	}
 
 }

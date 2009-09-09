@@ -79,13 +79,13 @@ public class SimpleDate extends AbstractModule {
 			if (day.trim().length() != 0 && month.trim().length() != 0 && year.trim().length() != 0) {
 				Calendar cal = DateConverter.getString2Calendar(day + "." + month + "." + year);
 				this.pan.setCalendar(cal);
-				this.pan.setDateTextField(getDateFromCalendarToString(cal));
+				this.pan.setDateTextField(cal);
 			} else {
-				this.pan.setDateTextField("");
+				this.pan.setDateTextField((Calendar)null);
 			}
 		} else {
 			//To empty the label when the node is null.
-			this.pan.setDateTextField("");
+			this.pan.setDateTextField((Calendar)null);
 		}
 	}
 
@@ -137,12 +137,9 @@ public class SimpleDate extends AbstractModule {
 	 * Function to get the string value of the date in the format dd.mm.yyyy
 	 * from the calendar
 	 */
-	public String getDateFromCalendarToString(Calendar cal) {
-		String day = new Integer(cal.get(Calendar.DAY_OF_MONTH)).toString();
-		String month = new Integer(cal.get(Calendar.MONTH) + 1).toString();
-		String year = new Integer(cal.get(Calendar.YEAR)).toString();
+	public String getDateFromCalendarToString(Calendar cal) {		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		java.util.Date d = sdf.parse(day + "." + month + "." + year, new ParsePosition(0));
+		java.util.Date d = cal.getTime();
 		return sdf.format(d);
 	}
 
@@ -152,7 +149,7 @@ public class SimpleDate extends AbstractModule {
 	
 	public void recycle() {
 		pan.setDateButtonEnabled(false);
-		pan.setDateTextField("");
+		pan.setDateTextField((Calendar)null);
 	}
 
 }
