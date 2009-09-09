@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-  <!--<distributable />-->
+  <distributable />
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
-      classpath:applicationContext.xml
-      classpath:applicationContext-compass.xml
-      classpath:applicationContext-server-authentication.xml
-      classpath:applicationContext-cqbeans.xml
-      classpath:applicationContext-ds.xml
-      <!-- root-contextConfigLocations merge-point -->
+      classpath:applicationContext-base-cocoon22.xml 
     </param-value>
   </context-param>
-
+  
   <!-- Servlet Filters ================================================ -->
 
   <!--

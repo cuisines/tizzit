@@ -21,13 +21,11 @@ package de.juwimm.cms.cocoon.support;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.beans.WebServiceSpring;
-import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.vo.PictureValue;
 import de.juwimm.util.mail.Mail;
 

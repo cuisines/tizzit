@@ -107,7 +107,7 @@
 	<!-- ******************* JMX BEANS ********************** -->
 	<!-- **************************************************** -->
 	<bean id="jmxBeanSearchengineIndexer" class="de.juwimm.cms.beans.jmx.SearchIndex">
-		<property name="enabled" value="${cqPropertiesBeanSpring.search.indexerEnabled}" />
+		<property name="enabled" value="%%%cqPropertiesBeanSpring.search.indexerEnabled%%%" />
 	</bean>
 
 	<bean id="searchengineIndexerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -117,7 +117,7 @@
 				<property name="targetMethod" value="cronRunSearchIndexer" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="${cqPropertiesBeanSpring.search.indexerCronExpression}" />
+		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.search.indexerCronExpression%%%" />
 	</bean>
 
 	<bean id="logfileCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -127,7 +127,7 @@
 				<property name="targetMethod" value="startParsing" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="${cqPropertiesBeanSpring.logfile.cronExpression}" />
+		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.logfile.cronExpression%%%" />
 	</bean>
 
 	<bean id="editionCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -137,7 +137,7 @@
 				<property name="targetMethod" value="cronEditionImport" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="${cqPropertiesBeanSpring.editionCronExpression}" />
+		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.editionCronExpression%%%" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
