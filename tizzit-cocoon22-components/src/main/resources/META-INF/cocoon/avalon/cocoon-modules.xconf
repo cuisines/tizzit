@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<components>
+  <input-modules>
+    <!-- TODO: downward compatibility  ConquestPropertyModule -->
+    <component-instance class="org.tizzit.cocoon.components.modules.input.TizzitPropertyModule" logger="org.tizzit.cocoon.components.modules.input.TizzitPropertyModule" name="conquest-properties" />
+    <component-instance class="org.tizzit.cocoon.components.modules.input.TizzitPropertyModule" logger="org.tizzit.cocoon.components.modules.input.TizzitPropertyModule" name="tizzit-property" />
+    <component-instance class="org.apache.cocoon.components.modules.input.RequestAttributeModule" name="attribute" />
+  </input-modules>
+  <component class="org.apache.excalibur.xml.xslt.XSLTProcessorImpl" logger="core.xslt-processor" role="org.apache.excalibur.xml.xslt.XSLTProcessor/saxon">
+    <parameter name="use-store" value="true" />
+    <parameter name="transformer-factory" value="net.sf.saxon.TransformerFactoryImpl" />
+  </component>
+</components>

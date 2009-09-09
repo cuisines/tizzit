@@ -1,0 +1,19 @@
+<projectDescription>
+  <name>tizzit-web-cocoon22</name>
+  <comment>The tizzit Project.</comment>
+  <projects>
+    <project>tizzit-cocoon22-components</project>
+    <project>tizzit-common</project>
+    <project>tizzit-core</project>
+    <project>tizzit-plugin-api</project>
+    <project>tizzit-xmlsearch-xindice</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

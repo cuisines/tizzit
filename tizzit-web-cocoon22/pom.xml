@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.tizzit</groupId>
+    <artifactId>tizzit</artifactId>
+    <version>1.0</version>
+    <relativePath>../tizzit/pom.xml</relativePath>
+  </parent>
+
+  <name>tizzit Cocoon 2.2 Web Application</name>
+  <groupId>org.tizzit</groupId>
+  <artifactId>tizzit-web-cocoon22</artifactId>
+  <version>${tizzit.version}</version>
+  <packaging>war</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>6.1.7</version>
+        <configuration>
+          <connectors>
+            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+              <port>8888</port>
+              <maxIdleTime>30000</maxIdleTime>
+            </connector>
+          </connectors>
+          <webAppSourceDirectory>${project.build.directory}/${pom.artifactId}-${pom.version}</webAppSourceDirectory>
+          <contextPath>/</contextPath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+      <!-- TizziT - Cocoon components / block-->
+      <dependency>
+        <groupId>${pom.groupId}</groupId>
+        <artifactId>tizzit-cocoon22-components</artifactId>
+        <version>${tizzit.version}</version>
+      </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2</version>
+    </dependency>
+      <dependency>
+        <groupId>${pom.groupId}</groupId>
+        <artifactId>tizzit-core</artifactId>
+        <version>${tizzit.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>${pom.groupId}</groupId>
+        <artifactId>tizzit-common</artifactId>
+        <version>${tizzit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${pom.groupId}</groupId>
+        <artifactId>tizzit-plugin-api</artifactId>
+        <version>${tizzit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${pom.groupId}</groupId>
+        <artifactId>tizzit-xmlsearch-xindice</artifactId>
+        <version>${tizzit.version}</version>
+      </dependency>
+  </dependencies>
+
+</project>
