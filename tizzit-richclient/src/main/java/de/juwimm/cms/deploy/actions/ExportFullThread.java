@@ -56,7 +56,6 @@ public class ExportFullThread extends Thread {
 	}
 
 	public void run() {
-		UIConstants.getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new FileFilter() {
 			public boolean accept(File fle) {
@@ -79,18 +78,17 @@ public class ExportFullThread extends Thread {
 					file.delete();
 					file.createNewFile();
 				}
+				UIConstants.setWorker(true);
 				UIConstants.setStatusInfo("Fetching Data from Server...");
 				((Communication) getBean(Beans.COMMUNICATION)).createEditionForExport(file, rootVCid);
 				UIConstants.setStatusInfo("Finished Export!");
-				UIConstants.getMainFrame().setCursor(Cursor.getDefaultCursor());
+				UIConstants.setWorker(false);				
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("ExportFullThread.message.success"), rb.getString("ExportFullThread.title"), JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception exe) {
 				log.error("Error during the export to file", exe);
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("ExportFullThread.message.failure"), rb.getString("ExportFullThread.title"), JOptionPane.ERROR_MESSAGE);
+				UIConstants.setWorker(false);
 			}
-		} else {
-			UIConstants.getMainFrame().setCursor(Cursor.getDefaultCursor());
 		}
 	}
-
 }

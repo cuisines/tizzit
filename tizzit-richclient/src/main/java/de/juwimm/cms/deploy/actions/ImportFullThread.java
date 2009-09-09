@@ -55,8 +55,7 @@ public class ImportFullThread extends Thread {
 		fileSuffix = ".unit.xml.gz";
 	}
 
-	public void run() {
-		UIConstants.getMainFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	public void run() {				
 		String warning = "";
 		if (rootVCid == null) {
 			warning = rb.getString("actions.importFullThread.fullWarning");
@@ -82,10 +81,11 @@ public class ImportFullThread extends Thread {
 				try {
 					File file = fc.getSelectedFile();
 					if (file.exists()) {
+						UIConstants.setWorker(true);
 						UIConstants.setStatusInfo("Reading File...");
 						((Communication) getBean(Beans.COMMUNICATION)).importEditionFromImport(file, rootVCid);
-						UIConstants.setStatusInfo("Finished Import!");
-						UIConstants.getMainFrame().setCursor(Cursor.getDefaultCursor());
+						UIConstants.setStatusInfo("Finished Import!");						
+						UIConstants.setWorker(false);
 						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("ImportFullThread.message.success"), rb.getString("ImportFullThread.title"), JOptionPane.INFORMATION_MESSAGE);
 					} else {
 						//File does not exist
@@ -95,11 +95,11 @@ public class ImportFullThread extends Thread {
 				} catch (Exception exe) {
 					log.error("Approving import error", exe);
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("ImportFullThread.message.failure"), rb.getString("ImportFullThread.title"), JOptionPane.ERROR_MESSAGE);
+					UIConstants.setWorker(false);
 				}
-			} else {
-				UIConstants.getMainFrame().setCursor(Cursor.getDefaultCursor());
-			}
+			} 
 		}
+		
 	}
 
 }
