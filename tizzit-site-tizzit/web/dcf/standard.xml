@@ -2,9 +2,9 @@
 <source>
 	<head/>
 	<all>
-		<stickyPad/>
 		<textfield name="content"/>
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
-		<footer/>
+		<web20/>
+		<t_footer/>
 	</all>
 </source>

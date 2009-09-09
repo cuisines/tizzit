@@ -6,6 +6,6 @@
 		<iteration descriptionDcfName="image-name" name="images">
 			<picture name="image-name" label="Detail-Bild"/>
 		</iteration>  
-		<!--<footer/>-->
+		<t_footer/>
 	</all>
 </source>

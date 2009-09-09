@@ -5,7 +5,7 @@
 
 	<xsl:template match="navigation" priority="1">
 		<xsl:if test="viewcomponent/viewcomponent[showType='2']">
-					<xsl:apply-templates select="viewcomponent/viewcomponent[showType='2']"/>
+				<xsl:apply-templates select="viewcomponent/viewcomponent[showType='2']"/>
 		</xsl:if>
 	</xsl:template>
     

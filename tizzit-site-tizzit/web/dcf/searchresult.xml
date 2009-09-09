@@ -2,9 +2,8 @@
 <source>
 	<head/>
 	<all>
-		<stickyPad/>
 		<textfield name="content"/>
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
-		<footer/>
+		<t_footer/>
 	</all>
 </source>

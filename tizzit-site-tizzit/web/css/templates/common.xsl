@@ -35,6 +35,11 @@
 		html, body {
 			width: 100%;
 			height: 100%;
+			color: #193140;
+		}
+		
+		a {
+			color: #193140;
 		}
 		
 		ul {
@@ -88,6 +93,10 @@
 		
 		<!-- Custom CSS below -->
 		
+		h1 {
+			font-size:24px;
+			padding-bottom:20px;
+		}
 		#layout {
 			width:1024px;
 			margin:0 auto;
@@ -111,6 +120,11 @@
 			background-image:url('/httpd/img/underwater_repeat.png');
 			background-repeat: repeat-x;
 			background-position: 0 195px;
+		}
+		#contentSeperator {
+			background-image:url('/httpd/img/contentSeperator.gif');
+			background-repeat: repeat-x;
+			background-position: 0 193px;
 		}
 		#information_1 {
 			height: 320px;
@@ -142,7 +156,7 @@
 		#contentcontainer {
 			margin-top: 37px!important;
 			margin-top: 10px;
-			padding:30px 50px 30px 310px;
+			padding:30px 50px 30px 25px;
 		}
 		#toparea {
 			float:right;
@@ -185,13 +199,52 @@
 			width:950px;
 			padding:17px 0 0 0;
 		}
+		#leftmenue {
+			width:255px;
+			padding-right:25px;
+		}
+		#leftmenue_top {
+			background-image:url('/httpd/img/navi/leftnavi_top.gif');
+			background-repeat:no-repeat;
+			height:9px;
+			line-height:0px;
+		}
+		#leftmenue_middle {
+			background-image:url('/httpd/img/navi/leftnavi_middle.gif');
+			background-repeat:repeat-y;
+			padding:20px 13px;
+		}
+		#leftmenue_bottom {
+			background-image:url('/httpd/img/navi/leftnavi_bottom.gif');
+			background-repeat:no-repeat;
+			height:10px;
+			line-height:0px;
+		}
+		#right {
+			width:200px;
+			padding-top:11px;
+		}
+		#middle {
+			width:455px;
+			padding-top:11px;
+		}
+		#tagCloud {
+			position:absolute;
+			left:30px;
+		}
 		.twitter {
 			float:right;
 		}
+		.content {
+			line-height:18px;
+		}
 		.secondlevel, #search_area, #search_button, #search_container, .copyright,
 		.firstlevel2 .firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
-		.fl_bg_l, .fl_bg, .flm_bg{
+		.fl_bg_l, .fl_bg, .flm_bg, #leftmenue, #right, #middle, .footer_item {
 			float:left;
+		}
+		.footer_item {
+			padding-left:25px;
 		}
 		.firstlevel2 {
 			margin: 49px 0 0 302px;
@@ -248,7 +301,26 @@
 		.firstlevel2 .firstlink a:hover {
 			color:#96cf48;
 		}
-		
+		.leftmenue .firstlink a {
+			font-size:13px;
+			text-decoration:none;
+			font-weight:bold;
+			background-image:url('/httpd/img/navi/leftnavi_seperator.gif');
+			background-repeat:no-repeat;
+			background-position:0 bottom;
+			display:block;
+			padding:3px 0 7px 17px;
+		}
+		.leftmenue .firstlink a:hover, .leftmenue .firstlink .clicked a {
+			font-weight:bold;
+		}
+		.leftmenue .thirdlinks a {
+			padding:3px 0 3px 32px;
+			background-image:url('/httpd/img/navi/leftnavi_bg.gif');
+			background-repeat:no-repeat;
+			background-position:17px 8px;
+			font-weight:normal;
+		}
 
 		<xsl:if test="$media = 'print'"></xsl:if>
 

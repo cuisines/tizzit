@@ -55,6 +55,32 @@
 		</form-element-list>
 	</xsl:template>
 	
+	<xsl:template match="web20">
+		<web20 label="WEB 2.0 Settings" dcfname="web20">
+			<dcfConfig>
+				<classname>de.juwimm.cms.content.modules.CheckBoxModule</classname>
+				<property name="checkboxes">
+					<label>Tagging</label>
+					<elementName>tagging</elementName>
+					<properties>true</properties>
+				</property>
+			</dcfConfig>
+		</web20>
+	</xsl:template>
+	
+	<xsl:template match="tagCloud">
+		<tagcloud label="WEB 2.0 Tagcloud" dcfname="tagcloud">
+			<dcfConfig>
+				<classname>de.juwimm.cms.content.modules.CheckBoxModule</classname>
+				<property name="checkboxes">
+					<label>Tagcloud anzeigen?</label>
+					<elementName>tagcloud</elementName>
+					<properties>true</properties>
+				</property>				
+			</dcfConfig>
+		</tagcloud>
+	</xsl:template>
+	
 	<xsl:template match="requiredChoose" priority="2">
 		<requiredChoose dcfname="requiredChoose" label="Feld ist ein Pflichtfeld?">
 			<dcfConfig>

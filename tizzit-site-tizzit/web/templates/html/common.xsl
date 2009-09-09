@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ctmpl="http://www.conquest-cms.net/template">
   
 	<xsl:include href="variables.xsl"/>
-   
+      
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/line.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/db-components.xsl"/>
@@ -12,9 +12,14 @@
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format_xhtml.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/standard.xsl"/>
 	 
-	<xsl:include href="include/footer.xsl"/>	
+	<xsl:include href="include/t_footer.xsl"/>
 	<xsl:include href="include/teaser.xsl"/>
-	<xsl:include href="include/image_div.xsl"/>
+	<xsl:include href="include/image_div.xsl"/> 
+	 
+	<!-- includes Web 2.0 -->  
+	<!--<xsl:include href="include/web20_rating.xsl"/>-->
+	<xsl:include href="include/web20_tagging.xsl"/>
+	<!--<xsl:include href="include/web20_comment.xsl"/>--> 
 	 
 	<!-- Configuration parameters so activate additional features -->
 	
@@ -146,10 +151,7 @@
 		<ctmpl:module name="search">
 			<xsl:call-template name="search"/>
 		</ctmpl:module>	
-		<ctmpl:module name="tagcloud">
-			tagcload
-		</ctmpl:module>	
-	</xsl:template>
+	</xsl:template> 
 	
 	<xsl:template name="search">
 		<div id="search_area">    

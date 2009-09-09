@@ -11,7 +11,7 @@
 			<![CDATA[
 				Shadowbox.loadSkin('classic', '/httpd/js/skin');
 				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
-				Shadowbox.loadPlayer(['flv', 'html', 'iframe', 'img', 'qt', 'swf', 'wmp'], '/httpd/js/player');
+				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
 				window.onload = function(){
 					Shadowbox.init();
 				};
@@ -57,7 +57,9 @@
 						<div id="footer">
 							<div id="f_content">
 								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
-								<div class="twitter">twitter</div>
+								<div class="twitter">
+									<ctmpl:include name="t_footer"/>
+								</div>
 								<div class="clear">&#160;</div>
 							</div>
 						</div>

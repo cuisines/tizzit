@@ -4,9 +4,10 @@
     <xsl:include href="standard.xsl"/> 
     
     <xsl:template match="content" mode="include" priority="3">
+        <div class="clear">&#160;</div>
         <br/>
         <xsl:choose>
-            <xsl:when test="../videoChooser='1'">
+            <xsl:when test="../videoChooser='1' and ../shadowBoxLinkTxt!=''">
                 <a class="option">
                     <xsl:attribute name="href">
                         <xsl:text>/httpd/flash/player-viral.swf?file=</xsl:text>

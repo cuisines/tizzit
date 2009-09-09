@@ -43,18 +43,6 @@
             width: 220px;  
             height: 310px;  
         } 
-        <!--#kwick1 {    
-            background-image: url('/httpd/img/home/01.png');  
-            background-repeat: no-repeat;
-        }  
-        #kwick2 {    
-            background-image: url('/httpd/img/home/02.png');
-            background-repeat: no-repeat;
-        }  
-        #kwick3 {   
-            background-image: url('/httpd/img/home/03.png');
-            background-repeat: no-repeat;
-        }  -->
         .kwick_bg_01 {
             background-image: url('/httpd/img/home/round_decisionmaker.png');
             background-repeat: no-repeat;
@@ -71,7 +59,9 @@
             background-position:right 0px;
         }
         .content {
-            padding: 15px 0px 30px 300px;
+            padding: 30px 0px 30px 300px;
+            background-image:url('/httpd/img/underwater.gif');
+            background-repeat:no-repeat;
         }
         .container { 
             <!--width:500px;--> 
@@ -128,6 +118,20 @@
         #video_container {
             margin:30px 0 0 93px;
         }
+        #cloud {
+            position:absolute;
+            width:170px;
+            top:350px;
+            padding:0 0 0 40px;
+        }
+        #cloud a{
+            color:#78a7c5;
+            text-decoration:none;
+        }
+        #cloud a:hover{
+            text-decoration:underline;
+        }
+        
         
     </xsl:template>
         

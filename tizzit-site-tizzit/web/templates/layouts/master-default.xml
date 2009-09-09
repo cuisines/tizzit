@@ -11,7 +11,7 @@
 			<![CDATA[
 				Shadowbox.loadSkin('classic', '/httpd/js/skin');
 				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
-				Shadowbox.loadPlayer(['flv', 'html', 'iframe', 'img', 'qt', 'swf', 'wmp'], '/httpd/js/player');
+				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
 				window.onload = function(){
 					Shadowbox.init();
 				};
@@ -22,27 +22,42 @@
 		<div id="cloudsrepeat">
 			<div id="wavesrepeat">
 				<div id="whitewaverepeat">
-					<div id="layout">
-						<div id="header">
-							<a href="/" id="homelink">&#160;</a>
-							<div id="toparea">
-								<ctmpl:include name="secondlevel"/>
-								<ctmpl:include name="search"/>
+					<div id="contentSeperator">
+						<div id="layout">
+							<div id="header">
+								<a href="/" id="homelink">&#160;</a>
+								<div id="toparea">
+									<ctmpl:include name="secondlevel"/>
+									<ctmpl:include name="search"/>
+								</div>
+								<div class="clear">&#160;</div>
+								<ctmpl:include name="firstlevel2"/>
+								<div class="clear">&#160;</div>
 							</div>
-							<div class="clear">&#160;</div>
-							<ctmpl:include name="firstlevel2"/>
-							<div class="clear">&#160;</div>
+							<div id="contentcontainer">
+								<div id="leftmenue">
+									<ctmpl:include name="leftmenue"/>
+								</div>
+								<div id="middle">
+									<ctmpl:include name="headline"/> 
+									<ctmpl:include name="content"/>
+									<ctmpl:include name="tagging"/>
+								</div>
+								<div id="right">
+									right
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
 						</div>
-						<div id="contentcontainer">
-							<ctmpl:include name="headline"/> 
-							<ctmpl:include name="content"/> 
-						</div>
-					</div>
-					<div id="footer">
-						<div id="f_content">
-							<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
-							<div class="twitter">twitter</div>
-							<div class="clear">&#160;</div>
+						<div id="information_2">&#160;</div>
+						<div id="footer">
+							<div id="f_content">
+								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
+								<div class="twitter">
+									<ctmpl:include name="t_footer"/>
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
 						</div>
 					</div>
 				</div>

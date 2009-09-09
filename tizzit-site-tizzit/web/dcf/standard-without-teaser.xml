@@ -4,6 +4,7 @@
 	<all>
 		<stickyPad/>
 		<textfield name="content"/>
-		<footer/>
+		<web20/>
+		<t_footer/>
 	</all>
 </source>

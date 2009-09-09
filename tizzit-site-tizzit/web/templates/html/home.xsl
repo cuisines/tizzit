@@ -74,7 +74,7 @@
     </xsl:template>
     
     <xsl:template name="content2">
-        <img src="/httpd/img/home/tizzit_coverflow.png" alt="Tizzit Bilder" />
+        <img src="/img/ejbimage/{../picture[@dcfname='sl2_picture']/image/filename}?id={../picture[@dcfname='sl2_picture']/image/@src}" alt="Tizzit Bilder" />
     </xsl:template>
     
     <xsl:template name="content3">
@@ -90,7 +90,7 @@
                 <xsl:text>bottom</xsl:text>
             </xsl:variable>
             <xsl:variable name="videoWidth">
-                <xsl:text>510px</xsl:text>
+                <xsl:text>476px</xsl:text>
             </xsl:variable>
             <xsl:variable name="videoHeight">
                 <xsl:text>270px</xsl:text>
@@ -100,7 +100,7 @@
                         s1.addParam("allowfullscreen","true");
                         s1.addParam("allownetworking","false");
                         s1.addParam("allowscriptaccess","always");
-                        s1.addParam("flashvars","]]><xsl:text>file=</xsl:text><xsl:value-of select="../videoUrl"/><![CDATA[&]]><xsl:text>autostart=</xsl:text><xsl:value-of select="$autostart"/><![CDATA[&]]><xsl:text>plugins=none</xsl:text><![CDATA[&]]><xsl:text>fullscreen=true</xsl:text><![CDATA[&]]><xsl:text>controlbar=</xsl:text><xsl:value-of select="$controlbar"/><![CDATA[&]]><xsl:text>image=/httpd/img/home/video_preview.jpg</xsl:text><![CDATA[");
+                        s1.addParam("flashvars","]]><xsl:text>file=</xsl:text><xsl:value-of select="../videoUrl"/><![CDATA[&]]><xsl:text>autostart=</xsl:text><xsl:value-of select="$autostart"/><![CDATA[&]]><xsl:text>plugins=none</xsl:text><![CDATA[&]]><xsl:text>fullscreen=true</xsl:text><![CDATA[&]]><xsl:text>controlbar=</xsl:text><xsl:value-of select="$controlbar"/><![CDATA[&]]><xsl:text>image=/img/ejbimage/</xsl:text><xsl:value-of select="../picture[@dcfname='video_picture']/image/filename"/><xsl:text>?id=</xsl:text><xsl:value-of select="../picture[@dcfname='video_picture']/image/@src"/><![CDATA[");
                         s1.write("video_container");
                     ]]>
         </script>
@@ -135,5 +135,5 @@
             &#160;
         </a>
     </xsl:template>
-
+    
 </xsl:stylesheet>

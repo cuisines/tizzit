@@ -21,6 +21,15 @@
 					<jar>juwimm-registry-remote-1.3.jar</jar>
 				</classpath>
 			</map:transformer>
+			<map:transformer name="web20" src="de.juwimm.cms.cocoon.transformation.GenericTransformer">
+				<classname>de.juwimm.web20.cocoon.transforming.Web20PageTransformer</classname>
+				<classpath>
+					<jar>juwimm-web20-cocoon-1.0.0.jar</jar>
+					<jar>juwimm-web20-common-1.0.0.jar</jar>
+					<jar>juwimm-web20-core-1.0.0-client.jar</jar>
+				</classpath>
+				<siteShort>juwimm-web20</siteShort>
+			</map:transformer>
 		</map:transformers>
 		<map:readers default="resource"/>
 
@@ -52,6 +61,15 @@
 				src="org.apache.cocoon.acting.RequestParamAction"/>
 			<map:action name="safeguard.logout"
 				src="de.juwimm.cms.cocoon.acting.SafeguardLogoutAction"/>
+			<map:action name="web20action" src="de.juwimm.cms.cocoon.acting.GenericAction">
+				<siteShort>juwimm-web20</siteShort>
+				<classname>de.juwimm.web20.cocoon.acting.Web20InsertAction</classname>
+				<classpath>
+					<jar>juwimm-web20-cocoon-1.0.0.jar</jar>
+					<jar>juwimm-web20-common-1.0.0.jar</jar>
+					<jar>juwimm-web20-core-1.0.0-client.jar</jar>
+				</classpath>
+			</map:action>
 		</map:actions>
 		<map:matchers default="wildcard"/>
 		<map:selectors default="browser"/>
@@ -295,6 +313,17 @@
 					</map:generate>
 				</map:otherwise>
 			</map:select>
+			
+			<map:transform src="templates/preparser/web20include.xsl">
+				<map:parameter name="template" value="{template}"/>
+			</map:transform>
+			<map:transform type="web20">
+				<map:parameter name="siteId"
+					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+				<map:parameter name="cqUserName" value="{request-param:safeguardUsername}"/>
+			</map:transform>
+			
 			<map:select type="parameter">
 				<map:parameter name="parameter-selector-test" value="{filetype}"/>
 				<map:when test="html">					
@@ -392,65 +421,71 @@
 				<map:parameter name="language" value="{language}"/>
 				<map:parameter name="path" value="{url}"/>
 				<map:parameter name="viewType" value="browser"/>
-				<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
-				<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
-				<map:transform src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
-					<map:parameter name="layout" value="{../layout}"/>
-					<map:parameter name="content-template" value="{template}"/>
-				</map:transform>
-				<map:transform src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl" label="content">
-					<map:parameter name="currentDate" value="{currentDate}"/>
-					<map:parameter name="language" value="{../language}"/>
-					<map:parameter name="url" value="{../url}"/>
+				<map:act type="web20action">
+					<map:parameter name="use-request-parameters" value="true"/>
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
-					<map:parameter name="template" value="{template}"/>
-					<map:parameter name="clientCode" value="{global:clientCode}"/>
-					<map:parameter name="disableLanguageVersions" value="false"/>
-					<map:parameter name="viewType" value="browser"/>
-					<map:parameter name="language" value="{language}"/>		
-					<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
-				</map:transform>
-				<map:transform type="cinclude">
-					<map:parameter name="parallel" value="true"/>
-					<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
-				</map:transform>
-				<map:select type="parameter">
-					<map:parameter name="parameter-selector-test" value="{safeguard}"/>
-					<map:when test="false">
-						<map:select type="parameter">
-							<map:parameter name="parameter-selector-test" value="{../filetype}"/>
-							<map:when test="html">
-								<map:transform src="{global:parentMandator}templates/layouts/master.xsl">
-									<map:parameter name="language" value="{../language}"/>
-									<map:parameter name="url" value="{../path}"/>
-									<map:parameter name="currentDate" value="{currentDate}"/>
-									<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-									<map:parameter name="use-request-parameters" value="true"/>
-									<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
-									<map:parameter name="template" value="{template}"/>
-									<map:parameter name="content-template" value="{template}"/>
-									<map:parameter name="clientCode" value="{global:clientCode}"/>
-									<map:parameter name="layout" value="{../layout}"/>
-									<map:parameter name="disableLanguageVersions" value="false"/>
-									<map:parameter name="viewType" value="browser"/>
-									<map:parameter name="language" value="{language}"/>
-									<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
-								</map:transform>
-								<map:transform
-									src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
-								<map:serialize type="xhtml"/>
-							</map:when>
-							<map:otherwise>
-								<map:serialize type="xml"/>
-							</map:otherwise>
-						</map:select>
-					</map:when>
-					<map:otherwise>
-						<map:redirect-to
-							uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"/>
-					</map:otherwise>
-				</map:select>
+					<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
+					<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
+					<map:transform src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
+						<map:parameter name="layout" value="{../../layout}"/>
+						<map:parameter name="content-template" value="{../template}"/>
+					</map:transform>
+					<map:transform src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl" label="content">
+						<map:parameter name="currentDate" value="{../currentDate}"/>
+						<map:parameter name="language" value="{../../language}"/>
+						<map:parameter name="url" value="{../../url}"/>
+						<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="template" value="{../template}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="disableLanguageVersions" value="false"/>
+						<map:parameter name="viewType" value="browser"/>
+						<map:parameter name="language" value="{../language}"/>		
+						<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
+					</map:transform>
+					<map:transform type="cinclude">
+						<map:parameter name="parallel" value="true"/>
+						<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
+					</map:transform>
+					<map:select type="parameter">
+						<map:parameter name="parameter-selector-test" value="{../safeguard}"/>
+						<map:when test="false">
+							<map:select type="parameter">
+								<map:parameter name="parameter-selector-test" value="{../../filetype}"/>
+								<map:when test="html">
+									<map:transform src="{global:parentMandator}templates/layouts/master.xsl">
+										<map:parameter name="language" value="{../../language}"/>
+										<map:parameter name="url" value="{../../path}"/>
+										<map:parameter name="currentDate" value="{../currentDate}"/>
+										<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
+										<map:parameter name="use-request-parameters" value="true"/>
+										<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+										<map:parameter name="template" value="{../template}"/>
+										<map:parameter name="content-template" value="{../template}"/>
+										<map:parameter name="clientCode" value="{global:clientCode}"/>
+										<map:parameter name="layout" value="{../../layout}"/>
+										<map:parameter name="disableLanguageVersions" value="false"/>
+										<map:parameter name="viewType" value="browser"/>
+										<map:parameter name="language" value="{../language}"/>
+										<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
+									</map:transform>
+									<map:transform
+										src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
+									<map:serialize type="xhtml"/>
+								</map:when>
+								<map:otherwise>
+									<map:serialize type="xml"/>
+								</map:otherwise>
+							</map:select>
+						</map:when>
+						<map:otherwise>
+							<map:redirect-to
+								uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"/>
+						</map:otherwise>
+					</map:select>
+				</map:act>
 			</map:act>
 		</map:resource>
 

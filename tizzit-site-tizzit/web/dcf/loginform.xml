@@ -10,6 +10,6 @@
 		<simpletextfield name="errorMsg" label="Error Message bei fehlgeschlagenem Login"/>
 		<notice>Unterhalb des Textes steht das Loginformular</notice>
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
-		<footer/>
+		<t_footer/>
 	</all>
 </source>
