@@ -112,9 +112,27 @@
 			<version>0.8.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.pdfbox</groupId>
+			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>fontbox</artifactId>
-			<version>0.8.0-SNAPSHOT</version>
+			<version>0.8.0-incubator</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>jempbox</artifactId>
+			<version>0.8.0-incubator</version>
+		</dependency>
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcmail-jdk14</artifactId>
+			<version>136</version>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>bouncycastle</groupId>
+			<artifactId>bcprov-jdk14</artifactId>
+			<version>136</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -189,27 +207,14 @@
 					</goals>
 					<configuration>
 					    <file>${pom.basedir}/src/main/resources/pdfbox.jar</file>
+						<pomFile>${pom.basedir}/src/main/resources/pdfbox.pom</pomFile>
 					    <groupId>org.apache.pdfbox</groupId>
 					    <artifactId>pdfbox</artifactId>
 						<packaging>jar</packaging>
 						<version>0.8.0-SNAPSHOT</version>
 					</configuration>
 				</execution>
-				<execution>
-					<id>fontbox</id>
-					<phase>validate</phase>
-					<goals>
-					  <goal>install-file</goal>
-					</goals>
-					<configuration>
-					    <file>${pom.basedir}/src/main/resources/fontbox.jar</file>
-					    <groupId>org.apache.pdfbox</groupId>
-						<artifactId>fontbox</artifactId>
-						<packaging>jar</packaging>
-						<version>0.8.0-SNAPSHOT</version>
-					</configuration>
-				</execution>
-			</executions>
+				</executions>
 		  </plugin>
 			<plugin>
 				<groupId>org.andromda.maven.plugins</groupId>
