@@ -16,19 +16,24 @@
 package de.juwimm.cms.gui;
 
 import java.awt.Color;
+import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.util.UIConstants;
 
 /**
  * <p>Title: juwimm cms</p>
@@ -46,6 +51,7 @@ public class FrmVersion extends JFrame {
 	private boolean startup = false;
 	private JLabel lblBackground = new JLabel();
 	private JTextField jTextField1 = new JTextField();
+	private JButton closeButton;
 
 	public FrmVersion() {
 		try {
@@ -54,12 +60,15 @@ public class FrmVersion extends JFrame {
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
-	}
+		closeButton.setVisible(false);
+	}	
 
 	public FrmVersion(String version) {
 		this();
 		lblVersionInfo.setText(version);
 		this.jTextField1.setVisible(false);
+		closeButton.setVisible(true);
+		
 	}
 
 	public void setStartup() {
@@ -83,6 +92,7 @@ public class FrmVersion extends JFrame {
 		lblBackground.setBackground(Color.darkGray);
 
 		lblVersionInfo.setFont(new java.awt.Font("SansSerif", 1, 12));
+		lblVersionInfo.setForeground(new Color(92,92,92));
 		lblVersionInfo.setText(Constants.CMS_VERSION);
 		lblVersionInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		//lblVersionInfo.setBounds(new Rectangle(25, 170, 398, 24)); Label.setBounds(186, 100, 220, 30);
@@ -102,8 +112,20 @@ public class FrmVersion extends JFrame {
 		jTextField1.setText("Loading...");
 		jTextField1.setHorizontalAlignment(SwingConstants.LEFT);
 		jTextField1.setBounds(new Rectangle(0, 275, 350, 25));
+		
 		this.getContentPane().add(lblVersionInfo, null);
 		this.getContentPane().add(jTextField1, null);
+		closeButton=new JButton(UIConstants.BTN_CLOSE);
+		closeButton.setHorizontalAlignment(SwingConstants.CENTER);
+		closeButton.setBounds(new Rectangle(430, 3, 16, 16));
+		closeButton.setFocusable(false);
+		closeButton.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+				disposeMe();				
+			}
+		});
+		this.getContentPane().add(closeButton, null);
+		
 		this.setResizable(false);
 		this.setUndecorated(true);
 	}
