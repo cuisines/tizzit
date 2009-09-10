@@ -872,7 +872,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			log.error("Unknown error while resolving myown user: " + AuthenticationHelper.getUserName());
 		}
 		boolean hasRights = false;
-		if ((!getUserHbmDao().isInRole(userMe, UserRights.SITE_ROOT, userMe.getActiveSite()) && !userGiven.isMasterRoot()) || userMe.isMasterRoot()) {
+		if ((getUserHbmDao().isInRole(userMe, UserRights.SITE_ROOT, userMe.getActiveSite()) && !userGiven.isMasterRoot()) || userMe.isMasterRoot()) {
 			hasRights = true;
 		}
 		if (!hasRights) {

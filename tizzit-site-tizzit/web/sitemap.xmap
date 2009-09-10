@@ -73,7 +73,6 @@
 		</map:actions>
 		<map:matchers default="wildcard"/>
 		<map:selectors default="browser"/>
-		<map:pipelines default="caching"/>
 	</map:components>
 
 	<map:views>
