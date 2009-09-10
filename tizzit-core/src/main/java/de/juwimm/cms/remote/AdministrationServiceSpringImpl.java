@@ -179,14 +179,8 @@ public class AdministrationServiceSpringImpl extends AdministrationServiceSpring
 	@Override
 	protected String handleGetStartPage(String hostName) throws Exception {
 		HostHbm host = getHostHbmDao().load(hostName);
-		if (host != null) {
-			try {
-				return host.getStartPage().getViewComponentId().toString();
-			} catch (Exception e) {
-				if (log.isErrorEnabled()) {
-					log.error("Could not get start page for host: " + hostName, e);
-				}
-			}
+		if (host != null && host.getStartPage() != null) {
+			return host.getStartPage().getViewComponentId().toString();
 		}
 		return "";
 	}
