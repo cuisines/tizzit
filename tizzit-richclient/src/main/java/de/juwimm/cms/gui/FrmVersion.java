@@ -19,7 +19,12 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
 
@@ -77,12 +82,13 @@ public class FrmVersion extends JFrame {
 
 		lblBackground.setBackground(Color.darkGray);
 
-		lblVersionInfo.setFont(new java.awt.Font("SansSerif", 1, 18));
+		lblVersionInfo.setFont(new java.awt.Font("SansSerif", 1, 12));
 		lblVersionInfo.setText(Constants.CMS_VERSION);
 		lblVersionInfo.setHorizontalAlignment(SwingConstants.CENTER);
 		//lblVersionInfo.setBounds(new Rectangle(25, 170, 398, 24)); Label.setBounds(186, 100, 220, 30);
-
-		lblVersionInfo.setBounds(new Rectangle(186, 100, 220, 30));
+		
+		lblVersionInfo.setBounds(new Rectangle(261, 193, 220, 30));
+		
 		lblVersionInfo.addMouseListener(new java.awt.event.MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				disposeMe();
