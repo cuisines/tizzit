@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.content;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -222,9 +222,7 @@ public final class ContentManager {
 		ModuleFactory mf = htTemplateModuleFactory.get(strLastDcfName);
 		if (mf != null) {
 			String errMsg = mf.isModuleValid();
-			if (errMsg.equals("")) {
-				return true;
-			}
+			if (errMsg.equals("")) { return true; }
 			new FrmValidationError(errMsg);
 			return false;
 		}
@@ -287,14 +285,14 @@ public final class ContentManager {
 		ModuleFactory mf = htTemplateModuleFactory.get(strLastDcfName);
 		mf.setEnabled(enabling);
 	}
-	
+
 	public void recycleActiveDcf() {
 		if (strLastDcfName != null && !"".equalsIgnoreCase(strLastDcfName)) {
 			ModuleFactory mf = htTemplateModuleFactory.get(strLastDcfName);
 			Iterator<Module> it = mf.getAllModules();
 			while (it.hasNext()) {
 				Module mod = it.next();
-				mod.recycle();	
+				mod.recycle();
 			}
 		}
 	}
