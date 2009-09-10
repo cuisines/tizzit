@@ -250,10 +250,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																											 panMenuentry.unload();
-																																																											 } else if (lastIndex == 2) {
-																																																											 panMetaData.unload();
-																																																											 }*/
+																																																																																																																																																																									 panMenuentry.unload();
+																																																																																																																																																																									 } else if (lastIndex == 2) {
+																																																																																																																																																																									 panMetaData.unload();
+																																																																																																																																																																									 }*/
 
 			String strTabName = "";
 			try {
@@ -316,10 +316,20 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("panel.panelView.content.linkNameTooLongWarning", new String[] {Integer.toString(maxLinkNameLength)}), rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 				}
 			}
+
+			String textFromTxtEditor = panContent.getContent();
+			textFromTxtEditor = setFormatForLink(textFromTxtEditor);
+			txtEditor.setCaretPosition(0);
+			panContent.setTxtEditorText(textFromTxtEditor);
+			txtEditor.setText(textFromTxtEditor);
+			panContent.setContent(textFromTxtEditor);
+
 			if (panTab.getSelectedIndex() == 3) {
 				panContent.setContent(txtEditor.getText());
 			} else if (panTab.getSelectedIndex() == 1) {
 				panContent.save();
+				this.reload();
+				panTab.setSelectedIndex(1);
 			}
 			if (viewComponent.getStatus() == Constants.DEPLOY_STATUS_EDITED) {
 				// If you checkIn a NEW Contentversion, your "REMOVE-COMMAND" will also be removed
@@ -428,6 +438,26 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		}
 		int id = viewComponent.getViewComponentId().intValue();
 		comm.showBrowserWindow(id, showInFrame);
+	}
+
+	/**
+	 * Puts the text from the xml tab in the correct format. For links copied from Word
+	 * or typed it changes the generated xml text for them into the correct format for 
+	 * external links.
+	 * @param text
+	 * @return string
+	 */
+	private String setFormatForLink(String text) {
+		while (text.contains("<a href")) {
+			String toReplace = text.substring(text.indexOf("<a href"), text.indexOf("</a>", text.indexOf("<a href"))) + "</a>";
+			String link = text.substring(text.indexOf("<a href") + 8, text.indexOf("</a>", text.indexOf("<a href")));
+			String hRefString = link.substring(0, link.indexOf(">"));
+			String valueText = link.substring(link.indexOf(">") + 1, link.length());
+			String valueToReplaceWith = "<externalLink dcfname=\"de.juwimm.cms.content.modules.ExternalLink\" description=\"D\" label=\"L\"><a displayType=\"block\" href=" + hRefString + " target=\"_blank\">" + valueText + "</a></externalLink>";
+			text = text.replace(toReplace, valueToReplaceWith);
+
+		}
+		return text;
 	}
 
 	public void actionPerformed(ActionEvent ae) {
