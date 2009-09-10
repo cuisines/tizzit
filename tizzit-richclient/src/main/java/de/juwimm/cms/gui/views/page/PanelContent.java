@@ -15,17 +15,35 @@
  */
 package de.juwimm.cms.gui.views.page;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -45,7 +63,11 @@ import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
 import de.juwimm.cms.gui.event.ExitEvent;
 import de.juwimm.cms.gui.event.ExitListener;
 import de.juwimm.cms.gui.views.PanContentView;
-import de.juwimm.cms.util.*;
+import de.juwimm.cms.util.ActionHub;
+import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.PropertyActionEvent;
+import de.juwimm.cms.util.PropertyConfigurationEvent;
+import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.ViewComponentValue;
@@ -175,6 +197,14 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 		jPanel1.add(panContentHeader, BorderLayout.NORTH);
 	}
 
+	public String getTextEditorText() {
+		return txtEditor.getText();
+	}
+
+	public void setTxtEditorText(String text) {
+		txtEditor.setText(text);
+	}
+
 	public void checkIn() { // this is for cancel
 		comm.checkIn(contentValue.getContentId().intValue());
 	}
@@ -206,9 +236,10 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 			if (ok) {
 				ActionHub.configureProperty(PROP_CHECKIN, PropertyConfigurationEvent.PROP_ENABLE, "false");
 				ActionHub.configureProperty(PROP_CHECKOUT, PropertyConfigurationEvent.PROP_ENABLE, "false");
-				
+
 				try {
-					newContent = contentManager.getContent(txtHeadline.getText());
+					//newContent = contentManager.getContent(txtHeadline.getText());
+					newContent = contentValue.getContentText();
 					if (newContent == null || "".equalsIgnoreCase(newContent)) { throw new Exception("Content is Empty"); }
 				} catch (Exception exe) {
 					log.error("Content was not valid: " + newContent, exe);
@@ -531,6 +562,15 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 		}
 	}
 
+	public String getContent() {
+		try {
+			return this.contentManager.getContent(txtHeadline.getText());
+		} catch (Exception e) {
+
+		}
+		return "";
+	}
+
 	public boolean exitPerformed(ExitEvent e) {
 		return true;
 	}
@@ -577,7 +617,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 		dropdownEnabled = true;
 		if (selectLastItem && ddh != null) cboContentVersions.setSelectedItem(ddh);
 	}
-	
+
 	private String getDisplayName(ContentVersionValue value, boolean newest) {
 		StringBuffer sb = new StringBuffer();
 		if (newest) {
@@ -586,7 +626,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 			sb.append(value.getVersion());
 		}
 		sb.append(" - ").append(value.getCreator()).append(" (").append(this.sdf.format(new Date(value.getCreateDate()))).append(")");
-		
+
 		return sb.toString();
 	}
 
