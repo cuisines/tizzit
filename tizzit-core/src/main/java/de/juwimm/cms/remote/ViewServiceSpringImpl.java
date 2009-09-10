@@ -20,7 +20,13 @@
  */
 package de.juwimm.cms.remote;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +35,14 @@ import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.exceptions.UserException;
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.PictureHbm;
+import de.juwimm.cms.model.SequenceHbmDao;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
@@ -46,12 +59,12 @@ import de.juwimm.cms.vo.compound.ViewIdAndUnitIdValue;
  */
 public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private static Logger log = Logger.getLogger(ViewServiceSpringImpl.class);
-	
+
 	@Autowired
 	private SearchengineService searchengineService;
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	/**
 	 * @see de.juwimm.cms.remote.ViewServiceSpring#removeViewComponent(java.lang.Integer, boolean)
 	 */
@@ -667,7 +680,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected ViewDocumentValue handleCreateViewDocument(ViewDocumentValue value) throws Exception {
-		ViewDocumentHbm vd = null; 
+		ViewDocumentHbm vd = null;
 		Integer vdid = getViewDocumentHbmDao().create(value.getLanguage(), value.getViewType());
 		vd = getViewDocumentHbmDao().load(vdid);
 		return vd.getDao();
@@ -942,7 +955,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			vc.setLastModifiedDate(System.currentTimeMillis());
 			if (vc.getStatus() == Constants.DEPLOY_STATUS_APPROVED && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
 				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
-			}		
+			}
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -1333,29 +1346,23 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected ViewDocumentValue handleSetDefaultViewDocument(String viewType, String language, Integer siteId) throws Exception {
 		SiteHbm site = getSiteHbmDao().load(siteId);
 		ViewDocumentHbm viewDocumentDefault = null;
-		if(site.getDefaultViewDocument() != null && checkEquals(site.getDefaultViewDocument(),language,viewType)){			
+		if (site.getDefaultViewDocument() != null && checkEquals(site.getDefaultViewDocument(), language, viewType)) {
 			viewDocumentDefault = site.getDefaultViewDocument();
-		}else{
-			List<ViewDocumentHbm> viewDocuments = (List<ViewDocumentHbm>)getViewDocumentHbmDao().findAll(siteId);
-			for(ViewDocumentHbm viewDocument : viewDocuments){
-				if(checkEquals(viewDocument,language,viewType)){
+		} else {
+			List<ViewDocumentHbm> viewDocuments = (List<ViewDocumentHbm>) getViewDocumentHbmDao().findAll(siteId);
+			for (ViewDocumentHbm viewDocument : viewDocuments) {
+				if (checkEquals(viewDocument, language, viewType)) {
 					viewDocumentDefault = viewDocument;
 					break;
 				}
 			}
-			if(viewDocumentDefault == null){				
+			if (viewDocumentDefault == null) {
 				//create
 				viewDocumentDefault = ViewDocumentHbm.Factory.newInstance();
 				viewDocumentDefault.setLanguage(language);
 				viewDocumentDefault.setViewType(viewType);
 				viewDocumentDefault.setSite(site);
-				ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
-				viewComponent.setReference("root");
-				viewComponent.setDisplayLinkName("root");
-				viewComponent.setLinkDescription("root");
 				viewDocumentDefault = getViewDocumentHbmDao().create(viewDocumentDefault);
-				viewComponent = getViewComponentHbmDao().create(viewDocumentDefault, "root", "root", "root", null);
-				viewDocumentDefault.setViewComponent(viewComponent);
 				getViewDocumentHbmDao().update(viewDocumentDefault);
 			}
 			site.setDefaultViewDocument(viewDocumentDefault);
@@ -1363,10 +1370,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 		return viewDocumentDefault.getDao();
 	}
-	
-	private boolean checkEquals(ViewDocumentHbm viewDocument, String language, String viewType){
-		return viewDocument.getLanguage().equals(language) &&
-		viewDocument.getViewType().equals(viewType);		
+
+	private boolean checkEquals(ViewDocumentHbm viewDocument, String language, String viewType) {
+		return viewDocument.getLanguage().equals(language) && viewDocument.getViewType().equals(viewType);
 	}
 
 }

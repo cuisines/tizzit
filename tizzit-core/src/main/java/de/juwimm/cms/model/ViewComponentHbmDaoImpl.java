@@ -47,10 +47,10 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	private static Logger log = Logger.getLogger(ViewComponentHbmDaoImpl.class);
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
 	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
-	
+
 	@Autowired
 	private SearchengineDeleteService searchengineDeleteService;
-	
+
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
 
@@ -148,7 +148,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		out.print("<displaySettings>" + current.getDisplaySettings() + "</displaySettings>\n");
 		out.print("<viewDocumentViewType>" + (viewDocumentValue != null ? viewDocumentValue.getViewType() : "browser") + "</viewDocumentViewType>\n");
 		out.print("<language>" + (viewDocumentValue != null ? viewDocumentValue.getLanguage() : "deutsch") + "</language>\n");
-		out.print("<userModifiedDate>" + current.getUserLastModifiedDate() + "</userModifiedDate>\n"); 
+		out.print("<userModifiedDate>" + current.getUserLastModifiedDate() + "</userModifiedDate>\n");
 
 		// this is for the edition
 		if (withContent) {
@@ -493,7 +493,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				log.warn("RootContent could not be created because of duplicate key. This should only occure on liveserver.");
 			}
 			vc.setViewType(new Byte("1").byteValue());
-		} else if (vc.getReference().startsWith("symlink:")) {
+		} else if (vc.getReference() != null && vc.getReference().startsWith("symlink:")) {
 			try {
 				ViewComponentHbm vclRef = super.load(new Integer(vc.getReference()));
 				ContentHbm c = getContentHbmDao().load(new Integer(vclRef.getReference()));
@@ -535,7 +535,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		// sending deleted-message to searchEngine
 		searchengineDeleteService.deletePage(viewComponentHbm);
-		
+
 		// if this page was protected remove protection
 		Realm2viewComponentHbm realm = viewComponentHbm.getRealm2vc();
 		if (realm != null) getRealm2viewComponentHbmDao().remove(realm);
@@ -555,30 +555,36 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		super.remove(viewComponentHbm);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByStatus(final int transform, final java.lang.Integer viewDocumentId, final int status) {
 		return this.findByStatus(transform, "from de.juwimm.cms.model.ViewComponentHbm as v where v.viewDocument.viewDocumentId = ? and v.status = ?", viewDocumentId, status);
 	}
 
+	@Override
 	public java.lang.Object find4Unit(final int transform, final java.lang.Integer unitId, final java.lang.Integer viewDocumentId) {
 		return this.find4Unit(transform, "from de.juwimm.cms.model.ViewComponentHbm v where v.assignedUnit.unitId = ? and v.viewDocument.viewDocumentId = ?", unitId, viewDocumentId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByReferencedContent(final int transform, final java.lang.String reference) {
 		return this.findByReferencedContent(transform, "from de.juwimm.cms.model.ViewComponentHbm as v where v.reference = ? and v.viewType in (0, 1, 4, 5)", reference);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByReferencedViewComponent(final int transform, final java.lang.String reference) {
 		return this.findByReferencedViewComponent(transform, "from de.juwimm.cms.model.ViewComponentHbm as v where v.reference = ? and v.viewType in (6, 2)", reference);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllWithUnit(final int transform, final java.lang.Integer viewDocumentId) {
 		return this.findAllWithUnit(transform, "from de.juwimm.cms.model.ViewComponentHbm as v where v.assignedUnit is not null and v.viewDocument.viewDocumentId = ?", viewDocumentId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByParent(final int transform, final java.lang.Integer vcId) {
 		return this.findByParent(transform, "from de.juwimm.cms.model.ViewComponentHbm v WHERE v.parent.viewComponentId = ?", vcId);
