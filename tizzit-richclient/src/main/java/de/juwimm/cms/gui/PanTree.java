@@ -128,11 +128,11 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private JMenuItem miTreeLinkAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_LINK_ADD"));
 	private JMenuItem miTreeSeparatorAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"));
 	private JMenuItem miTreeJumpAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_JUMP_ADD"));
-	private JMenuItem miDELETE = new JMenuItem(rb.getString("menubar.file.delete"));
+	private JMenuItem miDELETE = new JMenuItem(rb.getString("ribbon.delete"));
 	private JMenuItem miRootDeploysUnit = new JMenuItem();
 	private JMenuItem miRootExportUnit = new JMenuItem();
 	private JMenuItem miRootImportUnit = new JMenuItem();
-	private JMenuItem miContentApprove = new JMenuItem(rb.getString("menubar.publish.release"));
+	private JMenuItem miContentApprove = new JMenuItem(rb.getString("ribbon.publish.release"));
 	private JMenuItem miTreeExpandAll = new JMenuItem(rb.getString("actions.ACTION_TREE_EXPAND_ALL"));
 	private String strACTIONROOTDEPLOYSUNIT = rb.getString("wizard.editor.start.approve");
 	private String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
@@ -526,7 +526,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		miTreeExpandAll.setIcon(UIConstants.MNU_EMPTY);
 		miTreeExpandAll.setActionCommand(strACTIONTREEEXPANDALL);
 		popup.add(miTreeExpandAll);
-		if (comm.isUserInRole(UserRights.APPROVE)) { //rb.getString("menubar.publish.release")
+		if (comm.isUserInRole(UserRights.APPROVE)) { //rb.getString("ribbon.publish.release")
 			miContentApprove.setIcon(UIConstants.MNU_EMPTY);
 			miContentApprove.setActionCommand(Constants.ACTION_CONTENT_APPROVE);
 			popup.add(miContentApprove);
