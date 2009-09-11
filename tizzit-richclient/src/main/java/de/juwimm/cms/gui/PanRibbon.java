@@ -81,7 +81,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	private JCommandButton exitButton;
 	private JCommandButton logoutButton;
 	private JCommandButton optionsButton;
-	private JCommandButton directHelpButton;
 	private JCommandButton infoButton;
 
 	private JRibbonBand editBand;
@@ -230,7 +229,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		this.addButton(languageButton, 0, optionsBand);
 		this.addButton(optionsButton, 1, optionsBand);
 		this.addButton(helpButton, 2, optionsBand);
-		this.addButton(directHelpButton, 3, optionsBand);
 		this.addButton(infoButton, 4, optionsBand);
 
 		this.addButton(logoutButton, 3, exitBand);
@@ -299,7 +297,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		taskViewButton = createButton(Constants.rb.getString("ribbon.view.task"), UIConstants.RIBBON_TASK_VIEW);
 		adminViewButton = createButton(Constants.rb.getString("ribbon.view.admin"), UIConstants.RIBBON_ADMIN_VIEW);
 		helpButton = createButton(Constants.rb.getString("ribbon.help"), UIConstants.RIBBON_HELP);
-		directHelpButton = createButton(Constants.rb.getString("ribbon.contextHelp"), UIConstants.RIBBON_HELP);
 		infoButton = createButton(Constants.rb.getString("ribbon.about"), UIConstants.RIBBON_INFO);
 
 		logoutButton = createButton(Constants.rb.getString("ribbon.logoff"), UIConstants.RIBBON_LOGOUT);
