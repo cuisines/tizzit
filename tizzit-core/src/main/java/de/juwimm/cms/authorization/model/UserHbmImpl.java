@@ -51,7 +51,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 		unit.getUsers().add(this);
 		getUnits().add(unit);
 	}
-
+	
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#dropUnit(de.juwimm.cms.model.UnitHbm)
 	 */

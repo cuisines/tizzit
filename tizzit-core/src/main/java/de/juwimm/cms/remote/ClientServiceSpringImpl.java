@@ -349,7 +349,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 
 	@Override
 	protected GroupValue[] handleGetGroups4User(String userName) throws Exception {
-		GroupValue[] gv = getUserServiceSpring().getGroups4User(userName);
+		UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+		Integer siteId = user.getActiveSite().getSiteId();
+		GroupValue[] gv = getUserServiceSpring().getGroups4UserInSite(userName, siteId);
 		if (gv == null) gv = new GroupValue[0];
 		return gv;
 	}

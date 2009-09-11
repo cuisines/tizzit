@@ -892,6 +892,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 				}
 			}
 		}
+		if(log.isDebugEnabled()) log.debug("User " + userMe.getUserId() + " has right: " + hasRights + " for changing " + userGiven.getUserId());
 		return hasRights;
 	}
 
@@ -915,7 +916,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			if (user != null) {
 				if (this.hasRightsForChangeUser(user)) {
 					GroupHbm group = super.getGroupHbmDao().load(groupValue.getGroupId());
-					super.getUserHbmDao().addGroup(group, AuthenticationHelper.getUserName(), userName);
+					getUserHbmDao().addGroup(group, AuthenticationHelper.getUserName(), userName);
 					this.authCache.flushAuthCache();
 				} else {
 					throw new SecurityException("Not enough permissions to change the user:" + userName + " with credential:" + AuthenticationHelper.getUserName());

@@ -119,6 +119,7 @@ public class UnitServiceSpringImpl extends de.juwimm.cms.remote.UnitServiceSprin
 			UserHbm user = super.getUserHbmDao().load(userNameId);
 			UnitHbm unit = super.getUnitHbmDao().load(unitValue.getUnitId());
 			user.addUnit(unit);
+			unit.getUsers().add(user);
 		} catch (Exception e) {
 			if (log.isErrorEnabled()) {
 				log.error("Could not add user with id " + userNameId + " to unit with id " + unitValue.getUnitId(), e);
