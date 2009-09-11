@@ -116,8 +116,6 @@ public class PanMenubar extends JMenuBar implements ActionListener, FinishedActi
 	private JMenuItem mnuQuestionMarkContextHelp = new JMenuItem(rb.getString("menubar.questionMark.contextHelp"));
 	private JMenuItem mnuQuestionMarkAbout = new JMenuItem(rb.getString("menubar.questionMark.about"));
 
-	public static final String CMS_LANG_DE = "cmslanguagegerman";
-	public static final String CMS_LANG_EN = "cmslanguageenglish";
 
 	public PanMenubar() {
 		try {
@@ -369,15 +367,6 @@ public class PanMenubar extends JMenuBar implements ActionListener, FinishedActi
 				mnuItemVersionActionPerformed(e);
 			}
 		});
-
-		JMenuItem mi = new JMenuItem("Deutsch");
-		mi.addActionListener(this);
-		mi.setActionCommand(CMS_LANG_DE);
-		mnuExtrasOptionsChooseLanguage.add(mi);
-		mi = new JMenuItem("English");
-		mi.addActionListener(this);
-		mi.setActionCommand(CMS_LANG_EN);
-		mnuExtrasOptionsChooseLanguage.add(mi);
 
 		mnuFileDelete.setEnabled(false);
 		mnuFileNewContentAfter.setEnabled(false);

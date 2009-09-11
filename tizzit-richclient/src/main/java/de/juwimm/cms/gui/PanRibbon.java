@@ -188,15 +188,19 @@ public class PanRibbon extends Ribbon implements ActionListener {
 
 	}
 
-	private void addButton(JCommandButton component, int index, JRibbonBand band) {
+	private void addButton(JCommandButton component, int index, JRibbonBand band,String description) {
 		GridBagConstraints compnentConstraints = new GridBagConstraints();
 		compnentConstraints.gridx = index;
 		compnentConstraints.gridy = 0;
 		RichTooltip tooltip = new RichTooltip();
 		tooltip.setTitle(band.getTitle());
-		tooltip.addDescriptionSection(component.getText());
+		tooltip.addDescriptionSection(description);
 		component.setActionRichTooltip(tooltip);
 		band.addCommandButton( component, RibbonElementPriority.TOP);
+	}
+	
+	private void addButton(JCommandButton component, int index, JRibbonBand band) {	
+		addButton(component, index, band,component.getText());
 	}
 
 	private void arrangeButtons() {
@@ -204,7 +208,7 @@ public class PanRibbon extends Ribbon implements ActionListener {
 		this.addButton(newContentButton, 0, editBand);
 		this.addButton(moveButton, 1, editBand);
 		this.addButton(refreshTreeButton, 2, editBand);
-		this.addButton(deleteNodeButton, 3, editBand);
+		this.addButton(deleteNodeButton, 3, editBand,Constants.rb.getString("actions.ACTION_TREE_NODE_DELETE"));
 		editBand.startGroup();
 		this.addButton(checkOutButton, 5, editBand);
 		this.addButton(checkInButton, 6, editBand);
@@ -346,23 +350,23 @@ public class PanRibbon extends Ribbon implements ActionListener {
 			@Override
 			public JPopupPanel getPopupPanel(JCommandButton commandButton) {
 				if (loaded == false) {
-					addNewHeader(Constants.rb.getString("actions.TOOLBAR_CONTENT"), UIConstants.RIBBON_CONTENT, 0);
+					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_CONTENT"), UIConstants.RIBBON_CONTENT, 0);
 					addSubItem(newAfter, 1);
 					addSubItem(newBefore, 2);
 					addSubItem(newAppend, 3);
-					addNewHeader(Constants.rb.getString("actions.TOOLBAR_SYMLINK"), UIConstants.RIBBON_TOOLBAR_SYMLINK, 4);
+					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_SYMLINK"), UIConstants.RIBBON_TOOLBAR_SYMLINK, 4);
 					addSubItem(symLinkAfter, 5);
 					addSubItem(symLinkBefore, 6);
 					addSubItem(symLinkAppend, 7);
-					addNewHeader(Constants.rb.getString("actions.TOOLBAR_JUMP"), UIConstants.RIBBON_TOOLBAR_JUMP, 8);
+					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_JUMP"), UIConstants.RIBBON_TOOLBAR_JUMP, 8);
 					addSubItem(internAfter, 9);
 					addSubItem(internBefore, 10);
 					addSubItem(internAppend, 11);
-					addNewHeader(Constants.rb.getString("actions.TOOLBAR_LINK"), UIConstants.RIBBON_TOOLBAR_LINK, 12);
+					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_LINK"), UIConstants.RIBBON_TOOLBAR_LINK, 12);
 					addSubItem(externAfter, 13);
 					addSubItem(externBefore, 14);
 					addSubItem(externAppend, 15);
-					addNewHeader(Constants.rb.getString("actions.TOOLBAR_SEPARATOR"), UIConstants.RIBBON_TOOLBAR_SEPARATOR, 16);
+					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_SEPARATOR"), UIConstants.RIBBON_TOOLBAR_SEPARATOR, 16);
 					addSubItem(separatorAfter, 17);
 					addSubItem(separatorBefore, 18);
 					addSubItem(separatorAppend, 19);
