@@ -110,20 +110,14 @@ public class PanMenubar extends JMenuBar implements ActionListener, FinishedActi
 	 "menubar.extras.options.lookAndFeel.fromLinuxWindowmanager"));
 	 private JMenuItem mnuExtrasOptionsLookAndFeelWindows = new JMenuItem(rb.getString(
 	 "menubar.extras.options.lookAndFeel.fromWindows"));*/
-	private JMenuItem mnuExtrasClearCache = new JMenuItem(rb.getString("menubar.extras.clearcache"));
-	private JMenuItem mnuExtrasReloadDcf = new JMenuItem(rb.getString("menubar.extras.reloadDcf"));
 	/** Question Mark Menu */
 	private JMenu mnuQuestionMark = new JMenu(rb.getString("menubar.questionMark"));
 	private JMenuItem mnuQuestionMarkHelp = new JMenuItem(rb.getString("menubar.questionMark.help"));
 	private JMenuItem mnuQuestionMarkContextHelp = new JMenuItem(rb.getString("menubar.questionMark.contextHelp"));
 	private JMenuItem mnuQuestionMarkAbout = new JMenuItem(rb.getString("menubar.questionMark.about"));
 
-	public static final String CMS_CLEAR_CACHE = "cmsclearcachenow!";
-	public static final String CMS_RELOAD_DCF = "cmsreloaddcf";
 	public static final String CMS_LANG_DE = "cmslanguagegerman";
 	public static final String CMS_LANG_EN = "cmslanguageenglish";
-	public static final String CMS_EXPORT_ALL = "cmsexportallthefuck";
-	public static final String CMS_IMPORT_ALL = "cmsimportallthisshittystuffassoonaspossibletogetitrunning";
 
 	public PanMenubar() {
 		try {
@@ -319,24 +313,7 @@ public class PanMenubar extends JMenuBar implements ActionListener, FinishedActi
 		 mnuExtrasOptions.add(mnuExtrasOptionsLookAndFeel);
 		 }*/
 
-		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
-			JMenuItem mnuExtrasExportAll = new JMenuItem("Export complete Site");
-			mnuExtrasExportAll.setActionCommand(PanMenubar.CMS_EXPORT_ALL);
-			mnuExtrasExportAll.addActionListener(this);
-			mnuExtras.add(mnuExtrasExportAll);
-			JMenuItem mnuExtrasImportAll = new JMenuItem("Import complete Site");
-			mnuExtrasImportAll.setActionCommand(PanMenubar.CMS_IMPORT_ALL);
-			mnuExtrasImportAll.addActionListener(this);
-			mnuExtras.add(mnuExtrasImportAll);
-		}
-
 		mnuExtras.addSeparator();
-		mnuExtras.add(mnuExtrasClearCache);
-		mnuExtrasClearCache.addActionListener(this);
-		mnuExtrasClearCache.setActionCommand(CMS_CLEAR_CACHE);
-		mnuExtras.add(mnuExtrasReloadDcf);
-		mnuExtrasReloadDcf.addActionListener(this);
-		mnuExtrasReloadDcf.setActionCommand(CMS_RELOAD_DCF);
 
 		this.add(mnuQuestionMark);
 		mnuQuestionMark.add(mnuQuestionMarkHelp);
@@ -436,31 +413,7 @@ public class PanMenubar extends JMenuBar implements ActionListener, FinishedActi
 			mnuPublishRevise.setEnabled(false);
 			mnuViewTask.setSelected(true);
 		} else if (e.getActionCommand().equals(Constants.ACTION_TREE_SELECT) || e.getActionCommand().equals(Constants.ACTION_DEPLOY_STATUS_CHANGED)) {
-			setMenuOnEntryProperties((TreeNode) e.getSource());
-		} else if (e.getActionCommand().equals(CMS_CLEAR_CACHE)) {
-			comm.clearSvgCache();
-			try {
-				if (comm.getDbHelper().clearMyCache()) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.cmsMenubar.cacheCleared"), 
-							rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.cantClearCache"), 
-							rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (Exception exe) {
-				if (log.isDebugEnabled()) {
-					log.debug(exe.getMessage());
-				}
-			}
-		} else if (e.getActionCommand().equals(CMS_RELOAD_DCF)) {
-			PanLogin.loadTemplates(false);
-			ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR));
-		}  else if (e.getActionCommand().equals(CMS_EXPORT_ALL)) {
-			new ExportFullThread().start();
-			//EXPORT ALL
-		} else if (e.getActionCommand().equals(CMS_IMPORT_ALL)) {
-			new ImportFullThread().start();
-			//IMPORT ALL
+			setMenuOnEntryProperties((TreeNode) e.getSource());		
 		} else if (e.getActionCommand().equals(Constants.ENABLE_CHECKIN)) {
 			mnuFileCheckin.setEnabled(true);
 			mnuFileCheckout.setEnabled(false);

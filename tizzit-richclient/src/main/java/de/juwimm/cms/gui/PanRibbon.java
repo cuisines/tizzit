@@ -417,10 +417,10 @@ public class PanRibbon extends Ribbon implements ActionListener {
 			}
 		});
 
-		upItem = ButtonPopupPanelCallback.getImageItem("Up", UIConstants.RIBBON_UP);
-		downItem = ButtonPopupPanelCallback.getImageItem("Down", UIConstants.RIBBON_DOWN);
-		leftItem = ButtonPopupPanelCallback.getImageItem("Left", UIConstants.RIBBON_LEFT);
-		rightItem = ButtonPopupPanelCallback.getImageItem("Right", UIConstants.RIBBON_RIGHT);
+		upItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_UP"), UIConstants.RIBBON_UP);
+		downItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_DOWN"), UIConstants.RIBBON_DOWN);
+		leftItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_LEFT"), UIConstants.RIBBON_LEFT);
+		rightItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_RIGHT"), UIConstants.RIBBON_RIGHT);
 		moveButton.setPopupCallback(new ButtonPopupPanelCallback() {
 			@Override
 			public JPopupPanel getPopupPanel(JCommandButton commandButton) {

@@ -67,7 +67,7 @@ public class OptionsDialog extends JDialog implements ActionListener{
 	
 	private JCommandButton generalOption;
 	private JCommandButton importExportOption;
-	private JCommandButton userInformationOption;
+	private JCommandButton userOption;
 	private Communication comm;
 	
 	private JButton clearCacheButton;
@@ -95,16 +95,16 @@ public class OptionsDialog extends JDialog implements ActionListener{
 		this.comm = comm;
 		this.whom = comm.getUser().getUserName();
 		ActionHub.addActionListener(this);
-		Dimension size = new Dimension(245,240);
+		Dimension size = new Dimension(265,240);
 		this.setSize(size);
 		this.setIconImage(UIConstants.CMS.getImage());
 		this.setLocationRelativeTo(UIConstants.getMainFrame());
 		this.setMinimumSize(size);
 		this.setResizable(false);
 		
-		generalOption = new CommandButton("General",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_GENERAL_OPTIONS.getImage(), new Dimension(32,32)));
-		importExportOption = new CommandButton("Import/Export",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_IMPORT_EXPORT_OPTIONS.getImage(), new Dimension(32,32)));
-		userInformationOption = new CommandButton("User options",ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_USER_OPTIONS.getImage(), new Dimension(32,32)));
+		generalOption = new CommandButton(Constants.rb.getString("optionsDialog.generalOption"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_GENERAL_OPTIONS.getImage(), new Dimension(32,32)));
+		importExportOption = new CommandButton(Constants.rb.getString("optionsDialog.importExportOption"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_IMPORT_EXPORT_OPTIONS.getImage(), new Dimension(32,32)));
+		userOption = new CommandButton(Constants.rb.getString("optionsDialog.userOption"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_USER_OPTIONS.getImage(), new Dimension(32,32)));
 		
 		initOptionsRibbonsListeners();
 		ribbonBandContainer = new JPanel();
@@ -126,7 +126,7 @@ public class OptionsDialog extends JDialog implements ActionListener{
 		ribbonBandContainer.setBorder(BorderFactory.createLineBorder(Color.gray));
 		ribbonBandContainer.add(generalOption,generalOptionConstraint);
 		ribbonBandContainer.add(importExportOption,importExportOptionConstraint);
-		ribbonBandContainer.add(userInformationOption,userInformationOptionConstraint);
+		ribbonBandContainer.add(userOption,userInformationOptionConstraint);
 		
 		getContentPane().setLayout(new BorderLayout());
 		
@@ -149,16 +149,16 @@ public class OptionsDialog extends JDialog implements ActionListener{
 
 	private void constructGeneralOptionsPane(){
 		generalPanel = new JPanel(new BorderLayout());
-		clearCacheButton = new JButton(Constants.rb.getString("menubar.extras.clearcache"));
-		reloadDcfButton = new JButton(Constants.rb.getString("menubar.extras.reloadDcf"));
+		clearCacheButton = new JButton(Constants.rb.getString("optionsDialog.generalOption.clearcache"));
+		reloadDcfButton = new JButton(Constants.rb.getString("optionsDialog.generalOption.reloadDcf"));
 		generalPanel.add(clearCacheButton,BorderLayout.CENTER);
 		generalPanel.add(reloadDcfButton,BorderLayout.SOUTH);
 	}
 	
 	private void constructImportExportOptionsPane(){
 		importExportPanel = new JPanel(new BorderLayout());
-		importButton = new JButton("Import complete Site");
-		exportButton = new JButton("Export complete Site");
+		importButton = new JButton(Constants.rb.getString("optionsDialog.importOption"));
+		exportButton = new JButton(Constants.rb.getString("optionsDialog.exportOption"));
 		importExportPanel.add(importButton,BorderLayout.CENTER);
 		importExportPanel.add(exportButton,BorderLayout.SOUTH);
 	}
@@ -226,14 +226,14 @@ public class OptionsDialog extends JDialog implements ActionListener{
 	private void initOptionsRibbonsListeners() {
 		generalOption.setActionModel(new ActionToggleButtonModel(false));
 		importExportOption.setActionModel(new ActionToggleButtonModel(false));
-		userInformationOption.setActionModel(new ActionToggleButtonModel(false));
+		userOption.setActionModel(new ActionToggleButtonModel(false));
 		generalOption.getActionModel().setSelected(true);
 		generalOption.getActionModel().addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
 				importExportOption.getActionModel().setSelected(false);
 				generalOption.getActionModel().setSelected(true);
-				userInformationOption.getActionModel().setSelected(false);
+				userOption.getActionModel().setSelected(false);
 				generalPanel.setVisible(true);
 				importExportPanel.setVisible(false);
 				userInformationPanel.setVisible(false);
@@ -248,7 +248,7 @@ public class OptionsDialog extends JDialog implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				importExportOption.getActionModel().setSelected(true);
 				generalOption.getActionModel().setSelected(false);
-				userInformationOption.getActionModel().setSelected(false);
+				userOption.getActionModel().setSelected(false);
 				generalPanel.setVisible(false);
 				importExportPanel.setVisible(true);
 				userInformationPanel.setVisible(false);
@@ -257,13 +257,13 @@ public class OptionsDialog extends JDialog implements ActionListener{
         	
         });
         
-		userInformationOption.getActionModel().addActionListener(new ActionListener(){
+		userOption.getActionModel().addActionListener(new ActionListener(){
 
 			
 			public void actionPerformed(ActionEvent e) {
 				importExportOption.getActionModel().setSelected(false);
 				generalOption.getActionModel().setSelected(false);
-				userInformationOption.getActionModel().setSelected(true);
+				userOption.getActionModel().setSelected(true);
 				generalPanel.setVisible(false);
 				importExportPanel.setVisible(false);
 				userInformationPanel.setVisible(true);
