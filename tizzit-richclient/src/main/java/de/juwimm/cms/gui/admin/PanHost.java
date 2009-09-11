@@ -1188,7 +1188,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 
 	private JButton getBtnHelp() {
 		if (this.btnHelp == null) {
-			this.btnHelp = new JButton(rb.getString("menubar.questionMark.help"));
+			this.btnHelp = new JButton(rb.getString("ribbon.help"));
 			this.btnHelp.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					help();
@@ -1199,7 +1199,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	}
 
 	private void help() {
-		JOptionPane.showMessageDialog(UIConstants.getMainFrame(), new JLabel(rb.getString("panel.admin.host.help")), rb.getString("menubar.questionMark.help"), JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(UIConstants.getMainFrame(), new JLabel(rb.getString("panel.admin.host.help")), rb.getString("ribbon.help"), JOptionPane.INFORMATION_MESSAGE);
 	}
 
 } //  @jve:decl-index=0:visual-constraint="10,10"

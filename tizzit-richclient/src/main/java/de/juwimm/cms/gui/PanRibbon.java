@@ -16,13 +16,11 @@ import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
-import org.jvnet.flamingo.common.AbstractCommandButton;
 import org.jvnet.flamingo.common.CommandButtonDisplayState;
 import org.jvnet.flamingo.common.JCommandButton;
 import org.jvnet.flamingo.common.JCommandMenuButton;
@@ -41,6 +39,7 @@ import com.Ostermiller.util.Browser;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
+import de.juwimm.cms.gui.event.FinishedActionListener;
 import de.juwimm.cms.gui.event.ViewComponentEvent;
 import de.juwimm.cms.gui.ribbon.CommandButton;
 import de.juwimm.cms.gui.ribbon.CommandMenuButton;
@@ -57,7 +56,7 @@ import de.juwimm.cms.util.UserConfig;
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$
  */
-public class PanRibbon extends Ribbon implements ActionListener {
+public class PanRibbon extends Ribbon implements ActionListener, FinishedActionListener {
 	private static final long serialVersionUID = -6958197452475472452L;
 	private static Logger log = Logger.getLogger(PanRibbon.class);
 	public static final String CMS_LANG_DE = "cmslanguagegerman";
@@ -215,7 +214,14 @@ public class PanRibbon extends Ribbon implements ActionListener {
 
 		this.addButton(reviseSiteButton, 1, publishBand);
 		this.addButton(releaseSiteButton, 2, publishBand);
-		this.addButton(deployButton, 3, publishBand);
+		
+		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
+			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardRoot"));
+		} else if (comm.isUserInRole(UserRights.DEPLOY)) {
+			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardEditor"));
+		} else {
+			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardAuthor"));
+		}
 
 		this.addButton(editViewButton, 0, viewSelectBand);
 		this.addButton(taskViewButton, 1, viewSelectBand);
@@ -282,24 +288,24 @@ public class PanRibbon extends Ribbon implements ActionListener {
 	private void initButtons() {
 		newContentButton = createButton(Constants.rb.getString("ribbon.new"), UIConstants.RIBBON_NEW);
 		refreshTreeButton = createButton(Constants.rb.getString("ribbon.ACTION_TREE_REFRESH"), UIConstants.RIBBON_ACTION_TREE_REFRESH);
-		deleteNodeButton = createButton(Constants.rb.getString("dialog.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
-		releaseSiteButton = createButton(Constants.rb.getString("menubar.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
-		reviseSiteButton = createButton(Constants.rb.getString("menubar.publish.revise"), UIConstants.RIBBON_REVISE_SITE);
+		deleteNodeButton = createButton(Constants.rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
+		releaseSiteButton = createButton(Constants.rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
+		reviseSiteButton = createButton(Constants.rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);		
 		deployButton = createButton(Constants.rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
 		checkInButton = createButton(Constants.rb.getString("actions.ACTION_CHECKIN"), UIConstants.RIBBON_ACTION_CHECKIN);
 		checkOutButton = createButton(Constants.rb.getString("actions.ACTION_CHECKOUT"), UIConstants.RIBBON_ACTION_CHECKOUT);
 		languageButton = createButton(Constants.rb.getString("ribbon.language"), UIConstants.RIBBON_LANGUAGE);
-		editViewButton = createButton(Constants.rb.getString("menubar.view.editor"), UIConstants.RIBBON_EDIT_VIEW);
-		taskViewButton = createButton(Constants.rb.getString("menubar.view.task"), UIConstants.RIBBON_TASK_VIEW);
-		adminViewButton = createButton(Constants.rb.getString("menubar.view.admin"), UIConstants.RIBBON_ADMIN_VIEW);
-		helpButton = createButton(Constants.rb.getString("menubar.questionMark.help"), UIConstants.RIBBON_HELP);
-		directHelpButton = createButton(Constants.rb.getString("menubar.questionMark.contextHelp"), UIConstants.RIBBON_HELP);
-		infoButton = createButton(Constants.rb.getString("menubar.questionMark.about"), UIConstants.RIBBON_INFO);
+		editViewButton = createButton(Constants.rb.getString("ribbon.view.editor"), UIConstants.RIBBON_EDIT_VIEW);
+		taskViewButton = createButton(Constants.rb.getString("ribbon.view.task"), UIConstants.RIBBON_TASK_VIEW);
+		adminViewButton = createButton(Constants.rb.getString("ribbon.view.admin"), UIConstants.RIBBON_ADMIN_VIEW);
+		helpButton = createButton(Constants.rb.getString("ribbon.help"), UIConstants.RIBBON_HELP);
+		directHelpButton = createButton(Constants.rb.getString("ribbon.contextHelp"), UIConstants.RIBBON_HELP);
+		infoButton = createButton(Constants.rb.getString("ribbon.about"), UIConstants.RIBBON_INFO);
 
-		logoutButton = createButton(Constants.rb.getString("menubar.file.logoff"), UIConstants.RIBBON_LOGOUT);
-		exitButton = createButton(Constants.rb.getString("menubar.file.quit"), UIConstants.RIBBON_EXIT);
-		optionsButton = createButton(Constants.rb.getString("menubar.extras.options"), UIConstants.RIBBON_OPTIONS);
-		moveButton = createButton(Constants.rb.getString("menubar.file.move"), UIConstants.RIBBON_MOVE);
+		logoutButton = createButton(Constants.rb.getString("ribbon.logoff"), UIConstants.RIBBON_LOGOUT);
+		exitButton = createButton(Constants.rb.getString("ribbon.quit"), UIConstants.RIBBON_EXIT);
+		optionsButton = createButton(Constants.rb.getString("ribbon.options"), UIConstants.RIBBON_OPTIONS);
+		moveButton = createButton(Constants.rb.getString("ribbon.move"), UIConstants.RIBBON_MOVE);
 
 		
 		
@@ -620,6 +626,8 @@ public class PanRibbon extends Ribbon implements ActionListener {
 		} else if (e.getActionCommand().equals(Constants.ACTION_SHOW_OPTIONS)) {
 			OptionsDialog optionsDialog = new OptionsDialog(comm);
 			optionsDialog.setVisible(true);
+		} else if (e.getActionCommand().equals(Constants.ACTION_CREATE_UNIT)) {
+			adminViewButton.doActionClick();
 		}
 	}
 
@@ -759,5 +767,9 @@ public class PanRibbon extends Ribbon implements ActionListener {
 		dialog.setSize(width, height);
 		dialog.setLocation(midWidth - width / 2, midHeight - height / 2);
 		dialog.setVisible(true);
+	}
+	
+	public void actionFinished() {
+		editViewButton.setEnabled(true);
 	}
 }

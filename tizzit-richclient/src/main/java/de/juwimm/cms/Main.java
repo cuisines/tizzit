@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -54,11 +55,9 @@ import de.juwimm.cms.exceptions.UserHasNoUnitsException;
 import de.juwimm.cms.gui.FrmVersion;
 import de.juwimm.cms.gui.LookAndFeel;
 import de.juwimm.cms.gui.PanLogin;
-import de.juwimm.cms.gui.PanMenubar;
 import de.juwimm.cms.gui.PanRibbon;
 import de.juwimm.cms.gui.PanStatusbar;
 import de.juwimm.cms.gui.PanTool;
-import de.juwimm.cms.gui.PanToolbar;
 import de.juwimm.cms.gui.PasswordDialog;
 import de.juwimm.cms.gui.admin.PanAdministrationAdmin;
 import de.juwimm.cms.gui.admin.PanAdministrationRoot;
@@ -86,8 +85,6 @@ public class Main extends JFrame implements ActionListener {
 	private static Logger log = null;
 
 	private Communication comm;
-	private PanMenubar panMenubar;
-	private PanToolbar panToolbar;
 	private PanRibbon panRibbon;
 	private PanStatusbar panStatusbar;
 	private PanLogin panLogin;
@@ -354,7 +351,6 @@ public class Main extends JFrame implements ActionListener {
 	private void showAdminPanel() throws Exception {
 		Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_ADMIN;
 		panRibbon.setView(false);
-		panMenubar.setView(false);
 
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			try {
@@ -386,7 +382,6 @@ public class Main extends JFrame implements ActionListener {
 	private void showToolPanel() throws Exception {
 		if (Constants.CMS_CLIENT_VIEW != Constants.CLIENT_VIEW_CONTENT) {
 			panRibbon.setView(true);
-			panMenubar.setView(true);
 			try {
 				panTool = PanTool.getInstance();
 				panTool.reload();
@@ -422,19 +417,9 @@ public class Main extends JFrame implements ActionListener {
 				Constants.CMS_CLIENT_VIEW = -1;
 				setCenterPanel(PanInitView.getInstance());
 
-				if (panMenubar != null) {
-					ActionHub.removeActionListener(panMenubar);
-				}
-				panMenubar = new PanMenubar();
-				panMenubar.addActionListener(comm);
-				ActionHub.addActionListener(panMenubar);
-				//		this.setJMenuBar(panMenubar);
-
-				if (panToolbar == null) {
-					panToolbar = new PanToolbar(comm);
+				if (panStatusbar == null) {
 					panStatusbar = new PanStatusbar();
 					UIConstants.setStatusLine(panStatusbar);
-					ActionHub.addActionListener(panToolbar);
 					ActionHub.addActionListener(panStatusbar);
 				}
 

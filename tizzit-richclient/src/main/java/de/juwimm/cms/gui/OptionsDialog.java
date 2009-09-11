@@ -91,7 +91,7 @@ public class OptionsDialog extends JDialog implements ActionListener{
 	public static final String CMS_IMPORT_ALL = "cmsimportallthisshittystuffassoonaspossibletogetitrunning";
 	
 	public OptionsDialog(final Communication comm){
-		super(UIConstants.getMainFrame(), Constants.rb.getString("menubar.extras.options"), true);		
+		super(UIConstants.getMainFrame(), Constants.rb.getString("ribbon.options"), true);		
 		this.comm = comm;
 		this.whom = comm.getUser().getUserName();
 		ActionHub.addActionListener(this);
