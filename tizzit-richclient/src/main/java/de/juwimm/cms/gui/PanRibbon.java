@@ -1,7 +1,7 @@
 package de.juwimm.cms.gui;
 
-import static de.juwimm.cms.common.Constants.rb;
 
+import static de.juwimm.cms.common.Constants.rb;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -206,7 +206,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		this.addButton(newContentButton, 0, editBand);
 		this.addButton(moveButton, 1, editBand);
 		this.addButton(refreshTreeButton, 2, editBand);
-		this.addButton(deleteNodeButton, 3, editBand,Constants.rb.getString("actions.ACTION_TREE_NODE_DELETE"));
+		this.addButton(deleteNodeButton, 3, editBand,rb.getString("actions.ACTION_TREE_NODE_DELETE"));
 		editBand.startGroup();
 		this.addButton(checkOutButton, 5, editBand);
 		this.addButton(checkInButton, 6, editBand);
@@ -284,25 +284,25 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	}
 
 	private void initButtons() {
-		newContentButton = createButton(Constants.rb.getString("ribbon.new"), UIConstants.RIBBON_NEW);
-		refreshTreeButton = createButton(Constants.rb.getString("ribbon.ACTION_TREE_REFRESH"), UIConstants.RIBBON_ACTION_TREE_REFRESH);
-		deleteNodeButton = createButton(Constants.rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
-		releaseSiteButton = createButton(Constants.rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
-		reviseSiteButton = createButton(Constants.rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);		
-		deployButton = createButton(Constants.rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
-		checkInButton = createButton(Constants.rb.getString("actions.ACTION_CHECKIN"), UIConstants.RIBBON_ACTION_CHECKIN);
-		checkOutButton = createButton(Constants.rb.getString("actions.ACTION_CHECKOUT"), UIConstants.RIBBON_ACTION_CHECKOUT);
-		languageButton = createButton(Constants.rb.getString("ribbon.language"), UIConstants.RIBBON_LANGUAGE);
-		editViewButton = createButton(Constants.rb.getString("ribbon.view.editor"), UIConstants.RIBBON_EDIT_VIEW);
-		taskViewButton = createButton(Constants.rb.getString("ribbon.view.task"), UIConstants.RIBBON_TASK_VIEW);
-		adminViewButton = createButton(Constants.rb.getString("ribbon.view.admin"), UIConstants.RIBBON_ADMIN_VIEW);
-		helpButton = createButton(Constants.rb.getString("ribbon.help"), UIConstants.RIBBON_HELP);
-		infoButton = createButton(Constants.rb.getString("ribbon.about"), UIConstants.RIBBON_INFO);
+		newContentButton = createButton(rb.getString("ribbon.new"), UIConstants.RIBBON_NEW);
+		refreshTreeButton = createButton(rb.getString("ribbon.ACTION_TREE_REFRESH"), UIConstants.RIBBON_ACTION_TREE_REFRESH);
+		deleteNodeButton = createButton(rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
+		releaseSiteButton = createButton(rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
+		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);		
+		deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
+		checkInButton = createButton(rb.getString("actions.ACTION_CHECKIN"), UIConstants.RIBBON_ACTION_CHECKIN);
+		checkOutButton = createButton(rb.getString("actions.ACTION_CHECKOUT"), UIConstants.RIBBON_ACTION_CHECKOUT);
+		languageButton = createButton(rb.getString("ribbon.language"), UIConstants.RIBBON_LANGUAGE);
+		editViewButton = createButton(rb.getString("ribbon.view.editor"), UIConstants.RIBBON_EDIT_VIEW);
+		taskViewButton = createButton(rb.getString("ribbon.view.task"), UIConstants.RIBBON_TASK_VIEW);
+		adminViewButton = createButton(rb.getString("ribbon.view.admin"), UIConstants.RIBBON_ADMIN_VIEW);
+		helpButton = createButton(rb.getString("ribbon.help"), UIConstants.RIBBON_HELP);
+		infoButton = createButton(rb.getString("ribbon.about"), UIConstants.RIBBON_INFO);
 
-		logoutButton = createButton(Constants.rb.getString("ribbon.logoff"), UIConstants.RIBBON_LOGOUT);
-		exitButton = createButton(Constants.rb.getString("ribbon.quit"), UIConstants.RIBBON_EXIT);
-		optionsButton = createButton(Constants.rb.getString("ribbon.options"), UIConstants.RIBBON_OPTIONS);
-		moveButton = createButton(Constants.rb.getString("ribbon.move"), UIConstants.RIBBON_MOVE);
+		logoutButton = createButton(rb.getString("ribbon.logoff"), UIConstants.RIBBON_LOGOUT);
+		exitButton = createButton(rb.getString("ribbon.quit"), UIConstants.RIBBON_EXIT);
+		optionsButton = createButton(rb.getString("ribbon.options"), UIConstants.RIBBON_OPTIONS);
+		moveButton = createButton(rb.getString("ribbon.move"), UIConstants.RIBBON_MOVE);
 
 		
 		
@@ -322,54 +322,54 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		if ((comm.isUserInRole(UserRights.SITE_ROOT)) || (comm.isUserInRole(UserRights.UNIT_ADMIN))) {
 			adminViewButton.setEnabled(true);
 		}
-		editBand = new RibbonBand(Constants.rb.getString("ribbonBand.edit"), new EmptyResizableIcon(0));
-		publishBand = new RibbonBand(Constants.rb.getString("ribbonBand.publish"), new EmptyResizableIcon(0));
-		viewSelectBand = new RibbonBand(Constants.rb.getString("ribbonBand.view"), new EmptyResizableIcon(0));
-		optionsBand = new RibbonBand(Constants.rb.getString("ribbonBand.options"), new EmptyResizableIcon(0));
-		exitBand = new RibbonBand(Constants.rb.getString("ribbonBand.exit"), new EmptyResizableIcon(0));
+		editBand = new RibbonBand(rb.getString("ribbonBand.edit"), new EmptyResizableIcon(0));
+		publishBand = new RibbonBand(rb.getString("ribbonBand.publish"), new EmptyResizableIcon(0));
+		viewSelectBand = new RibbonBand(rb.getString("ribbonBand.view"), new EmptyResizableIcon(0));
+		optionsBand = new RibbonBand(rb.getString("ribbonBand.options"), new EmptyResizableIcon(0));
+		exitBand = new RibbonBand(rb.getString("ribbonBand.exit"), new EmptyResizableIcon(0));
 
-		newAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_NODE_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
-		newBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_NODE_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
-		newAppend = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_NODE_APPEND"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
+		newAfter = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_NODE_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
+		newBefore = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_NODE_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
+		newAppend = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_NODE_APPEND"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 
-		symLinkAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SYMLINK_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
-		symLinkBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SYMLINK_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
-		symLinkAppend = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SYMLINK_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
+		symLinkAfter = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_SYMLINK_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
+		symLinkBefore = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_SYMLINK_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
+		symLinkAppend = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_SYMLINK_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 
-		internAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
-		internBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
-		internAppend = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_JUMP_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
+		internAfter = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_JUMP_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
+		internBefore = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_JUMP_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
+		internAppend = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_JUMP_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 
-		externAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
-		externBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
-		externAppend = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_LINK_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
+		externAfter = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_LINK_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
+		externBefore = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_LINK_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
+		externAppend = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_LINK_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 
-		separatorAfter = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
-		separatorBefore = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
-		separatorAppend = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
+		separatorAfter = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_SEPARATOR_AFTER"), UIConstants.RIBBON_ACTION_TREE_NODE_AFTER);
+		separatorBefore = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_SEPARATOR_BEFORE"), UIConstants.RIBBON_ACTION_TREE_NODE_BEFORE);
+		separatorAppend = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"), UIConstants.RIBBON_ACTION_TREE_NODE_APPEND);
 
 		newContentButton.setPopupCallback(new ButtonPopupPanelCallback() {
 
 			@Override
 			public JPopupPanel getPopupPanel(JCommandButton commandButton) {
 				if (loaded == false) {
-					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_CONTENT"), UIConstants.RIBBON_CONTENT, 0);
+					addNewHeader(rb.getString("ribbon.TOOLBAR_CONTENT"), UIConstants.RIBBON_CONTENT, 0);
 					addSubItem(newAfter, 1);
 					addSubItem(newBefore, 2);
 					addSubItem(newAppend, 3);
-					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_SYMLINK"), UIConstants.RIBBON_TOOLBAR_SYMLINK, 4);
+					addNewHeader(rb.getString("ribbon.TOOLBAR_SYMLINK"), UIConstants.RIBBON_TOOLBAR_SYMLINK, 4);
 					addSubItem(symLinkAfter, 5);
 					addSubItem(symLinkBefore, 6);
 					addSubItem(symLinkAppend, 7);
-					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_JUMP"), UIConstants.RIBBON_TOOLBAR_JUMP, 8);
+					addNewHeader(rb.getString("ribbon.TOOLBAR_JUMP"), UIConstants.RIBBON_TOOLBAR_JUMP, 8);
 					addSubItem(internAfter, 9);
 					addSubItem(internBefore, 10);
 					addSubItem(internAppend, 11);
-					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_LINK"), UIConstants.RIBBON_TOOLBAR_LINK, 12);
+					addNewHeader(rb.getString("ribbon.TOOLBAR_LINK"), UIConstants.RIBBON_TOOLBAR_LINK, 12);
 					addSubItem(externAfter, 13);
 					addSubItem(externBefore, 14);
 					addSubItem(externAppend, 15);
-					addNewHeader(Constants.rb.getString("ribbon.TOOLBAR_SEPARATOR"), UIConstants.RIBBON_TOOLBAR_SEPARATOR, 16);
+					addNewHeader(rb.getString("ribbon.TOOLBAR_SEPARATOR"), UIConstants.RIBBON_TOOLBAR_SEPARATOR, 16);
 					addSubItem(separatorAfter, 17);
 					addSubItem(separatorBefore, 18);
 					addSubItem(separatorAppend, 19);
@@ -424,10 +424,10 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			}
 		});
 
-		upItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_UP"), UIConstants.RIBBON_UP);
-		downItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_DOWN"), UIConstants.RIBBON_DOWN);
-		leftItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_LEFT"), UIConstants.RIBBON_LEFT);
-		rightItem = ButtonPopupPanelCallback.getImageItem(Constants.rb.getString("actions.MOVE_RIGHT"), UIConstants.RIBBON_RIGHT);
+		upItem = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.MOVE_UP"), UIConstants.RIBBON_UP);
+		downItem = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.MOVE_DOWN"), UIConstants.RIBBON_DOWN);
+		leftItem = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.MOVE_LEFT"), UIConstants.RIBBON_LEFT);
+		rightItem = ButtonPopupPanelCallback.getImageItem(rb.getString("actions.MOVE_RIGHT"), UIConstants.RIBBON_RIGHT);
 		moveButton.setPopupCallback(new ButtonPopupPanelCallback() {
 			@Override
 			public JPopupPanel getPopupPanel(JCommandButton commandButton) {
@@ -598,7 +598,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			try {
 				Constants.CMS_LOCALE = Locale.GERMAN;
 				Constants.CMS_LANGUAGE = Constants.CMS_LOCALE.getLanguage();
-				Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
+				rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
 				UserConfig.getInstance().setConfigNodeValue(UserConfig.USERCONF_PREFERRED_LANGUAGE, Constants.CMS_LOCALE.toString());
 				UserConfig.getInstance().saveChanges();
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.firstRestartApp"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
@@ -611,7 +611,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			try {
 				Constants.CMS_LOCALE = Locale.ENGLISH;
 				Constants.CMS_LANGUAGE = Constants.CMS_LOCALE.getLanguage();
-				Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
+				rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
 				UserConfig.getInstance().setConfigNodeValue(UserConfig.USERCONF_PREFERRED_LANGUAGE, Constants.CMS_LOCALE.toString());
 				UserConfig.getInstance().saveChanges();
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.firstRestartApp"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
