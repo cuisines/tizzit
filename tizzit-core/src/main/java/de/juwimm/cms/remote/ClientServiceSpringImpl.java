@@ -1346,8 +1346,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected UnitValue[] handleGetUnits4User(String name) throws Exception {
-		UnitValue[] units = getUserServiceSpring().getUnits4User(name);
+	protected UnitValue[] handleGetUnits4User(String userName) throws Exception {
+		UnitValue[] units = getUserServiceSpring().getUnits4User(userName); // will fetch implicit the activesite of the asking user
 		if (units == null) units = new UnitValue[0];
 		return units;
 	}

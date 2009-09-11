@@ -38,6 +38,7 @@ import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.SequenceHbmDao;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.vo.UnitSlimValue;
 import de.juwimm.cms.vo.UnitValue;
 
@@ -92,7 +93,8 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 	protected Collection handleGetUnits4ActiveSite(UserHbm user) throws Exception {
 		Integer siteId = null;
 		try {
-			siteId = user.getActiveSite().getSiteId();
+			UserHbm userMe = load(AuthenticationHelper.getUserName());
+			siteId = userMe.getActiveSite().getSiteId();
 		} catch (Exception exe) {
 			log.error("Error while getting the actual siteid inside getRoles()", exe);
 		}
