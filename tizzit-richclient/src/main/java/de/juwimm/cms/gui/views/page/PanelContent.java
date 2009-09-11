@@ -73,6 +73,7 @@ import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.DropDownHolder;
 
+
 /**
  * <p>Title: ConQuest </p>
  * <p>Description: Content Management System</p>
@@ -197,14 +198,6 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 		jPanel1.add(panContentHeader, BorderLayout.NORTH);
 	}
 
-	public String getTextEditorText() {
-		return txtEditor.getText();
-	}
-
-	public void setTxtEditorText(String text) {
-		txtEditor.setText(text);
-	}
-
 	public void checkIn() { // this is for cancel
 		comm.checkIn(contentValue.getContentId().intValue());
 	}
@@ -238,8 +231,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 				ActionHub.configureProperty(PROP_CHECKOUT, PropertyConfigurationEvent.PROP_ENABLE, "false");
 
 				try {
-					//newContent = contentManager.getContent(txtHeadline.getText());
-					newContent = contentValue.getContentText();
+					newContent = contentManager.getContent(txtHeadline.getText());
 					if (newContent == null || "".equalsIgnoreCase(newContent)) { throw new Exception("Content is Empty"); }
 				} catch (Exception exe) {
 					log.error("Content was not valid: " + newContent, exe);
@@ -560,15 +552,6 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 			log.error("Content not valid error", exe);
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ContentNotValid"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		}
-	}
-
-	public String getContent() {
-		try {
-			return this.contentManager.getContent(txtHeadline.getText());
-		} catch (Exception e) {
-
-		}
-		return "";
 	}
 
 	public boolean exitPerformed(ExitEvent e) {
