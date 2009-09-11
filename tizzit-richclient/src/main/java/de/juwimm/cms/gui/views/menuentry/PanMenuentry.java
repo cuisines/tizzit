@@ -44,8 +44,6 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 
-import com.toedter.calendar.JDateChooser;
-
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
@@ -59,7 +57,6 @@ import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.DropDownHolder;
-import de.juwimm.util.DateConverter;
 
 /**
  * <p>Title: ConQuest </p>
@@ -435,12 +432,12 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		if (viewComponent.getOnlineStart() > 0) {
 			txtOnlineStart.setDateTextField(viewComponent.getOnlineStart());
 		} else {
-			txtOnlineStart.setDateTextField((Date)null);
+			txtOnlineStart.setDateTextField((Date) null);
 		}
 		if (viewComponent.getOnlineStop() > 0) {
 			txtOnlineStop.setDateTextField(viewComponent.getOnlineStop());
 		} else {
-			txtOnlineStop.setDateTextField((Date)null);
+			txtOnlineStop.setDateTextField((Date) null);
 		}
 
 		optSelectShow.setVisible(false);
@@ -707,11 +704,11 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 			// user may have changed the urlLinkName, so tidy it
 			if (txtUrlLinkName.getText().length() > 0) {
 				try {
-					if (viewComponent.getViewComponentId() == Integer.valueOf(txtUrlLinkName.getText()).intValue()) {
-						// the urlLinkName has the initial value from the creation of this page (viewComponentId)
-						txtUrlLinkName.setText(PanMenuentry.tidyUrl(txtDisplayedLinkName.getText()));
-					}
+					//Was: the urlLinkName has the initial value from the creation of this page (viewComponentId)
+					Integer.valueOf(txtUrlLinkName.getText());
+					txtUrlLinkName.setText(PanMenuentry.tidyUrl(txtDisplayedLinkName.getText()));
 				} catch (NumberFormatException e) {
+
 				}
 				if (!txtUrlLinkName.getText().equals(viewComponent.getUrlLinkName())) {
 					// urlLinkName has changed, tidy it
@@ -743,7 +740,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 				}
 			}
 		} catch (Exception e) {
-
+			System.out.println("error at getting children");
 		}
 		return flag;
 	}
