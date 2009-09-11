@@ -598,7 +598,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			try {
 				Constants.CMS_LOCALE = Locale.GERMAN;
 				Constants.CMS_LANGUAGE = Constants.CMS_LOCALE.getLanguage();
-				Constants.rb = ResourceBundle.getBundle("de.juwimm.cms.CMS", Constants.CMS_LOCALE);
+				Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
 				UserConfig.getInstance().setConfigNodeValue(UserConfig.USERCONF_PREFERRED_LANGUAGE, Constants.CMS_LOCALE.toString());
 				UserConfig.getInstance().saveChanges();
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.firstRestartApp"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
@@ -611,7 +611,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			try {
 				Constants.CMS_LOCALE = Locale.ENGLISH;
 				Constants.CMS_LANGUAGE = Constants.CMS_LOCALE.getLanguage();
-				Constants.rb = ResourceBundle.getBundle("de.juwimm.cms.CMS", Constants.CMS_LOCALE);
+				Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
 				UserConfig.getInstance().setConfigNodeValue(UserConfig.USERCONF_PREFERRED_LANGUAGE, Constants.CMS_LOCALE.toString());
 				UserConfig.getInstance().saveChanges();
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.firstRestartApp"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
