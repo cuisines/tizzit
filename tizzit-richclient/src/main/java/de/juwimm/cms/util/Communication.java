@@ -407,6 +407,10 @@ public class Communication implements ExitListener, ActionListener {
 		return null;
 	}
 
+	public UserValue getUserByName(String userName) {
+		return getClientService().getUserForId(userName);
+	}
+
 	public String getSiteConfigXML() {
 		return user.getSiteConfigXML();
 	}
