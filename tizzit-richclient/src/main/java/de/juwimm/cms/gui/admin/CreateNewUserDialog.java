@@ -37,7 +37,6 @@ import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
 
-import de.juwimm.cms.authorization.vo.UserValue;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.exceptions.NeededFieldsMissingException;
 import de.juwimm.cms.util.Communication;
@@ -161,42 +160,36 @@ public class CreateNewUserDialog extends JFrame {
 			Pattern p = Pattern.compile("^[A-Za-z_0-9\\.-]+@[A-Za-z_0-9\\.-]+\\.[a-zA-Z]+");
 			Matcher m = p.matcher(this.txtEmail.getText());
 			int selectedUnit = cmbUnits.getSelectedIndex();
-			if (!checkForUniqueUserName(this.txtUsername.getText())) {
-				if (m.matches() || this.txtEmail.getText().length() == 0) {
-					try {
-						((Communication) getBean(Beans.COMMUNICATION)).createUser(this.txtUsername.getText(), String.copyValueOf(pwdOne.getPassword()), this.txtFirstName.getText(), this.txtLastName.getText(), this.txtEmail.getText(), units[selectedUnit].getUnitId());
-					} catch (NeededFieldsMissingException nfme) {
-						String msg = rb.getString("exception.NeededFieldsMissingException");
-						msg = msg + nfme.getMissingFieldsLocaleString();
-						JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-						this.setEnabled(true);
-						this.setVisible(true);
-						return;
-					} catch (Exception excep) {
-						String msg = excep.getMessage();
-						if (msg.startsWith("de.juwimm.cms.exceptions.UserException: Entity with primary key")) msg = rb.getString("exception.UsernameAlreadyInUse");
-						if (msg.startsWith("java.sql.BatchUpdateException: ")) msg = rb.getString("exception.UsernameAlreadyInUse");
-						JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-						this.setEnabled(true);
-						this.setVisible(true);
-						return;
-					}
-					this.setVisible(false);
-					panUser.reload();
-					this.dispose();
-				} else {
-					String msg = rb.getString("exception.EmailIsNotValid");
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			if (m.matches() || this.txtEmail.getText().length() == 0) {
+				try {
+					((Communication) getBean(Beans.COMMUNICATION)).createUser(this.txtUsername.getText(), String.copyValueOf(pwdOne.getPassword()), this.txtFirstName.getText(), this.txtLastName.getText(), this.txtEmail.getText(), units[selectedUnit].getUnitId());
+				} catch (NeededFieldsMissingException nfme) {
+					String msg = rb.getString("exception.NeededFieldsMissingException");
+					msg = msg + nfme.getMissingFieldsLocaleString();
+					JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					this.setEnabled(true);
 					this.setVisible(true);
-					this.txtEmail.requestFocus();
+					return;
+				} catch (Exception excep) {
+					String msg = excep.getMessage();
+					if (msg.startsWith("de.juwimm.cms.exceptions.UserException: Entity with primary key")) msg = rb.getString("exception.UsernameAlreadyInUse");
+					if (msg.startsWith("java.sql.BatchUpdateException: ")) msg = rb.getString("exception.UsernameAlreadyInUse");
+					if (msg.contains("ConstraintViolationException ")) msg = rb.getString("exception.UsernameAlreadyInUse");
+					JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					this.setEnabled(true);
+					this.setVisible(true);
+					return;
 				}
+				this.setVisible(false);
+				panUser.reload();
+				this.dispose();
 			} else {
-				String msg = rb.getString("exception.UsernameAlreadyInUse");
-				JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-				this.setEnabled(true);
+				String msg = rb.getString("exception.EmailIsNotValid");
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				this.setVisible(true);
-				return;
+				this.txtEmail.requestFocus();
 			}
+
 		} else {
 			JOptionPane.showMessageDialog(this, rb.getString("frame.changePasswd.msgNoMatch"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			pwdOne.setText("");
@@ -222,25 +215,6 @@ public class CreateNewUserDialog extends JFrame {
 		this.txtEmail.setEnabled(b);
 		this.pwdOne.setEnabled(b);
 		this.pwdTwo.setEnabled(b);
-	}
-
-	/**
-	 * Checks for unique user name before save 
-	 * @param userName
-	 * @return
-	 */
-	private boolean checkForUniqueUserName(String userName) {
-		try {
-			UserValue usr = comm.getUserByName(userName);
-			if (usr != null) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (Exception e) {
-			return false;
-		}
-
 	}
 
 }
