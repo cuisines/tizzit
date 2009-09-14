@@ -281,7 +281,6 @@
 				<groupId>net.sf.ehcache</groupId>
 				<artifactId>ehcache</artifactId>
 				<version>1.3.0</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.fontbox</groupId>
@@ -415,7 +414,6 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate</artifactId>
 				<version>3.2.5.ga</version>
-				<scope>provided</scope>
 				<exclusions>
 					<exclusion>
 						<groupId>xml-apis</groupId>
