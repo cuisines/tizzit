@@ -115,6 +115,8 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 		lblDomain.setText("Domain");
 		txtUserName.setPreferredSize(new Dimension(6, 21));
 		txtPassword.setPreferredSize(new Dimension(6, 21));
+		txtPassword.setText("123");
+		txtUserName.setText("scarabeuz");
 		progressBar.setDoubleBuffered(true);
 
 		this.add(lblLogo, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
