@@ -15,16 +15,37 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
@@ -38,6 +59,7 @@ import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.DlgPictureBrowser;
 import de.juwimm.cms.content.frame.DlgPictureEditor;
+import de.juwimm.cms.content.frame.DlgSavePicture;
 import de.juwimm.cms.content.frame.helper.ImageFileView;
 import de.juwimm.cms.content.frame.helper.ImageFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
@@ -153,6 +175,7 @@ public class PanPicture extends JPanel {
 			this.lblPictId.setText(" ");
 			this.lblFileName.setText(" ");
 			this.txtAltText.setText(" ");
+			this.txtPictureSubtext.setText(" ");
 			btnEdit.setEnabled(false);
 		}
 	}
@@ -176,7 +199,7 @@ public class PanPicture extends JPanel {
 	}
 
 	public String getType() {
-		if(this.cboDirection.getSelectedItem() != null) {
+		if (this.cboDirection.getSelectedItem() != null) {
 			return ((CboModel) this.cboDirection.getSelectedItem()).getValue();
 		} else {
 			return "";
@@ -254,41 +277,25 @@ public class PanPicture extends JPanel {
 		lblDirection.setText(rb.getString("panel.content.picture.Direction"));
 		pnlPreview.add(btnPreview, BorderLayout.CENTER);
 		// upper part
-		this.add(lblPictNo, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(17, 15, 0, 13), 0, 0));
-		this.add(lblPictId, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(17, 0, 0, 0), 60, 0));
-		this.add(lblFile, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(5, 15, 0, 13), 0, 0));
-		this.add(lblFileName, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 60, 0));
+		this.add(lblPictNo, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(17, 15, 0, 13), 0, 0));
+		this.add(lblPictId, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(17, 0, 0, 0), 60, 0));
+		this.add(lblFile, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 15, 0, 13), 0, 0));
+		this.add(lblFileName, new GridBagConstraints(1, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 60, 0));
 		// center part
-		this.add(lblPreview, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(26, 15, 0, 0), 10, 0));
-		this.add(pnlPreview, new GridBagConstraints(0, 3, 3, 4, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 15, 0, 0), 119, -48));
+		this.add(lblPreview, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(26, 15, 0, 0), 10, 0));
+		this.add(pnlPreview, new GridBagConstraints(0, 3, 3, 4, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 15, 0, 0), 119, -48));
 		// center buttons
-		this.add(btnChoose, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 18, 0, 6), 58, 0));
-		this.add(btnUpload, new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
-		this.add(btnUploadRoot, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
-		this.add(btnEdit, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
+		this.add(btnChoose, new GridBagConstraints(3, 3, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 18, 0, 6), 58, 0));
+		this.add(btnUpload, new GridBagConstraints(3, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
+		this.add(btnUploadRoot, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
+		this.add(btnEdit, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
 		// lower part
-		this.add(lblDirection, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
-		this.add(cboDirection, new GridBagConstraints(2, 7, 2, 2, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 0, 50, 6), 188, 2));
-		this.add(lblPictureSubtext, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(9, 15, 0, 0), 7, 0));
-		this.add(txtPictureSubtext, new GridBagConstraints(2, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 188, 2));
-		this.add(lblAltText, new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
-		this.add(txtAltText, new GridBagConstraints(2, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
+		this.add(lblDirection, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
+		this.add(cboDirection, new GridBagConstraints(2, 7, 2, 2, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 50, 6), 188, 2));
+		this.add(lblPictureSubtext, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 0, 0), 7, 0));
+		this.add(txtPictureSubtext, new GridBagConstraints(2, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 188, 2));
+		this.add(lblAltText, new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
+		this.add(txtAltText, new GridBagConstraints(2, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
 	}
 
 	protected void btnUploadActionPerformed(ActionEvent e) {
@@ -340,17 +347,15 @@ public class PanPicture extends JPanel {
 					Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
 					if (files[i].length() > 4000000) {
 						this.setCursor(Cursor.getDefaultCursor());
-						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + files[i].getName(),
-								rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + files[i].getName(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 						continue;
 					}
-					FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"),
-							rb.getString("panel.content.upload.ParseFile"), 100);
+					FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"), rb.getString("panel.content.upload.ParseFile"), 100);
 					prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
+
 					try {
 						byte[] bty = getBytesFromFile(files[i]);
-		
+
 						ImageIcon tmpIcon = new ImageIcon(bty);
 						ImageIcon thumbnail = null;
 						if (tmpIcon.getIconWidth() > 90 || tmpIcon.getIconHeight() > 90) {
@@ -359,7 +364,7 @@ public class PanPicture extends JPanel {
 							thumbnail = tmpIcon;
 						}
 						ByteArrayOutputStream out = manipulateImage(thumbnail.getImage());
-		
+
 						String fext = Utils.getExtension(files[i]);
 						String mimetype = "image/jpeg";
 						if (fext.equals(Utils.JPEG) || fext.equals(Utils.JPG)) {
@@ -369,10 +374,30 @@ public class PanPicture extends JPanel {
 						} else if (fext.equals(Utils.TIF) || fext.equals(Utils.TIFF)) {
 							mimetype = "image/tif";
 						}
-		
+
 						prog.setProgress(rb.getString("panel.content.upload.Uploading"), 50);
-						retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName());
-		
+						int existingPicId = 0;
+						try {
+							existingPicId = comm.getPictureIdForUnitAndName(unit, files[i].getName());
+						} catch (Exception e) {
+							log.error("Error during getting getPictureIdForUnitAndName");
+						}
+						if (existingPicId == 0) {
+							retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName());
+						} else {
+							/**picture name already exists=>dialog message*/
+							PictureSlimValue picSlimVal = comm.getPicture(existingPicId);
+							retInt = picSlimVal.getPictureId();
+							DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, bty, out.toByteArray());
+							int frameHeight = 180;
+							int frameWidth = 250;
+							saveDialog.setSize(frameWidth, frameHeight);
+							saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
+							saveDialog.setModal(true);
+							saveDialog.setVisible(true);
+
+						}
+
 						setPictureId(retInt);
 					} catch (Exception exe) {
 						log.error("Error during the upload of the picture " + files[i].getName(), exe);
@@ -449,12 +474,12 @@ public class PanPicture extends JPanel {
 		int frameWidth = 500;
 		dlgPictureBrowser.setSize(frameWidth, frameHeight);
 		dlgPictureBrowser.setLocationRelativeTo(UIConstants.getMainFrame());
- 		dlgPictureBrowser.setVisible(true);
+		dlgPictureBrowser.setVisible(true);
 	}
-	
+
 	protected void btnEditActionPerformed(ActionEvent e) {
 		DlgPictureEditor dlgPictureEditor = new DlgPictureEditor(this.pictureId);
-		
+
 		dlgPictureEditor.addSaveActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				loadPreview(new Integer(ae.getActionCommand()).intValue());
@@ -492,7 +517,7 @@ public class PanPicture extends JPanel {
 				btnEdit.setEnabled(true);
 			}
 		} catch (Exception ex) {
-			log.error("catched exception while loading ImagePreview of imageId: "+picture, ex);
+			log.error("catched exception while loading ImagePreview of imageId: " + picture, ex);
 		}
 	}
 
