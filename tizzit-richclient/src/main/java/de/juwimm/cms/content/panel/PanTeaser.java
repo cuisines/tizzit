@@ -780,7 +780,7 @@ public class PanTeaser extends JPanel {
 				stringBuilder.append(resultRootEndElement);
 				Document doc = XercesHelper.string2Dom(stringBuilder.toString());
 		
-				Iterator teaserIterator = XercesHelper.findNodes(doc, "searchTeaserResult" + lastElementSearchedFor);
+				Iterator teaserIterator = XercesHelper.findNodes(doc, "/" + lastElementSearchedFor);
 				String identifierValue = null;
 				String teaserNameValue = null;
 				while (teaserIterator.hasNext()) {
