@@ -103,14 +103,14 @@ public class ContentHbmImpl extends ContentHbm {
 
 	private ContentValue toValue(ContentVersionHbm contentVersion) {
 		ContentValue data = new ContentValue();
+		data.setTemplate(this.getTemplate());
+		data.setContentId(this.getContentId());
 		if (contentVersion != null) {
 			data.setContentText(contentVersion.getText());
 			data.setCreateDate(contentVersion.getCreateDate());
 			data.setCreator(contentVersion.getCreator());
 			data.setVersion(contentVersion.getVersion()); 
-			data.setHeading(contentVersion.getHeading());
-			data.setTemplate(this.getTemplate());
-			data.setContentId(this.getContentId());
+			data.setHeading(contentVersion.getHeading());			
 			if (contentVersion.getLock() != null) {
 				try {
 					data.setLock(contentVersion.getLock().getDao());
