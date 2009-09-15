@@ -251,7 +251,9 @@
                      <include>javax.mail:mail</include>
                      <include>hsqldb:hsqldb</include> 
                      <include>ostermiller:ostermillerutils</include>
-					 <include>net.java.dev.flamingo:flamingo</include>					
+					<include>net.java.dev.flamingo:flamingo</include>	
+					<include>javax.media:jai-core</include>		
+					<include>com.sun.media:jai-codec</include>										
                   </includes>
                </dependencies>
                <jnlp>
