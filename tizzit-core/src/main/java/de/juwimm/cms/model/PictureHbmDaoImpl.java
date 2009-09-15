@@ -34,7 +34,7 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	public PictureHbm create(PictureHbm pictureHbm) {
 		if (pictureHbm.getPictureId() == null || pictureHbm.getPictureId().intValue() == 0) {
@@ -58,5 +58,16 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllPerUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findAllPerUnit(transform, "from de.juwimm.cms.model.PictureHbm as p where p.unit.unitId = ?", unitId);
+	}
+
+	@Override
+	public java.lang.Object getIdForNameAndUnit(final int transform, final java.lang.Integer unitId, final java.lang.String name) {
+		PictureHbm pic = (PictureHbm) this.getIdForNameAndUnit(transform, "from de.juwimm.cms.model.PictureHbm as pictureHbm where pictureHbm.unit.unitId = ? and pictureHbm.pictureName = ?", unitId, name);
+		if (pic != null) {
+			return pic.getPictureId();
+		} else {
+			return 0;
+		}
+
 	}
 }
