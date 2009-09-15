@@ -2364,4 +2364,8 @@ public class Communication implements ExitListener, ActionListener {
 	public ViewComponentValue[] getViewComponentChildren(Integer viewComponentId) {
 		return getClientService().getViewComponentChildren(viewComponentId);
 	}
+
+	public Integer getPictureIdForUnitAndName(Integer unitId, String name) {
+		return getClientService().getPictureIdForUnitAndName(unitId, name);
+	}
 }
