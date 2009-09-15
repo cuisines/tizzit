@@ -1785,4 +1785,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected ViewComponentValue[] handleGetViewComponentChildren(Integer viewComponentId) throws Exception {
 		return getViewServiceSpring().getViewComponentChildren(viewComponentId);
 	}
+
+	@Override
+	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
+		return getContentServiceSpring().getPictureIdForUnitAndName(unitId, name);
+	}
 }
