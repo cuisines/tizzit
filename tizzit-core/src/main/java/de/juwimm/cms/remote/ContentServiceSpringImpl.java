@@ -292,6 +292,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		
 		ContentVersionHbm cv = ContentVersionHbm.Factory.newInstance();
 		cv.setVersion("1");
+		cv.setText(contentValue.getContentText());
+		cv.setHeading(contentValue.getHeading());
 		cv = getContentVersionHbmDao().create(cv);
 		contentHbm.getContentVersions().add(cv);
 		return contentHbm.getDao();
