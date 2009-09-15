@@ -99,12 +99,12 @@ import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
  * <ul>
  * <li>redirectURL - an url if this host is configured to redirect to another host or external url, &quot;0&quot; if no redirect configured</li>
  * <li>mandatorDir - the path to the sitemap for the site for this host. This value is found in the field <codeA>mandator_dir</code> in the table <code>site</code>.</li>
- * <li>startpageURL - an url for redirecting the client. If no url is found this value equals &quot;0&quot;.</li> 
+ * <li>startpageURL - an url for redirecting the client. If no url is found this value equals &quot;0&quot;.</li>
  * </ul>
  * This action returns &quot;null&quot; if the request does not contain a host value, the host is empty,</br>
- * the host isn't found in the database or the field &quot;mandatorDir&quot; equals the empty string. 
+ * the host isn't found in the database or the field &quot;mandatorDir&quot; equals the empty string.
  * </p>
- * 
+ *
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
  * company Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
@@ -144,7 +144,7 @@ public class HostSelectorAction extends AbstractAction implements SingleThreaded
 		} else if ("".equalsIgnoreCase(host)) {
 			if (log.isDebugEnabled()) log.debug("Host header empty -- failing.");
 			return null;
-		} else if ("127.0.0.1".equalsIgnoreCase(host) || "localhost".equalsIgnoreCase(host)) {
+		} else if ("127.0.0.1".equalsIgnoreCase(host) || "localhost".equalsIgnoreCase(host) && "prod".equals(System.getProperty("org.apache.cocoon.mode", "prod"))) {
 			if (log.isDebugEnabled()) log.debug("Host \"localhost\" -- skipping (" + requestPath + ")");
 			return null;
 		} else {
@@ -175,7 +175,7 @@ public class HostSelectorAction extends AbstractAction implements SingleThreaded
 		return sitemapParams;
 	}
 
-    public String getRequestedURL(Map objectModel) {
+	public String getRequestedURL(Map objectModel) {
 		Request request = ObjectModelHelper.getRequest(objectModel);
 		StringBuffer uribuf = null;
 		boolean isSecure = request.isSecure();

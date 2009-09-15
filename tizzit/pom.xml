@@ -505,6 +505,28 @@
 				<artifactId>xmlParserAPIs</artifactId>
 				<version>2.6.2</version>
 			</dependency>
+
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-xpath</artifactId>
+				<version>${saxon.xpath.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>saxon</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-dom</artifactId>
+				<version>${saxon.dom.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -629,6 +651,10 @@
 		<spring.version>2.5.6</spring.version>
 		<spring.security.version>2.0.4</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
+
+		<saxon.version>9.0.0.2b-patched</saxon.version>
+		<saxon.xpath.version>9.0.0.2b</saxon.xpath.version>
+		<saxon.dom.version>9.0.0.2b</saxon.dom.version>
 
 		<!--
 			Change this to generate to the correct MDA database mappings, For

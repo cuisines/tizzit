@@ -406,11 +406,11 @@
 				<map:read src="robots.txt" mime-type="text/plain" />
 			</map:match>
 			<!--dcfliste in xml, wird von CMS client verwendet-->
-			<map:match pattern="*/dcf/dcf.xml">
+			<map:match pattern="**/dcf/dcf.xml">
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" mime-type="text/xml" />
 			</map:match>
 			<!--dcfliste als html, nur zur besseren Uebersicht fuer developer-->
-			<map:match pattern="*/dcf/dcf.html">
+			<map:match pattern="**/dcf/dcf.html">
 				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" />
 				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
 				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}dcf/dcf.xsl">
@@ -418,20 +418,20 @@
 				</map:transform>
 				<map:serialize type="html" />
 			</map:match>
-			<map:match pattern="*/dcf/**/*.jar">
+			<map:match pattern="**/dcf/**/*.jar">
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{3}.jar" />
 			</map:match>
 			<map:match pattern="dcf/**/*.jar">
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
 			</map:match>
-			<map:match pattern="*/dcf/*.jar">
+			<map:match pattern="**/dcf/*.jar">
 				<!--
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.jar" />
 				-->
 				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
 
 			</map:match>
-			<map:match pattern="*/dcf/*.xml">
+			<map:match pattern="**/dcf/*.xml">
 				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" />
 				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
 				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />

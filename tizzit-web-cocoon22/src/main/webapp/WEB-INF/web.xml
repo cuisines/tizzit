@@ -4,10 +4,10 @@
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
-      classpath:applicationContext-base-cocoon22.xml 
+      classpath:applicationContext-base-cocoon22.xml
     </param-value>
   </context-param>
-  
+
   <!-- Servlet Filters ================================================ -->
 
   <!--
@@ -37,7 +37,7 @@
     <description>Character Encoding filter for Cocoon</description>
     <display-name>Cocoon Character Encoding filter</display-name>
     <filter-name>SetCharacterEncoding</filter-name>
-    <filter-class>org.tizzit.cocoon.filters.SetCharacterEncodingFilter</filter-class>
+    <filter-class>org.tizzit.cocoon.generic.filters.SetCharacterEncodingFilter</filter-class>
     <init-param>
       <param-name>encoding</param-name>
       <param-value>UTF-8</param-value>

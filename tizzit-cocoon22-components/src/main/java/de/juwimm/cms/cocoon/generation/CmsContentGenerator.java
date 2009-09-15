@@ -35,9 +35,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.avalon.excalibur.pool.Poolable;
-import org.apache.avalon.framework.component.ComponentManager;
-import org.apache.avalon.framework.component.Composable;
 import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.avalon.framework.service.ServiceException;
+import org.apache.avalon.framework.service.ServiceManager;
+import org.apache.avalon.framework.service.Serviceable;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.ResourceNotFoundException;
 import org.apache.cocoon.caching.CacheableProcessingComponent;
@@ -163,7 +164,7 @@ import de.juwimm.util.XercesHelper;
  * Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
  */
-public class CmsContentGenerator extends AbstractGenerator implements CacheableProcessingComponent, Poolable, Composable {
+public class CmsContentGenerator extends AbstractGenerator implements CacheableProcessingComponent, Poolable, Serviceable {
 	private static Logger log = Logger.getLogger(CmsContentGenerator.class);
 	private static Logger cacheLogger = Logger.getLogger(CmsContentGenerator.class.getName() + "-CacheLogger");
 	private static final DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -182,7 +183,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private UnitValue unitValue = null;
 	private Parameters par = null;
 	private SessionContext sessContext = null;
-	private ComponentManager manager = null;
+	private ServiceManager serviceManager = null;
 	private ContextManager cm = null;
 	private boolean iAmTheLiveserver = false;
 	private boolean disableMeta = false;
@@ -212,23 +213,6 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private String requestUrl = null;
 	private Map<String, String> safeguardMap = null;
 	private Map<Integer, String> path4ViewComponentCacheMap = new HashMap<Integer, String>();
-
-	public void compose(ComponentManager componentManager) {
-		if (log.isDebugEnabled()) log.debug("begin compose");
-		this.manager = componentManager;
-
-		if (log.isDebugEnabled()) log.debug("instanciating new SAX Parser");
-		try {
-			SAXParserFactory fac = SAXParserFactory.newInstance();
-			fac.setNamespaceAware(true);
-			parser = fac.newSAXParser();
-		} catch (ParserConfigurationException exe) {
-			log.error("an unknown error occured", exe);
-		} catch (SAXException exe) {
-			log.error("an unknown error occured", exe);
-		}
-		if (log.isDebugEnabled()) log.debug("end compose");
-	}
 
 	@Override
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters parameters) {
@@ -302,7 +286,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			} catch (Exception exe) {
 			}
 
-			cm = (ContextManager) this.manager.lookup(ContextManager.ROLE);
+			cm = (ContextManager) this.serviceManager.lookup(ContextManager.ROLE);
 			sessContext = cm.getContext("authentication");
 		} catch (Exception exe) {
 			viewComponentId = null;
@@ -1756,4 +1740,23 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.apache.avalon.framework.service.Serviceable#service(org.apache.avalon.framework.service.ServiceManager)
+	 */
+	public void service(ServiceManager manager) throws ServiceException {
+		if (log.isDebugEnabled()) log.debug("service() -> begin");
+		this.serviceManager = manager;
+
+		if (log.isDebugEnabled()) log.debug("instanciating new SAX Parser");
+		try {
+			SAXParserFactory fac = SAXParserFactory.newInstance();
+			fac.setNamespaceAware(true);
+			parser = fac.newSAXParser();
+		} catch (ParserConfigurationException exe) {
+			log.error("an unknown error occured", exe);
+		} catch (SAXException exe) {
+			log.error("an unknown error occured", exe);
+		}
+		if (log.isDebugEnabled()) log.debug("service() -> end");
+	}
 }
