@@ -64,6 +64,8 @@
 =========END How to use ============================
 -->
 
+	<xsl:variable name="cqcms-juwimm-plugin-wysiwyg" select="'cqcms-juwimm-plugin-wysiwyg-5.1-all.jar'" />
+
 <xsl:include href="../templates/includes/date.lib.xsl"/>
 
 	<!-- head und title Element must be written in dcf, otherwise title of template is not saved. The DEFAULT value is overwritten by the template always -->
@@ -119,7 +121,7 @@
 				<classname>de.juwimm.cms.content.modules.Textfield</classname>
 				<!-- For ConQuest 3.0 you need to outcomment this area: -->
 				<classpath>
-					<jar>cqcms-juwimm-plugin-wysiwyg-5.1-all.jar</jar>
+					<jar><xsl:value-of select="$cqcms-juwimm-plugin-wysiwyg"/></jar>
 				</classpath> 
 				<xsl:choose>
 					<xsl:when test="not(child::*)">
@@ -1100,6 +1102,10 @@
 					<content dcfname="text" label="(Absatz-)Textfeld">
 						<dcfConfig>
 							<classname>de.juwimm.cms.content.modules.Textfield</classname>
+							<!-- For ConQuest 3.0 you need to outcomment this area: -->
+							<classpath>
+								<jar><xsl:value-of select="$cqcms-juwimm-plugin-wysiwyg"/></jar>
+							</classpath> 
 							<property name="Size">
 								<height>300</height>
 							</property>
@@ -2164,6 +2170,10 @@
 			<minipage-content dcfname="minipage-content" label="Minipage-Text">
 				<dcfConfig>
 					<classname>de.juwimm.cms.content.modules.Textfield</classname>
+					<!-- For ConQuest 3.0 you need to outcomment this area: -->
+					<classpath>
+						<jar><xsl:value-of select="$cqcms-juwimm-plugin-wysiwyg"/></jar>
+					</classpath> 
 					<property name="Size">
 						<height>400</height>
 					</property>
