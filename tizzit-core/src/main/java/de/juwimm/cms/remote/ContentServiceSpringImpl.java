@@ -20,9 +20,22 @@
  */
 package de.juwimm.cms.remote;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.sql.Blob;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
@@ -35,9 +48,25 @@ import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
 import de.juwimm.cms.exceptions.UserException;
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentVersionHbm;
+import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.EditionHbm;
+import de.juwimm.cms.model.LockHbm;
+import de.juwimm.cms.model.PictureHbm;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
-import de.juwimm.cms.vo.*;
+import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.ContentVersionValue;
+import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.EditionValue;
+import de.juwimm.cms.vo.PictureSlimValue;
+import de.juwimm.cms.vo.PictureSlimstValue;
+import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.util.DateConverter;
 import de.juwimm.util.XercesHelper;
 
@@ -68,8 +97,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			return deltaDocuments;
 		}
 
-	} 
- 
+	}
+
 	/**
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#addPicture2Unit(java.lang.Integer, byte[], byte[], java.lang.String, java.lang.String, java.lang.String)
 	 */
@@ -115,7 +144,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 					if (contentValue.isCreateNewVersion()) {
 						try {
 							ContentVersionHbm newContentVersion = ContentVersionHbm.Factory.newInstance();
-							newContentVersion.setCreateDate(System.currentTimeMillis()); 
+							newContentVersion.setCreateDate(System.currentTimeMillis());
 							newContentVersion.setText(contentValue.getContentText());
 							newContentVersion.setHeading(contentValue.getHeading());
 
@@ -131,7 +160,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 						} catch (Exception exe) {
 							throw new UserException(exe.getMessage());
 						}
-					} else { 
+					} else {
 						latest.setText(contentValue.getContentText());
 						latest.setHeading(contentValue.getHeading());
 						latest.setCreateDate(System.currentTimeMillis());
@@ -289,7 +318,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected ContentValue handleCreateContent(ContentValue contentValue) throws Exception {
 		ContentHbm contentHbm = super.getContentHbmDao().create(contentValue, AuthenticationHelper.getUserName());
-		
+
 		ContentVersionHbm cv = ContentVersionHbm.Factory.newInstance();
 		cv.setVersion("1");
 		cv.setText(contentValue.getContentText());
@@ -328,7 +357,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				prop.setProperty("deploy", Boolean.toString(deploy));
 				prop.setProperty("showMessage", Boolean.toString(succMessage));
 
-			//TODO:	getMessagingHubInvoker().invokeQueue(MessageConstants.QUEUE_NAME_DEPLOY, MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY, prop);
+				//TODO:	getMessagingHubInvoker().invokeQueue(MessageConstants.QUEUE_NAME_DEPLOY, MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY, prop);
 				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
 			} catch (Exception e) {
 				throw new UserException(e.getMessage());
@@ -917,11 +946,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Integer handleAddOrUpdateDocument(Integer unitId, String documentName, String mimeType, InputStream documentData, Integer documentId) throws Exception {
 		try {
-			if (log.isDebugEnabled()) log.debug("addOrUpdateDocument for user " + AuthenticationHelper.getUserName()); 
+			if (log.isDebugEnabled()) log.debug("addOrUpdateDocument for user " + AuthenticationHelper.getUserName());
 
 			UnitHbm unit = getUnitHbmDao().load(unitId);
 			DocumentHbm doc = null;
-			if(documentId == null) {
+			if (documentId == null) {
 				doc = DocumentHbm.Factory.newInstance();
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
@@ -933,7 +962,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
 			}
-			
+
 			Blob b = Hibernate.createBlob(documentData);
 			doc.setDocument(b);
 
@@ -958,7 +987,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				tmpFileName = this.storeEditionFile(in);
 			} catch (IOException e) {
 				log.warn("Unable to copy received inputstream: " + e.getMessage(), e);
-			} 
+			}
 			EditionHbm edition = EditionHbm.Factory.newInstance();
 			edition.setComment("Edition to import on local server");
 			UserHbm user = getUserHbmDao().load(AuthenticationHelper.getUserName());
@@ -1243,12 +1272,16 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleUpdatePictureData(java.lang.Integer, byte[], byte[])
 	 */
 	@Override
-	protected void handleUpdatePictureData(Integer pictureId, byte[] picture, String mimeType,
-			byte[] thumbnail) throws Exception {
+	protected void handleUpdatePictureData(Integer pictureId, byte[] picture, String mimeType, byte[] thumbnail) throws Exception {
 		PictureHbm pic = getPictureHbmDao().load(pictureId);
 		pic.setMimeType(mimeType);
 		pic.setPicture(picture);
 		pic.setThumbnail(thumbnail);
+	}
+
+	@Override
+	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
+		return getPictureHbmDao().getIdForNameAndUnit(unitId, name);
 	}
 
 }
