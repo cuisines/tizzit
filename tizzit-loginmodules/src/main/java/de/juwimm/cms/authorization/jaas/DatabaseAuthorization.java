@@ -85,7 +85,7 @@ public class DatabaseAuthorization {
 		try {
 			InitialContext ctx = new InitialContext();
 			DataSource ds = (DataSource) ctx.lookup(dsJndiName);
-			return getRoleSets(ds, userName);
+			return getRoleSets(ds, userName.toLowerCase());
 		} catch (NamingException e) {
 			log.error("Error occured", e);
 		}
