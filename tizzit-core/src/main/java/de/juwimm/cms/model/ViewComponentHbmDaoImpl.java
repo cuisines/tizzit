@@ -487,7 +487,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			cdao.setVersion("1");
 			cdao.setContentText("<source></source>");
 			try {
-				ContentHbm content = getContentHbmDao().create(cdao, AuthenticationHelper.getUserName());
+				ContentHbm content = getContentHbmDao().createWithContentVersion(cdao, AuthenticationHelper.getUserName());
 				vc.setReference(content.getContentId().toString());
 			} catch (Throwable exe) {
 				log.warn("RootContent could not be created because of duplicate key. This should only occure on liveserver.");
