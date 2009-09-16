@@ -847,9 +847,9 @@ public class Communication implements ExitListener, ActionListener {
 						stringBuilder.insert(0, resultRootStartElement);
 						stringBuilder.append(resultRootEndElement);
 						Document doc = XercesHelper.string2Dom(stringBuilder.toString());
-						Iterator<Element> teaserIterator = (Iterator<Element>) XercesHelper.findNodes(doc, "searchTeaserResult/teaserRef");
+						Iterator<Element> teaserIterator = XercesHelper.findNodes(doc, "searchTeaserResult/teaserRef");
 						while (teaserIterator.hasNext()) {
-							Element element = (Element) teaserIterator.next();
+							Element element = teaserIterator.next();
 							String viewComponentIdValue = element.getAttribute("viewComponentId");
 							if (viewComponentIdValue != null && viewComponentIdValue.trim().length() > 0) {
 								if (intViewComponentId == (new Integer(viewComponentIdValue)).intValue()) {
@@ -2020,8 +2020,8 @@ public class Communication implements ExitListener, ActionListener {
 	 * 
 	 */
 	private class OkListener implements ActionListener {
-		private PanCheckInPages pan;
-		private JDialog dlg;
+		private final PanCheckInPages pan;
+		private final JDialog dlg;
 
 		public OkListener(PanCheckInPages pan, JDialog dlg) {
 			this.pan = pan;
@@ -2292,7 +2292,7 @@ public class Communication implements ExitListener, ActionListener {
 	public void exportXlsPersonData(File outputFile) {
 		try {
 			log.info("exportXlsPersonData");
-			ClientServiceSpring cs = (ClientServiceSpring) getClientService();
+			ClientServiceSpring cs = getClientService();
 			InputStream is = cs.exportXlsPersonData();
 			FileOutputStream fos = new FileOutputStream(outputFile);
 			int read = 0;
@@ -2308,7 +2308,7 @@ public class Communication implements ExitListener, ActionListener {
 	public Integer addOrUpdateDocument(File file, int unitId, String fileName, String mimeType, Integer documentId) {
 		InputStream fis = null;
 		try {
-			fis = new FileInputStream(file);
+			fis = new BufferedInputStream(new FileInputStream(file));
 			return getClientService().addOrUpdateDocument(fis, unitId, fileName, mimeType, documentId);
 		} catch (Exception re) {
 			log.error("Error importing document " + re.getMessage());
