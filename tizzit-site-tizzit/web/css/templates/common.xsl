@@ -98,6 +98,11 @@
 			font-size:24px;
 			padding-bottom:20px;
 		}
+		h2 {
+			font-size:18px;
+			color:#254559;
+			padding-bottom:4px;
+		}
 		#layout {
 			width:1024px;
 			margin:0 auto;
@@ -351,17 +356,13 @@
 			padding-right:10px;
 		}
 		#information_2 h1.teaserheadline {
-			font-size:24px;
+			font-weight:normal;
 			color:#fff;
-		}
-		#information_2 h2.subline {
-			font-size:18px;
-			color:#254559;
+			padding-bottom:15px;
 		}
 		#information_2 .teaser_content {
 			font-size:13px;
 			color:#474747;
-			padding-top:10px;
 		}
 		#information_2 .teaserimage {
 			float:left;
