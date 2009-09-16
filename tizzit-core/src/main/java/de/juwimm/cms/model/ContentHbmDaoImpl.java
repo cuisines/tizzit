@@ -20,17 +20,16 @@
  */
 package de.juwimm.cms.model;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.vo.ContentValue;
-import de.juwimm.util.Base64;
-import de.juwimm.util.DateConverter;
 import de.juwimm.util.XercesHelper;
 
 /**
@@ -44,7 +43,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	protected ContentHbm handleCreate(ContentValue content, String creator) throws Exception {
 		ContentHbm contentHbm = ContentHbm.Factory.newInstance();
@@ -55,11 +54,11 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		}
 		contentHbm.setStatus(content.getStatus());
 		contentHbm.setTemplate(content.getTemplate());
-		 
-     //   removeSpareContentVersions();
+
+		//   removeSpareContentVersions();
 		return this.create(contentHbm);
 	}
-	
+
 	/**
 	 * @see de.juwimm.cms.model.ContentHbm#setContent(java.lang.String)
 	 */
@@ -73,7 +72,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		// -- Indexing through No-Messaging
 		content.setUpdateSearchIndex(true);
 	}
-	
+
 	/**
 	 * @see de.juwimm.cms.model.ContentHbmDao#updateDocumentUseCountLastVersion(java.lang.String,
 	 *      java.lang.String)
@@ -186,13 +185,13 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		if (publsVersion != null) {
 			String oldPublishContentText = publsVersion.getText() == null ? null : publsVersion.getText();
 			this.updateDocumentUseCountPublishVersion(oldPublishContentText, latestVersion.getText());
-			publsVersion.setText(latestVersion.getText()); 
+			publsVersion.setText(latestVersion.getText());
 			publsVersion.setHeading(latestVersion.getHeading());
 			publsVersion.setCreateDate(System.currentTimeMillis());
 			publsVersion.setCreator(AuthenticationHelper.getUserName());
 		} else {
 			publsVersion = ContentVersionHbm.Factory.newInstance();
-			publsVersion.setCreateDate(System.currentTimeMillis()); 
+			publsVersion.setCreateDate(System.currentTimeMillis());
 			publsVersion.setText(latestVersion.getText());
 			publsVersion.setHeading(latestVersion.getHeading());
 			publsVersion.setCreator(AuthenticationHelper.getUserName());
@@ -206,7 +205,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 			// -- Indexing
 		}
 	}
-	
+
 	/**
 	 * @see de.juwimm.cms.model.ContentHbm#toXml(int)
 	 */
@@ -239,7 +238,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 			Integer id = new Integer(cnde.getAttribute("id"));
 			if (log.isDebugEnabled()) log.debug("creating Content with existing id " + id);
 			content.setContentId(id);
-		} 
+		}
 		content.setStatus(Integer.parseInt(XercesHelper.getNodeValue(cnde, "./status")));
 		content.setUpdateSearchIndex(true);
 		content.setTemplate(XercesHelper.getNodeValue(cnde, "./template"));
@@ -248,14 +247,36 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		Iterator cvit = XercesHelper.findNodes(cnde, "./contentVersion");
 		while (cvit.hasNext()) {
 			Element cvnde = (Element) cvit.next();
-			String version = XercesHelper.getNodeValue(cvnde, "./version");  
+			String version = XercesHelper.getNodeValue(cvnde, "./version");
 			// import contentVersion: PUBLS only on livedeploy, all but PUBLS on import
 			if ((liveDeploy && version.equalsIgnoreCase("PUBLS")) || (!liveDeploy && !version.equalsIgnoreCase("PUBLS"))) {
 				ContentVersionHbm contentVersion = getContentVersionHbmDao().createFromXml(cvnde, reusePrimaryKey, liveDeploy);
 				content.getContentVersions().add(contentVersion);
 			}
 		}
-		
+
+		return content;
+	}
+
+	@Override
+	protected ContentHbm handleCreateWithContentVersion(ContentValue contentValue, String creator) throws Exception {
+		ContentHbm contentHbm = ContentHbm.Factory.newInstance();
+		if (contentHbm.getContentId() == null || contentHbm.getContentId().intValue() == 0) {
+			contentHbm.setContentId(sequenceHbmDao.getNextSequenceNumber("content.content_id"));
+		} else {
+			contentHbm.setContentId(contentValue.getContentId());
+		}
+		contentHbm.setStatus(contentValue.getStatus());
+		contentHbm.setTemplate(contentValue.getTemplate());
+		ContentHbm content = this.create(contentHbm);
+
+		ContentVersionHbm cv = ContentVersionHbm.Factory.newInstance();
+		cv.setVersion("1");
+		cv.setText(contentValue.getContentText());
+		cv.setHeading(contentValue.getHeading());
+		cv = getContentVersionHbmDao().create(cv);
+		content.getContentVersions().add(cv);
+
 		return content;
 	}
 }
