@@ -46,9 +46,9 @@
     <xsl:template match="teaser" mode="teasercontent" priority="3">
         <xsl:choose>
             <xsl:when test="headline!=''">
-                <div class="teaserheadline">
+                <h1 class="teaserheadline">
                     <xsl:apply-templates select="headline" mode="teaser"/>
-                </div>
+                </h1>
             </xsl:when>    
         </xsl:choose>
         <xsl:if test="picture/image !=''">

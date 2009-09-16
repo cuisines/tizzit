@@ -134,6 +134,7 @@
 			background-image:url('/httpd/img/informations_repeat.jpg');
 			background-repeat: repeat-x;
 			background-position: 0 top;
+			background-color:#aeb9bf;
 			<!--height: 410px;-->
 		}
 		#footer {
@@ -345,16 +346,22 @@
 			margin:0 auto;
 		}
 		#information_2 .teaseritem {
-			width:480px;
+			width:460px;
 			float:left;
+			padding-right:10px;
 		}
-		#information_2 .teaserheadline {
+		#information_2 h1.teaserheadline {
 			font-size:24px;
 			color:#fff;
+		}
+		#information_2 h2.subline {
+			font-size:18px;
+			color:#254559;
 		}
 		#information_2 .teaser_content {
 			font-size:13px;
 			color:#474747;
+			padding-top:10px;
 		}
 		#information_2 .teaserimage {
 			float:left;
