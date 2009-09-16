@@ -5,7 +5,7 @@ import java.util.zip.*
 import org.xml.sax.InputSource 
 import javax.xml.parsers.DocumentBuilderFactory
 import org.w3c.dom.Node
-import de.juwimm.util.XercesHelper
+import org.tizzit.util.XercesHelper
 import org.apache.xml.serialize.OutputFormat
 
 def jnlpFile = new File("${pom.basedir}/target/jnlp/juwimm-cms-client.jnlp")
