@@ -212,9 +212,9 @@
 	</xsl:template>
 
 	<xsl:template match="subline" mode="format">
-		<span class="subline">
+		<h2 class="subline">
 			<xsl:value-of select="."/>
-		</span>
+		</h2>
 		<!-- <br/> -->
 	</xsl:template>
 
