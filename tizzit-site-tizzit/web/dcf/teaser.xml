@@ -2,13 +2,11 @@
 <source>
 	<head/>
 	<all>
-		<teaser>				
-			<simpletextfield name="teaserHeadline" label="Teaser Headline"/>
-			<iteration name="singleTeaser" descriptionDcfName="teaserSubline" label="Teaser">			
-				<picture label="Teaser Image"/>			
-				<simpletextfield name="teaserSubline" label="Teaser Subline"/>
-				<textfield name="teaserContent" label="Teaser Content" height="250"/>
-			</iteration>
+		<teaser>
+			<simpletextfield name="headline" label="headline"/>
+			<picture label="Teaser Image (max. 158px)"/>
+			<textfield name="content" height="250" label="textfield"/>	  
+			<internalLink/>
 		</teaser>
 	</all>
 </source>

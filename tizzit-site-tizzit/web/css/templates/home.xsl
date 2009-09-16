@@ -78,8 +78,6 @@
         .slides div { 
             position:absolute; 
             top:0; 
-            <!--width:1000px;--> 
-            <!--display:none; -->
         }
         a.previous { 
             position:absolute; 
@@ -130,6 +128,9 @@
         }
         #cloud a:hover{
             text-decoration:underline;
+        }
+        #cloudlist {
+            position:absolute;
         }
         
         

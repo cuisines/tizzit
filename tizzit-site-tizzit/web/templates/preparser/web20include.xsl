@@ -5,24 +5,8 @@
 
     <xsl:template match="all" priority="1.1">
         <xsl:element name="all">
-            <xsl:choose>
-                <xsl:when test="$template = 'pageranking'">
-                    <web20:rating xmlns:web20="http://web20.conquest-cms.net/1.0" scope="site" quantity="10"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:choose>
-                        <xsl:when test="$template = 'tagcloud'">
-                            <web20:tagging xmlns:web20="http://web20.conquest-cms.net/1.0" scope="site" form="cloud" quantity="50"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <!--<web20:rating xmlns:web20="http://web20.conquest-cms.net/1.0" scope="page"/>
-                            <web20:comment xmlns:web20="http://web20.conquest-cms.net/1.0" quantity="10"/>-->
-                            <web20:tagging xmlns:web20="http://web20.conquest-cms.net/1.0" scope="site" form="cloud" quantity="20"/>
-                            <web20:tagging xmlns:web20="http://web20.conquest-cms.net/1.0" scope="page" quantity="10"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:otherwise>
-            </xsl:choose>
+            <web20:tagging xmlns:web20="http://web20.conquest-cms.net/1.0" scope="site" form="cloud" quantity="20"/>
+            <web20:tagging xmlns:web20="http://web20.conquest-cms.net/1.0" scope="page" quantity="10"/>
                         
             <!-- rating für aktuelle seite -->
             <!--<web20:rating xmlns:web20="http://web20.conquest-cms.net/1.0" scope="page"/>-->

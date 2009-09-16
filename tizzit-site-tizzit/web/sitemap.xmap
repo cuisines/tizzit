@@ -320,7 +320,8 @@
 				<map:parameter name="siteId"
 					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-				<map:parameter name="cqUserName" value="{request-param:safeguardUsername}"/>
+				<!--cqUserName cannot be null-->
+				<map:parameter name="cqUserName" value="{random:x}"/>
 			</map:transform>
 			
 			<map:select type="parameter">
@@ -425,7 +426,8 @@
 					<map:parameter name="siteId"
 						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-					<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
+					<!--cqUserName cannot be null-->
+					<map:parameter name="cqUserName" value="{random:x}"/>
 					<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
 					<map:transform src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
 						<map:parameter name="layout" value="{../../layout}"/>
@@ -445,7 +447,7 @@
 						<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
 					</map:transform>
 					<map:transform type="cinclude">
-						<map:parameter name="parallel" value="true"/>
+						<map:parameter name="parallel" value="false"/>
 						<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
 					</map:transform>
 					<map:select type="parameter">
@@ -480,8 +482,21 @@
 							</map:select>
 						</map:when>
 						<map:otherwise>
-							<map:redirect-to
-								uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"/>
+							<map:select type="parameter">
+								<map:parameter name="parameter-selector-test" value="{../login}"/>
+								<map:when test="'-1'">
+									<!-- unauthenticated -->
+									<map:redirect-to uri="/{../language}/{../redirecttologin}/page.html?resource=/{../language}/{../path}/&amp;login={../login}"/>
+								</map:when>
+								<map:when test="'-2'">
+									<!-- unauthorized -->
+									<map:redirect-to uri="/{../language}/{../redirecttologin}/page.html?resource=/{../language}/{../path}/&amp;login={../login}"/>
+								</map:when>
+								<map:otherwise>
+									<!-- successfully (never happens, because succesfull login leads into the safeguard=false case above) -->
+									<map:redirect-to uri="/{../language}/{../redirecttologin}/page.html?resource=/{../language}/{../path}/page.html%3F{request:queryString}&amp;login={../login}"/>
+								</map:otherwise>
+							</map:select>
 						</map:otherwise>
 					</map:select>
 				</map:act>

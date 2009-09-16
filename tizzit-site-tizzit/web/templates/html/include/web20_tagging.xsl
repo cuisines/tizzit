@@ -61,23 +61,6 @@
                         </div>
                     </xsl:if>&#160;
                     <div class="clear">&#160;</div>
-                    
-                        <!--<xsl:choose>
-                            <xsl:when test="$tag = ''">      
-                                <div id="cloud">
-                                    <xsl:apply-templates select="tagCloud/tag/tagName" mode="style">  
-                                        <xsl:sort select="." data-type="text" case-order="lower-first" order="ascending"/>
-                                    </xsl:apply-templates>
-                                </div>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <div id="cloudlist">
-                                    <xsl:apply-templates select="tagCloud/tag" mode="taglist">
-                                        <xsl:with-param name="tagname" select="$tag"/>
-                                    </xsl:apply-templates>
-                                </div>
-                            </xsl:otherwise>
-                        </xsl:choose>  -->
                 </ctmpl:module>
                 <div class="clear">&#160;</div>
             </xsl:when>
@@ -91,11 +74,6 @@
                     <a name="tagging" class="nameA">&#160;</a>
                     <div id="divlayer_tagging">
                         <div class="tagging_top">&#160;</div>
-                        <!--<div class="tagging_top">
-                            <a href="?tag=" class="closeTagging">
-                                <img src="/httpd/img/zoom/closebox.png" alt="schließen"/>
-                            </a>
-                        </div>-->
                         <div class="tagging_middle">
                             <div class="taglist">
                                 <div class="tag_headline">
@@ -140,21 +118,11 @@
         <xsl:param name="fontsize">
             <xsl:value-of select="26 * ($cur_anzahl - $tag_min) div ($tag_max - $tag_min)"/>
         </xsl:param>
-        <!--<xsl:value-of select="$tag_max"/> -
-        <xsl:value-of select="$tag_min"/> -
-        <xsl:value-of select="$cur_anzahl"/> 
-        <xsl:value-of select="$fontsize"/>-->
             <a>
                 <xsl:attribute name="href">
                     <xsl:text>?tag=</xsl:text>
                     <xsl:value-of select="."/> 
-                    <!--<xsl:text>#tagging</xsl:text>-->
                 </xsl:attribute> 
-               <!-- <xsl:attribute name="onclick">
-                    <xsl:text>displayTagClouds('</xsl:text>
-                    <xsl:value-of select="."/>
-                    <xsl:text>');</xsl:text>
-                </xsl:attribute>-->
                 <xsl:attribute name="style">
                     <xsl:text>font-size:</xsl:text>
                     <xsl:choose>
@@ -169,11 +137,6 @@
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:text>px;</xsl:text>
-                    <!--<xsl:choose>
-                        <xsl:when test="$fontsize>13">
-                            <xsl:text>font-weight:bold;</xsl:text>
-                        </xsl:when>
-                    </xsl:choose>-->
                 </xsl:attribute>
                 <xsl:apply-templates select="."/>
             </a>&#160;

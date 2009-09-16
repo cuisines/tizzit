@@ -3,7 +3,8 @@
 	<head/>
 	<all>
 		<textfield name="content"/>
-		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser rechts"/>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
 		<web20/>
 		<t_footer/>
 	</all>

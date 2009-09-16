@@ -5,18 +5,6 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<ctmpl:include name="css"/>
         <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
-		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
-		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
-		<script language="JavaScript" type="text/javaScript">
-			<![CDATA[
-				Shadowbox.loadSkin('classic', '/httpd/js/skin');
-				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
-				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
-				window.onload = function(){
-					Shadowbox.init();
-				};
-			]]>
-		</script>
 	</head>
 	<body>
 		<div id="cloudsrepeat">
@@ -27,38 +15,32 @@
 							<div id="header">
 								<a href="/" id="homelink">&#160;</a>
 								<div id="toparea">
-									<ctmpl:include name="secondlevel"/>
-									<ctmpl:include name="search"/>
+									&#160;
 								</div>
 								<div class="clear">&#160;</div>
-								<ctmpl:include name="firstlevel2"/>
+								&#160;
 								<div class="clear">&#160;</div>
 							</div>
 							<div id="contentcontainer">
 								<div id="leftmenue">
-									<ctmpl:include name="leftmenue"/>
+									&#160;
 								</div>
 								<div id="middle">
 									<ctmpl:include name="headline"/> 
 									<ctmpl:include name="content"/>
-									<ctmpl:include name="tagging"/>
 								</div>
 								<div id="right">
-									<ctmpl:include name="teaser"/>
 									&#160;
 								</div>
 								<div class="clear">&#160;</div>
 							</div>
 						</div>
-						<div id="information_2">
-							<ctmpl:include name="teaser_bottom"/>
-							&#160;
-						</div>
+						<div id="information_2">&#160;</div>
 						<div id="footer">
 							<div id="f_content">
 								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
 								<div class="twitter">
-									<ctmpl:include name="t_footer"/>
+									&#160;
 								</div>
 								<div class="clear">&#160;</div>
 							</div>

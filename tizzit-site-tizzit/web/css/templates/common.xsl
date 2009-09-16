@@ -127,13 +127,13 @@
 			background-position: 0 193px;
 		}
 		#information_1 {
-			height: 320px;
+			<!--height: 320px;-->
 		}
 		#information_2 {
 			background-image:url('/httpd/img/informations_repeat.jpg');
 			background-repeat: repeat-x;
 			background-position: 0 bottom;
-			height: 410px;
+			<!--height: 410px;-->
 		}
 		#footer {
 			background-image:url('/httpd/img/footer_repeat.jpg');
