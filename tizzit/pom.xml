@@ -627,9 +627,11 @@
 		<module>../tizzit-plugin-api</module>
 		<module>../tizzit-core</module>
 		<module>../tizzit-webstart</module>
+		<!--
 		<module>../tizzit-web-cocoon</module>
 		<module>../tizzit-cocoon22-components</module>
 		<module>../tizzit-web-cocoon22</module>
+		-->
 		<module>../tizzit-richclient</module>
 		<module>../tizzit-web-admin</module>
 		<module>../tizzit-loginmodules</module>
@@ -855,6 +857,46 @@
 				<webservice.host />
 				<webservice.port />
 			</properties>
+		</profile>
+		<!-- build Cocoon 2.1.x and Cocoon 2.2 (default) -->
+		<profile>
+			<id>cocoon-all</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>cocoon-all</name>
+				</property>
+			</activation>
+			<modules>
+				<module>../tizzit-web-cocoon</module>
+				<module>../tizzit-cocoon22-components</module>
+				<module>../tizzit-web-cocoon22</module>
+			</modules>
+		</profile>
+		<!-- build only Cocoon 2.1.x (use '-P cocoon' to activate this profile ) -->
+		<profile>
+			<id>cocoon</id>
+			<activation>
+				<property>
+					<name>cocoon</name>
+				</property>
+			</activation>
+			<modules>
+				<module>../tizzit-web-cocoon</module>
+			</modules>
+		</profile>
+		<!-- build only Cocoon 2.2 (use '-P cocoon22' to activate this profile ) -->
+		<profile>
+			<id>cocoon22</id>
+			<activation>
+				<property>
+					<name>cocoon22</name>
+				</property>
+			</activation>
+			<modules>
+				<module>../tizzit-cocoon22-components</module>
+				<module>../tizzit-web-cocoon22</module>
+			</modules>
 		</profile>
 	</profiles>
 	<distributionManagement>
