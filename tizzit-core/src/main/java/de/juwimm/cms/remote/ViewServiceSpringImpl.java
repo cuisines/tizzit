@@ -824,57 +824,41 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected ViewComponentValue handleMoveViewComponentLeft(Integer viewComponentId) throws Exception {
 		try {
-			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			if (view.getParent().getParent().getViewType() == 0) {
+			ViewComponentHbm thisNode = getViewComponentHbmDao().load(viewComponentId);
+			if (thisNode.getParent().getParent().getViewType() == 0) {
 				// I'm moving a Unit to a root-entry !
-				view.setShowType((byte) 3);
-				view.setViewIndex("2");
+				thisNode.setShowType((byte) 3);
+				thisNode.setViewIndex("2");
 			}
-			ViewComponentHbm prev, next, parent, nextParent;
-			prev = view.getPrevNode();
-			next = view.getNextNode();
-			parent = view.getParent();
-			if (prev == null) {
-				if (next != null) {
-					parent.setFirstChild(next);
-					next.setPrevNode(null);
-				} else {
-					parent.setFirstChild(null);
-				}
-			} else {
+			ViewComponentHbm prev, next, parent;
+			prev = thisNode.getPrevNode();
+			next = thisNode.getNextNode();
+			parent = thisNode.getParent();
+			if (prev != null) {
 				prev.setNextNode(next);
-
-				if (next != null) {
-					next.setPrevNode(prev);
-				}
+			} else {
+				parent.setFirstChild(next);
 			}
-			nextParent = parent.getNextNode();
-			parent.setNextNode(view);
-			if (nextParent != null) {
-				nextParent.setPrevNode(view);
+			if (next != null) {
+				next.setPrevNode(prev);
 			}
-			view.setPrevNode(parent);
-			view.setNextNode(nextParent);
-			parent.removeChild(view);
-			parent.getParent().addChild(view);
+			thisNode.setPrevNode(parent);
+			thisNode.setNextNode(parent.getNextNode());
+			if (thisNode.getNextNode() != null) {
+				thisNode.getNextNode().setPrevNode(thisNode);
+			}
+			parent.setNextNode(thisNode);
+			thisNode.setParent(parent.getParent());
+			parent.removeChild(thisNode);
+			thisNode.getParent().addChild(thisNode);
 			long modDate = (System.currentTimeMillis());
-			view.setLastModifiedDate(modDate);
+			thisNode.setLastModifiedDate(modDate);
 			parent.setLastModifiedDate(modDate);
 			// check for same urlLinkName on this level
-			if (view.hasSiblingsWithLinkName(view.getUrlLinkName())) {
-				int id = 0;
-				String tempText = "";
-				boolean foundAnEmptyName = false;
-				while (!foundAnEmptyName) {
-					id++;
-					tempText = view.getUrlLinkName() + "_" + id;
-					if (!view.hasSiblingsWithLinkName(tempText)) {
-						foundAnEmptyName = true;
-					}
-				}
-				view.setUrlLinkName(tempText);
+			if (thisNode.hasSiblingsWithLinkName(thisNode.getUrlLinkName())) {
+				thisNode.setUrlLinkName(thisNode.getUrlLinkName() + "-0");
 			}
-			return view.getDao();
+			return thisNode.getDao();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
