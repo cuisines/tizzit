@@ -21,7 +21,8 @@
 					<jar>juwimm-registry-remote-1.3.jar</jar>
 				</classpath>
 			</map:transformer>
-			<map:transformer name="web20" src="de.juwimm.cms.cocoon.transformation.GenericTransformer">
+			<!--<map:transformer name="web20"
+				src="de.juwimm.cms.cocoon.transformation.GenericTransformer">
 				<classname>de.juwimm.web20.cocoon.transforming.Web20PageTransformer</classname>
 				<classpath>
 					<jar>juwimm-web20-cocoon-1.0.0.jar</jar>
@@ -29,7 +30,7 @@
 					<jar>juwimm-web20-core-1.0.0-client.jar</jar>
 				</classpath>
 				<siteShort>juwimm-web20</siteShort>
-			</map:transformer>
+			</map:transformer>-->
 		</map:transformers>
 		<map:readers default="resource"/>
 
@@ -61,7 +62,7 @@
 				src="org.apache.cocoon.acting.RequestParamAction"/>
 			<map:action name="safeguard.logout"
 				src="de.juwimm.cms.cocoon.acting.SafeguardLogoutAction"/>
-			<map:action name="web20action" src="de.juwimm.cms.cocoon.acting.GenericAction">
+			<!--<map:action name="web20action" src="de.juwimm.cms.cocoon.acting.GenericAction">
 				<siteShort>juwimm-web20</siteShort>
 				<classname>de.juwimm.web20.cocoon.acting.Web20InsertAction</classname>
 				<classpath>
@@ -69,7 +70,7 @@
 					<jar>juwimm-web20-common-1.0.0.jar</jar>
 					<jar>juwimm-web20-core-1.0.0-client.jar</jar>
 				</classpath>
-			</map:action>
+			</map:action>-->
 		</map:actions>
 		<map:matchers default="wildcard"/>
 		<map:selectors default="browser"/>
@@ -109,7 +110,7 @@
 						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
-						<map:parameter name="defaultImage" value="/httpd/img/spacer.gif"/>						
+						<map:parameter name="defaultImage" value="/httpd/img/spacer.gif"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="serverName" value="{request:serverName}"/>
 					</map:transform>
@@ -130,7 +131,7 @@
 				</map:otherwise>
 			</map:select>
 		</map:resource>
-		
+
 		<map:resource name="navresourcetemplate">
 			<map:generate type="CmsContent"
 				src="{system-property:cqCmsTemplatesPath}navmodules/config/{module}.xml">
@@ -234,7 +235,7 @@
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-						<map:parameter name="clientCode" value="{global:clientCode}"/>						
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="serverName" value="{request:serverName}"/>
 					</map:transform>
@@ -246,7 +247,7 @@
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-						<map:parameter name="clientCode" value="{global:clientCode}"/>						
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="serverName" value="{request:serverName}"/>
 					</map:transform>
@@ -261,7 +262,7 @@
 		<map:resource name="contentresource">
 			<map:select type="parameter">
 				<map:parameter name="parameter-selector-test" value="{template}"/>
-				<map:when test="functionalTesting">				
+				<map:when test="functionalTesting">
 					<map:generate type="CmsContent">
 						<map:parameter name="parameters" value="true"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
@@ -312,21 +313,21 @@
 					</map:generate>
 				</map:otherwise>
 			</map:select>
-			
-			<map:transform src="templates/preparser/web20include.xsl">
+
+			<!--<map:transform src="templates/preparser/web20include.xsl">
 				<map:parameter name="template" value="{template}"/>
 			</map:transform>
 			<map:transform type="web20">
 				<map:parameter name="siteId"
 					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-				<!--cqUserName cannot be null-->
+				<!-\-cqUserName cannot be null-\->
 				<map:parameter name="cqUserName" value="{random:x}"/>
-			</map:transform>
-			
+			</map:transform>-->
+
 			<map:select type="parameter">
 				<map:parameter name="parameter-selector-test" value="{filetype}"/>
-				<map:when test="html">					
+				<map:when test="html">
 					<map:call resource="generalContentTransformation">
 						<map:parameter name="template" value="{template}"/>
 					</map:call>
@@ -343,7 +344,7 @@
 						<map:parameter name="serverName" value="{request:serverName}"/>
 						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
 						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
-					</map:transform>						
+					</map:transform>
 					<map:call resource="generalContentTransformation">
 						<map:parameter name="template" value="{template}"/>
 					</map:call>
@@ -414,7 +415,7 @@
 			</map:select>
 		</map:resource>
 
-		<map:resource name="page">
+		<!--<map:resource name="page">
 			<map:act type="cms.actions.template">
 				<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="parameters" value="true"/>
@@ -426,7 +427,7 @@
 					<map:parameter name="siteId"
 						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-					<!--cqUserName cannot be null-->
+					<!-\-cqUserName cannot be null-\->
 					<map:parameter name="cqUserName" value="{random:x}"/>
 					<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
 					<map:transform src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
@@ -485,21 +486,113 @@
 							<map:select type="parameter">
 								<map:parameter name="parameter-selector-test" value="{../login}"/>
 								<map:when test="'-1'">
-									<!-- unauthenticated -->
+									<!-\- unauthenticated -\->
 									<map:redirect-to uri="/{../language}/{../redirecttologin}/page.html?resource=/{../language}/{../path}/&amp;login={../login}"/>
 								</map:when>
 								<map:when test="'-2'">
-									<!-- unauthorized -->
+									<!-\- unauthorized -\->
 									<map:redirect-to uri="/{../language}/{../redirecttologin}/page.html?resource=/{../language}/{../path}/&amp;login={../login}"/>
 								</map:when>
 								<map:otherwise>
-									<!-- successfully (never happens, because succesfull login leads into the safeguard=false case above) -->
+									<!-\- successfully (never happens, because succesfull login leads into the safeguard=false case above) -\->
 									<map:redirect-to uri="/{../language}/{../redirecttologin}/page.html?resource=/{../language}/{../path}/page.html%3F{request:queryString}&amp;login={../login}"/>
 								</map:otherwise>
 							</map:select>
 						</map:otherwise>
 					</map:select>
 				</map:act>
+			</map:act>
+			</map:resource>-->
+
+		<map:resource name="page">
+			<map:act type="cms.actions.template">
+				<map:parameter name="siteId"
+					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				<map:parameter name="parameters" value="true"/>
+				<map:parameter name="language" value="{language}"/>
+				<map:parameter name="path" value="{url}"/>
+				<map:parameter name="viewType" value="browser"/>
+				<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
+				<map:transform
+					src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
+					<map:parameter name="layout" value="{../layout}"/>
+					<map:parameter name="content-template" value="{template}"/>
+				</map:transform>
+				<map:transform
+					src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl"
+					label="content">
+					<map:parameter name="currentDate" value="{currentDate}"/>
+					<map:parameter name="language" value="{../language}"/>
+					<map:parameter name="url" value="{../url}"/>
+					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="template" value="{template}"/>
+					<map:parameter name="clientCode" value="{global:clientCode}"/>
+					<map:parameter name="disableLanguageVersions" value="false"/>
+					<map:parameter name="viewType" value="browser"/>
+					<map:parameter name="language" value="{language}"/>
+					<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+				</map:transform>
+				<map:transform type="cinclude">
+					<map:parameter name="parallel" value="false"/>
+					<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+				</map:transform>
+				<map:select type="parameter">
+					<map:parameter name="parameter-selector-test" value="{safeguard}"/>
+					<map:when test="false">
+						<map:select type="parameter">
+							<map:parameter name="parameter-selector-test" value="{../filetype}"/>
+							<map:when test="html">
+								<map:transform
+									src="{global:parentMandator}templates/layouts/master.xsl">
+									<map:parameter name="language" value="{../language}"/>
+									<map:parameter name="url" value="{../path}"/>
+									<map:parameter name="currentDate" value="{currentDate}"/>
+									<map:parameter name="viewComponentId"
+										value="{../viewComponentId}"/>
+									<map:parameter name="use-request-parameters" value="true"/>
+									<map:parameter name="liveserver"
+										value="{system-property:cqLiveserver}"/>
+									<map:parameter name="template" value="{template}"/>
+									<map:parameter name="content-template" value="{template}"/>
+									<map:parameter name="clientCode" value="{global:clientCode}"/>
+									<map:parameter name="layout" value="{../layout}"/>
+									<map:parameter name="disableLanguageVersions" value="false"/>
+									<map:parameter name="viewType" value="browser"/>
+									<map:parameter name="language" value="{language}"/>
+									<map:parameter name="safeguardUsername"
+										value="{../safeguardUsername}"/>
+								</map:transform>
+								<map:transform
+									src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
+								<map:serialize type="xhtml"/>
+							</map:when>
+							<map:otherwise>
+								<map:serialize type="xml"/>
+							</map:otherwise>
+						</map:select>
+					</map:when>
+					<map:otherwise>
+						<map:select type="parameter">
+							<map:parameter name="parameter-selector-test" value="{login}"/>
+							<map:when test="'-1'">
+								<map:redirect-to
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"
+								/>
+							</map:when>
+							<map:when test="'-2'">
+								<map:redirect-to
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"
+								/>
+							</map:when>
+							<map:otherwise>
+								<map:redirect-to
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/page.html%3F{request:queryString}&amp;login={login}"
+								/>
+							</map:otherwise>
+						</map:select>
+					</map:otherwise>
+				</map:select>
 			</map:act>
 		</map:resource>
 
@@ -540,8 +633,8 @@
 				</map:select>
 			</map:act>
 		</map:resource>
-		
-		
+
+
 		<map:resource name="generalContentTransformation">
 			<map:select type="parameter">
 				<map:parameter name="parameter-selector-test" value="{template}"/>
@@ -611,7 +704,7 @@
 				<clientCode>tizzit</clientCode>
 			</global-variables>
 		</map:component-configurations>
-		
+
 		<map:pipeline type="noncaching">
 			<map:match pattern="cforms/**">
 				<map:mount check-reload="yes" src="cforms/" uri-prefix="cforms"/>
@@ -637,7 +730,7 @@
 					<map:parameter name="filetype" value="{2}"/>
 				</map:call>
 			</map:match>
-			
+
 			<!-- START File readers -->
 			<map:match pattern="xml/*.xml">
 				<map:read src="{global:parentMandator}xml/{1}.xml" mime-type="text/xml"/>
@@ -649,7 +742,8 @@
 				<map:read src="{global:parentMandator}httpd/html/{1}.html" mime-type="text/html"/>
 			</map:match>
 			<map:match pattern="httpd/html/**/*.html">
-				<map:read src="{global:parentMandator}httpd/html/{1}/{2}.html" mime-type="text/html"/>
+				<map:read src="{global:parentMandator}httpd/html/{1}/{2}.html" mime-type="text/html"
+				/>
 			</map:match>
 			<map:match pattern="erbitux/**.css">
 				<map:read src="../../merckserono-erbitux-prototype/html/{1}.css" mime-type="css"/>
@@ -685,14 +779,15 @@
 				<map:read type="filereader"/>
 			</map:match>
 			<!-- END File readers -->
-			
+
 			<map:match pattern="**/">
 				<map:redirect-to uri="page.html"/>
 			</map:match>
-			
+
 			<map:match pattern="">
 				<map:call resource="page">
-					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="language"
+						value="{conquest-properties:default-language-{global:clientCode}}"/>
 					<map:parameter name="url" value=""/>
 					<map:parameter name="filetype" value="html"/>
 					<map:parameter name="layout" value="default"/>
@@ -724,7 +819,8 @@
 			</map:match>
 			<map:match pattern="print.*">
 				<map:call resource="page">
-					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="language"
+						value="{conquest-properties:default-language-{global:clientCode}}"/>
 					<map:parameter name="url" value=""/>
 					<map:parameter name="filetype" value="{1}"/>
 					<map:parameter name="layout" value="print"/>
@@ -748,7 +844,8 @@
 			</map:match>
 			<map:match pattern="popup.*">
 				<map:call resource="page">
-					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="language"
+						value="{conquest-properties:default-language-{global:clientCode}}"/>
 					<map:parameter name="url" value=""/>
 					<map:parameter name="filetype" value="{1}"/>
 					<map:parameter name="layout" value="popup"/>
@@ -794,7 +891,8 @@
 			</map:match>
 			<map:match pattern="*/**/content.*">
 				<map:act type="cms.actions.template">
-					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -812,7 +910,8 @@
 			</map:match>
 			<map:match pattern="*/content.*">
 				<map:act type="cms.actions.template">
-					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value=""/>
@@ -928,7 +1027,8 @@
 			<!-- Navmodulestemplate für Startseite -->
 			<map:match pattern="navmodulestemplate/*/*.*">
 				<map:act type="cms.actions.template">
-					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -945,7 +1045,8 @@
 			<!-- Navmodulestemplate für alle anderen -->
 			<map:match pattern="navmodulestemplate/*/**/*.*">
 				<map:act type="cms.actions.template">
-					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="siteId"
+						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -1010,8 +1111,8 @@
 					<map:parameter name="layout" value="default"/>
 				</map:call>
 			</map:match>
-			
-			<map:handle-errors>				
+
+			<map:handle-errors>
 				<map:select type="exception">
 					<map:when test="not-found">
 						<map:generate type="notifying"/>
@@ -1020,35 +1121,38 @@
 							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="requestHost" value="{request:serverName}"/>
-							<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+							<map:parameter name="language"
+								value="{conquest-properties:default-language-{global:clientCode}}"/>
 						</map:transform>
 						<map:transform src="templates/layouts/master.xsl"/>
 						<map:serialize type="html" status-code="404"/>
-					</map:when>					
+					</map:when>
 					<map:when test="invalid-continuation">
 						<map:generate type="notifying"/>
 						<map:transform src="templates/html/errorpages/common.xsl">
 							<map:parameter name="statusCode" value="404"/>
 							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
-							<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+							<map:parameter name="language"
+								value="{conquest-properties:default-language-{global:clientCode}}"/>
 						</map:transform>
 						<map:transform src="templates/layouts/master.xsl"/>
 						<map:serialize type="html" status-code="404"/>
-					</map:when>					
+					</map:when>
 					<map:otherwise>
 						<map:generate type="notifying"/>
 						<map:transform src="templates/html/errorpages/common.xsl">
 							<map:parameter name="statusCode" value="500"/>
 							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
-							<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
-						</map:transform>		
-						
+							<map:parameter name="language"
+								value="{conquest-properties:default-language-{global:clientCode}}"/>
+						</map:transform>
+
 						<map:transform src="templates/layouts/master.xsl"/>
 						<map:serialize type="html" status-code="500"/>
 					</map:otherwise>
-				</map:select>					
+				</map:select>
 			</map:handle-errors>
 		</map:pipeline>
 	</map:pipelines>
