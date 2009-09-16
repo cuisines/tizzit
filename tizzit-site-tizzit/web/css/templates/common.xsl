@@ -278,7 +278,7 @@
 			height:29px;
 		}
 		.firstlevel2 .firstlink{
-			margin-right:14px;
+			margin-right:13px;
 		}
 		.firstlevel2 .firstlink a {
 			color: #494949;
@@ -351,9 +351,9 @@
 			margin:0 auto;
 		}
 		#information_2 .teaseritem {
-			width:460px;
+			width:450px;
 			float:left;
-			padding-right:10px;
+			padding-right:20px;
 		}
 		#information_2 h1.teaserheadline {
 			font-weight:normal;
