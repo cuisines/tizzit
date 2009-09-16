@@ -188,6 +188,9 @@
 				<map:parameter name="disableUnitList" value="true"/>
 				<map:parameter name="disableMembersList" value="true"/>
 				<map:parameter name="disableContentInclude" value="false"/>
+				<map:parameter name="disableLanguageVersions" value="false"/>
+				<map:parameter name="viewType" value="browser"/>
+				<map:parameter name="language" value="{language}"/>
 			</map:generate>
 			<map:select type="parameter">
 				<map:parameter name="parameter-selector-test" value="{filetype}"/>
@@ -226,6 +229,9 @@
 				<map:parameter name="disableHeadLine" value="true"/>
 				<map:parameter name="disableUnitList" value="true"/>
 				<map:parameter name="disableMembersList" value="true"/>
+				<map:parameter name="disableLanguageVersions" value="false"/>
+				<map:parameter name="viewType" value="browser"/>
+				<map:parameter name="language" value="{language}"/>
 			</map:generate>
 			<map:select type="parameter">
 				<map:parameter name="parameter-selector-test" value="{filetype}"/>
@@ -516,14 +522,14 @@
 				<map:transform
 					src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
 					<map:parameter name="layout" value="{../layout}"/>
-					<map:parameter name="content-template" value="{template}"/>
+					<map:parameter name="content-template" value="{../template}"/>
 				</map:transform>
 				<map:transform
 					src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl"
 					label="content">
 					<map:parameter name="currentDate" value="{currentDate}"/>
-					<map:parameter name="language" value="{../language}"/>
-					<map:parameter name="url" value="{../url}"/>
+					<map:parameter name="language" value="{language}"/>
+					<map:parameter name="url" value="{url}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
 					<map:parameter name="template" value="{template}"/>
@@ -549,7 +555,7 @@
 									<map:parameter name="url" value="{../path}"/>
 									<map:parameter name="currentDate" value="{currentDate}"/>
 									<map:parameter name="viewComponentId"
-										value="{../viewComponentId}"/>
+										value="{viewComponentId}"/>
 									<map:parameter name="use-request-parameters" value="true"/>
 									<map:parameter name="liveserver"
 										value="{system-property:cqLiveserver}"/>
@@ -561,7 +567,7 @@
 									<map:parameter name="viewType" value="browser"/>
 									<map:parameter name="language" value="{language}"/>
 									<map:parameter name="safeguardUsername"
-										value="{../safeguardUsername}"/>
+										value="{safeguardUsername}"/>
 								</map:transform>
 								<map:transform
 									src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
@@ -587,7 +593,7 @@
 							</map:when>
 							<map:otherwise>
 								<map:redirect-to
-									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/page.html%3F{request:queryString}&amp;login={login}"
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/page.html%3Flogin={login}"
 								/>
 							</map:otherwise>
 						</map:select>

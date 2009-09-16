@@ -20,7 +20,8 @@
 		</checkBox>	
 		<checkBox name="videoControlbar" label="controlbar anzeigen?">
 			<box label="Ja" elementname="videoControlbarSelect" selected="true">true</box>
-		</checkBox>	
+		</checkBox>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
 		<tagCloud/>
 		<t_footer/>
 	</all>

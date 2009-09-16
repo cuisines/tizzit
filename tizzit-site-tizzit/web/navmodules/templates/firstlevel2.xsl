@@ -5,7 +5,8 @@
 
 	<xsl:template match="navigation" priority="1">
 		<xsl:if test="viewcomponent/viewcomponent[showType='2']">
-				<xsl:apply-templates select="viewcomponent/viewcomponent[showType='2']"/>
+			<xsl:apply-templates select="viewcomponent/viewcomponent[showType='2']"/>
+		    <div class="clear">&#160;</div>
 		</xsl:if>
 	</xsl:template>
     
@@ -37,17 +38,7 @@
                     <xsl:apply-templates select="." mode="links"/>
                 </xsl:otherwise>
             </xsl:choose>			
-            <!--<xsl:if test="@onAxisToRoot='true' and (viewcomponent[showType='3' or showType='0'])">
-                <div class="secondlinks">
-                    <xsl:apply-templates select="viewcomponent[showType='3' or showType='0']" mode="second"/>
-                </div>
-            </xsl:if>-->
         </div>
     </xsl:template>
 
 </xsl:stylesheet>
-<!-- Stylus Studio meta-information - (c)1998-2001 eXcelon Corp.
-<metaInformation>
-<scenarios/><MapperInfo  srcSchemaPath="" srcSchemaRoot="" srcSchemaPathIsRelative="yes" destSchemaPath="" destSchemaRoot="" destSchemaPathIsRelative="yes" />
-</metaInformation>
--->

@@ -59,7 +59,7 @@
             background-position:right 0px;
         }
         .content {
-            padding: 30px 0px 30px 300px;
+            padding: 30px 0px 0 300px;
             background-image:url('/httpd/img/underwater.gif');
             background-repeat:no-repeat;
         }

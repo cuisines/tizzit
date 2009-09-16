@@ -13,13 +13,14 @@
 		<cached-include src="breadcrumbs.xhtml"/>	
 		<cached-include src="thirdlevel.xhtml"/>  -->   
 		<!--<cached-include src="logoimage.xhtml"/>-->		
-		<!--<cached-include src="language_switchflags.xhtml"/>-->	
 	</navresource>
 
 	<navresourcelocal>
 		<cached-include src="secondlevel.xhtml"/>
 		<cached-include src="firstlevel2.xhtml"/>
 		<cached-include src="leftmenue.xhtml"/>
+		<cached-include src="breadcrumbsfromroot.xhtml"/>
+		<cached-include src="language.xhtml"/>
 	</navresourcelocal>
 
 	<contentModule/>

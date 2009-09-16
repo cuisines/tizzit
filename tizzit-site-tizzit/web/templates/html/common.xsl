@@ -30,7 +30,7 @@
 	<xsl:param name="cfg-enableMaxContentTableWidth" select="'true'"/>
 	<xsl:param name="cfg-maxContentTableWidth" select="'500'"/>
 	<xsl:param name="cfg-maxContentTableWidthWithoutTeaser" select="'700'"/>
-	
+ 
 	<!-- Enable content image scaling -->
 	<xsl:param name="cfg-enableMaxContentImageWidth" select="'true'"/>
 	<xsl:param name="cfg-maxContentImageWidth" select="'500'"/>

@@ -29,6 +29,11 @@
 	                    <img src="/httpd/img/footer/twitter_11.gif" alt="Bookmark with delicious" border="0"/>
 	                </a>
 	            </div>
+	        	<div class="footer_item">
+	        		<a href="#">
+	        			<img src="/httpd/img/footer/twitter.gif" alt="Bookmark with delicious" border="0"/>
+	        		</a>
+	        	</div>
 	            <div class="footer_item">
 	                <a href="#">
 	                    <img src="/httpd/img/footer/google.gif" alt="Bookmark with delicious" border="0"/>
@@ -44,6 +49,16 @@
 	                    <img src="/httpd/img/footer/rss.gif" alt="Bookmark with delicious" border="0"/>
 	                </a>
 	            </div>
+	        	<div class="footer_item">
+	        		<a href="#">
+	        			<img src="/httpd/img/footer/windows.gif" alt="Bookmark with delicious" border="0"/>
+	        		</a>
+	        	</div>
+	        	<div class="footer_item">
+	        		<a href="#">
+	        			<img src="/httpd/img/footer/stumbleUpon.gif" alt="Bookmark with delicious" border="0"/>
+	        		</a>
+	        	</div>
 	        </div>
 	    </ctmpl:module>	
 	</xsl:template>

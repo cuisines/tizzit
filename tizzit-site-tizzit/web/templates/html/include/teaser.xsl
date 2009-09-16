@@ -6,7 +6,8 @@
             <xsl:choose>
                 <xsl:when test="teaserInclude != ''">
                     <div class="teaseraggregation">
-                        <xsl:apply-templates select="teaserInclude" mode="teaserInclude2"/> 
+                        <xsl:apply-templates select="teaserInclude" mode="teaserInclude2"/>
+                        <div class="clear">&#160;</div>
                     </div>
                 </xsl:when>
                 <xsl:otherwise>
@@ -22,6 +23,7 @@
                 <xsl:when test="teaserInclude != ''">
                     <div class="teaseraggregation">
                         <xsl:apply-templates select="teaserInclude" mode="teaserInclude2"/> 
+                        <div class="clear">&#160;</div>
                     </div>
                 </xsl:when>
                 <xsl:otherwise>

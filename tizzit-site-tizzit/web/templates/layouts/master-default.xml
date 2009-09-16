@@ -28,11 +28,15 @@
 								<a href="/" id="homelink">&#160;</a>
 								<div id="toparea">
 									<ctmpl:include name="secondlevel"/>
+									<ctmpl:include name="language"/>
 									<ctmpl:include name="search"/>
 								</div>
 								<div class="clear">&#160;</div>
 								<ctmpl:include name="firstlevel2"/>
 								<div class="clear">&#160;</div>
+							</div>
+							<div id="breadcrumbs">
+								<ctmpl:include name="breadcrumbsfromroot"/>
 							</div>
 							<div id="contentcontainer">
 								<div id="leftmenue">
@@ -45,14 +49,14 @@
 								</div>
 								<div id="right">
 									<ctmpl:include name="teaser"/>
-									&#160;
+									<div class="clear">&#160;</div>
 								</div>
 								<div class="clear">&#160;</div>
 							</div>
 						</div>
 						<div id="information_2">
 							<ctmpl:include name="teaser_bottom"/>
-							&#160;
+							<div class="clear">&#160;</div>
 						</div>
 						<div id="footer">
 							<div id="f_content">
