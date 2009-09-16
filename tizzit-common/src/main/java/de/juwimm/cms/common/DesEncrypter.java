@@ -25,8 +25,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.Base64;
 
-import de.juwimm.util.Base64;
 
 /**
  * Encrypts and decrypts any string based on DES Algorithm with a predefined

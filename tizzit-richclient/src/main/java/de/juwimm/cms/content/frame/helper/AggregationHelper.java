@@ -18,13 +18,13 @@ package de.juwimm.cms.content.frame.helper;
 import java.util.Hashtable;
 import java.util.Iterator;
 
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.tree.ComponentNode;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik </a>

@@ -29,9 +29,9 @@ import org.apache.lucene.document.Field;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
+import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.search.beans.SearchengineService;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>

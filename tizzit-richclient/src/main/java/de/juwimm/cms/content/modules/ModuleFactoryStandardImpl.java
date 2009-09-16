@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -47,7 +48,6 @@ import de.juwimm.cms.content.panel.ContentBorder;
 import de.juwimm.cms.content.panel.ContentBorderModulePanel;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.vo.SiteValue;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

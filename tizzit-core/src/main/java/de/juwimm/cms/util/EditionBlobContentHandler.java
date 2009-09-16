@@ -19,12 +19,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import de.juwimm.util.Base64;
 
 /**
  * 

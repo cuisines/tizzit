@@ -34,13 +34,13 @@ import org.apache.cocoon.environment.SourceResolver;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
-import de.juwimm.util.XercesHelper;
 
 /**
  * This action can extract a value from the content of a cms-page.<br/>

@@ -25,10 +25,10 @@ import org.apache.cocoon.selection.Selector;
 import org.apache.cocoon.webapps.authentication.components.DefaultAuthenticationManager;
 import org.apache.cocoon.webapps.authentication.user.UserState;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
 
-import de.juwimm.util.XercesHelper;
 
 /**
  * 

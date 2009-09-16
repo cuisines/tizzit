@@ -33,6 +33,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -47,7 +48,6 @@ import de.juwimm.cms.util.ContentErrorListener;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ViewComponentValue;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

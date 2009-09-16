@@ -30,6 +30,7 @@ import javax.swing.*;
 import javax.swing.border.MatteBorder;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,7 +45,6 @@ import de.juwimm.cms.content.panel.util.VisibilityCheckBox;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.DBCDao;
 import de.juwimm.cms.util.UIConstants;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: juwimm cms</p>

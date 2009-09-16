@@ -28,9 +28,9 @@ import javax.ejb.EJBException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.tizzit.util.Base64;
 
 import de.juwimm.cms.authorization.vo.UserValue;
-import de.juwimm.util.Base64;
 
 /**
  * @see de.juwimm.cms.authorization.model.UserHbm

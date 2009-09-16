@@ -21,6 +21,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.*;
@@ -29,7 +30,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import de.juwimm.cms.content.modules.AbstractModule;
 import de.juwimm.cms.content.modules.Module;
 import de.juwimm.cms.content.modules.ModuleFactory;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

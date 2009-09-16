@@ -24,10 +24,10 @@ import org.compass.core.CompassSession;
 import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.model.*;
 import de.juwimm.cms.search.res.html.HTMLParser;
-import de.juwimm.util.XercesHelper;
 
 /**
  * Helper for getting injected the Compass-Instances from Spring and offering getters for them

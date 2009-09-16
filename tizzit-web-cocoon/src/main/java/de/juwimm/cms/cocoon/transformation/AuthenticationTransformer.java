@@ -30,13 +30,13 @@ import org.apache.cocoon.transformation.ServiceableTransformer;
 import org.apache.cocoon.webapps.session.ContextManager;
 import org.apache.cocoon.webapps.session.context.SessionContext;
 import org.apache.log4j.Logger;
+import org.tizzit.util.Base64;
+import org.tizzit.util.xml.SAXHelper;
 import org.w3c.dom.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.juwimm.util.Base64;
-import de.juwimm.util.xml.SAXHelper;
 
 /**
  * This transformer fills the tag <code>authentication</code> in the content with information of the logged-in user.</br>

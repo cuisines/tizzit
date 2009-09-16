@@ -24,6 +24,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,7 +36,6 @@ import de.juwimm.cms.content.panel.PanOnlyButton;
 import de.juwimm.cms.content.panel.PanPicture;
 import de.juwimm.cms.content.panel.PanPictureCustomPreview;
 import de.juwimm.cms.util.Communication;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>

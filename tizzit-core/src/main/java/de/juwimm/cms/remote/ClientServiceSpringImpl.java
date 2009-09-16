@@ -27,6 +27,7 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.Comparer;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
@@ -71,7 +72,6 @@ import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.cms.vo.compound.ViewIdAndInfoTextValue;
 import de.juwimm.cms.vo.compound.ViewIdAndUnitIdValue;
-import de.juwimm.util.Comparer;
 
 /**
  * Facade for all communication with the CMS-client

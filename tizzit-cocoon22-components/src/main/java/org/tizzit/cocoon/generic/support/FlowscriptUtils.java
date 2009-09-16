@@ -16,10 +16,10 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import de.juwimm.util.XercesHelper;
 
 /**
  * This type allows easy creation of DOM documents providing the document's URL. 

@@ -23,13 +23,13 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.event.EditpaneFiredEvent;
 import de.juwimm.cms.content.panel.PanOnlyButton;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

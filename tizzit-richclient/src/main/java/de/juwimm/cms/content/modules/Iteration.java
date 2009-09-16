@@ -26,12 +26,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.content.panel.PanIteration;
-import de.juwimm.util.XercesHelper;
 
 /**
  * This is the Iteration-wrapper module.<br>

@@ -30,6 +30,8 @@ import javax.ejb.CreateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.tizzit.util.XercesHelper;
+import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -46,8 +48,6 @@ import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.*;
 import de.juwimm.cms.util.EditionBlobContentHandler;
 import de.juwimm.cms.vo.ShortLinkValue;
-import de.juwimm.util.XercesHelper;
-import de.juwimm.util.xml.XMLWriter;
 
 /**
  * @see de.juwimm.cms.remote.EditionServiceSpring

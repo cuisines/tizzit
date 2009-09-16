@@ -24,12 +24,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.ContentManager;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

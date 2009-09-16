@@ -21,11 +21,11 @@ import static de.juwimm.cms.common.Constants.*;
 import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.client.beans.Beans;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: ConQuest</p>

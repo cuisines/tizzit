@@ -32,6 +32,8 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
+import org.tizzit.util.xml.SAXHelper;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
@@ -42,8 +44,6 @@ import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
-import de.juwimm.util.XercesHelper;
-import de.juwimm.util.xml.SAXHelper;
 
 /**
  * Transformer parses input for the tag "unit" and fetches and appends unitpath, unitname and image-information</br>

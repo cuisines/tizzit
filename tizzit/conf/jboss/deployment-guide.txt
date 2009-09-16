@@ -13,31 +13,16 @@ does not use the run.bat/run.sh for sure.
 - put JDBC-lib in server/conquest/lib
 
 - check valid conquest.properties! note the jms config part for cluster true/false
-***************************************** J2EE 1.4 CLASS LOADING COMPATIBILITY *****************************************
-http://docs.jboss.org/jbossas/whatsnew40/html_single/
+******************************************************* COCOON *********************************************************
+If you want use Cocoon 2.2, just deploy the latest 'tizzit-web-cocoon22-xxx.war' and set the following parameter to 
+false in your Cocoon-Sitemap (e.g.: /tizzit-site-tizzit/web/sitemap.xmap)
+<map:transform type="cinclude">
+ <map:parameter name="parallel" value="false" />
+.....
+</map:transform>
 
-In JBoss AS 4.0.1, the default configuration is the same as the default configuration in JBoss AS 3.2. It starts all 
-J2EE services in JBoss's unified class loader. It has optimized performance, when the components are deployed in the 
-same JVM. But the deployed applications are less compartmentalized in this configuration. As a result, this
-configuration is not fully J2EE 1.4 compliant. To make it J2EE complaint, you need to change the configuration settings 
-as follows to enable the scoped class loading behavior and call by value JNDI lookup behavior.
+Don't forget to undeploy your Cocoon 2.1.9 Application (tizzit-web-cocoon-xxx.war) ;)
 
-First, edit the conf/jboss-service.xml file and set the NamingService CallByValue to true:
-
-<mbean code="org.jboss.naming.NamingService"
-       name="jboss:service=Naming">
-    <attribute name="CallByValue">true</attribute>
-</mbean>
-
-Second, edit the deploy/ear-deployer.xml file and set the Isolated and CallByValue attributes to true:
-<server>
-   <!-- EAR deployer, remove if you are not using ear deployments -->
-   <mbean code="org.jboss.deployment.EARDeployer"
-      name="jboss.j2ee:service=EARDeployer">
-      <attribute name="Isolated">true</attribute>
-      <attribute name="CallByValue">true</attribute>
-   </mbean>
-</server>
 ************************************************ Transaction Timeout ***************************************************
 Transaction Timeout is handled by applicationContext-cqbeans.xml, but the maximum value is depending on the transaction 
 managers settins. Lower settings are possible (and used), but for bigger imports and deployments 5 minutes might not be 

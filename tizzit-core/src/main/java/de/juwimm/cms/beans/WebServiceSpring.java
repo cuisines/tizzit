@@ -41,6 +41,8 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.tizzit.util.DateConverter;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,8 +66,6 @@ import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.vo.*;
-import de.juwimm.util.DateConverter;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.remote.WebServiceSpring

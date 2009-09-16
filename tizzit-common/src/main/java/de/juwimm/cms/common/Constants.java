@@ -18,7 +18,8 @@ package de.juwimm.cms.common;
 import java.io.File;
 import java.util.Locale;
 
-import de.juwimm.util.KeyOrderKeptHashMap;
+import org.tizzit.util.KeyOrderKeptHashMap;
+
 
 /**
  * <p>Title: ConQuest</p>

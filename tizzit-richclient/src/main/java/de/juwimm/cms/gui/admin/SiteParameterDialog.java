@@ -28,13 +28,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 
 import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.Parameter;
 import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
-import de.juwimm.util.XercesHelper;
 
 /**
  * 

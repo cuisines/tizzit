@@ -41,6 +41,7 @@ import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ContentHandler;
@@ -49,7 +50,6 @@ import org.xml.sax.SAXException;
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
 import de.juwimm.cms.cocoon.sax.SVGMarkContentHandler;
-import de.juwimm.util.XercesHelper;
 
 /**
  * 

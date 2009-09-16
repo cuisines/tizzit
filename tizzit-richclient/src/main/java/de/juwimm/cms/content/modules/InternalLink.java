@@ -24,6 +24,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.client.beans.Beans;
@@ -31,7 +32,6 @@ import de.juwimm.cms.content.frame.DlgModalModule;
 import de.juwimm.cms.content.panel.PanInternalLink;
 import de.juwimm.cms.content.panel.PanLinkButton;
 import de.juwimm.cms.util.Communication;
-import de.juwimm.util.XercesHelper;
 
 /**
  * Module for internal links (links to other pages inside this CMS).<br/>

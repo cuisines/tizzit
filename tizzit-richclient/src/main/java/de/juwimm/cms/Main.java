@@ -43,6 +43,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 
 import com.Ostermiller.util.Browser;
@@ -71,7 +72,6 @@ import de.juwimm.cms.http.ProxyHelper;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <b>ConQuest Enterprise Content Management</b><br/>

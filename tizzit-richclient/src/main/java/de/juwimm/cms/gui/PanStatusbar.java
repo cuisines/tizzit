@@ -29,6 +29,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.DateConverter;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
@@ -38,7 +39,6 @@ import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.MessageDeleter;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.TaskValue;
-import de.juwimm.util.DateConverter;
 
 /**
  * 

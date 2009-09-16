@@ -24,13 +24,13 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.FrmStickyPad;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

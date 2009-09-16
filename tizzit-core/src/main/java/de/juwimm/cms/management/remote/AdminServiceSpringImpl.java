@@ -24,6 +24,7 @@ import javax.naming.directory.*;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.HexConverter;
 
 import de.juwimm.cms.beans.foreign.support.MiniViewComponent;
 import de.juwimm.cms.beans.foreign.support.MiniViewComponentComparator;
@@ -33,7 +34,6 @@ import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.vo.SiteValue;
-import de.juwimm.util.HexConverter;
 
 /**
  * At present this is the only Service the AdminClient is using.

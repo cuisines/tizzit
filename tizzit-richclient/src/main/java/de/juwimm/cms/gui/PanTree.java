@@ -55,6 +55,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -99,7 +100,6 @@ import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.swing.DropDownHolder;
 import de.juwimm.swing.NoResizeScrollPane;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <b>ConQuest Enterprise Content Management</b><br/>

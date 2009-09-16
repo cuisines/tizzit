@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.DateConverter;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
@@ -39,7 +40,6 @@ import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.TaskValue;
-import de.juwimm.util.DateConverter;
 
 /**
  * <p>Title: juwimm cms</p>

@@ -22,10 +22,11 @@ package de.juwimm.cms.model;
 
 import javax.swing.ImageIcon;
 
+import org.tizzit.util.Base64;
+
 import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.PictureValue;
-import de.juwimm.util.Base64;
 
 /**
  * @see de.juwimm.cms.model.PictureHbm

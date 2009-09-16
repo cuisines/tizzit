@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
 import org.apache.xindice.client.xmldb.services.CollectionManager;
 import org.apache.xindice.client.xmldb.services.MetaService;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -32,7 +33,6 @@ import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XPathQueryService;
 
 import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
-import de.juwimm.util.XercesHelper;
 
 /**
  * Helperclass for performing operations on the Xindice XML Database.

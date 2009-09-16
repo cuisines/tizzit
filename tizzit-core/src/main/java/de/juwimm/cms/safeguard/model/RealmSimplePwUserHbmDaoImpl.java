@@ -25,11 +25,11 @@ import javax.ejb.CreateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 
 import de.juwimm.cms.model.SequenceHbmDao;
 import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm

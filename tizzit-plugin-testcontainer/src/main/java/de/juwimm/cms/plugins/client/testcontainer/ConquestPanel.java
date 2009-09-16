@@ -28,11 +28,11 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicBorders;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.*;
 
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.modules.Module;
-import de.juwimm.util.XercesHelper;
 
 public final class ConquestPanel extends JPanel {
 	

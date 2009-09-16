@@ -26,11 +26,11 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 
 import de.juwimm.cms.components.vo.PersonValue;
 import de.juwimm.cms.model.SequenceHbmDao;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.components.model.PersonHbm

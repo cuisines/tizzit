@@ -19,12 +19,12 @@ import java.io.BufferedInputStream;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.http.HttpClientWrapper;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: juwimm cms</p>

@@ -42,6 +42,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.tizzit.util.DateConverter;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 
 import de.juwimm.cms.authorization.model.UserHbm;
@@ -67,8 +69,6 @@ import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
-import de.juwimm.util.DateConverter;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.remote.ContentServiceSpring

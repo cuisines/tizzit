@@ -22,6 +22,8 @@ import java.util.Enumeration;
 
 import javax.swing.Icon;
 
+import org.tizzit.util.ArraySorter;
+import org.tizzit.util.Comparer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -33,8 +35,6 @@ import de.juwimm.cms.content.frame.helper.IsolatedAggregationHelper;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.UnitValue;
-import de.juwimm.util.ArraySorter;
-import de.juwimm.util.Comparer;
 
 /**
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik </a>
@@ -173,7 +173,7 @@ public class UnitNode extends ComponentNode {
 	 */
 	private static class PersonComparer implements Comparer {
 		
-		/** @see de.juwimm.util.Comparer#compare(java.lang.Object, java.lang.Object) */
+		/** @see org.tizzit.util.Comparer#compare(java.lang.Object, java.lang.Object) */
 		public int compare(Object objA, Object objB) {
 			PersonValue pda = (PersonValue) objA;
 			PersonValue pdb = (PersonValue) objB;

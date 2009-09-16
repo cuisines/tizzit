@@ -22,8 +22,9 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.tizzit.util.DateConverter;
+
 import de.juwimm.cms.vo.EditionValue;
-import de.juwimm.util.DateConverter;
 
 /**
  * <p>Title: </p>

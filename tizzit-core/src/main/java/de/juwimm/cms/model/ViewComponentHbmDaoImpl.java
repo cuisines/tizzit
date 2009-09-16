@@ -26,6 +26,7 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.DateConverter;
 
 import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants;
@@ -35,7 +36,6 @@ import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
-import de.juwimm.util.DateConverter;
 
 /**
  * @see de.juwimm.cms.model.ViewComponentHbm

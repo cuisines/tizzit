@@ -23,6 +23,7 @@ package de.juwimm.cms.safeguard.remote;
 import java.util.*;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.*;
 
 import de.juwimm.cms.authorization.model.UserHbm;
@@ -31,7 +32,6 @@ import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.*;
 import de.juwimm.cms.safeguard.realmlogin.*;
 import de.juwimm.cms.safeguard.vo.*;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.safeguard.remote.SafeguardServiceSpring

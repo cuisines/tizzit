@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.model.ContentHbm;
@@ -64,7 +65,6 @@ import de.juwimm.cms.search.vo.LinkDataValue;
 import de.juwimm.cms.search.vo.SearchResultValue;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.search.xmldb.XmlDb;
-import de.juwimm.util.XercesHelper;
 
 /**
  * 

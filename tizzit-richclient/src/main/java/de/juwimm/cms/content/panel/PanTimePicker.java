@@ -29,13 +29,13 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.JSpinner.DateEditor;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 import de.juwimm.cms.content.ContentManager;
-import de.juwimm.util.XercesHelper;
 
 /**
  * Panel for module for choosing a point in time in hours, minutes and seconds.

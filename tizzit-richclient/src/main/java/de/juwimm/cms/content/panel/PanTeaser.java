@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,7 +48,6 @@ import de.juwimm.cms.content.modules.Teaser.TeaserProperties;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.swing.*;
-import de.juwimm.util.XercesHelper;
 
 /**
  * The panel for displaying the teaser within the client.

@@ -28,6 +28,7 @@ import java.util.*;
 import javax.swing.*;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -41,7 +42,6 @@ import de.juwimm.cms.util.*;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.swing.CustomComboBoxModel;
 import de.juwimm.swing.DropDownHolder;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: ConQuest </p>

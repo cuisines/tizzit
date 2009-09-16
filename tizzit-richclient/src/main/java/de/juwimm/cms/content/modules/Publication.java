@@ -20,11 +20,11 @@ import java.util.Properties;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.frame.DlgModalModule;
 import de.juwimm.cms.content.panel.PanPublication;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

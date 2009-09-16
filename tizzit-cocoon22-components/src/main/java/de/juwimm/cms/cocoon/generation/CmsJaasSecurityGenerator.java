@@ -31,10 +31,10 @@ import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.cocoon.webapps.session.ContextManager;
 import org.apache.cocoon.xml.dom.DOMStreamer;
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: juwimm cms</p>

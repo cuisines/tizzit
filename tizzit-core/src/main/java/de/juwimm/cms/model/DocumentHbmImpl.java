@@ -25,9 +25,9 @@ import java.sql.SQLException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.tizzit.util.Base64;
 
 import de.juwimm.cms.vo.DocumentSlimValue;
-import de.juwimm.util.Base64;
 
 /**
  * @see de.juwimm.cms.model.DocumentHbm

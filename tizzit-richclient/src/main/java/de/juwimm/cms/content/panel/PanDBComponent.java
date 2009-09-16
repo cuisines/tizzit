@@ -31,6 +31,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.Messages;
@@ -49,7 +50,6 @@ import de.juwimm.cms.content.frame.tree.*;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.UnitValue;
-import de.juwimm.util.XercesHelper;
 
 /**
  * 

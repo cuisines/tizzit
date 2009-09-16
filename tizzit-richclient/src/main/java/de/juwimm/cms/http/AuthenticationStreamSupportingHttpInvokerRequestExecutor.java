@@ -38,11 +38,11 @@ import org.springframework.remoting.httpinvoker.HttpInvokerClientConfiguration;
 import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
+import org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerRequestExecutor;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.http.HttpClientWrapper;
 import de.juwimm.cms.util.UIConstants;
-import de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerRequestExecutor;
 
 /**
  * Adds BASIC authentication support to

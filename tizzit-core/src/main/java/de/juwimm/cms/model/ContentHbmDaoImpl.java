@@ -26,11 +26,12 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.vo.ContentValue;
-import de.juwimm.util.XercesHelper;
+
 
 /**
  * @see de.juwimm.cms.model.ContentHbm

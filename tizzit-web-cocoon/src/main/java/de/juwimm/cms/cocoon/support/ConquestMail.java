@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.mail.Mail;
 
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.vo.PictureValue;
-import de.juwimm.util.mail.Mail;
 
 /**
  * @author <a href="mailto:christiane.hausleiter@juwimm.com">Christiane Hausleiter</a>

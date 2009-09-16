@@ -24,9 +24,9 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.model.SequenceHbmDao;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.components.model.AddressHbm

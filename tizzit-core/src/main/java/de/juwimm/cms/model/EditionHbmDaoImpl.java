@@ -31,6 +31,7 @@ import javax.ejb.CreateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
@@ -40,7 +41,6 @@ import de.juwimm.cms.safeguard.model.RealmLdapHbm;
 import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
 import de.juwimm.cms.util.EditionSliceInputStream;
 import de.juwimm.cms.util.EditionSliceOutputStream;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.model.EditionHbm

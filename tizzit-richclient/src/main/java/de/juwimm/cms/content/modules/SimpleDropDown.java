@@ -25,12 +25,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.DlgModalModule;
 import de.juwimm.swing.DropDownHolder;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

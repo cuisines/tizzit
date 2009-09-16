@@ -18,10 +18,10 @@ package de.juwimm.cms.cocoon.sax;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.xml.SAXHelper;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 
-import de.juwimm.util.xml.SAXHelper;
 
 /**
  * 

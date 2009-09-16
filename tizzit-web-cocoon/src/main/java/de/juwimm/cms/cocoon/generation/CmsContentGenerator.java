@@ -44,6 +44,8 @@ import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
 import org.springframework.aop.target.CommonsPoolTargetSource;
+import org.tizzit.util.Base64;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.*;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -66,8 +68,6 @@ import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
-import de.juwimm.util.Base64;
-import de.juwimm.util.XercesHelper;
 
 /**
  * The ContentGenerator is the main interface between the core content management system and the Cocoon presentation layer.<br/>

@@ -28,6 +28,7 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,7 +49,6 @@ import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.swing.DropDownHolder;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

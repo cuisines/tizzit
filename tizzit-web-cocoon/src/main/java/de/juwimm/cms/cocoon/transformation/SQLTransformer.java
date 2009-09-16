@@ -34,12 +34,12 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.log4j.Logger;
+import org.tizzit.util.xml.SAXHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import de.juwimm.cms.cocoon.helper.ConfigurationHelper;
-import de.juwimm.util.xml.SAXHelper;
 
 /**
  * 

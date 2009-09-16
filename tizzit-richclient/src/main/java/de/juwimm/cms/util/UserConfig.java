@@ -18,12 +18,12 @@ package de.juwimm.cms.util;
 import static de.juwimm.cms.client.beans.Application.*;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.client.beans.Beans;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: ConQuest</p>

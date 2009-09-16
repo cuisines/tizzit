@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -37,7 +38,6 @@ import de.juwimm.cms.content.modules.Module;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.swing.NoResizeScrollPane;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: ConQuest</p>

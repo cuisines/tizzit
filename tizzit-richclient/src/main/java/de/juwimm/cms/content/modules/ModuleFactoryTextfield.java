@@ -19,9 +19,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 
-import de.juwimm.util.XercesHelper;
 
 
 /**

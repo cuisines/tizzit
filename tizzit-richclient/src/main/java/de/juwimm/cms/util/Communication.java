@@ -45,6 +45,9 @@ import org.springframework.security.SpringSecurityException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
+import org.tizzit.util.ArraySorter;
+import org.tizzit.util.Comparer;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -103,9 +106,6 @@ import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.cms.vo.compound.ViewIdAndInfoTextValue;
 import de.juwimm.cms.vo.compound.ViewIdAndUnitIdValue;
-import de.juwimm.util.ArraySorter;
-import de.juwimm.util.Comparer;
-import de.juwimm.util.XercesHelper;
 
 /**
  * Facade Class for communicating with the server.

@@ -22,10 +22,10 @@ package de.juwimm.cms.safeguard.model;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 
 import de.juwimm.cms.model.SequenceHbmDao;
-import de.juwimm.util.XercesHelper;
 
 /**
  * @see de.juwimm.cms.safeguard.model.RealmSimplePwHbm

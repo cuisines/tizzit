@@ -22,9 +22,9 @@ import java.io.FileInputStream;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.*;
 
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

@@ -22,12 +22,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.frame.DlgModalModule;
 import de.juwimm.cms.content.panel.PanExternalLink;
 import de.juwimm.cms.content.panel.PanLinkButton;
-import de.juwimm.util.XercesHelper;
 
 /**
  * Module for external links (links to pages outside this CMS).<br/>

@@ -25,6 +25,8 @@ import java.util.Properties;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.tizzit.util.DateConverter;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -32,8 +34,6 @@ import org.w3c.dom.Text;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.DlgModalModule;
 import de.juwimm.cms.content.panel.PanSimpleDate;
-import de.juwimm.util.DateConverter;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: </p>

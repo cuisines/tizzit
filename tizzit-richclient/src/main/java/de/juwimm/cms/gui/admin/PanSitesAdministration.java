@@ -53,6 +53,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -69,7 +70,6 @@ import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
-import de.juwimm.util.XercesHelper;
 
 /**
  * <p>Title: ConQuest</p>

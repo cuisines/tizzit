@@ -15,10 +15,10 @@
  */
 package de.juwimm.cms.util;
 
+import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.juwimm.util.XercesHelper;
 
 public class SmallSiteConfigReader {
 	public static final String CONF_NODE_DEFAULT = "//config/default/";
