@@ -197,6 +197,52 @@
         <artifactId>maven-install-plugin</artifactId>
         <version>2.3</version>
         <executions>
+          <!-- patched -->
+          <execution>
+            <id>patched-saxon</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/patched/resources/saxon-9.0.0.2b-patched.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon</artifactId>
+              <version>9.0.0.2b-patched</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+
+          <!-- thirdparty -->
+          <execution>
+            <id>thirdparty-saxon-xpath</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-xpath-9.0.0.2b.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-xpath</artifactId>
+              <version>9.0.0.2b</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>thirdparty-saxon-dom</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-dom-9.0.0.2b.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-dom</artifactId>
+              <version>9.0.0.2b</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+
           <!-- compiled from source -->
           <execution>
             <id>compiledFromSrc-cocoon-profiler-impl</id>
