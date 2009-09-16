@@ -20,7 +20,12 @@
  */
 package de.juwimm.cms.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -139,45 +144,6 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public ViewComponentValue getDao() throws UserException {
-		// ViewComponentValue val = new ViewComponentValue();
-		// val.setCreateDate(this.getCreateDate());
-		// val.setDeployCommand(this.getDeployCommand());
-		// val.setDisplayLinkName(this.getDisplayLinkName());
-		// val.setLastModifiedDate(this.getLastModifiedDate());
-		// val.setLeaf(this.isLeaf());
-		// val.setLinkDescription(this.getLinkDescription());
-		// val.setMetaData(this.getMetaData());
-		// val.setMetaDescription(this.getMetaDescription());
-		// val.setOnline(this.getOnline());
-		// val.setOnlineStart(this.getOnlineStart());
-		// val.setOnlineStop(this.getOnlineStop());
-		// val.setReference(this.getReference());
-		// val.setShowType(this.getShowType());
-		// val.setStatus(this.getStatus());
-		// val.setViewComponentId(this.getViewComponentId());
-		// val.setViewIndex(this.getViewIndex());
-		// val.setViewLevel(this.getViewLevel());
-		// val.setViewType(this.getViewType());
-		// val.setVisible(this.isVisible());
-		// val.setSearchIndexed(this.isSearchIndexed());
-		// try {
-		// val.setParentId(this.getParent().getViewComponentId());
-		// } catch (Exception ex) {
-		// }
-		// byte displaySettings = 0;
-		// try {
-		// // may result errors during update and development
-		// displaySettings = this.getDisplaySettings();
-		// } catch (Exception e) {
-		// }
-		// val.setDisplaySettings(displaySettings);
-		// try {
-		// ViewComponentHbm firstChild = this.getFirstChild();
-		// if (firstChild != null && firstChild.getViewComponentId() != null)
-		// val.setFirstChildId(firstChild.getViewComponentId());
-		// } catch (Exception e) {
-		// }
-		// return val;
 		return getDao(-1);
 	}
 
@@ -293,7 +259,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 			}
 		}
 		while ((temp = temp.getNextNode()) != null) {
-			if(log.isTraceEnabled()) log.trace("TRACE getAllChildrenOrderedAsDao: nextNode: " + temp.getViewComponentId());
+			if (log.isTraceEnabled()) log.trace("TRACE getAllChildrenOrderedAsDao: nextNode: " + temp.getViewComponentId());
 			if (currentDepth >= 0) {
 				try {
 					vec.addElement(temp.getDao(currentDepth));
@@ -356,8 +322,12 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public int getDepth() {
-		// @todo implement public int getDepth()
-		return 0;
+		int value = 0;
+		// always liked recursion
+		if (this.getParent() != null) {
+			value = 1 + this.getParent().getDepth();
+		}
+		return value;
 	}
 
 	/**
@@ -365,8 +335,12 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public boolean hasSiblingsWithLinkName(String testName) {
-		// @todo implement public boolean
-		// hasSiblingsWithLinkName(java.lang.String testName)
+		Collection siblings = this.getParent().getChildren();
+		Iterator it = siblings.iterator();
+		while (it.hasNext()) {
+			ViewComponentHbm vc = (ViewComponentHbm) it.next();
+			if (vc.getUrlLinkName().equalsIgnoreCase(this.getUrlLinkName()) && !this.equals(vc)) { return true; }
+		}
 		return false;
 	}
 
@@ -376,9 +350,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	@Override
 	public ViewComponentHbm getNavigationRoot() {
 		if (log.isDebugEnabled()) log.debug("getNavigationRoot start");
-		if ((getViewIndex() != null && "2".equals(getViewIndex())) || isRoot()) {
-			return this;
-		}
+		if ((getViewIndex() != null && "2".equals(getViewIndex())) || isRoot()) { return this; }
 		ViewComponentHbm parent = null;
 		parent = getParent();
 		if (parent != null && !parent.isRoot()) {
@@ -486,8 +458,8 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public boolean isIAmInTheFirstLevel() {
-		// @todo implement public boolean isIAmInTheFirstLevel()
-		return false;
+		// root would be 0
+		return (this.getDepth() == 1);
 	}
 
 	/**
