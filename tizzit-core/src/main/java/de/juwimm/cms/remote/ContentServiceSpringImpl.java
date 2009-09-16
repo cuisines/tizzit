@@ -970,10 +970,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
 			}
-
-			Blob b = Hibernate.createBlob(documentData);
+			File tmp = this.storeTempFile(documentData, documentName);
+			FileInputStream in = new FileInputStream(tmp);
+			Blob b = Hibernate.createBlob(in);
 			doc.setDocument(b);
-
 			return doc.getDocumentId();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -1232,6 +1232,21 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		IOUtils.closeQuietly(out);
 		IOUtils.closeQuietly(in);
 		return storedEditionFile.getAbsolutePath();
+	}
+
+	private File storeTempFile(InputStream in, String name) throws IOException {
+		String dir = getCqPropertiesBeanSpring().getDatadir() + File.separatorChar + "tmp";
+		File fDir = new File(dir);
+		fDir.mkdirs();
+		File storedEditionFile = File.createTempFile(name, "bak", fDir);
+		FileOutputStream out = new FileOutputStream(storedEditionFile);
+		IOUtils.copyLarge(in, out);
+		IOUtils.closeQuietly(out);
+		IOUtils.closeQuietly(in);
+		if (log.isDebugEnabled()) {
+			log.debug("Stored document file stream temporarily in: " + storedEditionFile.getAbsolutePath());
+		}
+		return storedEditionFile;
 	}
 
 	/**
