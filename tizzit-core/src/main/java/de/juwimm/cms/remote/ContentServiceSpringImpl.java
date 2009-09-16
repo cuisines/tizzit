@@ -240,6 +240,14 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		try {
 			String caller = AuthenticationHelper.getUserName();
 			ContentHbm content = super.getContentHbmDao().load(contentId);
+			ContentVersionHbm contentVersion = content.getLastContentVersion();
+			if(contentVersion == null){
+				//if does not have a content version
+				contentVersion =  ContentVersionHbm.Factory.newInstance();
+				contentVersion.setVersion("1");
+				contentVersion = getContentVersionHbmDao().create(contentVersion);
+				content.getContentVersions().add(contentVersion);
+			}
 			LockHbm lock = content.getLastContentVersion().getLock();
 			UserHbm user = super.getUserHbmDao().load(caller);
 			if (lock == null || force || lock.getOwner() == null) {
