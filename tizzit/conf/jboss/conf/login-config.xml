@@ -34,7 +34,7 @@ The outline of the application-policy is:
 			<login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule" flag="required">
 				<module-option name="dsJndiName">java:/ConQuestDS</module-option>
 				<module-option name="password-stacking">useFirstPass</module-option>
-				<module-option name="principalsQuery">SELECT passwd FROM usr WHERE user_id = ?</module-option>
+				<module-option name="principalsQuery">SELECT passwd FROM usr WHERE lower(user_id) = lower(?)</module-option>
 				<module-option name="rolesQuery">SELECT user_id, 'Roles' FROM usr WHERE user_id = '' AND user_id = ?</module-option>
 				<module-option name="hashAlgorithm">SHA-1</module-option>
 				<module-option name="hashEncoding">base64</module-option>
