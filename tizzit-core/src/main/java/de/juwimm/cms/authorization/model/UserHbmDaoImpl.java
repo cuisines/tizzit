@@ -50,7 +50,14 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 	
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-
+	
+	@Override
+	public UserHbm load(String userId) {
+		if(userId != null){
+			userId = userId.toLowerCase();
+		}
+		return super.load(userId);
+	}
 	@Override
 	public UserHbm create(UserHbm userHbm) {
 		if (userHbm.getUserId() == null) {
@@ -60,6 +67,8 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 			} catch (Exception e) {
 				log.error("Error creating primary key", e);
 			}
+		}else{
+			userHbm.setUserId(userHbm.getUserId().toLowerCase());
 		}
 		return super.create(userHbm); 
 	}
