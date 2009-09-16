@@ -27,7 +27,6 @@
 		</map:actions>
 		<map:matchers default="wildcard"/>
 		<map:selectors default="browser"/>
-		<map:pipelines default="caching"/>
 	</map:components>
 
 	<map:pipelines>
@@ -96,17 +95,17 @@
 				<map:serialize type="html"/>
 			</map:match>
 		</map:pipeline>
-		
+
 		<map:pipeline>
 			<map:match pattern="dynamic/**">
 				<map:mount check-reload="yes" src="dynamic/" uri-prefix="dynamic"/>
 			</map:match>
 
-		
+
 		<!-- read the rest-->
 			<map:match pattern="**">
 				<map:read src="{1}" />
 			</map:match>
-		</map:pipeline>		
+		</map:pipeline>
 	</map:pipelines>
 </map:sitemap>
