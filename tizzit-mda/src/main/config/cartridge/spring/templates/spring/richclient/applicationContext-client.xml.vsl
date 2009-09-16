@@ -3,7 +3,7 @@
 
 <beans>
     <!--
-        Modified for ConQuest to support  de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter.
+        Modified for ConQuest to support  org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter.
         All other available exports (hessian, rmi, burlap) has been removed.
         Some other errors regarding  <bean id="${serviceRemoteContext}RemoteAuthenticationManagerService" fixed.
     -->
@@ -44,7 +44,7 @@
     <!-- $service.name Remote Service Local Proxy with inner $service.name Remote Service invoker -->
     <bean id="$service.getBeanName(false)" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
-            <bean class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
+            <bean class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
                 <property name="serviceUrl"><value>$service.remoteUrl</value></property>
                 <property name="serviceInterface"><value>$service.fullyQualifiedName</value></property>
 #if($stringUtils.isNotBlank($clientHttpInvokerExecutor))
@@ -70,7 +70,7 @@
     <!-- $manageable.manageableServiceName Remote Service Local Proxy with inner $manageable.manageableServiceName Remote Service invoker -->
     <bean id="$manageable.manageableServiceName" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
-            <bean class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
+            <bean class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
                 <property name="serviceUrl"><value>$manageable.remoteUrl</value></property>
                 <property name="serviceInterface"><value>$manageable.fullyQualifiedManageableServiceName</value></property>
             </bean>
@@ -92,7 +92,7 @@
 #end
 #if($acegiServiceSecurity)
     <bean id="${serviceRemoteContext}RemoteAuthenticationManagerService"
-        class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
+        class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
         <property name="serviceUrl">
             <value>http://${${configPropertyPrefix}remoteServer}:${${configPropertyPrefix}remotePort}/${${configPropertyPrefix}remoteContext}/RemoteAuthenticationManagerService</value>
         </property>

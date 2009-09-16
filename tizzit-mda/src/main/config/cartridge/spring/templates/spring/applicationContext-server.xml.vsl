@@ -3,14 +3,14 @@
 
 <beans>
     <!--
-        Modified for ConQuest to support  de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter.
+        Modified for ConQuest to support  org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter.
         All other available exports (hessian, rmi, burlap) has been removed.
     -->
     <!-- ==================== Start of REMOTE SERVICE DEFINITIONS ===================== -->
 
 #foreach($service in $services)
     <!-- $service.name Remote Service exporter  -->
-    <bean name="/$service.name" class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter">
+    <bean name="/$service.name" class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter">
         <property name="service"><ref bean="$service.getBeanName(false)"/></property>
         <property name="serviceInterface"><value>$service.fullyQualifiedName</value></property>
     </bean>
@@ -18,7 +18,7 @@
 #end
 #foreach ($manageable in $manageables)
     <!-- $manageable.manageableServiceName Remote Service exporter  -->
-    <bean name="/remote$manageable.manageableServiceName" class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter">
+    <bean name="/remote$manageable.manageableServiceName" class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter">
         <property name="service"><ref bean="$manageable.manageableServiceName"/></property>
         <property name="serviceInterface"><value>$manageable.fullyQualifiedManageableServiceName</value></property>
     </bean>
@@ -28,7 +28,7 @@
 
 #if ($richClient && $acegiServiceSecurity)
     <!-- Authentication service for remote rich clients -->
-    <bean name="/RemoteAuthenticationManagerService" class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter">
+    <bean name="/RemoteAuthenticationManagerService" class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter">
         <property name="service">
             <bean class="org.springframework.security.providers.rcp.RemoteAuthenticationManagerImpl">
                 <property name="authenticationManager">
