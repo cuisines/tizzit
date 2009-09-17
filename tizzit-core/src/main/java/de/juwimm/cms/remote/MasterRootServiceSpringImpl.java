@@ -30,8 +30,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.juwimm.cms.authorization.model.UserHbmImpl;
 import de.juwimm.cms.authorization.vo.UserValue;
 import de.juwimm.cms.exceptions.UserException;
-import de.juwimm.cms.model.*;
-import de.juwimm.cms.vo.*;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.SequenceHbmDao;
+import de.juwimm.cms.model.ShortLinkHbm;
+import de.juwimm.cms.model.SiteGroupHbm;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.SiteHbmDao;
+import de.juwimm.cms.model.SiteHbmImpl;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.vo.HostValue;
+import de.juwimm.cms.vo.ShortLinkValue;
+import de.juwimm.cms.vo.SiteGroupValue;
+import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.UnitValue;
 
 /**
  * @see de.juwimm.cms.remote.MasterRootServiceSpring
@@ -43,7 +54,7 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	/**
 	 * @see de.juwimm.cms.remote.MasterRootServiceSpring#createSite(de.juwimm.cms.vo.SiteValue)
 	 */
@@ -69,8 +80,8 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 	 */
 	@Override
 	protected void handleDeleteSite(Integer siteId) throws Exception {
-		// TODO: are all dependent objects deleted recursively and implicitely?
-		super.getSiteHbmDao().remove(siteId);
+		getViewDocumentHbmDao().remove(getViewDocumentHbmDao().findAll(siteId));
+		getSiteHbmDao().remove(siteId);
 	}
 
 	/**
