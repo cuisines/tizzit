@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 
 import com.toedter.calendar.JCalendar;
 
+import de.juwimm.cms.gui.controls.CalendarChooser;
 import de.juwimm.cms.util.UIConstants;
 
 /**
@@ -61,7 +62,7 @@ public class DlgSimpleDateTime extends JDialog {
 	public DlgSimpleDateTime() {
 		super(UIConstants.getMainFrame(), true);
 		super.setTitle(rb.getString("frame.simpledate.title"));
-		this.cal = new JCalendar();
+		this.cal = new CalendarChooser();
 		try {
 			this.jbInit();
 			this.getRootPane().setDefaultButton(this.btnOk);

@@ -888,7 +888,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 								it = dlg.getSelectedPages().iterator();
 								while (it.hasNext()) {
 									ViewComponentValue value = (ViewComponentValue) it.next();
-									value.setUserLastModifiedDate(value.getLastModifiedDate());
+									value.setLastModifiedDate(System.currentTimeMillis());
 								}
 							}
 						} else {

@@ -96,7 +96,7 @@ public class ChangePageLastModifiedTableModel extends AbstractTableModel impleme
 			if (((Boolean) value[4]).booleanValue()) {
 				Date date = (Date) value[3];
 				ViewComponentValue vcValue = (ViewComponentValue) value[5];
-				vcValue.setLastModifiedDate(date.getTime());
+				vcValue.setUserLastModifiedDate(date.getTime());
 				result.add(vcValue);
 			}
 		}
