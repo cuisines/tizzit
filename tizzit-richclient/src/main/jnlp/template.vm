@@ -3,7 +3,7 @@
    <information>
       <title>Tizzit 3.0 Open Source</title>
       <vendor>Juwi MacMillan Group GmbH</vendor>
-      <homepage href="http://www.cqcms.org"> </homepage>
+      <homepage href="http://www.tizzit.org"> </homepage>
       <icon href="/cms/img/cms_64x64.gif"> </icon>
       <icon href="/cms/img/cms_450x300.gif" kind="splash"> </icon>
       <description>Contains the Client module</description>

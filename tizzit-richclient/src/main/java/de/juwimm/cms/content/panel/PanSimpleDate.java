@@ -20,13 +20,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 import org.apache.log4j.Logger;
 
+import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
+import com.toedter.calendar.JDayChooser;
 
 import de.juwimm.cms.Messages;
 
@@ -45,7 +49,7 @@ public class PanSimpleDate extends JPanel {
 	private Logger log = Logger.getLogger(PanSimpleDate.class);
 	private JPanel panMain = new JPanel();
 	private JLabel dateLabel = new JLabel();
-	private JDateChooser dateChooser = new JDateChooser();
+	private JDateChooser dateChooser = new DateChooser();
 
 	public PanSimpleDate() {
 		try {
@@ -59,7 +63,7 @@ public class PanSimpleDate extends JPanel {
 		this.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 
 		dateLabel.setText(Messages.getString("PanSimpleDate.dateButton"));
-		dateChooser.getJCalendar().getDayChooser().setDecorationBackgroundColor(new Color(92, 92, 92));		
+		
 		panMain.setLayout(new GridBagLayout());
 		this.add(panMain, null);
 		panMain.add(dateLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 5, 5), 0, 0));
@@ -156,4 +160,185 @@ public class PanSimpleDate extends JPanel {
 		this.dateChooser.setEnabled(enabled);
 	}
 
+}
+
+class DateChooser extends JDateChooser{
+	private static final long serialVersionUID = 3122411689996068892L;
+
+	DateChooser(){
+		super(new CalendarChooser(), null,null, null);
+	}
+}
+
+class CalendarChooser extends JCalendar{
+	private static final long serialVersionUID = -3814194514540073558L;
+	CalendarChooser(){
+		this(null, null, true, true);
+	}
+	public CalendarChooser(Date date, Locale locale, boolean monthSpinner, boolean weekOfYearVisible) {
+		super(date, locale, monthSpinner, weekOfYearVisible);
+		// needed for setFont() etc.
+		remove(dayChooser);		
+		dayChooser = new DayChooser(weekOfYearVisible);
+		dayChooser.addPropertyChangeListener(this);
+		add(dayChooser, BorderLayout.CENTER);
+		monthChooser.setDayChooser(dayChooser);
+		yearChooser.setDayChooser(dayChooser);
+	}
+	
+}
+
+class DayChooser extends JDayChooser{
+	private static final long serialVersionUID = 8762184809200937023L;
+	public DayChooser(boolean weekOfYearVisible){
+		setName("JDayChooser");
+		setBackground(Color.blue);
+		this.weekOfYearVisible = weekOfYearVisible;
+		locale = Locale.getDefault();
+		days = new JButton[49];
+		selectedDay = null;
+		calendar = Calendar.getInstance(locale);
+		today = (Calendar) calendar.clone();
+
+		setLayout(new BorderLayout());
+
+		dayPanel = new JPanel();
+		dayPanel.setLayout(new GridLayout(7, 7));
+
+		for (int y = 0; y < 7; y++) {
+			for (int x = 0; x < 7; x++) {
+				int index = x + (7 * y);
+				if (y == 0) {			
+					days[index] = new PlainButton(PlainButtonType.Day);
+				} else {
+					days[index] = new PlainButton(PlainButtonType.SelectionDay);
+					days[index].addActionListener(this);
+					days[index].addKeyListener(this);
+					days[index].addFocusListener(this);
+				}
+
+				days[index].setMargin(new Insets(2, 2, 2, 2));							
+				dayPanel.add(days[index]);
+			}
+		}
+
+		weekPanel = new JPanel();
+		weekPanel.setLayout(new GridLayout(7, 1));
+		weeks = new JButton[7];
+
+		for (int i = 0; i < 7; i++) {
+			if(i ==0 ){
+				weeks[i] = new PlainButton(PlainButtonType.Day);
+			}else{
+				weeks[i] = new PlainButton(PlainButtonType.Week);
+			}
+			
+			weeks[i].setMargin(new Insets(2, 2, 2, 2));
+			weeks[i].setFocusPainted(false);
+			weeks[i].setForeground(new Color(100, 100, 100));
+
+			if (i != 0) {
+				weeks[i].setText("0" + (i + 1));
+			}
+
+			weekPanel.add(weeks[i]);
+		}
+
+		Calendar tmpCalendar = Calendar.getInstance();
+		tmpCalendar.set(1, 0, 1, 1, 1);
+		defaultMinSelectableDate = tmpCalendar.getTime();
+		minSelectableDate = defaultMinSelectableDate;
+		tmpCalendar.set(9999, 0, 1, 1, 1);
+		defaultMaxSelectableDate = tmpCalendar.getTime();
+		maxSelectableDate = defaultMaxSelectableDate;
+
+		init();
+
+		setDay(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+		add(dayPanel, BorderLayout.CENTER);
+
+		if (weekOfYearVisible) {
+			add(weekPanel, BorderLayout.WEST);
+		}
+		initialized = true;
+		updateUI();
+
+		this.weekPanel.setOpaque(true);
+		this.selectedColor = Color.white;
+		this.dayPanel.setBackground(new Color(187,187,187));
+		this.decorationBackgroundColor = new Color(92, 92, 92);
+		
+	}
+	
+	@Override
+	public void setDayBordersVisible(boolean dayBordersVisible) {
+	
+	}
+	
+	public void setFont(Font font) {
+		if (days != null) {
+			for (int i = 0; i < 49; i++) {
+				days[i].setFont(font);
+			}
+		}
+		Font newItalicButtonFont=new Font(font.getName(),Font.ITALIC,font.getSize());
+		if (weeks != null) {
+			for (int i = 0; i < 7; i++) {				  
+				weeks[i].setFont(newItalicButtonFont);
+			}
+		}
+	}
+	
+	enum PlainButtonType {
+		SelectionDay,Day,Week
+	}
+	
+	class PlainButton extends JButton{
+		private static final long serialVersionUID = -7433645992591669725L;
+
+		PlainButton(PlainButtonType type){			
+			super();
+			this.setBorderPainted(false);
+			switch(type){
+				case SelectionDay:
+					this.ui = new PlainButtonUI(new Color(184,184,184),Color.white);
+					break;
+				case Day:
+					this.ui = new PlainButtonUI(Color.white,null);
+					break;
+				case Week:
+					this.setForeground(new Color(110,110,110));
+					this.ui = new PlainButtonUI(new Color(219,219,219),null);					
+			}
+			
+		}		
+	}
+	
+	class PlainButtonUI extends BasicButtonUI{
+		Color selectedColor = null;
+		Color noSelectionColor = null;
+		
+		PlainButtonUI(Color noSelectionColor,Color selectedColor){
+			this.selectedColor=selectedColor;
+			this.noSelectionColor=noSelectionColor;
+		}
+		@Override
+		public void paint(Graphics g, JComponent c) {
+			if (selectedColor != null && (selectedDay.equals(c) || ((JButton)c).getModel().isRollover())) {
+				c.setBackground(selectedColor);
+			}else{
+				c.setBackground(noSelectionColor);
+			}
+			super.paint(g, c);
+		}
+		@Override
+		protected void paintButtonPressed(Graphics g, AbstractButton b) {
+			if (selectedColor != null){
+				b.setBackground(selectedColor);
+			}else{
+				b.setBackground(noSelectionColor);
+			}
+			super.paintButtonPressed(g, b);
+		}		
+	}	
 }
