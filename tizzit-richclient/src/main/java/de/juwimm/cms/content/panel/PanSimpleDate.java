@@ -33,6 +33,7 @@ import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JDayChooser;
 
 import de.juwimm.cms.Messages;
+import de.juwimm.cms.util.UIConstants;
 
 /**
  * <p>Title: </p>
@@ -167,6 +168,7 @@ class DateChooser extends JDateChooser{
 
 	DateChooser(){
 		super(new CalendarChooser(), null,null, null);
+		this.calendarButton.setIcon(UIConstants.ICON_CALENDAR);
 	}
 }
 
