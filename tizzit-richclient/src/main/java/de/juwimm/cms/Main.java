@@ -23,7 +23,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -390,6 +389,7 @@ public class Main extends JFrame implements ActionListener {
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_LOGOFF));
 				return;
 			} catch (NullPointerException npe) {
+				panTool.setTreeToEmpty();
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.SiteIsEmpty"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 			setCenterPanel(panTool);
