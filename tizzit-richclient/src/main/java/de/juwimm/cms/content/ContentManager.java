@@ -91,8 +91,7 @@ public final class ContentManager {
 		this.comm = comm;
 	}
 
-	/**
-	 * @todo TODO Replace the moduledcfname.substring(0, 3).equals("de.")
+	/**	 
 	 * @param contentValue
 	 * @param scrollPane
 	 * @param viewComponentValue
@@ -121,7 +120,7 @@ public final class ContentManager {
 					while (results.hasNext()) {
 						Element el = (Element) results.next();
 						String moduleDcfName = el.getAttribute("dcfname");
-						if (moduleDcfName != null && !moduleDcfName.equals("") && !moduleDcfName.substring(0, 3).equals("de.")) {
+						if (moduleDcfName != null && !moduleDcfName.equals("") && !moduleDcfName.startsWith("de.")) {
 							if (log.isDebugEnabled()) log.debug("In Content: moduleDcfName " + moduleDcfName);
 							if (!htModuleDcfNameDcfElement.containsKey(moduleDcfName)) htModuleDcfNameDcfElement.put(moduleDcfName, el);
 						}
