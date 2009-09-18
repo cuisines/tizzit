@@ -1790,4 +1790,12 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
 		return getContentServiceSpring().getPictureIdForUnitAndName(unitId, name);
 	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleIsUserInUnit(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	protected boolean handleIsUserInUnit(String userId, Integer unitId) throws Exception {
+		return getUserServiceSpring().isUserInUnit(userId, unitId);
+	}
 }

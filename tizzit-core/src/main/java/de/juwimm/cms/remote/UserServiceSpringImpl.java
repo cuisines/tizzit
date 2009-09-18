@@ -892,7 +892,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 				}
 			}
 		}
-		if(log.isDebugEnabled()) log.debug("User " + userMe.getUserId() + " has right: " + hasRights + " for changing " + userGiven.getUserId());
+		if (log.isDebugEnabled()) log.debug("User " + userMe.getUserId() + " has right: " + hasRights + " for changing " + userGiven.getUserId());
 		return hasRights;
 	}
 
@@ -1295,6 +1295,14 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		TaskHbm tvHbm = getTaskHbmDao().load(taskId);
 		if (tvHbm != null) { return tvHbm.getTaskValue(); }
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.UserServiceSpringBase#handleIsUserInUnit(java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	protected Boolean handleIsUserInUnit(String userId, Integer unitId) throws Exception {
+		return getUserHbmDao().load(userId).isInUnit(unitId);
 	}
 
 }

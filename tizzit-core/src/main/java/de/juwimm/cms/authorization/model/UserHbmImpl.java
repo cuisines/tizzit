@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.tizzit.util.Base64;
 
 import de.juwimm.cms.authorization.vo.UserValue;
+import de.juwimm.cms.model.UnitHbm;
 
 /**
  * @see de.juwimm.cms.authorization.model.UserHbm
@@ -51,7 +52,7 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 		unit.getUsers().add(this);
 		getUnits().add(unit);
 	}
-	
+
 	/**
 	 * @see de.juwimm.cms.authorization.model.UserHbm#dropUnit(de.juwimm.cms.model.UnitHbm)
 	 */
@@ -157,5 +158,16 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 			log.error("encryption failed", exe);
 		}
 		return passwd;
+	}
+
+	@Override
+	public boolean isInUnit(Integer unitId) {
+		Collection units = getUnits();
+		Iterator it = units.iterator();
+		while (it.hasNext()) {
+			int uId = ((UnitHbm) it.next()).getUnitId();
+			if (uId == unitId) { return true; }
+		}
+		return false;
 	}
 }
