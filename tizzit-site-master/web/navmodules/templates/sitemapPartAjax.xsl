@@ -27,7 +27,7 @@
 					<a>
 						<xsl:attribute name="href">javascript:showNoShow('<xsl:value-of select="@id"
 								/>','<xsl:value-of select="$language"/>')</xsl:attribute>
-						<img src="/httpd/img/sitemap_plus.gif" border="0" alt="Unterpunkte">
+						<img src="/httpd/img/sitemap/sitemap_plus.gif" border="0" alt="Unterpunkte">
 							<xsl:attribute name="name">image_<xsl:value-of select="@id"
 							/></xsl:attribute>
 						</img>

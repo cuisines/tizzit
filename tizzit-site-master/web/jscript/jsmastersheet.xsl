@@ -1006,8 +1006,8 @@ function getTopPosition (e,depth){
 function showNoShow(layerId){
  x = document.getElementById('sitemap'+layerId).style.display;
  picName = "image_"+layerId;
- plus = new Image(); plus.src = "/httpd/img/sitemap_plus.gif";
- down = new Image(); down.src = "/httpd/img/sitemap_down.gif";
+ plus = new Image(); plus.src = "/httpd/img/sitemap/sitemap_plus.gif";
+ down = new Image(); down.src = "/httpd/img/sitemap/sitemap_down.gif";
  if (x =='none'){
          if (document.getElementById('sitemap'+layerId).hasChildNodes() == false) {
            reloadSitemap(layerId);
@@ -1062,8 +1062,8 @@ function reloadNavresource(layerId,language){
  function showNoShow(layerId,language){
  x = document.getElementById('sitemap'+layerId).style.display;
  picName = "image_"+layerId;
- plus = new Image(); plus.src = "/httpd/img/sitemap_plus.gif";
- down = new Image(); down.src = "/httpd/img/sitemap_down.gif";
+ plus = new Image(); plus.src = "/httpd/img/sitemap/sitemap_plus.gif";
+ down = new Image(); down.src = "/httpd/img/sitemap/sitemap_down.gif";
  if (x =='none'){
  if (document.getElementById('sitemap'+layerId).hasChildNodes() == false) {
  reloadSitemap(layerId,language);
@@ -1466,11 +1466,11 @@ function lastpic() {
             imageName = 'image_' + id;
             if (document.getElementById(divId).style.display == "none") {
                 document.getElementById(divId).style.display="block";
-                document.images[imageName].src = "/httpd/img/sitemap_down.gif";
+                document.images[imageName].src = "/httpd/img/sitemap/sitemap_down.gif";
                 document.images[imageName].alt = "open";
             } else {
                 document.getElementById(divId).style.display="none";
-                document.images[imageName].src= "/httpd/img/sitemap_plus.gif";
+                document.images[imageName].src= "/httpd/img/sitemap/sitemap_plus.gif";
                 document.images[imageName].alt="closed";
             }
         }
