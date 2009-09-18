@@ -15,9 +15,13 @@
  */
 package de.juwimm.cms.content.frame;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -27,7 +31,20 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -56,43 +73,43 @@ import de.juwimm.cms.vo.PictureSlimstValue;
  */
 public class DlgPictureBrowser extends JDialog {
 	private static Logger log = Logger.getLogger(DlgPictureBrowser.class);
-	private ResourceBundle rb = Constants.rb;
-	private EventListenerList listenerList = new EventListenerList();
-	private JPanel panBottom = new JPanel();
-	private JButton btnDelete = new JButton();
-	private JButton btnOk = new JButton();
-	private JButton btnCancel = new JButton();
-	private JScrollPane spMain = new JScrollPane();
-	private JPanel panPictureButtons = new JPanel();
-	private JPanel panPictures = new JPanel();
-	private JProgressBar progressBar = new JProgressBar();
-	private JPanel panLeftBottomButton = new JPanel();
-	private JPanel panRightBottomButton = new JPanel();
+	private final ResourceBundle rb = Constants.rb;
+	private final EventListenerList listenerList = new EventListenerList();
+	private final JPanel panBottom = new JPanel();
+	private final JButton btnDelete = new JButton();
+	private final JButton btnOk = new JButton();
+	private final JButton btnCancel = new JButton();
+	private final JScrollPane spMain = new JScrollPane();
+	private final JPanel panPictureButtons = new JPanel();
+	private final JPanel panPictures = new JPanel();
+	private final JProgressBar progressBar = new JProgressBar();
+	private final JPanel panLeftBottomButton = new JPanel();
+	private final JPanel panRightBottomButton = new JPanel();
 	private ButtonGroup bgrp = new ButtonGroup();
 
-	private int intActUnit;
-	private int intRootUnit;
+	private final int intActUnit;
+	private final int intRootUnit;
 	private int anzahlItems;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JComboBox cboRegion = new JComboBox();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JComboBox cboRegion = new JComboBox();
 
-	private JTable tblPictures = new JTable();
+	private final JTable tblPictures = new JTable();
 	private PictureTableModel tblPicturesModel = null;
 	private TableSorter tblPictureSorter = null;
 	private PanViewSelect panViewSelect = null;
 	private JToggleButton btnListView = null;
 	private JToggleButton btnSymbolView = null;
-	private SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
+	private final SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
 	private Integer selectedPictureId = null;
-	
+
 	private Thread loadThumbsRunnerThread = null;
 
 	/**
 	 * 
 	 */
 	public final class CboModel {
-		private String strView;
-		private int intRegionId;
+		private final String strView;
+		private final int intRegionId;
 
 		public CboModel(String view, int regionid) {
 			this.strView = view;
@@ -107,6 +124,7 @@ public class DlgPictureBrowser extends JDialog {
 			return this.intRegionId;
 		}
 
+		@Override
 		public String toString() {
 			return this.strView;
 		}
@@ -120,20 +138,24 @@ public class DlgPictureBrowser extends JDialog {
 		try {
 			fitinrow = width / 100;
 		} catch (ArithmeticException e) {
+			log.error("caught ArithmeticException ", e);
 		}
 		try {
 			dblSmall = ((double) anzahlItems / (double) fitinrow) - (anzahlItems / fitinrow);
 		} catch (ArithmeticException e) {
+			log.error("caught ArithmeticException ", e);
 		}
 		if (dblSmall < 1 && dblSmall > 0) {
 			try {
 				height = ((anzahlItems / fitinrow) + 1) * 100;
 			} catch (ArithmeticException e) {
+				log.error("caught ArithmeticException ", e);
 			}
 		} else {
 			try {
 				height = (anzahlItems / fitinrow) * 100;
 			} catch (ArithmeticException e) {
+				log.error("caught ArithmeticException ", e);
 			}
 		}
 		panPictureButtons.setPreferredSize(new Dimension(width, height));
@@ -162,6 +184,7 @@ public class DlgPictureBrowser extends JDialog {
 		tblPictures.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		this.addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				resizeScrollpane();
 			}
@@ -245,7 +268,7 @@ public class DlgPictureBrowser extends JDialog {
 				tblPicturesModel.addRows(pics);
 				{
 					// clean-up
-					Component[] toggBtns =  panPictureButtons.getComponents();
+					Component[] toggBtns = panPictureButtons.getComponents();
 					for (int i = (toggBtns.length) - 1; i >= 0; i--) {
 						if (toggBtns[i] instanceof AbstractButton) {
 							ActionListener[] listeners = ((AbstractButton) toggBtns[i]).getActionListeners();
@@ -318,7 +341,7 @@ public class DlgPictureBrowser extends JDialog {
 			}
 		}
 	}
-	
+
 	public void setPictureId(int pictureId) {
 		this.selectedPictureId = Integer.valueOf(pictureId);
 	}
@@ -335,7 +358,7 @@ public class DlgPictureBrowser extends JDialog {
 		selectedPictureId = new Integer(bgrp.getSelection().getActionCommand());
 		selectPicture(selectedPictureId);
 	}
-	
+
 	void btnCancelActionPerformed(ActionEvent e) {
 		this.setVisible(false);
 	}
@@ -348,7 +371,7 @@ public class DlgPictureBrowser extends JDialog {
 		t.start();
 		try {
 			if (intRootUnit == intSelItem) {
-				if (comm.isUserInRole(UserRights.SITE_ROOT)) {
+				if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInUnit(intRootUnit)) {
 					this.btnDelete.setVisible(true);
 				} else {
 					this.btnDelete.setVisible(false);
@@ -357,6 +380,7 @@ public class DlgPictureBrowser extends JDialog {
 				this.btnDelete.setVisible(true);
 			}
 		} catch (Exception ex) {
+			log.error("Error in 'isUserInRole' ", ex);
 		}
 	}
 
@@ -368,6 +392,7 @@ public class DlgPictureBrowser extends JDialog {
 			this.fireSaveActionListener(ae);
 			this.setVisible(false);
 		} catch (NullPointerException ex) {
+			log.error("Catched NullPointerException ", ex);
 		}
 	}
 
@@ -375,9 +400,7 @@ public class DlgPictureBrowser extends JDialog {
 		try {
 			String acc = bgrp.getSelection().getActionCommand();
 			if (log.isDebugEnabled()) log.debug(acc);
-			int ret = JOptionPane.showConfirmDialog(this, Messages.getString("DlgPictureBrowser.reallyDeleteThisPicture", acc),
-					Messages.getString("DlgPictureBrowser.deletePicture"), JOptionPane.WARNING_MESSAGE,
-					JOptionPane.YES_NO_OPTION);
+			int ret = JOptionPane.showConfirmDialog(this, Messages.getString("DlgPictureBrowser.reallyDeleteThisPicture", acc), Messages.getString("DlgPictureBrowser.deletePicture"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
 			if (ret == JOptionPane.YES_OPTION) {
 				comm.removePicture(new Integer(acc).intValue());
 				Thread t = new Thread(new LoadPictureListRunner(((CboModel) this.cboRegion.getSelectedItem()).getRegionId()));
@@ -385,20 +408,21 @@ public class DlgPictureBrowser extends JDialog {
 				t.start();
 			}
 		} catch (Exception ex) {
+			log.error("caught error ", ex);
 		}
 	}
 
 	private JPanel getViewSelectPan() {
-        if (panViewSelect == null) {
-            panViewSelect = new PanViewSelect();
-            panViewSelect.setPreferredSize(new Dimension(26, spMain.getHeight()));
-            btnListView = new JToggleButton(UIConstants.BTN_LIST_VIEW, true);
-            btnListView.setToolTipText(rb.getString("PanDocument.view.list"));
-            btnListView.setPreferredSize(new Dimension(UIConstants.BTN_LIST_VIEW.getIconHeight() + 10, UIConstants.BTN_LIST_VIEW.getIconWidth() + 10));
-            btnSymbolView = new JToggleButton(UIConstants.BTN_SYMBOL_VIEW, false);
-            btnSymbolView.setToolTipText(rb.getString("PanDocument.view.symbol"));
-            btnSymbolView.setPreferredSize(new Dimension(UIConstants.BTN_SYMBOL_VIEW.getIconHeight() + 10, UIConstants.BTN_SYMBOL_VIEW.getIconWidth() + 10));
-            btnSymbolView.addActionListener(new ActionListener() {
+		if (panViewSelect == null) {
+			panViewSelect = new PanViewSelect();
+			panViewSelect.setPreferredSize(new Dimension(26, spMain.getHeight()));
+			btnListView = new JToggleButton(UIConstants.BTN_LIST_VIEW, true);
+			btnListView.setToolTipText(rb.getString("PanDocument.view.list"));
+			btnListView.setPreferredSize(new Dimension(UIConstants.BTN_LIST_VIEW.getIconHeight() + 10, UIConstants.BTN_LIST_VIEW.getIconWidth() + 10));
+			btnSymbolView = new JToggleButton(UIConstants.BTN_SYMBOL_VIEW, false);
+			btnSymbolView.setToolTipText(rb.getString("PanDocument.view.symbol"));
+			btnSymbolView.setPreferredSize(new Dimension(UIConstants.BTN_SYMBOL_VIEW.getIconHeight() + 10, UIConstants.BTN_SYMBOL_VIEW.getIconWidth() + 10));
+			btnSymbolView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Component current = spMain.getViewport().getView();
 					if (current != null) {
@@ -409,8 +433,8 @@ public class DlgPictureBrowser extends JDialog {
 					if (loadThumbsRunnerThread.isAlive()) progressBar.setVisible(true);
 					resizeScrollpane();
 				}
-            });
-            btnListView.addActionListener(new ActionListener() {
+			});
+			btnListView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Component current = spMain.getViewport().getView();
 					if (current != null) {
@@ -419,12 +443,12 @@ public class DlgPictureBrowser extends JDialog {
 					progressBar.setVisible(false);
 					spMain.getViewport().add(tblPictures, null);
 				}
-            });
-            panViewSelect.addButton(btnListView);
-            panViewSelect.addButton(btnSymbolView);
-        }
-        return panViewSelect;
-    }
+			});
+			panViewSelect.addButton(btnListView);
+			panViewSelect.addButton(btnSymbolView);
+		}
+		return panViewSelect;
+	}
 
 	private class PictureListSelectionListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
@@ -442,5 +466,5 @@ public class DlgPictureBrowser extends JDialog {
 			}
 		}
 	}
-	
+
 }

@@ -424,13 +424,7 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public boolean isUserInUnit(int unitId) {
-		// changed to "early load" for performance issue
-		UnitValue[] uv = user.getUnits();
-		if (uv == null) { return false; }
-		for (int i = 0; i < uv.length; i++) {
-			if (uv[i].getUnitId().intValue() == unitId) { return true; }
-		}
-		return false;
+		return getClientService().isUserInUnit(getUser().getUserName(), unitId);
 	}
 
 	public DbHelper getDbHelper() {
