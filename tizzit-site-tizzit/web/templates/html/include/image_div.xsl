@@ -139,7 +139,7 @@
     </xsl:template>
     
     <xsl:template match="image" mode="newimage">
-        <img style="border:0px;">
+        <img style="border:0px;" align="left">
             <xsl:attribute name="src">
                 <xsl:text>/img/ejbimage</xsl:text>
                 <xsl:choose>

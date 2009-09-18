@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<source xmlns:cinclude="http://apache.org/cocoon/include/1.0">
+    <head/>
+	<all>
+		<content>
+			<textfield name="textbefore" label="Text vor der Faq Liste"/>
+			<simpletextfield label="Kategorie" name="category"/>				    
+            <iteration descriptionDcfName="question" name="faq" >
+		        <simpletextfield label="Frage" name="question"/>
+		        <textfield label="Antwort" name="answer"/>
+            </iteration>   
+		</content>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser rechts"/>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
+		<web20/>
+		<t_footer/>
+	</all>
+</source>

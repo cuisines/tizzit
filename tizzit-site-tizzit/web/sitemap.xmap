@@ -1097,7 +1097,10 @@
 			<!--dynamic JS-->
 			<map:match pattern="jscript/*.js">
 				<map:generate type="file" src="{global:parentMandator}jscript/{1}.xml"/>
-				<map:transform src="{global:parentMandator}jscript/jssheet.xsl"/>
+				<map:transform src="{global:parentMandator}jscript/jssheet.xsl">
+					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
+					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				</map:transform>
 				<map:serialize type="js"/>
 			</map:match>
 			<!-- pipeline for debugging -->

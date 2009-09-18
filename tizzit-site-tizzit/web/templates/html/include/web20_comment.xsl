@@ -3,9 +3,6 @@
     xmlns:ctmpl="http://www.conquest-cms.net/template"
     xmlns:web20="http://web20.conquest-cms.net/1.0">
 
-    <!--<xsl:include href="../variables.xsl"/>
-    <xsl:include href="../../../../../juwimm-web-cms/web/templates/variables.xsl"/>
--->
     <xsl:variable name="comment" select="source/all/web20/comment"/>
     
     <!-- COMMENT -->

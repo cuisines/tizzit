@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<textfield name="content" height="300" label="Content über den Downloads"/>
+		<iteration name="downloadlist" dcfname="newslist" label="Liste der Downloads" maxcount="999" descriptionDcfname="downloadname">
+			<simpletextfield name="downloadname" label="Dateiname" mandatory="true"/>
+			<externalLink name="downloadURL" label="DownloadURL" mandatory="true"/>
+			<simpletextfield name="downloadVersion" label="Version"/>	
+			<simpleDate name="downloadUpload" label="Upload Datum"/>
+			<textfield name="text" label="Beschreibung" height="200"/>							
+		</iteration>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser rechts"/>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
+		<web20/>
+		<t_footer/>
+	</all>
+</source>

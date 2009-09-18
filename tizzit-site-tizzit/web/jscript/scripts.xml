@@ -8,4 +8,7 @@
 	<fastsearch/>
 	<toggle/>
 	<search/>
+	<ajax/>
+	<ajaxSitemap/>
+	<search3.0/>
 </js>

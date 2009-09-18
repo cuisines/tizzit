@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <source>
 	<head/>
 	<all>
@@ -9,7 +9,7 @@
 				<simpletextfield name="element" label="Elementbezeichung"/>
 				<simpletextfield name="label" label="Label des Formelements"/>
 				<requiredChoose/>
-				<simpletextfield name="validate" label="Nachricht bei nicht oder falsch ausgefülltem Feld"/>
+				<simpletextfield name="validate" label="Nachricht bei nicht oder falsch ausgefÃ¼lltem Feld"/>
 				<form-element-list/>
 				<textfield name="text" label="Text vor diesem Item" height="200"/>
 			</iteration>

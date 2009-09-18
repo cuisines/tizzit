@@ -25,7 +25,6 @@
 	<xsl:template match="styles">
 		
 		<!-- Globale Matcher -->
-		
 		* {
 			padding: 0;
 			margin: 0;
@@ -37,18 +36,7 @@
 			font-family: Arial;
 			font-size: 12px;
 		}
-		
-		a {
-			color: #193140;
-			text-decoration:none;
-		}
-		
-		ul {
-			padding-left:15px;
-		}
-		
 		<!-- Clear Hack to Remove Floating -->
-		
 		.clear {
 			width: 0px;
 			height: 0px;
@@ -58,9 +46,7 @@
 			line-height: 0px;
 			clear: both;
 		}
-		
 		<!-- info box layouts -->
-		
 		.box-green {
 			padding: 7px 20px;
 			margin: 0px 0px 10px 0px;
@@ -91,17 +77,36 @@
 			border-width: 1px 0px;
 			color: #AA1124;
 		}
-		
 		<!-- Custom CSS below -->
-		
 		h1 {
 			font-size:24px;
 			padding-bottom:20px;
+			font-family:Trebuchet MS, Arial;
 		}
 		h2 {
 			font-size:18px;
 			color:#254559;
 			padding-bottom:4px;
+			font-family:Trebuchet MS, Arial;
+		}
+		a {
+			color: #193140;
+			text-decoration:none;
+		}
+		ul {
+			padding-left:15px;
+		}
+		p {
+			margin-bottom:5px;
+		}
+		img {
+			border:none;
+		}
+		hr {
+			margin:20px 0;
+			border: 0px;
+			background-image:url('/httpd/img/hr_bg.gif');
+			background-repeat: repeat-x;
 		}
 		#layout {
 			width:1024px;
@@ -216,10 +221,19 @@
 			height:9px;
 			line-height:0px;
 		}
+		#leftmenue_headline {
+			background-image:url('/httpd/img/navi/leftnavi_seperator.gif');
+			background-repeat:no-repeat;
+			background-position:0 bottom;
+			padding:0 0 7px 25px;
+			font-size:14px;
+			font-weight:bold;
+			font-family:Trebuchet MS, Arial;
+		}
 		#leftmenue_middle {
 			background-image:url('/httpd/img/navi/leftnavi_middle.gif');
 			background-repeat:repeat-y;
-			padding:20px 13px;
+			padding:10px 13px 10px 3px;
 		}
 		#leftmenue_bottom {
 			background-image:url('/httpd/img/navi/leftnavi_bottom.gif');
@@ -245,6 +259,7 @@
 		.content {
 			line-height:18px;
 			font-size:13px;
+			font-family:Tahoma;
 		}
 		.secondlevel, #search_area, #search_button, #search_container, .copyright,
 		.firstlevel2 .firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
@@ -318,16 +333,16 @@
 			background-repeat:no-repeat;
 			background-position:0 bottom;
 			display:block;
-			padding:3px 0 7px 17px;
+			padding:3px 10px 7px 35px;
 		}
 		.leftmenue .firstlink a:hover, .leftmenue .firstlink .clicked a {
 			font-weight:bold;
 		}
 		.leftmenue .thirdlinks a {
-			padding:3px 0 3px 32px;
+			padding:3px 10px 3px 48px;
 			background-image:url('/httpd/img/navi/leftnavi_bg.gif');
 			background-repeat:no-repeat;
-			background-position:17px 8px;
+			background-position:36px 8px;
 			font-weight:normal;
 		}
 		#right .teaseraggregation {

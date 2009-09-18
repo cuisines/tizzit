@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ctmpl="http://www.conquest-cms.net/template">
   
 	<xsl:include href="variables.xsl"/>
-      
+       
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/line.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/db-components.xsl"/>
@@ -11,6 +11,7 @@
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/minipage.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format_xhtml.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/standard.xsl"/>
+	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/date.lib.xsl"/>	
 	 
 	<xsl:include href="include/t_footer.xsl"/>
 	<xsl:include href="include/teaser.xsl"/>
@@ -156,13 +157,14 @@
 	<xsl:template name="search">
 		<div id="search_area">    
 			<div id="search_button"> 
-				<input type="image" id="search_arrow" src="/httpd/img/search_btn.gif" onclick="javascript:fastSearch('searchresult/page.html');"/>                                 
+				<input type="image" id="search_arrow" src="/httpd/img/search_btn.gif" onclick="javascript:fastSearch2('searchresult/page.html');"/>                                 
 			</div>	
 			<div id="search_container"> 
-				<form action="javascript:fastSearch('searchresult/page.html')" onsubmit="javascript:fastSearch('searchresult/page.html')" method="post" name="fastsearch" id="fastsearch">
-					<input class="hidden" type="hidden" name="conquest-searchquery-is-query" value="true"/>
+				<form name="fastsearch" method="get" onsubmit="javascript:fastSearch2('searchresult/page.html');" action="javascript:fastSearch2('searchresult/page.html');">
 					<input class="hidden" type="hidden" name="format" value="long"/>
-					<input id="searchValue" type="text" name="query" value="Search" class="searchinput" onclick="if (this.value=='Search')value=''" onblur="if (this.value=='')value='Search'"/>
+					<input type="hidden" name="cqSearchPageSize" value="10"/>
+					<input type="hidden" name="cqSearchPageNumber" value="0"/>
+					<input id="searchValue" type="text" name="cqWebSearchQuery" value="Search" class="searchinput" onclick="if (this.value=='Search')value=''" onblur="if (this.value=='')value='Search'"/>
 				</form>
 			</div>  
 		</div>

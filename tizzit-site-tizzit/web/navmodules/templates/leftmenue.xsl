@@ -13,6 +13,11 @@
             <div id="leftmenue">
                 <div id="leftmenue_top">&#160;</div>
                 <div id="leftmenue_middle">
+                    <xsl:if test="statusInfo!=''">
+                        <div id="leftmenue_headline">
+                            <xsl:value-of select="statusInfo"/>
+                        </div>
+                    </xsl:if>
                     <xsl:apply-templates select="viewcomponent[showType=2 or showType=0]" mode="first"/>
                 </div>
                 <div id="leftmenue_bottom">&#160;</div>

@@ -3,8 +3,6 @@
     xmlns:ctmpl="http://www.conquest-cms.net/template"
     xmlns:web20="http://web20.conquest-cms.net/1.0">
 
-    <!--<xsl:include href="../../../../../juwimm-web-cms/web/templates/variables.xsl"/>
-  -->
     <xsl:variable name="rating" select="source/all/web20/rating"/>
     
     <xsl:variable name="userRating" select="//page/userRating"/>
