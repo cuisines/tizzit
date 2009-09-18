@@ -618,6 +618,10 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		comm.setViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
 	}
 
+	public void setTreeToEmpty() {
+		PanTree.tree.setModel(new CmsTreeModel(new TreeNode(rb.getString("exception.SiteTreeIsEmpty"))));
+	}
+
 	private void loadView4ViewDocument(ViewDocumentValue viewDocument) {
 		ViewComponentValue viewComponent = null;
 		try {
