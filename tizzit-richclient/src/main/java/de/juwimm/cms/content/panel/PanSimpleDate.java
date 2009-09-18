@@ -144,7 +144,7 @@ public class PanSimpleDate extends JPanel {
 	 * @param txt
 	 */
 	public String getDateTextField() {
-		return new SimpleDateFormat("dd.MM.yyyy").format(dateChooser.getCalendar());
+		return new SimpleDateFormat("dd.MM.yyyy").format(dateChooser.getCalendar().getTime());
 	}	
 
 	/**
