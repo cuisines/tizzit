@@ -115,7 +115,7 @@ public class FrmVersion extends JFrame {
 		
 		this.getContentPane().add(lblVersionInfo, null);
 		this.getContentPane().add(jTextField1, null);
-		closeButton=new JButton(UIConstants.BTN_CLOSE);
+		closeButton=new JButton(UIConstants.ICON_CLOSE_VERSION);
 		closeButton.setHorizontalAlignment(SwingConstants.CENTER);
 		closeButton.setBounds(new Rectangle(430, 3, 16, 16));
 		closeButton.setFocusable(false);

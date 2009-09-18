@@ -68,6 +68,7 @@ public final class UIConstants {
 	public static ImageIcon ICON_TALKTIME;
 	public static ImageIcon ICON_ADDRESS;
 	public static ImageIcon ICON_CALENDAR;
+	public static ImageIcon ICON_CLOSE_VERSION;	
 
 	public static ImageIcon ICON_USER;
 	public static ImageIcon ICON_MANDANT;
@@ -313,7 +314,9 @@ public final class UIConstants {
 		ICON_TALKTIME = load("16x16/sprechzeit.gif");
 		ICON_PERSON = load("16x16/person.gif");
 		ICON_PERSON_LINK = load("modules/databaseComponents/person_link.png");
-		ICON_CALENDAR = load("16x16/calendar.png"); 
+		ICON_CALENDAR = load("16x16/calendar.png");
+		ICON_CLOSE_VERSION = load("16x16/close_version.gif");
+		
 
 		CONTENT_OFFLINE = load("16x16/content_offline.gif");
 		CONTENT_EDITED = load("tree/content/c_edited.png");
