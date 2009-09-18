@@ -820,11 +820,17 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.sitesAdministration.deleteTheLastSiteMessage"), rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 		} else {
 			SiteValue vo = (SiteValue) tblSiteModel.getValueAt(tblSite.getSelectedRow(), 2);
-			int i = JOptionPane.showConfirmDialog(this, Messages.getString("panel.sitesAdministration.deleteSiteMessage", vo.getName()), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (i == JOptionPane.YES_OPTION) {
-				Thread t = new Thread(new DeleteRunnable(vo));
-				t.setPriority(Thread.NORM_PRIORITY);
-				t.start();
+			int currentSiteId = comm.getSiteId();
+			if (currentSiteId != vo.getSiteId().intValue()) {
+				int i = JOptionPane.showConfirmDialog(this, Messages.getString("panel.sitesAdministration.deleteSiteMessage", vo.getName()), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (i == JOptionPane.YES_OPTION) {
+					Thread t = new Thread(new DeleteRunnable(vo));
+					t.setPriority(Thread.NORM_PRIORITY);
+					t.start();
+				}
+			} else {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.sitesAdministration.deleteActiveSiteMessage"), rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
+
 			}
 		}
 	}
