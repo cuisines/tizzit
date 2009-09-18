@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.content.modules;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,7 +25,12 @@ import java.net.URLClassLoader;
 import java.security.AllPermission;
 import java.security.CodeSource;
 import java.security.PermissionCollection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -41,7 +46,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.Messages;
-import de.juwimm.cms.client.beans.Application;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.content.panel.ContentBorder;
@@ -87,7 +91,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		}
 		return module;
 	}
-	
+
 	public Module loadPlugins(String classname, List<String> additionalJarFiles) {
 		Module module = null;
 		Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
@@ -235,7 +239,9 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 
 			//Load initial config if there is no current content
 			Node ndeInitialContent = XercesHelper.findNode(dcfElement, "./dcfInitial");
-			htInitialContent.put(module.getName(), ndeInitialContent);
+			if (ndeInitialContent != null) {
+				htInitialContent.put(module.getName(), ndeInitialContent);
+			}
 			if (contentdata == null) {
 				contentdata = ndeInitialContent;
 			}
@@ -380,8 +386,8 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 	private URLClassLoader getURLClassLoader(URL[] url) {
 		ClassLoader previousClassLoader = Thread.currentThread().getContextClassLoader();
 		URLClassLoader cl = new PluginURLClassLoader(url, previousClassLoader);
-		Thread.currentThread().setContextClassLoader(cl);	
-		
+		Thread.currentThread().setContextClassLoader(cl);
+
 		return cl;
 	}
 
@@ -392,11 +398,11 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 	 * @version $Id$
 	 */
 	public class PluginURLClassLoader extends URLClassLoader {
-		
+
 		public PluginURLClassLoader(URL[] url, ClassLoader parent) {
 			super(url, parent);
 		}
-		
+
 		protected PermissionCollection getPermissions(CodeSource codesource) {
 			PermissionCollection perms = super.getPermissions(codesource);
 			perms.add(new AllPermission());
