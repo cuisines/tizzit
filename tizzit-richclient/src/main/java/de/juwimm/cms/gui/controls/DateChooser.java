@@ -12,7 +12,7 @@ public class DateChooser extends JDateChooser{
 	private static final long serialVersionUID = 3122411689996068892L;
 
 	public DateChooser(){
-		super(new CalendarChooser(), null,null, null);
+		super(new CalendarChooser(), null,"dd/MM/yyyy", null);
 		this.calendarButton.setIcon(UIConstants.ICON_CALENDAR);
 	}
 }
