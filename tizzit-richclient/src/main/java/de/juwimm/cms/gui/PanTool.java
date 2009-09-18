@@ -131,6 +131,10 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 
 	}
 
+	public void setTreeToEmpty() {
+		panTree.setTreeToEmpty();
+	}
+
 	private LoadableViewComponentPanel oldRight = null;
 
 	private void updateRightComponent(Component right) {
