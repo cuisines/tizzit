@@ -15,15 +15,26 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Hashtable;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 
@@ -54,57 +65,57 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 	private static final String NORMAL_TYPE = "normal";
 	private static final String FLOW_TYPE = "flow";
 	private PersonNode personNode = null;
-	
-	private DlgModalPicture frame = new DlgModalPicture(new ActionListener() {
+
+	private final DlgModalPicture frame = new DlgModalPicture(new ActionListener() {
 		public void actionPerformed(ActionEvent ae) {
 			txtImage.setText(frame.getRootPanel().getPictureId().toString());
 		}
 	});
-	private JLabel lblCaptionVisibility = new JLabel(UIConstants.DBC_VISIBILTY);
-	private JLabel lblCaptionDB = new JLabel(rb.getString("PanDBC.component"));
-	private JLabel lblFirstName = new JLabel();
-	private JLabel lblLastName = new JLabel();
-	private JLabel lblOrderPosition = new JLabel();
-	private JLabel lblSalutation = new JLabel();
-	private JLabel lblImage = new JLabel();
-	private JLabel lblJobTitle = new JLabel();
-	private JLabel lblCountryJob = new JLabel();
-	private JLabel lblMedicalAssociation = new JLabel();
-	private JLabel lblLinkMedicalAssociation = new JLabel();
-	private JLabel lpbPosition = new JLabel();
-	private JTextField txtFirstName = new JTextField();
-	private JTextField txtLastName = new JTextField();
-	private PanSimpleDate txtBirthDay = new PanSimpleDate();
-	private JTextField txtImage = new JTextField();
-	private JComboBox cbxSalutation = new JComboBox();
-	private JTextField txtJobTitle = new JTextField();
-	private JTextField txtPosition = new JTextField();
-	private JTextField txtLinkMedicalAssociation = new JTextField();
-	private JTextField txtMedicalAssociation = new JTextField();
-	private JTextField txtCountryJob = new JTextField();
-	private JSlider sliderOrderPosition = new JSlider();
-	private VisibilityCheckBox vcbSalutation = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbTitle = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbFirstName = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbLastName = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbBirthDay = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbJobTitle = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbPosition = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbCountryJob = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbMedicalAssociation = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbLinkMedicalAssociation = new VisibilityCheckBox(getCheckActionListener());
-	private VisibilityCheckBox vcbImage = new VisibilityCheckBox(getCheckActionListener());
-	private JTextField txtTitle = new JTextField();
-	
-	private JLabel lblTitle = new JLabel();
-	private JLabel lblViewType = new JLabel();
-	private JComboBox cbxViewType = new JComboBox();
-	private JButton cmdImage = new JButton();
-	private JLabel lblImportant = new JLabel();
-	private JLabel lblLessImportant = new JLabel();
-	private JLabel lblBirthday = new JLabel();
-	private JButton btnDeleteImage = new JButton();
-	
+	private final JLabel lblCaptionVisibility = new JLabel(UIConstants.DBC_VISIBILTY);
+	private final JLabel lblCaptionDB = new JLabel(rb.getString("PanDBC.component"));
+	private final JLabel lblFirstName = new JLabel();
+	private final JLabel lblLastName = new JLabel();
+	private final JLabel lblOrderPosition = new JLabel();
+	private final JLabel lblSalutation = new JLabel();
+	private final JLabel lblImage = new JLabel();
+	private final JLabel lblJobTitle = new JLabel();
+	private final JLabel lblCountryJob = new JLabel();
+	private final JLabel lblMedicalAssociation = new JLabel();
+	private final JLabel lblLinkMedicalAssociation = new JLabel();
+	private final JLabel lpbPosition = new JLabel();
+	private final JTextField txtFirstName = new JTextField();
+	private final JTextField txtLastName = new JTextField();
+	private final PanSimpleDate txtBirthDay = new PanSimpleDate();
+	private final JTextField txtImage = new JTextField();
+	private final JComboBox cbxSalutation = new JComboBox();
+	private final JTextField txtJobTitle = new JTextField();
+	private final JTextField txtPosition = new JTextField();
+	private final JTextField txtLinkMedicalAssociation = new JTextField();
+	private final JTextField txtMedicalAssociation = new JTextField();
+	private final JTextField txtCountryJob = new JTextField();
+	private final JSlider sliderOrderPosition = new JSlider();
+	private final VisibilityCheckBox vcbSalutation = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbTitle = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbFirstName = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbLastName = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbBirthDay = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbJobTitle = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbPosition = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbCountryJob = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbMedicalAssociation = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbLinkMedicalAssociation = new VisibilityCheckBox(getCheckActionListener());
+	private final VisibilityCheckBox vcbImage = new VisibilityCheckBox(getCheckActionListener());
+	private final JTextField txtTitle = new JTextField();
+
+	private final JLabel lblTitle = new JLabel();
+	private final JLabel lblViewType = new JLabel();
+	private final JComboBox cbxViewType = new JComboBox();
+	private final JButton cmdImage = new JButton();
+	private final JLabel lblImportant = new JLabel();
+	private final JLabel lblLessImportant = new JLabel();
+	private final JLabel lblBirthday = new JLabel();
+	private final JButton btnDeleteImage = new JButton();
+
 	/**
 	 * The default constructor initializes the instance.
 	 */
@@ -144,6 +155,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 			});
 			this.txtJobTitle.getDocument().addDocumentListener(getChangedDocumentListener());
 			this.txtPosition.getDocument().addDocumentListener(getChangedDocumentListener());
+			this.txtCountryJob.getDocument().addDocumentListener(getChangedDocumentListener());
 			this.txtLinkMedicalAssociation.getDocument().addDocumentListener(getChangedDocumentListener());
 			this.txtMedicalAssociation.getDocument().addDocumentListener(getChangedDocumentListener());
 			this.sliderOrderPosition.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -184,7 +196,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 			JPanel horizontalRuler = new JPanel();
 			horizontalRuler.setBorder(new MatteBorder(0, 0, 1, 0, Color.BLACK));
 			add(horizontalRuler, new GridBagConstraints(0, 1, 5, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 0));
-			
+
 			add(this.lblViewType, new GridBagConstraints(1, 2, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 3, 0), 0, 0));
 			add(this.cbxViewType, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 20, 3));
 
@@ -195,50 +207,50 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 			add(this.vcbTitle, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblTitle, new GridBagConstraints(1, 6, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtTitle, new GridBagConstraints(1, 7, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbLastName, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblLastName, new GridBagConstraints(1, 8, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtLastName, new GridBagConstraints(1, 9, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbFirstName, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblFirstName, new GridBagConstraints(1, 10, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtFirstName, new GridBagConstraints(1, 11, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbBirthDay, new GridBagConstraints(0, 12, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblBirthday, new GridBagConstraints(1, 12, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtBirthDay, new GridBagConstraints(1, 13, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
-			
+
 			add(this.vcbPosition, new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lpbPosition, new GridBagConstraints(1, 14, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtPosition, new GridBagConstraints(1, 15, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbJobTitle, new GridBagConstraints(0, 16, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblJobTitle, new GridBagConstraints(1, 16, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtJobTitle, new GridBagConstraints(1, 17, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbCountryJob, new GridBagConstraints(0, 18, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblCountryJob, new GridBagConstraints(1, 18, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtCountryJob, new GridBagConstraints(1, 19, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbMedicalAssociation, new GridBagConstraints(0, 20, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblMedicalAssociation, new GridBagConstraints(1, 20, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtMedicalAssociation, new GridBagConstraints(1, 21, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbLinkMedicalAssociation, new GridBagConstraints(0, 22, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblLinkMedicalAssociation, new GridBagConstraints(1, 22, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtLinkMedicalAssociation, new GridBagConstraints(1, 23, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 25), 0, 4));
-			
+
 			add(this.vcbImage, new GridBagConstraints(0, 24, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblImage, new GridBagConstraints(1, 24, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtImage, new GridBagConstraints(1, 25, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 20, 4));
 			add(this.cmdImage, new GridBagConstraints(2, 25, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
 			add(this.btnDeleteImage, new GridBagConstraints(3, 25, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 0, 0));
-			
+
 			add(this.lblOrderPosition, new GridBagConstraints(1, 26, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 3, 0), 0, 0));
 			add(this.sliderOrderPosition, new GridBagConstraints(1, 27, 4, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 25), 0, 0));
 			add(this.lblImportant, new GridBagConstraints(1, 28, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 10, 0), 0, 0));
 			add(this.lblLessImportant, new GridBagConstraints(2, 28, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 10, 25), 0, 0));
-			
+
 			this.sliderOrderPosition.setSnapToTicks(true);
 			this.sliderOrderPosition.setPaintTrack(true);
 			this.sliderOrderPosition.setMinimum(1);
@@ -247,7 +259,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 			this.sliderOrderPosition.setMinorTickSpacing(1);
 			this.sliderOrderPosition.setPaintTicks(true);
 			this.sliderOrderPosition.setPaintLabels(true);
-			
+
 			this.cbxViewType.addItem(Messages.getString("PanDBCPerson.viewType.list"));
 			this.cbxViewType.addItem(Messages.getString("PanDBCPerson.viewType.normal"));
 			this.cbxViewType.addItem(Messages.getString("PanDBCPerson.viewType.flow"));
@@ -258,8 +270,8 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 		}
 	}
 
-
 	/** @see de.juwimm.cms.content.panel.AbstractTreePanel#updateCheckHash() */
+	@Override
 	public void updateCheckHash() {
 		Hashtable<String, Integer> ht = new Hashtable<String, Integer>();
 		ht.put("birthDay", this.vcbBirthDay.isSelected() ? new Integer(1) : new Integer(0));
@@ -277,6 +289,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 	}
 
 	/** @see de.juwimm.cms.content.panel.AbstractTreePanel#setCheckHash(java.util.Hashtable) */
+	@Override
 	public void setCheckHash(Hashtable ht) {
 		super.setCheckHash(ht);
 		this.vcbBirthDay.setSelected(getCheckValueForName("birthDay"));
@@ -299,6 +312,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 	}
 
 	/** @see de.juwimm.cms.content.panel.AbstractTreePanel#setFieldsEditable(boolean) */
+	@Override
 	public void setFieldsEditable(boolean editable) {
 		cbxSalutation.setEnabled(editable);
 		txtFirstName.setEditable(editable);
@@ -348,12 +362,16 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 	 */
 	public String getViewType() {
 		switch (this.cbxViewType.getSelectedIndex()) {
-			case 0: return LIST_TYPE;
-			case 1: return NORMAL_TYPE;
-			case 2: return FLOW_TYPE;
-			default: return NORMAL_TYPE;
+			case 0:
+				return LIST_TYPE;
+			case 1:
+				return NORMAL_TYPE;
+			case 2:
+				return FLOW_TYPE;
+			default:
+				return NORMAL_TYPE;
 		}
-//		return ((String) this.cbxViewType.getSelectedItem());
+		//		return ((String) this.cbxViewType.getSelectedItem());
 	}
 
 	/**
@@ -419,11 +437,11 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 		this.personNode.setClicks(getCheckHash());
 		PersonValue personValue = this.personNode.getPersonValue();
 		boolean changed = false;
-		
+
 		String content = (String) this.cbxSalutation.getSelectedItem();
 		if (!personValue.getSalutation().equals(content)) {
 			changed = true;
-			personValue.setSalutation(content);	
+			personValue.setSalutation(content);
 		}
 		content = this.txtTitle.getText();
 		if (content == null || content.trim().equals("")) {
@@ -510,7 +528,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 			}
 		} else {
 			intValue = Integer.parseInt(content);
-			if (personValue.getImageId() != intValue) {
+			if (personValue.getImageId() == null || personValue.getImageId() != intValue) {
 				changed = true;
 				personValue.setImageId(intValue);
 			}
@@ -553,15 +571,13 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 			}
 		}
 		// ******************************************************************************
-		
+
 		if (changed) {
 			Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 			try {
 				comm.updatePerson(personValue);
 			} catch (Exception exe) {
-				JOptionPane.showMessageDialog(this.getParent().getParent().getParent(), Messages.getString("PanDBCPerson.errorSaving") + exe.getMessage(),
-						Messages.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this.getParent().getParent().getParent(), Messages.getString("PanDBCPerson.errorSaving") + exe.getMessage(), Messages.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				log.error(Messages.getString("PanDBCPerson.errorSaving") + personValue.getLastname(), exe);
 			}
 		}
@@ -573,9 +589,7 @@ public class PanDBCPerson extends AbstractTreePanel implements DBCDao {
 		if (this.txtPosition.getText().length() > 100) {
 			errorMessageBuilder.append(rb.getString("PanDBCPerson.error.job.length"));
 		}
-		if (errorMessageBuilder.length() == 0) {
-			return null;
-		}
+		if (errorMessageBuilder.length() == 0) { return null; }
 		return errorMessageBuilder.toString();
 	}
 

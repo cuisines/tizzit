@@ -15,14 +15,39 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Hashtable;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeExpansionEvent;
@@ -36,6 +61,7 @@ import org.w3c.dom.Node;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
+import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.components.vo.AddressValue;
 import de.juwimm.cms.components.vo.DepartmentValue;
 import de.juwimm.cms.components.vo.PersonValue;
@@ -46,7 +72,15 @@ import de.juwimm.cms.content.frame.DlgDBCPersonSearch;
 import de.juwimm.cms.content.frame.DlgDBCUnitSearch;
 import de.juwimm.cms.content.frame.DlgModalModule;
 import de.juwimm.cms.content.frame.helper.IsolatedAggregationHelper;
-import de.juwimm.cms.content.frame.tree.*;
+import de.juwimm.cms.content.frame.tree.AddressNode;
+import de.juwimm.cms.content.frame.tree.CheckNode;
+import de.juwimm.cms.content.frame.tree.CheckRenderer;
+import de.juwimm.cms.content.frame.tree.ComponentNode;
+import de.juwimm.cms.content.frame.tree.ComponentsTreeModel;
+import de.juwimm.cms.content.frame.tree.DepartmentNode;
+import de.juwimm.cms.content.frame.tree.PersonNode;
+import de.juwimm.cms.content.frame.tree.TalkTimeNode;
+import de.juwimm.cms.content.frame.tree.UnitNode;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.UnitValue;
@@ -61,23 +95,23 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 	private static final String ACTION_SEARCH_UNIT = "searchunit";
 	private static final String ACTION_SEARCH_PERSON = "searchperson";
 	private static final String ACTION_ADD_POPUP = "addpopup";
-	private static final String ACTION_ADD_PERSON = "addperson"; 
+	private static final String ACTION_ADD_PERSON = "addperson";
 	private static final String ACTION_ADD_TALKTIME = "addtalktime";
 	private static final String ACTION_ADD_ADDRESS = "addaddress";
 
 	private static Logger log = Logger.getLogger(PanDBComponent.class);
 
 	private IsolatedAggregationHelper aggHelper = null;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private Thread treeClick = null;
-	private JPanel panToolbar = new JPanel();
+	private final JPanel panToolbar = new JPanel();
 	//	private JToolBar tbGeneral = new JToolBar();
-	private JButton cmdSearchPopup = new JButton();
-	private JButton cmdSave = new JButton();
-	private JToolBar tbActions = new JToolBar();
-	private JButton cmdDelete = new JButton();
-	private JLabel lblGeneral = new JLabel();
-	private JLabel lblSpecificOptions = new JLabel();
+	private final JButton cmdSearchPopup = new JButton();
+	private final JButton cmdSave = new JButton();
+	private final JToolBar tbActions = new JToolBar();
+	private final JButton cmdDelete = new JButton();
+	private final JLabel lblGeneral = new JLabel();
+	private final JLabel lblSpecificOptions = new JLabel();
 
 	private boolean isTreeEditable = true;
 
@@ -96,20 +130,20 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 	private ComponentsTreeModel modelTree;
 	private JTree mtree;
 
-	private JSplitPane jSplitPane = new JSplitPane();
-	private JPanel leftPanel = new JPanel();
-	private JScrollPane scrollpanelMTree = new JScrollPane();
-	private JComboBox comboBox = new JComboBox();
-	private JPanel rightPanel = new JPanel();
-	private JScrollPane scrollpanelComponent = new JScrollPane();
-	private JPopupMenu popupSearch = new JPopupMenu();
-	private JMenuItem cmdSearchUnit = new JMenuItem(rb.getString("content.modules.dbc.search4Unit"));
-	private JMenuItem cmdSearchPerson = new JMenuItem(rb.getString("content.modules.dbc.search4Person"));
-	private JButton cmdAddPopup = new JButton();
-	private JPopupMenu popupAdd = new JPopupMenu(); 
-	private JMenuItem cmdAddPerson = new JMenuItem(rb.getString("content.modules.dbc.addPerson"));
-	private JMenuItem cmdAddTalktime = new JMenuItem(rb.getString("content.modules.dbc.addTalktime"));
-	private JMenuItem cmdAddAddress = new JMenuItem(rb.getString("content.modules.dbc.addAddress"));
+	private final JSplitPane jSplitPane = new JSplitPane();
+	private final JPanel leftPanel = new JPanel();
+	private final JScrollPane scrollpanelMTree = new JScrollPane();
+	private final JComboBox comboBox = new JComboBox();
+	private final JPanel rightPanel = new JPanel();
+	private final JScrollPane scrollpanelComponent = new JScrollPane();
+	private final JPopupMenu popupSearch = new JPopupMenu();
+	private final JMenuItem cmdSearchUnit = new JMenuItem(rb.getString("content.modules.dbc.search4Unit"));
+	private final JMenuItem cmdSearchPerson = new JMenuItem(rb.getString("content.modules.dbc.search4Person"));
+	private final JButton cmdAddPopup = new JButton();
+	private final JPopupMenu popupAdd = new JPopupMenu();
+	private final JMenuItem cmdAddPerson = new JMenuItem(rb.getString("content.modules.dbc.addPerson"));
+	private final JMenuItem cmdAddTalktime = new JMenuItem(rb.getString("content.modules.dbc.addTalktime"));
+	private final JMenuItem cmdAddAddress = new JMenuItem(rb.getString("content.modules.dbc.addAddress"));
 
 	public PanDBComponent() {
 		try {
@@ -132,14 +166,14 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 			cmdAddPopup.addActionListener(this);
 			cmdAddPerson.setIcon(UIConstants.ICON_PERSON);
 			cmdAddPerson.setActionCommand(ACTION_ADD_PERSON);
-			cmdAddPerson.addActionListener(this); 
+			cmdAddPerson.addActionListener(this);
 			cmdAddTalktime.setIcon(UIConstants.ICON_TALKTIME);
 			cmdAddTalktime.setActionCommand(ACTION_ADD_TALKTIME);
 			cmdAddTalktime.addActionListener(this);
 			cmdAddAddress.setIcon(UIConstants.ICON_ADDRESS);
 			cmdAddAddress.setActionCommand(ACTION_ADD_ADDRESS);
 			cmdAddAddress.addActionListener(this);
-			popupAdd.add(cmdAddPerson); 
+			popupAdd.add(cmdAddPerson);
 			popupAdd.add(cmdAddTalktime);
 			popupAdd.add(cmdAddAddress);
 
@@ -288,6 +322,7 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 		};
 
 		MouseListener ml = new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent me) {
 				try {
 					int selRow = mtree.getRowForLocation(me.getX(), me.getY());
@@ -340,16 +375,18 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 	 * 
 	 */
 	private class NodeSelectionListener extends MouseAdapter {
-		private JTree tree;
+		private final JTree tree;
 
 		NodeSelectionListener(JTree tree) {
 			this.tree = tree;
 		}
 
+		@Override
 		public void mouseEntered(MouseEvent e) {
 			tree.setToolTipText(new String());
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			int x = e.getX();
 			int y = e.getY();
@@ -457,11 +494,11 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 					cmdAddPopup.setEnabled(true);
 					cmdAddAddress.setEnabled(true);
 					cmdAddTalktime.setEnabled(true);
-					cmdAddPerson.setEnabled(false); 
+					cmdAddPerson.setEnabled(false);
 					cmdDelete.setEnabled(true);
 				}
 				try {
-					selectedUnitId = (int) personNode.getPersonValue().getUnitId().intValue();
+					selectedUnitId = personNode.getPersonValue().getUnitId().intValue();
 				} catch (Exception exe) {
 					log.error("Unit ID not found for person ID " + personNode.getId());
 				}
@@ -482,11 +519,11 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 					cmdAddPopup.setEnabled(false);
 					cmdAddAddress.setEnabled(false);
 					cmdAddTalktime.setEnabled(false);
-					cmdAddPerson.setEnabled(false); 
+					cmdAddPerson.setEnabled(false);
 					cmdDelete.setEnabled(true);
 				}
 				if (addressNode.getParent() instanceof PersonNode) {
-					selectedUnitId = (int) ((PersonNode) addressNode.getParent()).getPersonValue().getUnitId().intValue();
+					selectedUnitId = ((PersonNode) addressNode.getParent()).getPersonValue().getUnitId().intValue();
 				} else if (addressNode.getParent() instanceof DepartmentNode) {
 					selectedUnitId = ((DepartmentNode) addressNode.getParent()).getDepartmentValue().getUnitId();
 				} else if (addressNode.getParent() instanceof UnitNode) {
@@ -509,11 +546,11 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 					cmdAddPopup.setEnabled(false);
 					cmdAddAddress.setEnabled(false);
 					cmdAddTalktime.setEnabled(false);
-					cmdAddPerson.setEnabled(false); 
+					cmdAddPerson.setEnabled(false);
 					cmdDelete.setEnabled(true);
 				}
 				if (talktimeNode.getParent() instanceof PersonNode) {
-					selectedUnitId = (int) ((PersonNode) talktimeNode.getParent()).getPersonValue().getUnitId().intValue();
+					selectedUnitId = ((PersonNode) talktimeNode.getParent()).getPersonValue().getUnitId().intValue();
 				} else if (talktimeNode.getParent() instanceof DepartmentNode) {
 					selectedUnitId = ((DepartmentNode) talktimeNode.getParent()).getDepartmentValue().getUnitId();
 				} else if (talktimeNode.getParent() instanceof UnitNode) {
@@ -536,7 +573,7 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 					cmdAddPopup.setEnabled(true);
 					cmdAddAddress.setEnabled(true);
 					cmdAddTalktime.setEnabled(true);
-					cmdAddPerson.setEnabled(true); 
+					cmdAddPerson.setEnabled(true);
 					cmdDelete.setEnabled(true);
 				}
 				selectedUnitId = ((DepartmentNode) nde).getDepartmentValue().getUnitId();
@@ -557,7 +594,7 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 					cmdAddPopup.setEnabled(true);
 					cmdAddAddress.setEnabled(true);
 					cmdAddTalktime.setEnabled(true);
-					cmdAddPerson.setEnabled(true); 
+					cmdAddPerson.setEnabled(true);
 					cmdDelete.setEnabled(false);
 				}
 				selectedUnitId = unitNode.getUnitValue().getUnitId();
@@ -567,12 +604,12 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 				mtree.expandPath(path);
 				mtree.setSelectionPath(path);
 			}
-			if (selectedUnitId > 0 && !comm.isUserInUnit(selectedUnitId)) {
+			if (!comm.isUserInUnit(selectedUnitId) && !comm.isUserInRole(UserRights.SITE_ROOT)) {
 				// I am a not-priveleged User.... so I can't edit this person
 				cmdAddPopup.setEnabled(false);
 				cmdAddAddress.setEnabled(false);
 				cmdAddTalktime.setEnabled(false);
-				cmdAddPerson.setEnabled(false); 
+				cmdAddPerson.setEnabled(false);
 				cmdDelete.setEnabled(false);
 				currentComponentPanel.setFieldsEditable(false);
 			} else {
@@ -661,7 +698,7 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 		} catch (Exception e) {
 			log.error("error creating person", e);
 		}
-		
+
 		((ComponentsTreeModel) mtree.getModel()).nodeStructureChanged(node);
 		TreePath path = new TreePath(personNode.getPath());
 
@@ -680,7 +717,7 @@ public class PanDBComponent extends JPanel implements SearchListener, ChangeList
 		node.add(addressNode);
 
 		try {
-			long id = comm.createAddress(data); 
+			long id = comm.createAddress(data);
 			if (node instanceof PersonNode) {
 				comm.addAddress2Person(node.getId(), id);
 			} else if (node instanceof DepartmentNode) {
