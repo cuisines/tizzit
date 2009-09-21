@@ -36,10 +36,8 @@ public class CommandButton extends JCommandButton{
 	@Override
 	public void setEnabled(boolean state) {
 		if(enabledToolTip != null){
-			if(state == false){		
-				//remove tooltip if button is disabled 
-				RichToolTipManager richToolTipManager = RichToolTipManager.sharedInstance();
-				richToolTipManager.unregisterComponent(this);
+			if(state == false){				
+				super.setActionRichTooltip(null);
 			}else{
 				this.setActionRichTooltip(enabledToolTip);
 			}
