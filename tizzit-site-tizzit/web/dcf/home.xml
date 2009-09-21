@@ -21,6 +21,11 @@
 		<checkBox name="videoControlbar" label="controlbar anzeigen?">
 			<box label="Ja" elementname="videoControlbarSelect" selected="true">true</box>
 		</checkBox>
+		<information_1>
+			<news>
+				<fulltextsearch nodename="//newslist" searchOnlyInThisUnit="true"/>
+			</news>
+		</information_1>
 		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
 		<tagCloud/>
 		<t_footer/>

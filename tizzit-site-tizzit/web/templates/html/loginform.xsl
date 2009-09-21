@@ -18,10 +18,10 @@
         <div class="form">
             <!--Formulaer ausgeben -->
             <form method="post" action="{$resource}page.html">
-                <div class="loginform"> Benutzername:<br/>
+                <div class="loginform"> Username:<br/>
                     <input tabindex="1" width="100" id="cqusername" type="text" name="cqusername" value="Benutzername" title="Benutzername" onfocus="if(this.value=='Benutzername') this.value=''" onBlur="if(this.value=='') this.value='Benutzername'"/>
                 </div>
-                <div class="loginform"> Passwort:<br/>
+                <div class="loginform"> Password:<br/>
                     <input tabindex="2" width="100" type="password" name="cqpassword" id="cqpassword" value="Passwort" title="Passwort" onfocus="if(this.value=='Passwort') this.value=''" onBlur="if(this.value=='') this.value='Passwort'"/>
                 </div>
                 <br/>
@@ -32,9 +32,6 @@
                 <input type="hidden" name="resource" value="{$resource}"/>
             </form>
         </div>
-        
-        
-        
     </xsl:template>
     
 </xsl:stylesheet>

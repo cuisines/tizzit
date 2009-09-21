@@ -4,6 +4,7 @@
 		<ctmpl:include name="meta"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<ctmpl:include name="css"/>
+		<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="content.rss" />
         <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
 		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
 		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
@@ -62,7 +63,7 @@
 							<div id="f_content">
 								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
 								<div class="twitter">
-									<ctmpl:include name="t_footer"/>
+									<ctmpl:include name="footer"/>
 								</div>
 								<div class="clear">&#160;</div>
 							</div>

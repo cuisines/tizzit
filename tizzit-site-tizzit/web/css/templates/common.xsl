@@ -148,9 +148,7 @@
 			<!--height: 410px;-->
 		}
 		#footer {
-			background-image:url('/httpd/img/footer_repeat.jpg');
-			background-repeat: repeat-x;
-			background-position: 0 bottom;
+			background-color:#193140;
 			height:60px;
 		}
 		#header {

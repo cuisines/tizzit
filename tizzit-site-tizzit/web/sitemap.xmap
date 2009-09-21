@@ -95,7 +95,7 @@
 				<map:parameter name="disableAggregations" value="true"/>
 				<map:parameter name="disableInternalLinks" value="true"/>
 				<map:parameter name="disableUnitInformation" value="false"/>
-				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableFulltext" value="false"/>
 				<map:parameter name="disableMeta" value="true"/>
 				<map:parameter name="disableHeadLine" value="true"/>
 				<map:parameter name="disableUnitList" value="true"/>
@@ -144,7 +144,7 @@
 				<map:parameter name="disableAggregations" value="true"/>
 				<map:parameter name="disableInternalLinks" value="true"/>
 				<map:parameter name="disableUnitInformation" value="false"/>
-				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableFulltext" value="false"/>
 				<map:parameter name="disableMeta" value="true"/>
 				<map:parameter name="disableHeadLine" value="true"/>
 				<map:parameter name="disableUnitList" value="true"/>
@@ -182,7 +182,7 @@
 				<map:parameter name="disableAggregations" value="true"/>
 				<map:parameter name="disableInternalLinks" value="true"/>
 				<map:parameter name="disableUnitInformation" value="false"/>
-				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableFulltext" value="false"/>
 				<map:parameter name="disableMeta" value="true"/>
 				<map:parameter name="disableHeadLine" value="true"/>
 				<map:parameter name="disableUnitList" value="true"/>
@@ -224,7 +224,7 @@
 				<map:parameter name="disableAggregations" value="true"/>
 				<map:parameter name="disableInternalLinks" value="true"/>
 				<map:parameter name="disableUnitInformation" value="true"/>
-				<map:parameter name="disableFulltext" value="true"/>
+				<map:parameter name="disableFulltext" value="false"/>
 				<map:parameter name="disableMeta" value="true"/>
 				<map:parameter name="disableHeadLine" value="true"/>
 				<map:parameter name="disableUnitList" value="true"/>
@@ -301,7 +301,7 @@
 						<map:parameter name="disableAggregations" value="false"/>
 						<map:parameter name="disableInternalLinks" value="false"/>
 						<map:parameter name="disableUnitInformation" value="true"/>
-						<map:parameter name="disableFulltext" value="true"/>
+						<map:parameter name="disableFulltext" value="false"/>
 						<map:parameter name="disableNavigation" value="false"/>
 						<map:parameter name="disableMeta" value="false"/>
 						<map:parameter name="disableHeadLine" value="false"/>
@@ -350,6 +350,7 @@
 						<map:parameter name="serverName" value="{request:serverName}"/>
 						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
 						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+						<map:parameter name="disableFulltext" value="false"/>
 					</map:transform>
 					<map:call resource="generalContentTransformation">
 						<map:parameter name="template" value="{template}"/>
@@ -372,6 +373,7 @@
 						<map:parameter name="randomValue" value="{random:x}"/>
 						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
 						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+						<map:parameter name="disableFulltext" value="false"/>
 					</map:transform>
 					<!--formular cinclude -->
 					<map:select type="parameter">
@@ -414,6 +416,23 @@
 						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
 					</map:transform>
 					<map:serialize type="fo2pdf"/>
+				</map:when>
+				<map:when test="rss">	
+					<map:transform src="templates/html/rss.xsl">
+						<map:parameter name="language" value="{language}"/>
+						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
+						<map:parameter name="use-request-parameters" value="true"/>
+						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="clientCode" value="{global:clientCode}"/>
+						<map:parameter name="randomValue" value="{random:x}"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
+						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
+						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
+					</map:transform>	
+					<map:serialize type="xml"/>
 				</map:when>
 				<map:otherwise>
 					<map:serialize type="xml"/>

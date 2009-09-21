@@ -41,6 +41,9 @@
         <div class="teaseritem">
             <xsl:apply-templates select="teaser" mode="teasercontent"/>
         </div>
+        <xsl:if test="position() mod 2 = 0">
+            <div class="clear">&#160;</div>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template match="teaser" mode="teasercontent" priority="3">

@@ -96,13 +96,13 @@
                 <xsl:text>270px</xsl:text>
             </xsl:variable>
             <![CDATA[
-                        var s1 = new SWFObject("/httpd/flash/player-viral.swf","ply","]]><xsl:value-of select="$videoWidth"/><![CDATA[","]]><xsl:value-of select="$videoHeight "/><![CDATA[","9","#FFFFFF");
-                        s1.addParam("allowfullscreen","true");
-                        s1.addParam("allownetworking","false");
-                        s1.addParam("allowscriptaccess","always");
-                        s1.addParam("flashvars","]]><xsl:text>file=</xsl:text><xsl:value-of select="../videoUrl"/><![CDATA[&]]><xsl:text>autostart=</xsl:text><xsl:value-of select="$autostart"/><![CDATA[&]]><xsl:text>plugins=none</xsl:text><![CDATA[&]]><xsl:text>fullscreen=true</xsl:text><![CDATA[&]]><xsl:text>controlbar=</xsl:text><xsl:value-of select="$controlbar"/><![CDATA[&]]><xsl:text>image=/img/ejbimage/</xsl:text><xsl:value-of select="../picture[@dcfname='video_picture']/image/filename"/><xsl:text>?id=</xsl:text><xsl:value-of select="../picture[@dcfname='video_picture']/image/@src"/><![CDATA[");
-                        s1.write("video_container");
-                    ]]>
+                var s1 = new SWFObject("/httpd/flash/player-viral.swf","ply","]]><xsl:value-of select="$videoWidth"/><![CDATA[","]]><xsl:value-of select="$videoHeight "/><![CDATA[","9","#FFFFFF");
+                s1.addParam("allowfullscreen","true");
+                s1.addParam("allownetworking","false");
+                s1.addParam("allowscriptaccess","always");
+                s1.addParam("flashvars","]]><xsl:text>file=</xsl:text><xsl:value-of select="../videoUrl"/><![CDATA[&]]><xsl:text>autostart=</xsl:text><xsl:value-of select="$autostart"/><![CDATA[&]]><xsl:text>plugins=none</xsl:text><![CDATA[&]]><xsl:text>fullscreen=true</xsl:text><![CDATA[&]]><xsl:text>controlbar=</xsl:text><xsl:value-of select="$controlbar"/><![CDATA[&]]><xsl:text>image=/img/ejbimage/</xsl:text><xsl:value-of select="../picture[@dcfname='video_picture']/image/filename"/><xsl:text>?id=</xsl:text><xsl:value-of select="../picture[@dcfname='video_picture']/image/@src"/><![CDATA[");
+                s1.write("video_container");
+            ]]>
         </script>
     </xsl:template>
     
@@ -134,6 +134,14 @@
             </xsl:attribute>            
             &#160;
         </a>
+    </xsl:template>
+    
+    <xsl:template match="information_1">
+        <ctmpl:module name="information_1"> 
+            <div class="latestNews">
+               as
+            </div>           
+        </ctmpl:module> 
     </xsl:template>
     
 </xsl:stylesheet>
