@@ -34,7 +34,7 @@
 					</a>
 				</xsl:when>
 				<xsl:otherwise>
-					<img src="/httpd/img/sitemap_page.gif" alt="keine Unterpunkte"/>
+					<img src="/httpd/img/sitemap/sitemap_page.gif" alt="keine Unterpunkte"/>
 				</xsl:otherwise>
 			</xsl:choose>
 

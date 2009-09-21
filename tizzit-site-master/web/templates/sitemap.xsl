@@ -67,7 +67,7 @@
 								</a>
 							</xsl:when>
 							<xsl:otherwise>
-								<img src="../../httpd/img/sitemap_page.gif"/>
+								<img src="../../httpd/img/sitemap/sitemap_page.gif"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
