@@ -9,7 +9,7 @@ delete from viewcomponent where unit_id_fk not in (select unit_id from unit);
 
 delete from viewdocument where view_component_id_fk not in (select view_component_id from viewcomponent); 
 -- deletes units without sites
-delete from unit where site_id_fk not in (select site_id from site);
+delete from unit where site_id_fk not in (select site_id from site) or site_id_fk is null;
 delete from units2users where units_id_fk not in (select unit_id from unit) or users_id_fk not in (select user_id from usr);
 
 --delete pics/docs that have a non existing unit assigned 
