@@ -1,4 +1,4 @@
-package de.juwimm.cms.model;
+package de.juwimm.cms.beans;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$
  */
-public class BlobJdbcDaoImpl extends JdbcDaoSupport implements BlobJdbcDao {
+public class BlobJdbcDao extends JdbcDaoSupport {
 	
 	@SuppressWarnings("unchecked")
 	public byte[] getDocumentContent(Integer documentId) {		

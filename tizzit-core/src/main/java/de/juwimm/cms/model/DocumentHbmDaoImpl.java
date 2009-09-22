@@ -28,6 +28,7 @@ import org.hibernate.lob.BlobImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.Base64;
 
+import de.juwimm.cms.beans.BlobJdbcDao;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
 
 /**

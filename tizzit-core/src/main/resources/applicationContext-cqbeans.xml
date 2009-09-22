@@ -82,7 +82,7 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	<bean id="blobJdbcDao" class="de.juwimm.cms.model.BlobJdbcDaoImpl">
+	<bean id="blobJdbcDao" class="de.juwimm.cms.beans.BlobJdbcDao">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
