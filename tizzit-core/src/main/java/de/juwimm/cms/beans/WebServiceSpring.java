@@ -406,7 +406,9 @@ public class WebServiceSpring {
 		byte[] ret = null;
 		try {
 			DocumentHbm docHbm = documentHbmDao.load(documentId);
-			ret = IOUtils.toByteArray(docHbm.getDocument().getBinaryStream());
+			
+			ret = documentHbmDao.getDocumentContent(documentId);
+			//IOUtils.toByteArray(docHbm.getDocument().getBinaryStream());
 		} catch (Exception e) {
 			log.warn("Error getting Document " + documentId + ": " + e.getMessage());
 		}

@@ -342,14 +342,14 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unit.getUnitId());
 					for (DocumentHbm doc : docs) {
 						if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
-						out.print(doc.toXml(2));
+						out.print(getDocumentHbmDao().toXml(doc.getDocumentId(),2));
 					}
 				}
 			} else {
 				Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unitId);
 				for (DocumentHbm doc : docs) {
 					if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
-					out.print(doc.toXml(2));
+					out.print(getDocumentHbmDao().toXml(doc.getDocumentId(),2));
 				}
 			}
 		} catch (Exception exe) {

@@ -21,12 +21,12 @@
 package de.juwimm.cms.model;
 
 import java.sql.Blob;
-import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.lob.BlobImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.Base64;
 
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
 
@@ -44,6 +44,9 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
+	
+	@Autowired 
+	private BlobJdbcDao blobJdbcDao;
 	
 	@Override
 	public DocumentHbm create(DocumentHbm documentHbm) {
@@ -109,4 +112,37 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	public java.util.Collection findAllPerUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findAllPerUnit(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.unit.unitId = ?", unitId);
 	}
+	
+	
+
+	
+	@Override
+	protected byte[] handleGetDocumentContent(Integer documentId) throws Exception {		
+		return blobJdbcDao.getDocumentContent(documentId);
+	}
+	
+	@Override
+	public String handleToXml(Integer documentId,int tabdepth) {
+		DocumentHbm document = this.load(documentId);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<document id=\"");
+		sb.append(document.getDocumentId());
+		sb.append("\" mimeType=\"");
+		sb.append(document.getMimeType());
+		sb.append("\" unitId=\"");
+		sb.append(document.getUnit().getUnitId());
+		sb.append("\">\n");
+		byte[] data = blobJdbcDao.getDocumentContent(document.getDocumentId());
+	
+		if(data == null || data.length == 0) {
+			sb.append("\t<file></file>\n");
+		} else {				
+			sb.append("\t<file>").append(Base64.encodeBytes(data)).append("</file>\n");
+		}
+
+		sb.append("\t<name><![CDATA[" + document.getDocumentName() + "]]></name>\n");
+		sb.append("</document>\n");
+		return sb.toString();
+	}
+
 }

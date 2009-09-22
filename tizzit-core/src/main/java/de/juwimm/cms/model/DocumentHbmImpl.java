@@ -25,6 +25,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.Base64;
 
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -40,37 +41,6 @@ public class DocumentHbmImpl extends DocumentHbm {
 	private static Logger log = Logger.getLogger(DocumentHbmImpl.class);
 
 	/**
-	 * @see de.juwimm.cms.model.DocumentHbm#toXml(int)
-	 */
-	@Override
-	public String toXml(int tabdepth) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<document id=\"");
-		sb.append(this.getDocumentId());
-		sb.append("\" mimeType=\"");
-		sb.append(this.getMimeType());
-		sb.append("\" unitId=\"");
-		sb.append(this.getUnit().getUnitId());
-		sb.append("\">\n");
-		byte[] data;
-		try {
-			if(getDocument() == null || getDocument().getBinaryStream() == null) {
-				sb.append("\t<file></file>\n");
-			} else {
-				data = IOUtils.toByteArray(this.getDocument().getBinaryStream());
-				sb.append("\t<file>").append(Base64.encodeBytes(data)).append("</file>\n");
-			}
-		} catch (IOException e) {
-			log.error("Could not encode document: " + e.getMessage(), e);
-		} catch (SQLException e) {
-			log.error("Could not encode document: " + e.getMessage(), e);
-		}
-		sb.append("\t<name><![CDATA[" + this.getDocumentName() + "]]></name>\n");
-		sb.append("</document>\n");
-		return sb.toString();
-	}
-
-	/**
 	 * @see de.juwimm.cms.model.DocumentHbm#getSlimValue()
 	 */
 	@Override
@@ -84,5 +54,5 @@ public class DocumentHbmImpl extends DocumentHbm {
 		vo.setUseCountPublishVersion(this.getUseCountPublishVersion());
 		return vo;
 	}
-
+	
 }

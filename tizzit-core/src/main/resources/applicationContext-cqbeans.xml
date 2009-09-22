@@ -81,6 +81,10 @@
 	<bean id="conQuestSqlDaoSpring" class="de.juwimm.cms.beans.foreign.ConQuestSqlDaoSpringImpl">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
+	
+	<bean id="blobJdbcDao" class="de.juwimm.cms.model.BlobJdbcDaoImpl">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="searchengineService" class="de.juwimm.cms.search.beans.SearchengineService">
 		<property name="viewComponentHbmDao" ref="viewComponentHbmDao" />
