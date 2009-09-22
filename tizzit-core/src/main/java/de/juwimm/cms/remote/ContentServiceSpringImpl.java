@@ -712,9 +712,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		byte[] retArr = null;
 		try {
 			log.debug("LOOKING FOR DOCUMENT");
-			DocumentHbm document = super.getDocumentHbmDao().load(documentId);
 			//TODO: @TODO: Just a hack for the moment
-			retArr = IOUtils.toByteArray(document.getDocument().getBinaryStream());
+			retArr = getDocumentHbmDao().getDocumentContent(documentId);
 			if (log.isDebugEnabled()) {
 				try {
 					log.debug("GOT THE DOCUMENT");
