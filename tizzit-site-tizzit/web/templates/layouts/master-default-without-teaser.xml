@@ -4,14 +4,15 @@
 		<ctmpl:include name="meta"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<ctmpl:include name="css"/>
-        <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
+		<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="content.rss" />
+		<script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
 		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
 		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
 		<script language="JavaScript" type="text/javaScript">
 			<![CDATA[
 				Shadowbox.loadSkin('classic', '/httpd/js/skin');
 				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
-				Shadowbox.loadPlayer(['flv', 'html', 'iframe', 'img', 'qt', 'swf', 'wmp'], '/httpd/js/player');
+				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
 				window.onload = function(){
 					Shadowbox.init();
 				};
@@ -19,31 +20,53 @@
 		</script>
 	</head>
 	<body>
-		<div id="layout">
-			<div id="leftcol">
-				<ctmpl:include name="secondlevel"/>
-				<div class="clear">&#160;</div>
+		<div id="cloudsrepeat">
+			<div id="wavesrepeat">
+				<div id="whitewaverepeat">
+					<div id="contentSeperator">
+						<div id="layout">
+							<div id="header">
+								<a href="/" id="homelink">&#160;</a>
+								<div id="toparea">
+									<ctmpl:include name="secondlevel"/>
+									<ctmpl:include name="language"/>
+									<ctmpl:include name="search"/>
+								</div>
+								<div class="clear">&#160;</div>
+								<ctmpl:include name="firstlevel2"/>
+								<div class="clear">&#160;</div>
+							</div>
+							<div id="breadcrumbs">
+								<ctmpl:include name="breadcrumbsfromroot"/>
+							</div>
+							<div id="contentcontainer">
+								<div id="leftmenue">
+									<ctmpl:include name="leftmenue"/>
+								</div>
+								<div id="middle">
+									<ctmpl:include name="headline"/> 
+									<ctmpl:include name="content"/>
+									<ctmpl:include name="tagging"/>
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
+						</div>
+						<div id="information_2">
+							<ctmpl:include name="teaser_bottom"/>
+							<div class="clear">&#160;</div>
+						</div>
+						<div id="footer">
+							<div id="f_content">
+								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
+								<div class="twitter">
+									<ctmpl:include name="footer"/>
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div id="rightcol">
-				<ctmpl:include name="headline"/>
-				<ctmpl:include name="content"/>
-			</div>
-			<div class="clear">&#160;</div>
 		</div>
-		<!-- Please use our defined Templates below
-			logo 		<ctmpl:include name="logo"/>
-			firstlevel1 <ctmpl:include name="firstlevel1"/>
-			firstlevel2 <ctmpl:include name="firstlevel2"/>
-			secondlevel <ctmpl:include name="secondlevel"/>
-			breadcrumbs <ctmpl:include name="breadcrumbs"/>
-			headline 	<ctmpl:include name="headline"/>
-			thirdlevel 	<ctmpl:include name="thirdlevel"/>
-			content 	<ctmpl:include name="content"/>
-			footer 		<ctmpl:include name="footer"/>
-			image 		<ctmpl:include name="image"/>
-			language 	<ctmpl:include name="language"/>
-			minipage 	<ctmpl:include name="minipage"/>
-			teaser 		<ctmpl:include name="teaser"/>
-		-->
 	</body>
 </html>

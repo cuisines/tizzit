@@ -344,7 +344,7 @@
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
 						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
-						<map:parameter name="template" value="{template}"/>
+						<map:parameter name="template" value="{../template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="randomValue" value="{random:x}"/>
 						<map:parameter name="serverName" value="{request:serverName}"/>

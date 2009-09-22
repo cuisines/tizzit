@@ -9,12 +9,12 @@
 			<item filename="video">Video</item>
 			<item filename="downloads">Downloads</item>
 			<item filename="sitemap">Sitemap</item>
+			<item filename="images">Bilder</item>
 			<item filename="faq">FAQ</item>
 			<item filename="searchresult">Suchergebnisse</item>
 			<item filename="teaser">Teaser</item>
 			<item filename="loginform">Login</item>
 			<!--
-				<item filename="images">Bilder</item>
 				<item filename="cinclude4flow">Verweis aufs Formular</item>
 				<item filename="formular">Formular</item>
 			-->

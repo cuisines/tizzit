@@ -15,7 +15,7 @@
 	                </a>
 	            </div>-->
 	            <div class="footer_item">
-	            	<a href="http://del.icio.us/submit?url=[URL]&amp;title=[title]" target="_blank">
+	            	<a href="http://del.icio.us/submit?url={$serverName}{$url}&amp;title=Tizzit.org" target="_blank">
 	                	<img src="/httpd/img/footer/delicious.gif" alt="SAVE TO DELICIOUS" border="0"/>
 	                </a>
 	            </div>
