@@ -311,28 +311,37 @@ public class DlgPictureBrowser extends JDialog {
 		public void run() {
 			try {
 				progressBar.setMaximum(pics.length - 1);
+				if (pics.length == 0) {
+					btnDelete.setEnabled(false);
+					btnOk.setEnabled(false);
+				} else if (pics.length > 0) {
+					btnDelete.setEnabled(true);
+					btnOk.setEnabled(true);
+				}
 				int pbState = 0;
-				for (int i = (pics.length - 1); i >= 0; i--, pbState++) {
-					progressBar.setValue(pbState);
-					JToggleButton togg = new JToggleButton();
-					togg.setPreferredSize(new Dimension(95, 95));
-					Icon ico = new ImageIcon(comm.getThumbnail(pics[i].getPictureId()));
-					togg.setIcon(ico);
-					togg.setActionCommand("" + pics[i].getPictureId());
-					togg.setToolTipText(pics[i].getPictureName() != null ? pics[i].getPictureName() + " - " + sdf.format(new Date(pics[i].getTimeStamp())) : sdf.format(new Date(pics[i].getTimeStamp())));
-					togg.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							btnSelectActionPerformed(e);
+				if (pics.length > 0) {
+					for (int i = (pics.length - 1); i >= 0; i--, pbState++) {
+						progressBar.setValue(pbState);
+						JToggleButton togg = new JToggleButton();
+						togg.setPreferredSize(new Dimension(95, 95));
+						Icon ico = new ImageIcon(comm.getThumbnail(pics[i].getPictureId()));
+						togg.setIcon(ico);
+						togg.setActionCommand("" + pics[i].getPictureId());
+						togg.setToolTipText(pics[i].getPictureName() != null ? pics[i].getPictureName() + " - " + sdf.format(new Date(pics[i].getTimeStamp())) : sdf.format(new Date(pics[i].getTimeStamp())));
+						togg.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								btnSelectActionPerformed(e);
+							}
+						});
+						panPictureButtons.add(togg, null);
+						anzahlItems++;
+						bgrp.add(togg);
+						if (selectedPictureId != null && pics[i].getPictureId() == selectedPictureId.intValue()) {
+							togg.doClick();
 						}
-					});
-					panPictureButtons.add(togg, null);
-					anzahlItems++;
-					bgrp.add(togg);
-					if (selectedPictureId != null && pics[i].getPictureId() == selectedPictureId.intValue()) {
-						togg.doClick();
+						panPictureButtons.validate();
+						panPictureButtons.repaint();
 					}
-					panPictureButtons.validate();
-					panPictureButtons.repaint();
 				}
 				progressBar.setVisible(false);
 				resizeScrollpane();
