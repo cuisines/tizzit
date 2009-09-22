@@ -937,7 +937,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			vc.setDeployCommand(dao.getDeployCommand());
 			vc.setStatus(dao.getStatus());
 			vc.setLastModifiedDate(System.currentTimeMillis());
-			vc.setUserLastModifiedDate(dao.getUserLastModifiedDate());
+			//vc.setUserLastModifiedDate(dao.getUserLastModifiedDate());
 			if (vc.getStatus() == Constants.DEPLOY_STATUS_APPROVED && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
 				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
 			}
@@ -1358,6 +1358,15 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	private boolean checkEquals(ViewDocumentHbm viewDocument, String language, String viewType) {
 		return viewDocument.getLanguage().equals(language) && viewDocument.getViewType().equals(viewType);
+	}
+
+	@Override
+	protected void handleRemoveViewDocuments(Collection viewDocuments) throws Exception {
+		for (Object o : viewDocuments) {
+			ViewDocumentHbm vdh = (ViewDocumentHbm) o;
+			getViewComponentHbmDao().remove(vdh.getViewComponent());
+		}
+		getViewDocumentHbmDao().remove(viewDocuments);
 	}
 
 }

@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.UnitHbmDao;
 import de.juwimm.cms.model.UnitHbmImpl;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.vo.UnitValue;
@@ -50,8 +51,7 @@ public class UnitServiceSpringImpl extends de.juwimm.cms.remote.UnitServiceSprin
 		try {
 			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			Collection units = super.getUnitHbmDao().findByName(user.getActiveSite().getSiteId(), unitName);
-			if (units.size() > 0) { throw new UserException("UnitnameIsAlreadyUsedException");
-			}
+			if (units.size() > 0) { throw new UserException("UnitnameIsAlreadyUsedException"); }
 			UnitHbm unitHbm = new UnitHbmImpl();
 			unitHbm.setSite(user.getActiveSite());
 			unitHbm.setName(unitName);
@@ -142,4 +142,15 @@ public class UnitServiceSpringImpl extends de.juwimm.cms.remote.UnitServiceSprin
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.UnitServiceSpringBase#handleRemoveUnits(de.juwimm.cms.vo.UnitValue[])
+	 */
+	@Override
+	protected void handleRemoveUnits(UnitValue[] units) throws Exception {
+		UnitHbmDao uhd = getUnitHbmDao();
+		for (int i = 0; i < units.length; i++) {
+			uhd.remove(units[i].getUnitId());
+		}
+
+	}
 }

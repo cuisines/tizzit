@@ -80,7 +80,7 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 	 */
 	@Override
 	protected void handleDeleteSite(Integer siteId) throws Exception {
-		getViewDocumentHbmDao().remove(getViewDocumentHbmDao().findAll(siteId));
+		getViewServiceSpring().removeViewDocuments(getViewDocumentHbmDao().findAll(siteId));
 		getSiteHbmDao().remove(siteId);
 	}
 

@@ -1417,6 +1417,7 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected void handleRemoveSite(int siteId) throws Exception {
 		try {
+			getUnitServiceSpring().removeUnits(getMasterRootServiceSpring().getAllUnits4Site(siteId));
 			getMasterRootServiceSpring().deleteSite(Integer.valueOf(siteId));
 		} catch (Exception exe) {
 			log.error("Error removing site", exe);
@@ -1789,13 +1790,5 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
 		return getContentServiceSpring().getPictureIdForUnitAndName(unitId, name);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleIsUserInUnit(java.lang.Integer, java.lang.Integer)
-	 */
-	@Override
-	protected boolean handleIsUserInUnit(String userId, Integer unitId) throws Exception {
-		return getUserServiceSpring().isUserInUnit(userId, unitId);
 	}
 }
