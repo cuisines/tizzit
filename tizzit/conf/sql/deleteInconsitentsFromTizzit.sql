@@ -29,7 +29,7 @@ delete from comp_address where person_id_fk is not null and person_id_fk not in 
 delete from comp_talktime where person_id_fk not in (select person_id from comp_person) and person_id_fk is not null or unit_id_fk not in (select unit_id from unit) and unit_id_fk is not null or department_id_fk is not null and department_id_fk not in (select department_id from comp_department);
 
 -- authotization entitys
-delete from sgroup WHERE site_id_fk not in (select site_id from site); 
+delete from sgroup WHERE site_id_fk not in (select site_id from site) or site_id_fk is null; 
 delete from groups2users WHERE groups_id_fk not in (select group_id from sgroup) or users_id_fk not in (select user_id from usr);
 delete from groups2roles where groups_id_fk not in (select group_id from sgroup) or roles_id_fk not in (select role_id from role);
 -- deletes connection from users to not existing sites and other way around
