@@ -175,9 +175,9 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		TaskHbm task = new TaskHbmImpl();
 
 		TaskValue taskValue = new TaskValue();
-		taskValue.setComment(comment);
-		taskValue.setUnit(super.getUnitHbmDao().load(unitId).getUnitSlimValue());
+		taskValue.setComment(comment);		
 		taskValue.setTaskType(taskType);
+		task.setUnit(super.getUnitHbmDao().load(unitId));
 		try {
 			task.setSender(super.getUserHbmDao().load(AuthenticationHelper.getUserName()));
 			if (receiverUserId != null) {
