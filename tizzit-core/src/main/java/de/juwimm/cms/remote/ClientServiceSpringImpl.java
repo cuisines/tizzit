@@ -1791,4 +1791,10 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
 		return getContentServiceSpring().getPictureIdForUnitAndName(unitId, name);
 	}
+
+	@Override
+	protected Integer handleGetDocumentIdForNameAndUnit(String name, Integer unitId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
