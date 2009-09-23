@@ -219,7 +219,8 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		} else if (comm.isUserInRole(UserRights.DEPLOY)) {
 			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardEditor"));
 		} else {
-			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardAuthor"));
+			deployButton.setText(rb.getString("ribbon.publish.wizardAuthor"));
+			this.addButton(deployButton, 3, publishBand);
 		}
 
 		this.addButton(editViewButton, 0, viewSelectBand);
