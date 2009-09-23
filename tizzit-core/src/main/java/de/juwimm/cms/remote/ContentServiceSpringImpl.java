@@ -241,9 +241,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			String caller = AuthenticationHelper.getUserName();
 			ContentHbm content = super.getContentHbmDao().load(contentId);
 			ContentVersionHbm contentVersion = content.getLastContentVersion();
-			if(contentVersion == null){
+			if (contentVersion == null) {
 				//if does not have a content version
-				contentVersion =  ContentVersionHbm.Factory.newInstance();
+				contentVersion = ContentVersionHbm.Factory.newInstance();
 				contentVersion.setVersion("1");
 				contentVersion = getContentVersionHbmDao().create(contentVersion);
 				content.getContentVersions().add(contentVersion);
@@ -1304,6 +1304,12 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
 		return getPictureHbmDao().getIdForNameAndUnit(unitId, name);
+	}
+
+	@Override
+	protected Integer handleGetDocumentIdForNameAndUnit(String name, Integer unitId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
