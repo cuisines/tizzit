@@ -12,17 +12,22 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @version $Id$
  */
 public class BlobJdbcDao extends JdbcDaoSupport {
-	
+
 	@SuppressWarnings("unchecked")
-	public byte[] getDocumentContent(Integer documentId) {		
+	public byte[] getDocumentContent(Integer documentId) {
 		String selectQuery = "select document as document from document where document_Id = ?";
-		List<byte[]> lst = getJdbcTemplate().query(selectQuery, new Object[] {documentId},new BlobRowMapper("document"));		
-		return lst.get(0);		
+		List<byte[]> lst = getJdbcTemplate().query(selectQuery, new Object[] {documentId}, new BlobRowMapper("document"));
+		return lst.get(0);
 	}
-	
-	private class BlobRowMapper implements RowMapper {		
+
+	public void setDocumentContent(Integer documentId, byte[] blob) {
+		String updateQuery = "update document set document=? where document_id=?";
+		getJdbcTemplate().update(updateQuery, new Object[] {blob, documentId});
+	}
+
+	private class BlobRowMapper implements RowMapper {
 		private String blobColumn;
-		
+
 		public BlobRowMapper(String columneName) {
 			blobColumn = columneName;
 		}
