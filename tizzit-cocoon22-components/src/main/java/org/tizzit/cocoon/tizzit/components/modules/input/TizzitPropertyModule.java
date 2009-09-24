@@ -24,6 +24,8 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.thread.ThreadSafe;
 import org.apache.cocoon.components.modules.input.AbstractJXPathModule;
 import org.apache.cocoon.components.modules.input.InputModule;
+import org.apache.cocoon.environment.ObjectModelHelper;
+import org.apache.cocoon.environment.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,12 +75,24 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 	@Override
 	public Object getAttribute(String name, Configuration modeConf, Map objectModel) throws ConfigurationException {
 		if (log.isDebugEnabled()) log.debug("getAttribute() -> begin");
-		Object result = super.getAttribute(name, modeConf, objectModel);
-		if (result == null) {
-			if (log.isDebugEnabled()) log.debug("Attribute \"" + name + "\" not found, reloading...");
+		Object result;
+		if ("liveserver".equals(name)) {
 			this.instantiateWebServiceSpringBean(objectModel);
-			this.load();
+			Request request = ObjectModelHelper.getRequest(objectModel);
+			String host = request.getHeader("Host");
+			int portPosition = host.lastIndexOf(":");
+			if (portPosition > 0) {
+				host = host.substring(0, portPosition);
+			}
+			result = webSpringBean.getLiveserver(host).toString();
+		} else {
 			result = super.getAttribute(name, modeConf, objectModel);
+			if (result == null) {
+				if (log.isDebugEnabled()) log.debug("Attribute \"" + name + "\" not found, reloading...");
+				this.instantiateWebServiceSpringBean(objectModel);
+				this.load();
+				result = super.getAttribute(name, modeConf, objectModel);
+			} 
 		}
 		if (log.isDebugEnabled()) log.debug("getAttribute() -> end");
 		return result;

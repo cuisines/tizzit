@@ -5,6 +5,7 @@ ALTER TABLE `edition` ADD COLUMN `edition_file_name` VARCHAR(255) NULL;
 ALTER TABLE `edition` ADD COLUMN `needs_import` TINYINT DEFAULT 0 NULL;
 ALTER TABLE `edition` ADD COLUMN `site_id` INTEGER NULL;
 ALTER TABLE `edition` ADD COLUMN `view_component_id` INTEGER NULL;
+ALTER TABLE `host` ADD COLUMN `liveserver` TINYINT DEFAULT 0;
 DROP TABLE COMP_PERSONTOUNITLINK;
 ALTER TABLE `contentversion` DROP COLUMN `version_comment`;
 # oracle
@@ -14,6 +15,7 @@ ALTER TABLE edition ADD edition_file_name VARCHAR2(255) NULL;
 ALTER TABLE edition ADD needs_import NUMBER(5) DEFAULT 0 NULL;
 ALTER TABLE edition ADD site_id NUMBER(10) NULL;
 ALTER TABLE edition ADD view_component_id NUMBER(10) NULL;
+ALTER TABLE host ADD LIVESERVER NUMBER(5) DEFAULT '0' NULL;
 DROP TABLE COMP_PERSONTOUNITLINK;
 ALTER TABLE contentversion DROP COLUMN version_comment;
 # sapdb
@@ -23,6 +25,7 @@ ALTER TABLE edition ADD (edition_file_name VARCHAR(255) NULL);
 ALTER TABLE edition ADD (needs_import SMALLINT DEFAULT 0 NULL);
 ALTER TABLE edition ADD (site_id INTEGER NULL);
 ALTER TABLE edition ADD (view_component_id INTEGER NULL);
+ALTER TABLE host ADD (LIVESERVER SMALLINT DEFAULT '0' NULL);
 DROP TABLE COMP_PERSONTOUNITLINK;
 ALTER TABLE contentversion DROP COLUMN version_comment;
 # mssql
@@ -32,6 +35,7 @@ ALTER TABLE edition ADD COLUMN edition_file_name VARCHAR(255) NULL;
 ALTER TABLE edition ADD COLUMN needs_import SMALLINT DEFAULT 0 NULL;
 ALTER TABLE edition ADD COLUMN site_id INTEGER NULL;
 ALTER TABLE edition ADD COLUMN view_component_id INTEGER NULL;
+ALTER TABLE host ADD COLUMN LIVESERVER SMALLINT DEFAULT '0' NULL;
 DROP TABLE COMP_PERSONTOUNITLINK;
 ALTER TABLE contentversion DROP COLUMN version_comment;
 Add to conquest.properties

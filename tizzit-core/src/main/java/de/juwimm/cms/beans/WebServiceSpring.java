@@ -1782,6 +1782,15 @@ public class WebServiceSpring {
 		}
 		return 0L;
 	}
+	
+	public Boolean getLiveserver(String hostName) {
+		boolean retVal = false;
+		HostHbm host = hostHbmDao.load(hostName);
+		if(host != null) {
+			retVal = host.isLiveserver();
+		}
+		return retVal;
+	}
 
 	public String getUnitInfoXml(Integer unitId) throws Exception {
 		StringBuffer sb = new StringBuffer("");

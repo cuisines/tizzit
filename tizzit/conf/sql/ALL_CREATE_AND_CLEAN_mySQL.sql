@@ -169,6 +169,7 @@ CREATE TABLE GROUPS2USERS (
 
 CREATE TABLE HOST (
 	host_name VARCHAR(255) NOT NULL, 
+	liveserver TINYINT DEFAULT 0,
 	site_id_fk INTEGER NULL, 
 	startpage_vc_id_fk INTEGER NULL, 
 	unit_id_fk INTEGER NULL, 
