@@ -1794,7 +1794,6 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 
 	@Override
 	protected Integer handleGetDocumentIdForNameAndUnit(String name, Integer unitId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getContentServiceSpring().getDocumentIdForNameAndUnit(name, unitId);
 	}
 }
