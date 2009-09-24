@@ -957,22 +957,25 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 			UnitHbm unit = getUnitHbmDao().load(unitId);
 			DocumentHbm doc = null;
+
+			File tmp = this.storeTempFile(documentData, documentName);
+			FileInputStream in = new FileInputStream(tmp);
+			Blob b = Hibernate.createBlob(in);
+
 			if (documentId == null) {
 				doc = DocumentHbm.Factory.newInstance();
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
 				doc.setUnit(unit);
 				doc = getDocumentHbmDao().create(doc);
+				doc.setDocument(b);
 			} else {
 				doc = getDocumentHbmDao().load(documentId);
 				doc.setTimeStamp(System.currentTimeMillis());
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
+				getDocumentHbmDao().setDocumentContent(doc.getDocumentId(), IOUtils.toByteArray(in));
 			}
-			File tmp = this.storeTempFile(documentData, documentName);
-			FileInputStream in = new FileInputStream(tmp);
-			Blob b = Hibernate.createBlob(in);
-			doc.setDocument(b);
 			return doc.getDocumentId();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -1308,8 +1311,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 	@Override
 	protected Integer handleGetDocumentIdForNameAndUnit(String name, Integer unitId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return getDocumentHbmDao().getIdForNameAndUnit(name, unitId);
 	}
 
 }
