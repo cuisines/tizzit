@@ -20,7 +20,7 @@
 	                </a>
 	            </div>
 	            <div class="footer_item">
-	            	<a href="http://www.facebook.com/sharer.php?u=[URL]&amp;t=[title]" target="_blank">
+	            	<a href="http://www.facebook.com/sharer.php?u={$serverName}{$url}&amp;t=Tizzit.org" target="_blank">
 	            		<img src="/httpd/img/footer/facebook.gif" alt="SHARE ON FACEBOOK" border="0"/>
 	                </a>
 	            </div>
@@ -30,7 +30,7 @@
 	                </a>
 	            </div>-->
 	        	<div class="footer_item">
-	        		<a href="http://twitthis.com/twit?url=[URL]" target="_blank">
+	        		<a href="http://twitthis.com/twit?url={$serverName}{$url}" target="_blank">
 	        			<img src="/httpd/img/footer/twitter.gif" alt="TWEET THIS!" border="0"/>
 	        		</a>
 	        	</div>
@@ -40,7 +40,7 @@
 	                </a>
 	            </div>-->
 	            <div class="footer_item">
-	            	<a href="http://www.digg.com/submit?phase=2&amp;url=[URL]" target="_blank">
+	            	<a href="http://www.digg.com/submit?phase=2&amp;url={$serverName}{$url}" target="_blank">
 	                	<img src="/httpd/img/footer/digg.gif" alt="DIGG IT!" borer="0"/>
 	                </a>
 	            </div>
@@ -50,7 +50,7 @@
 	        		</a>
 	        	</div>-->
 	        	<div class="footer_item">
-	        		<a href="http://www.stumbleupon.com/submit?url=[URL]&amp;title=[title]" target="_blank">
+	        		<a href="http://www.stumbleupon.com/submit?url={$serverName}{$url}&amp;title=Tizzit.org" target="_blank">
 	        			<img src="/httpd/img/footer/stumbleUpon.gif" alt="STUMBLE THIS!" border="0"/>
 	        		</a>
 	        	</div>

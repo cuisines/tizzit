@@ -6,15 +6,16 @@
     <!-- eigene Styles fuer dieses Template -->
     <xsl:template match="styles" mode="template" priority="1">
         
-        table, td {
-            border:1px solid black;
-            border-collapse:collapse;
+        .preText, .newsItem {
+            margin-bottom:20px;
         }
-        .metadata {
-            font-weight:bold;
+        .afterText {
+            margin-top:20px;
+        }
+        .newsDate {
             font-size:11px;
         }
-        #news_location{
+        .moreLink {
             font-weight:bold;
         }
         

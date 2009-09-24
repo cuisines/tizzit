@@ -6,42 +6,52 @@
     <!-- eigene Styles fuer dieses Template -->
     <xsl:template match="styles" mode="template" priority="1">
         
-        .layer {  
-            padding: 10px 2px 2px 0px ;
-            margin-left:0px;
-            width : 370px;
+        #middle {
+            width:779px;
         }
-        .layer a:hover{
-        
+        .headline {
+            padding-left:280px;
         }
-        .layer a{
-            padding-top:2px;
-        }
-        .layerRoot {
-            width : 370px;
-        }
-        .layerSub {
-            padding: 12px 2px 2px 22px ; 
-            background-position:21px 15px; 
-            background-image:url(/httpd/img/sitemap/sitemap_linienkachel.gif); 
-            background-repeat:repeat-y; 
-            width : 370px;        
-        }
-        .layerSubLast {        
-            padding: 12px 2px 2px 22px ; 
-            background-position:21px 0px; 
-            background-image:url(/httpd/img/sitemap/sitemap_eckstueck.gif); 
+        .sitemap a {
+            font-size:16px;
+            font-family:Trebuchet MS;
+            font-weight:bold;
+            background-image:url('/httpd/img/sitemap/link_bg.gif');
             background-repeat:no-repeat;
-            width : 370px;
-        }
-        .layer img {
-            float:left;
-            vertical-align: top;
-            padding-right:10px;
-        }
-        .linkSitemap {
+            background-position:0 6px;
+            padding:0 0 15px 9px; 
             display:block;
-        } 
+            text-decoration:underline;
+        }
+        sitemap a:hover {
+            color:#96CF48;
+        }
+        .s_firstlevel, .s_secondlevel, .sitemap_left, .root, .s_links {
+            float:left;
+        }
+        .root {
+            font-size:16px;
+            font-family:Trebuchet MS;
+            font-weight:bold;
+            background-image:url('/httpd/img/sitemap/root_bg.jpg');
+            background-repeat:no-repeat;
+            background-position:0 0;
+            padding-left:15px;
+            width:80px;
+        }
+        .sitemap_left {
+            background-image:url('/httpd/img/sitemap/sitemap_bg.jpg');
+            background-repeat:no-repeat;
+            background-position:0 0;
+            width:280px;
+            height:300px;
+        }
+        .s_links {
+            width:400px;
+        }
+        .s_firstlevel, .s_secondlevel {
+            padding-right:15px;
+        }
         
     </xsl:template>
     

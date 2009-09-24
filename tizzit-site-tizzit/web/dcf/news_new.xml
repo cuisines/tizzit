@@ -7,13 +7,11 @@
     			<sortOrder/>
     			<iteration name="newslist" dcfname="newslist" label="Liste der 'Termine' und 'Aktuelles' Einträge" maxcount="999" descriptionDcfname="newsname">
     				<simpletextfield name="newsname" label="Titel"/>							
-    				<simpletextfield name="newslocality" label="Ort"/>							
     				<simpleDate name="newsdate" dcfname="newsdate" label="Datum/Starttermin"/>
                     <simpleDate name="newsEndDate" dcfname="newsEndDate" label="Endtermin (optional)"/>
                     <simpleDate name="newsArchivDate" dcfname="newsArchivDate" label="News anzeigen bis"/>
     				<simpletextfield name="newsdate-info" label="Zeitpunkt (optional)"/>							
     				<textfield name="text" label="Beschreibung"/>							
-    				<deployStartStop name="deploy-start-stop" dcfname="deploy" label="anzeigen von-bis"/>
     			</iteration>
     		</news>
 		</content>

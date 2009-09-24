@@ -16,7 +16,7 @@
 	<xsl:include href="include/footer.xsl"/>
 	<xsl:include href="include/teaser.xsl"/>
 	<xsl:include href="include/image_div.xsl"/> 
-	
+	 
 	<!-- includes Web 2.0 -->  
 	<!--<xsl:include href="include/web20_rating.xsl"/>-->
 	<xsl:include href="include/web20_tagging.xsl"/>

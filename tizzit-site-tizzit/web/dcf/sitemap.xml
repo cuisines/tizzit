@@ -3,12 +3,10 @@
 	<head/>
 	<all>
         <content>
-		<unitInformation/>
     		<sitemap>
-    			<navigation since="root" depth="2" />
+    			<navigation since="root" depth="5" />
     		</sitemap>
 		</content>
-		<navigation since="unit" depth="1" />
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser rechts"/>
 		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
 		<web20/>

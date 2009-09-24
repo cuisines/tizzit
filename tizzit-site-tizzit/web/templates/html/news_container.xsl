@@ -35,9 +35,19 @@
 				<xsl:apply-templates select="$doc//news" mode="newsDetail"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="preTxt" mode="format"/>
-				<xsl:apply-templates select="$doc//news" mode="newsList"/>
-				<xsl:apply-templates select="afterTxt" mode="format"/>
+				<xsl:if test="preTxt!=''">
+					<div class="preText">
+						<xsl:apply-templates select="preTxt" mode="format"/>
+					</div>
+				</xsl:if>
+				<div class="newsContainer">
+					<xsl:apply-templates select="$doc//news" mode="newsList"/>
+				</div>
+				<xsl:if test="afterTxt">
+					<div class="afterText">
+						<xsl:apply-templates select="afterTxt" mode="format"/>
+					</div>
+				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
@@ -46,53 +56,13 @@
 	<xsl:template match="news" mode="newsList" priority="1.2">
 		<xsl:choose>
 			<xsl:when test="$doc//news/newslist//item/newsname!=''">
-				<table width="100%">
-					<tr class="gradient">
-						<th>
-							<a>
-								<xsl:attribute name="href"
-										>page.html?sortBy=title&amp;order=<xsl:value-of
-										select="$oppOrder"/></xsl:attribute>
-								<xsl:text>Title</xsl:text>
-								<xsl:text>&#160;</xsl:text>
-								<img src="/httpd/img/pfeil_blau_6uhr.gif"
-									alt="order by document name"/>
-							</a>
-						</th>
-						<th>
-							<a>
-								<xsl:attribute name="href"
-										>page.html?sortBy=date&amp;order=<xsl:value-of
-										select="$oppOrder"/></xsl:attribute>
-								<xsl:text>Ort</xsl:text>
-								<xsl:text>&#160;</xsl:text>
-								<img src="/httpd/img/pfeil_blau_6uhr.gif"
-									alt="order by document name"/>
-							</a>
-						</th>
-						<th>
-							<a>
-								<xsl:attribute name="href"
-										>page.html?sortBy=location&amp;order=<xsl:value-of
-										select="$oppOrder"/></xsl:attribute>
-								<xsl:text>Datum</xsl:text>
-								<xsl:text>&#160;</xsl:text>
-								<img src="/httpd/img/pfeil_blau_6uhr.gif"
-									alt="order by document name"/>
-							</a>
-						</th>
-					</tr>
-					<xsl:apply-templates select="$doc//news" mode="sort"/>
-				</table>
-				<br/>
-				<div class="newsBottomLink">
-					<a href="#">nach oben</a>
-				</div>
-				<br/>
+				<xsl:apply-templates select="$doc//news" mode="sort"/>
 			</xsl:when>
-			<xsl:otherwise>Zurzeit liegen leider keine aktuellen Nachrichten und Termine vor.
-				<br/><br/>Bitte versuchen Sie es zu einem sp&#228;teren Zeitpunkt
-				wieder.</xsl:otherwise>
+			<xsl:otherwise>
+				<xsl:text>Zurzeit liegen leider keine aktuellen Nachrichten vor.</xsl:text>
+				<br/><br/>
+				<xsl:text>Bitte versuchen Sie es zu einem sp&#228;teren Zeitpunkt wieder.</xsl:text>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
@@ -241,8 +211,8 @@
 
 	<xsl:template match="item" mode="date" priority="2">
 		<xsl:param name="itemPosition"/>
-		<tr>
-			<td>
+		<div class="newsItem">
+			<h2 class="newsHeadline">
 				<a>
 					<xsl:attribute name="href">
 						<xsl:text>?newsNr=</xsl:text>
@@ -250,26 +220,32 @@
 					</xsl:attribute>
 					<xsl:value-of select="newsname"/>
 				</a>
-				<xsl:text> </xsl:text>
-			</td>
-			<td>
-				<xsl:value-of select="newslocality"/>
-				<xsl:text> </xsl:text>
-			</td>
-			<td>
+			</h2>
+			<!--<span class="newsDate">
 				<xsl:call-template name="formatDateForOverview">
 					<xsl:with-param name="day" select="newsdate/day"/>
 					<xsl:with-param name="month" select="newsdate/month"/>
 					<xsl:with-param name="year" select="newsdate/year"/>
 				</xsl:call-template>
-			</td>
-		</tr>
+			</span>-->
+			<div class="clear">&#160;</div>
+			<xsl:if test="text!=''">
+				<div class="newsContent">
+					<xsl:value-of select="substring(text, 0, 300)"/>
+					<a class="moreLink">
+						<xsl:attribute name="href">
+							<xsl:text>?newsNr=</xsl:text>
+							<xsl:value-of select="@timestamp"/>
+						</xsl:attribute>
+						<xsl:if test="string-length(text)&gt;300">
+							<xsl:text> ...more</xsl:text>
+						</xsl:if>
+					</a>
+				</div>
+			</xsl:if>
+		</div>
 		<xsl:if test="$itemPosition mod 10 = 0">
-			<tr>
-				<td colspan="3" align="right">
-					<a href="#">nach oben</a>
-				</td>
-			</tr>
+			<a href="#">nach oben</a>
 		</xsl:if>
 	</xsl:template>
 
@@ -296,6 +272,10 @@
 
 	<xsl:template name="newsAnchor">
 		<xsl:value-of select="position()"/>
+	</xsl:template>
+	
+	<xsl:template match="afterTxt | preTxt" mode="format">
+		<xsl:apply-templates mode="format"/>
 	</xsl:template>
 
 </xsl:stylesheet>

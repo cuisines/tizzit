@@ -47,71 +47,6 @@
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="news" mode="newsList">
-		<xsl:choose>
-			<xsl:when test="//news/newslist//item/newsname!=''">
-				<table cellspacing="0" cellpadding="6" border="0" style="border-collapse:collapse;">
-					<tr>
-						<th style="border: 1px solid #888888" valign="top" width="150">
-							<a>
-								<xsl:attribute name="href"
-										>page.html?sortBy=title&amp;order=<xsl:value-of
-										select="$oppOrder"/></xsl:attribute>
-								<span>Titel</span>
-							</a>
-						</th>
-						<th style="border: 1px solid #888888" valign="top" width="150">
-							<a>
-								<xsl:attribute name="href"
-										>page.html?sortBy=date&amp;order=<xsl:value-of
-										select="$oppOrder"/></xsl:attribute>
-								<span>Datum</span>
-							</a>
-						</th>
-						<th style="border: 1px solid #888888" valign="top" width="150">
-							<a>
-								<xsl:attribute name="href"
-										>page.html?sortBy=location&amp;order=<xsl:value-of
-										select="$oppOrder"/></xsl:attribute>
-								<span>Ort</span>
-							</a>
-						</th>
-					</tr>
-					<xsl:apply-templates select="." mode="sort"/>
-				</table>
-			</xsl:when>
-			<xsl:otherwise>Zurzeit liegen leider keine aktuellen Nachrichten und Termine vor.
-				<br/><br/>Bitte versuchen Sie es zu einem sp&#228;teren Zeitpunkt
-				wieder.</xsl:otherwise>
-		</xsl:choose>
-	</xsl:template>
-
-	<xsl:template match="item" mode="date" priority="1.1">
-		<tr>
-			<td valign="top" class="list-detail">
-				<a>
-					<xsl:attribute name="href">page.html?newsNr=<xsl:value-of select="@timestamp"
-						/></xsl:attribute>
-					<xsl:apply-templates select="newsname" mode="format"/>
-				</a>
-			</td>
-			<td valign="top" class="list-detail">
-				<xsl:if test="newsdate!=''">
-					<xsl:if test="newsdate-info=''">
-						<xsl:apply-templates select="newsdate" mode="format"/>
-						<xsl:apply-templates select="newsEndDate" mode="format"/>
-					</xsl:if>
-				</xsl:if>
-				<xsl:if test="newsdate-info!=''">
-					<xsl:apply-templates select="newsdate-info"/>
-				</xsl:if>
-			</td>
-			<td valign="top" class="list-detail">
-				<xsl:apply-templates select="newslocality"/>
-			</td>
-		</tr>
-	</xsl:template>
-
 	<xsl:template match="news" mode="sort" priority="1.1">
 		<xsl:choose>
 			<xsl:when test="$sortBy='date'">
@@ -282,11 +217,11 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	<xsl:template match="stickyPad" mode="newsDetail" priority="1.1"/>
 
 	<xsl:template match="news" mode="newsDetail">
 		<xsl:apply-templates select="newslist" mode="newsDetail"/>
 	</xsl:template>
+	
 	<xsl:template match="newslist" mode="newsDetail">
 		<xsl:apply-templates select="item[@timestamp = $newsNr]" mode="newsDetail"/>
 	</xsl:template>
@@ -298,9 +233,7 @@
 		<div class="announcement_text">
 			<xsl:apply-templates select="text" mode="format"/>
 		</div>
-		<xsl:apply-templates select="newslocality" mode="format"/>
 	</xsl:template>
-
 
 	<xsl:template match="newsname" mode="format" priority="1.1">
 		<xsl:apply-templates mode="format"/>
@@ -311,34 +244,6 @@
 			<xsl:text>-&#160;</xsl:text>
 			<xsl:apply-templates mode="format"/>
 		</xsl:if>
-	</xsl:template>
-
-	<xsl:template match="item" mode="format2" priority="1.1">
-		<tr>
-			<td style="border: 1px solid #888888" valign="top">
-				<a>
-					<xsl:attribute name="href">page.html?newsNr=<xsl:value-of select="@timestamp"
-						/></xsl:attribute>
-					<xsl:apply-templates select="newsname" mode="format"/>
-				</a>
-			</td>
-			<td style="border: 1px solid #888888" valign="top">
-				<xsl:if test="newsdate!=''">
-					<xsl:apply-templates select="newsdate" mode="format"/>
-					<xsl:apply-templates select="newsEndDate" mode="format"/>
-				</xsl:if>
-				<xsl:if test="newsdate-info!=''">
-					<xsl:if
-						test="normalize-space(newsdate/year)!='' or normalize-space(newsEndDate/year)!=''">
-						<br/>
-					</xsl:if>
-					<xsl:apply-templates select="newsdate-info"/>
-				</xsl:if>
-			</td>
-			<td style="border: 1px solid #888888" valign="top">
-				<xsl:apply-templates select="newslocality"/>
-			</td>
-		</tr>
 	</xsl:template>
 
 	<xsl:template match="newsdate" mode="format">
@@ -365,20 +270,36 @@
 			<xsl:value-of select="xs:date($date-string)"/>
 		</xsl:variable>
 		<xsl:value-of select="format-date($date, '[D]. [MNn] [Y]')"/>
-		<br/>
 	</xsl:template>
-
-	<xsl:template match="newslocality" mode="format" priority="1.1">
-		<span id="news_location">
-			<xsl:apply-templates mode="format"/>
-		</span>
-		<br/>
-		<br/>
-		<a href="javascript:history.back()">
-			<img src="/httpd/img/but_zurueck_lo.gif" alt="back"
-				onmouseover="this.src = '/httpd/img/but_zurueck_hi.gif'"
-				onmouseout="this.src = '/httpd/img/but_zurueck_lo.gif'"/>
-		</a>
+	
+	<xsl:template match="head" priority="1.1">
+		<ctmpl:module name="headline" xmlns:ctmpl="http://www.conquest-cms.net/template">
+			<h1 class="headline">
+				<xsl:choose>
+					<xsl:when test="title = ''">
+						&#160;
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:choose>
+							<xsl:when test="//newsname">
+								<xsl:value-of select="//newsname"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="title"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:otherwise>
+				</xsl:choose>				
+			</h1>
+		</ctmpl:module>
+		<ctmpl:module name="meta" xmlns:ctmpl="http://www.conquest-cms.net/template">
+			<xsl:apply-templates select="title" mode="format"/>
+			<xsl:apply-templates select="meta" mode="format"/>
+		</ctmpl:module>
+		<ctmpl:module name="searchresults" xmlns:ctmpl="http://www.conquest-cms.net/template">
+			<xsl:apply-templates select="searchresults" mode="start"/>
+		</ctmpl:module>
+		<xsl:apply-templates select="." mode="include"/>
 	</xsl:template>
 
 </xsl:stylesheet>

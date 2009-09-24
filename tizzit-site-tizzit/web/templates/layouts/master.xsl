@@ -17,6 +17,7 @@
             <!--<xsl:when test="$content-template='standard-without-teaser'">default-without-teaser</xsl:when>-->
             <xsl:when test="$content-template='home'">home</xsl:when>
             <xsl:when test="$content-template='images'">default-without-teaser</xsl:when>
+            <xsl:when test="$content-template='sitemap'">default-without-leftnavi</xsl:when>
             <xsl:when test="$content-template='loginform'">login</xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$layout"/>                

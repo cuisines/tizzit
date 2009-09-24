@@ -2,13 +2,9 @@
 <js>
 	<getNewRequest />
 	<popup/>
-	<zoom/>
 	<mailTo/>
 	<printView/>
-	<fastsearch/>
 	<toggle/>
 	<search/>
-	<ajax/>
-	<ajaxSitemap/>
 	<search3.0/>
 </js>

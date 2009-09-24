@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<html xmlns:ctmpl="http://www.conquest-cms.net/template">
+	<head>
+		<ctmpl:include name="meta"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<ctmpl:include name="css"/>
+		<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="content.rss" />
+        <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
+		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
+		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
+		<script language="JavaScript" type="text/javaScript">
+			<![CDATA[
+				Shadowbox.loadSkin('classic', '/httpd/js/skin');
+				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
+				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
+				window.onload = function(){
+					Shadowbox.init();
+				};
+			]]>
+		</script>
+	</head>
+	<body>
+		<div id="cloudsrepeat">
+			<div id="wavesrepeat">
+				<div id="whitewaverepeat">
+					<div id="contentSeperator">
+						<div id="layout">
+							<div id="header">
+								<a href="/" id="homelink">&#160;</a>
+								<div id="toparea">
+									<ctmpl:include name="secondlevel"/>
+									<ctmpl:include name="language"/>
+									<ctmpl:include name="search"/>
+								</div>
+								<div class="clear">&#160;</div>
+								<ctmpl:include name="firstlevel2"/>
+								<div class="clear">&#160;</div>
+							</div>
+							<div id="breadcrumbs">
+								<ctmpl:include name="breadcrumbsfromroot"/>
+							</div>
+							<div id="contentcontainer">
+								<div id="middle">
+									<ctmpl:include name="headline"/> 
+									<ctmpl:include name="content"/>
+									<ctmpl:include name="tagging"/>
+								</div>
+								<div id="right">
+									<ctmpl:include name="teaser"/>
+									<div class="clear">&#160;</div>
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
+						</div>
+						<div id="information_2">
+							<ctmpl:include name="teaser_bottom"/>
+							<div class="clear">&#160;</div>
+						</div>
+						<div id="footer">
+							<div id="f_content">
+								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
+								<div class="twitter">
+									<ctmpl:include name="footer"/>
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
