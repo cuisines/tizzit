@@ -142,14 +142,19 @@ public class UnitServiceSpringImpl extends de.juwimm.cms.remote.UnitServiceSprin
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.UnitServiceSpringBase#handleRemoveUnits(de.juwimm.cms.vo.UnitValue[])
-	 */
+	// has to remove all user2unit relations too
 	@Override
 	protected void handleRemoveUnits(UnitValue[] units) throws Exception {
 		UnitHbmDao uhd = getUnitHbmDao();
 		for (int i = 0; i < units.length; i++) {
-			uhd.remove(units[i].getUnitId());
+			UnitValue uv = units[i];
+			UnitHbm unit = getUnitHbmDao().load(uv.getUnitId());
+			Collection users = unit.getUsers();
+			Iterator it = users.iterator();
+			while (it.hasNext()) {
+				((UserHbm) it.next()).dropUnit(unit);
+			}
+			uhd.remove(uv.getUnitId());
 		}
 
 	}

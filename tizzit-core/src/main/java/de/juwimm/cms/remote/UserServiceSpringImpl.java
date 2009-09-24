@@ -175,7 +175,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		TaskHbm task = new TaskHbmImpl();
 
 		TaskValue taskValue = new TaskValue();
-		taskValue.setComment(comment);		
+		taskValue.setComment(comment);
 		taskValue.setTaskType(taskType);
 		task.setUnit(super.getUnitHbmDao().load(unitId));
 		try {
@@ -1303,6 +1303,15 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	@Override
 	protected Boolean handleIsUserInUnit(String userId, Integer unitId) throws Exception {
 		return getUserHbmDao().load(userId).isInUnit(unitId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.UserServiceSpringBase#handleRemoveUserFromSite(java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	protected void handleRemoveUserFromSite(String userId, Integer siteId) throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 
 }

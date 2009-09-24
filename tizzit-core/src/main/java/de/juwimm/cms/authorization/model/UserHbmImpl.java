@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.tizzit.util.Base64;
 
 import de.juwimm.cms.authorization.vo.UserValue;
+import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.UnitHbm;
 
 /**
@@ -169,5 +170,14 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 			if (uId == unitId) { return true; }
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.authorization.model.UserHbm#dropSite(de.juwimm.cms.model.SiteHbm)
+	 */
+	@Override
+	public void dropSite(SiteHbm site) {
+		// TODO Auto-generated method stub
+
 	}
 }
