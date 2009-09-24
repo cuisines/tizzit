@@ -42,13 +42,13 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 
 	@Autowired
 	private SearchengineDeleteService searchengineDeleteService;
-	
+
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
-	@Autowired 
+
+	@Autowired
 	private BlobJdbcDao blobJdbcDao;
-	
+
 	@Override
 	public DocumentHbm create(DocumentHbm documentHbm) {
 		if (documentHbm.getDocumentId() == null || documentHbm.getDocumentId().intValue() == 0) {
@@ -108,22 +108,19 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	public java.util.Collection findAllPerSite(final int transform, final java.lang.Integer siteId) {
 		return this.findAllPerSite(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.unit.site.siteId = ?", siteId);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllPerUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findAllPerUnit(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.unit.unitId = ?", unitId);
 	}
-	
-	
 
-	
 	@Override
-	protected byte[] handleGetDocumentContent(Integer documentId) throws Exception {		
+	protected byte[] handleGetDocumentContent(Integer documentId) throws Exception {
 		return blobJdbcDao.getDocumentContent(documentId);
 	}
-	
+
 	@Override
-	public String handleToXml(Integer documentId,int tabdepth) {
+	public String handleToXml(Integer documentId, int tabdepth) {
 		DocumentHbm document = this.load(documentId);
 		StringBuffer sb = new StringBuffer();
 		sb.append("<document id=\"");
@@ -134,16 +131,38 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 		sb.append(document.getUnit().getUnitId());
 		sb.append("\">\n");
 		byte[] data = blobJdbcDao.getDocumentContent(document.getDocumentId());
-	
-		if(data == null || data.length == 0) {
+
+		if (data == null || data.length == 0) {
 			sb.append("\t<file></file>\n");
-		} else {				
+		} else {
 			sb.append("\t<file>").append(Base64.encodeBytes(data)).append("</file>\n");
 		}
 
 		sb.append("\t<name><![CDATA[" + document.getDocumentName() + "]]></name>\n");
 		sb.append("</document>\n");
 		return sb.toString();
+	}
+
+	@Override
+	public java.lang.Object getIdForNameAndUnit(final int transform, final java.lang.String name, final java.lang.Integer unitId) {
+		DocumentHbm docHbm = (DocumentHbm) this.getIdForNameAndUnit(transform, "from de.juwimm.cms.model.DocumentHbm as documentHbm where documentHbm.documentName = ? and documentHbm.unit.unitId = ?", name, unitId);
+		if (docHbm != null) {
+			return docHbm.getDocumentId();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	protected boolean handleSetDocumentContent(Integer idDocument, byte[] blob) throws Exception {
+		try {
+			blobJdbcDao.setDocumentContent(idDocument, blob);
+			return true;
+		} catch (Exception e) {
+			log.error("Error setting document content");
+			return false;
+		}
+
 	}
 
 }
