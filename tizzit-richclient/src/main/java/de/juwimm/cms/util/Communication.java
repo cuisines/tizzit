@@ -2368,4 +2368,8 @@ public class Communication implements ExitListener, ActionListener {
 	public Integer getPictureIdForUnitAndName(Integer unitId, String name) {
 		return getClientService().getPictureIdForUnitAndName(unitId, name);
 	}
+
+	public Integer getDocumentIdForNameAndUnit(String name, Integer unitId) {
+		return getClientService().getDocumentIdForNameAndUnit(name, unitId);
+	}
 }
