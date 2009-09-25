@@ -81,6 +81,7 @@ public class ExternalLink extends AbstractModule {
 	private boolean displayTypeEditable = false;
 	private boolean popupAvailable = false;
 
+	@Override
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
 		if ("DisplayType".equalsIgnoreCase(methodname)) {
@@ -151,7 +152,8 @@ public class ExternalLink extends AbstractModule {
 				if (nde != null) {
 					this.popupAvailable = true;
 				}
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		} else {
 			setDescription("");
 		}
@@ -165,19 +167,19 @@ public class ExternalLink extends AbstractModule {
 			return getURLEncodedISO("svgexternallink." + getDescription());
 		} catch (Exception exe) {
 			log.error("Error getting pane image", exe);
-			return "tra_link.png";
+			return "wysiwyg_ex_link.gif";
 		}
 	}
 
 	public String getIconImage() {
-		return "tra_link.png";
+		return "wysiwyg_ex_link.gif";
 	}
 
 	public void setEnabled(boolean enabling) {
 		if (panBtn != null) panBtn.setEnabled(enabling);
 		imEnabled = enabling;
 	}
-	
+
 	public void recycle() {
 		pan.clear();
 	}

@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.content.modules;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.event.ActionListener;
 import java.util.Properties;
@@ -86,7 +86,7 @@ import de.juwimm.cms.util.Communication;
 public class InternalLink extends AbstractModule {
 	private static Logger log = Logger.getLogger(InternalLink.class);
 	public static final String CLASS_NAME = "de.juwimm.cms.content.modules.InternalLink";
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private PanInternalLink pan;
 	private PanLinkButton panBtn;
 	private boolean imEnabled = false;
@@ -116,6 +116,7 @@ public class InternalLink extends AbstractModule {
 	 *   </ul>
 	 * </ul>
 	 */
+	@Override
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
 		if ("anchor".equalsIgnoreCase(methodname)) {
@@ -191,7 +192,8 @@ public class InternalLink extends AbstractModule {
 				if (nde != null) {
 					this.popupAvailable = true;
 				}
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		}
 		if (pan == null) pan = new PanInternalLink(this, treeLink, isSymlink);
 		pan.setProperties(this.node);
@@ -200,7 +202,7 @@ public class InternalLink extends AbstractModule {
 	}
 
 	public String getIconImage() {
-		return "tra_jump.png";
+		return "wysiwyg_int_link.gif";
 	}
 
 	public String getPaneImage() {
@@ -208,7 +210,7 @@ public class InternalLink extends AbstractModule {
 			return getURLEncodedISO("svginternallink." + getDescription());
 		} catch (Exception exe) {
 			log.error("Error returning the pane image for desc " + getDescription(), exe);
-			return "tra_jump.png";
+			return "wysiwyg_int_link.gif";
 		}
 	}
 
@@ -216,7 +218,7 @@ public class InternalLink extends AbstractModule {
 		if (panBtn != null) panBtn.setEnabled(enabling);
 		imEnabled = enabling;
 	}
-	
+
 	public void recycle() {
 		pan.clear();
 	}
@@ -231,8 +233,7 @@ public class InternalLink extends AbstractModule {
 
 	public String getLinkTarget() {
 		int targetViewComponentId = this.pan.getLinkTarget();
-		if (targetViewComponentId > 0)
-			return "/" + comm.getPathForViewComponentId(targetViewComponentId);
+		if (targetViewComponentId > 0) return "/" + comm.getPathForViewComponentId(targetViewComponentId);
 		return "";
 	}
 
