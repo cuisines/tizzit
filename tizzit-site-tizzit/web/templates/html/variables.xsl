@@ -1,9 +1,9 @@
 <?xml version='1.0'?>
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-	<xsl:param name="language" select="'deutsch'"/>
+	<xsl:param name="language" select="'en'"/>
 	<xsl:param name="url" select="''"/>
-	<xsl:param name="viewComponentId" select="''"/>
+	<xsl:param name="viewComponentId" select="''"/> 
 	<xsl:param name="print" select="0"/>
 	<xsl:param name="anchor" select="''"/>
 	<xsl:param name="liveserver" select="''"/>

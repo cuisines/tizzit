@@ -339,12 +339,12 @@
 					</map:call>
 					<map:transform src="templates/html/{template}.xsl">
 						<map:parameter name="language" value="{language}"/>
-						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
 						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
-						<map:parameter name="template" value="{../template}"/>
+						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="randomValue" value="{random:x}"/>
 						<map:parameter name="serverName" value="{request:serverName}"/>
@@ -363,7 +363,7 @@
 					</map:call>
 					<map:transform src="templates/html/{template}.xsl">
 						<map:parameter name="language" value="{language}"/>
-						<map:parameter name="url" value="{path}"/>
+						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
@@ -374,6 +374,7 @@
 						<map:parameter name="userAgentString" value="{request-header:User-Agent}"/>
 						<map:parameter name="safeguardUsername" value="{safeguardUsername}"/>
 						<map:parameter name="disableFulltext" value="false"/>
+						<map:parameter name="serverName" value="{request:serverName}"/>
 					</map:transform>
 					<!--formular cinclude -->
 					<map:select type="parameter">
@@ -389,11 +390,11 @@
 					<map:transform src="templates/fo/standard.xsl">
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{path}"/>
-						<map:parameter name="currentDate" value="{../currentDate}"/>
-						<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
 						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
-						<map:parameter name="template" value="{../template}"/>
+						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="contextRoot" value="{realpath:}/"/>
 						<map:parameter name="localImgDir" value="{global:clientCode}/httpd/img/"/>
@@ -405,11 +406,11 @@
 					<map:transform src="templates/fo/standard.xsl">
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{path}"/>
-						<map:parameter name="currentDate" value="{../currentDate}"/>
-						<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
+						<map:parameter name="currentDate" value="{currentDate}"/>
+						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
 						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
-						<map:parameter name="template" value="{../template}"/>
+						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="contextRoot" value="{realpath:}/"/>
 						<map:parameter name="localImgDir" value="{global:clientCode}/httpd/img/"/>

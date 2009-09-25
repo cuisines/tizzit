@@ -8,6 +8,13 @@
     	    <internalLink label="Link zu den Newsinhalten"/>			
 			<textfield name="afterTxt" label="Text After News" height="300"/>
     	</content>
-		<t_footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

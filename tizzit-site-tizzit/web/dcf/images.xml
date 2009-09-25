@@ -6,6 +6,13 @@
 		<iteration descriptionDcfName="image-name" name="images">
 			<picture name="image-name" label="Detail-Bild"/>
 		</iteration>  
-		<t_footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

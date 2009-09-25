@@ -99,4 +99,21 @@
 		</requiredChoose>  
 	</xsl:template>
 	
+	<xsl:template match="sn_footer" priority="2">
+		<sn_footer>
+			<display label="Social Network" dcfname="display">
+				<dcfConfig>
+					<classname>de.juwimm.cms.content.modules.CheckBoxModule</classname>
+					<property name="checkboxes">
+						<label>Display Social Network Icons?</label>
+						<elementName>display</elementName>
+						<properties>true</properties>
+						<selected>true</selected>
+					</property>				
+				</dcfConfig>
+			</display>
+			<xsl:apply-templates/>
+		</sn_footer>
+	</xsl:template>
+	
 </xsl:stylesheet>

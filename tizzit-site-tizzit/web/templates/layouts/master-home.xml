@@ -63,9 +63,7 @@
 						<div id="footer">
 							<div id="f_content">
 								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
-								<div class="twitter">
-									<ctmpl:include name="footer"/>
-								</div>
+								<ctmpl:include name="sn_footer"/>
 								<div class="clear">&#160;</div>
 							</div>
 						</div>

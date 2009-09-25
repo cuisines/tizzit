@@ -23,7 +23,7 @@
             display:block;
             text-decoration:underline;
         }
-        sitemap a:hover {
+        .sitemap a:hover {
             color:#96CF48;
         }
         .s_firstlevel, .s_secondlevel, .sitemap_left, .root, .s_links {

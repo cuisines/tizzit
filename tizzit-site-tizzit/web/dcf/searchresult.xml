@@ -4,6 +4,13 @@
 	<all>
 		<textfield name="content"/>
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
-		<t_footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

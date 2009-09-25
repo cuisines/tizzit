@@ -34,6 +34,13 @@
 		<textfield name="contentAfterVideo" height="200" label="Text nach dem Video"/>
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
 		<web20/>
-		<t_footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

@@ -28,6 +28,13 @@
 		</information_1>
 		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
 		<tagCloud/>
-		<t_footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

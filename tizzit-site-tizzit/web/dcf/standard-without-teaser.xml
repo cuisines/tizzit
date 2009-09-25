@@ -5,6 +5,13 @@
 		<stickyPad/>
 		<textfield name="content"/>
 		<web20/>
-		<t_footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

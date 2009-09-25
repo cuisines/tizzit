@@ -16,6 +16,13 @@
 			<textfield name="aftertext" label="Text nach dem Formular"/>       
 		</content>      
 		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/> 	
-		<footer/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
 	</all>
 </source>

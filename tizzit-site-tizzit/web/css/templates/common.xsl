@@ -93,6 +93,9 @@
 			color: #193140;
 			text-decoration:none;
 		}
+		a:hover {
+			color:#96CF48;
+		}
 		ul {
 			padding-left:15px;
 		}
@@ -165,7 +168,6 @@
 		}
 		#contentcontainer {
 			margin-top: 37px!important;
-			margin-top: 10px;
 			padding:30px 0px 30px 25px;
 		}
 		#toparea {
@@ -211,7 +213,8 @@
 		}
 		#leftmenue {
 			width:255px;
-			padding-right:25px;
+			padding-right:25px!important;
+			padding-right:12px;
 		}
 		#leftmenue_top {
 			background-image:url('/httpd/img/navi/leftnavi_top.gif');
@@ -251,7 +254,7 @@
 			position:absolute;
 			left:30px;
 		}
-		.twitter {
+		#sn_footer {
 			float:right;
 		}
 		.content {
@@ -299,6 +302,7 @@
 			font-size:17px;
 			display:block;
 			padding:5px 8px 13px 8px;
+			font-weight:bold;
 		}
 		.firstlevel2 .firstlink .fl_bg_l {
 			background-image:url('/httpd/img/navi/nav_bg_left.gif');
