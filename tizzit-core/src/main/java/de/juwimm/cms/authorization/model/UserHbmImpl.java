@@ -177,7 +177,6 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	 */
 	@Override
 	public void dropSite(SiteHbm site) {
-		// TODO Auto-generated method stub
-
+		this.getSites().remove(site);
 	}
 }

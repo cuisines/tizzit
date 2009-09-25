@@ -1310,7 +1310,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemoveUserFromSite(String userId, Integer siteId) throws Exception {
-		// TODO Auto-generated method stub
+		getUserHbmDao().load(userId).dropSite(getSiteHbmDao().load(siteId));
 
 	}
 

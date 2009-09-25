@@ -27,6 +27,7 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.model.UserHbmImpl;
 import de.juwimm.cms.authorization.vo.UserValue;
 import de.juwimm.cms.exceptions.UserException;
@@ -81,6 +82,11 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 	@Override
 	protected void handleDeleteSite(Integer siteId) throws Exception {
 		getViewServiceSpring().removeViewDocuments(getViewDocumentHbmDao().findAll(siteId));
+		SiteHbm site = getSiteHbmDao().load(siteId);
+		Collection<UserHbm> users = site.getUsers();
+		for (UserHbm user : users) {
+			getUserServiceSpring().removeUserFromSite(user.getUserId(), siteId);
+		}
 		getSiteHbmDao().remove(siteId);
 	}
 
@@ -89,9 +95,9 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 	 */
 	@Override
 	protected void handleChangeSite(SiteValue vo) throws Exception {
-		SiteHbm siteHbm = super.getSiteHbmDao().load(vo.getSiteId());
+		SiteHbm siteHbm = getSiteHbmDao().load(vo.getSiteId());
 		siteHbm.setSiteValue(vo);
-		super.getSiteHbmDao().update(siteHbm);
+		getSiteHbmDao().update(siteHbm);
 	}
 
 	/**
@@ -101,7 +107,7 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 	protected SiteValue[] handleGetAllSites() throws Exception {
 		SiteValue[] sites = null;
 		try {
-			Collection<SiteHbm> sitesList = super.getSiteHbmDao().findAll();
+			Collection<SiteHbm> sitesList = getSiteHbmDao().findAll();
 			sites = new SiteValue[sitesList.size()];
 			Iterator<SiteHbm> it = sitesList.iterator();
 			int i = 0;

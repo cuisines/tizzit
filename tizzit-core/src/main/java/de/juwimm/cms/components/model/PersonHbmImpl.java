@@ -20,7 +20,11 @@
  */
 package de.juwimm.cms.components.model;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -42,6 +46,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#addAddress(de.juwimm.cms.components.model.AddressHbm)
 	 */
+	@Override
 	public void addAddress(AddressHbm address) {
 		if (getAddresses() != null) {
 			getAddresses().add(address);
@@ -55,6 +60,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#removeAddress(de.juwimm.cms.components.model.AddressHbm)
 	 */
+	@Override
 	public void removeAddress(AddressHbm address) {
 		try {
 			getAddresses().remove(address);
@@ -66,6 +72,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#addDepartment(de.juwimm.cms.components.model.DepartmentHbm)
 	 */
+	@Override
 	public void addDepartment(DepartmentHbm department) {
 		if (getDepartments() != null) {
 			getDepartments().add(department);
@@ -80,10 +87,10 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#removeDepartment(de.juwimm.cms.components.model.DepartmentHbm)
 	 */
+	@Override
 	public void removeDepartment(DepartmentHbm department) {
 		try {
 			getDepartments().remove(department);
-			//			department.removePerson(this);
 		} catch (Exception e) {
 			log.error("Could not remove department from person with id " + getPersonId(), e);
 		}
@@ -92,6 +99,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#addTalktime(de.juwimm.cms.components.model.TalktimeHbm)
 	 */
+	@Override
 	public void addTalktime(TalktimeHbm talktime) {
 		if (getTalktimes() != null) {
 			getTalktimes().add(talktime);
@@ -105,6 +113,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#removeTalktime(de.juwimm.cms.components.model.TalktimeHbm)
 	 */
+	@Override
 	public void removeTalktime(TalktimeHbm talktime) {
 		try {
 			getTalktimes().remove(talktime);
@@ -116,6 +125,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#getDao(int)
 	 */
+	@Override
 	public PersonValue getDao(int depth) {
 		PersonValue dao = null;
 		try {
@@ -188,6 +198,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#update(de.juwimm.cms.components.vo.PersonValue)
 	 */
+	@Override
 	public void update(PersonValue personValue) {
 		//@todo implement public void update(de.juwimm.cms.components.vo.PersonValue personValue)
 		throw new UnsupportedOperationException("de.juwimm.cms.components.model.PersonHbm.update(de.juwimm.cms.components.vo.PersonValue personValue) Not implemented!");
@@ -196,6 +207,7 @@ public class PersonHbmImpl extends PersonHbm {
 	/**
 	 * @see de.juwimm.cms.components.model.PersonHbm#toXmlRecursive(int)
 	 */
+	@Override
 	public String toXmlRecursive(int tabdepth) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<person id=\"").append(getPersonId()).append("\" imageid=\"").append(getImageId()).append("\">\n");
