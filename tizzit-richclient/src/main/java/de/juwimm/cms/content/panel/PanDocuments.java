@@ -15,9 +15,14 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -26,7 +31,20 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -38,6 +56,7 @@ import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
+import de.juwimm.cms.content.frame.DlgSaveDocument;
 import de.juwimm.cms.content.frame.helper.DocumentFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
@@ -77,7 +96,7 @@ public class PanDocuments extends JPanel {
 	private JLabel lbLinkDescription = new JLabel();
 	private BorderLayout panLinkNameLayout = new BorderLayout();
 	private JCheckBox cbxDisplayTypeInline = new JCheckBox();
-	
+
 	private JTable tblDocuments = new JTable();
 	private DocumentTableModel tblDocumentsModel = null;
 	private TableSorter tblDocumentSorter = null;
@@ -85,7 +104,8 @@ public class PanDocuments extends JPanel {
 	private JToggleButton btnListView = null;
 	private JToggleButton btnSymbolView = null;
 	private int maxButtonWidth = 0;
-
+	private boolean isDataActualization = false;
+	private String selectedDocName;
 
 	public PanDocuments() {
 		try {
@@ -137,7 +157,7 @@ public class PanDocuments extends JPanel {
 		});
 		//regionSelected();
 	}
-	
+
 	/**
 	 */
 	public final class CboModel {
@@ -171,8 +191,7 @@ public class PanDocuments extends JPanel {
 			fitinrow = width / this.maxButtonWidth;
 		} catch (ArithmeticException e) {
 		}
-		if (fitinrow < 1)
-			fitinrow = 1;
+		if (fitinrow < 1) fitinrow = 1;
 		try {
 			dblSmall = ((double) anzahlItems / (double) fitinrow) - (anzahlItems / fitinrow);
 		} catch (ArithmeticException e) {
@@ -322,11 +341,7 @@ public class PanDocuments extends JPanel {
 				return;
 			}
 			*/
-			int ret = JOptionPane.showConfirmDialog(this, 
-					Messages.getString("panel.content.documents.deleteThisDocument", tmp),
-					Messages.getString("panel.content.documents.deleteDocument"), 
-					JOptionPane.WARNING_MESSAGE,
-					JOptionPane.YES_NO_OPTION);
+			int ret = JOptionPane.showConfirmDialog(this, Messages.getString("panel.content.documents.deleteThisDocument", tmp), Messages.getString("panel.content.documents.deleteDocument"), JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
 			if (ret == JOptionPane.YES_OPTION) {
 				comm.removeDocument(Integer.valueOf(acc).intValue());
 				loadThumbs(((CboModel) this.cboRegion.getSelectedItem()).getRegionId());
@@ -340,16 +355,19 @@ public class PanDocuments extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				CboModel cb = (CboModel) cboRegion.getSelectedItem();
+				isDataActualization = false;
 				upload(cb.getView(), cb.getRegionId(), null);
 				loadThumbs(cb.getRegionId());
 			}
 		});
 	}
-	
+
 	private void btnUpdateActionPerformed(ActionEvent e) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				CboModel cb = (CboModel) cboRegion.getSelectedItem();
+				/**overwrite the content of the document*/
+				isDataActualization = true;
 				upload(cb.getView(), cb.getRegionId(), intDocId);
 				loadThumbs(cb.getRegionId());
 			}
@@ -376,20 +394,40 @@ public class PanDocuments extends JPanel {
 			if ((files != null) && (files.length > 0)) {
 				for (int i = (files.length - 1); i >= 0; i--) {
 					File file = files[i];
-		
-					FrmProgressDialog prog = new FrmProgressDialog(Messages.getString("panel.content.documents.addDocument"),
-							Messages.getString("panel.content.upload.ParseFile"), 100);
+
+					FrmProgressDialog prog = new FrmProgressDialog(Messages.getString("panel.content.documents.addDocument"), Messages.getString("panel.content.upload.ParseFile"), 100);
 					prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
+
 					try {
 						String fext = Utils.getExtension(file);
-		
+
 						String mimetype = Utils.getMimeType4Extension(fext);
 						if (mimetype.equals("")) {
 							mimetype = "application/octet-stream";
 						}
 						prog.setProgress(Messages.getString("panel.content.upload.Uploading"), 50);
-						this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+						int existingDocId = comm.getDocumentIdForNameAndUnit(file.getName(), unit);
+						//this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+						if (!isDataActualization) {
+							if (existingDocId == 0) {
+								this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+							} else {
+								DlgSaveDocument saveDialog = new DlgSaveDocument(file, unit, file.getName(), mimetype, existingDocId);
+								int frameHeight = 180;
+								int frameWidth = 250;
+								saveDialog.setSize(frameWidth, frameHeight);
+								saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
+								saveDialog.setModal(true);
+								saveDialog.setVisible(true);
+							}
+						} else {
+							if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
+								this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+							} else if ((existingDocId != 0) && (!file.getName().equalsIgnoreCase(selectedDocName))) {
+								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("dialog.saveDocument.imposibleToOverwrite"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
+
 					} catch (Exception exe) {
 						log.error("Error upload document " + file.getName(), exe);
 					} finally {
@@ -402,8 +440,8 @@ public class PanDocuments extends JPanel {
 			Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
 		}
 		this.setCursor(Cursor.getDefaultCursor());
-	} 
-	
+	}
+
 	public Integer getDocumentId() {
 		return this.intDocId;
 	}
@@ -438,6 +476,7 @@ public class PanDocuments extends JPanel {
 			if (tblDocuments.getSelectedRow() >= 0) {
 				DocumentSlimValue vo = (DocumentSlimValue) tblDocumentSorter.getValueAt(tblDocuments.getSelectedRow(), 4);
 				intDocId = vo.getDocumentId();
+				selectedDocName = vo.getDocumentName();
 			}
 			btnUpdate.setVisible(false);
 			if (intDocId != null) {
@@ -472,17 +511,17 @@ public class PanDocuments extends JPanel {
 		}
 	}
 
-    private JPanel getViewSelectPan() {
-        if (panViewSelect == null) {
-            panViewSelect = new PanViewSelect();
-            panViewSelect.setPreferredSize(new Dimension(26, scrollPane.getHeight()));
-            btnListView = new JToggleButton(UIConstants.BTN_LIST_VIEW, true);
-            btnListView.setToolTipText(rb.getString("PanDocument.view.list"));
-            btnListView.setPreferredSize(new Dimension(UIConstants.BTN_LIST_VIEW.getIconHeight() + 10, UIConstants.BTN_LIST_VIEW.getIconWidth() + 10));
-            btnSymbolView = new JToggleButton(UIConstants.BTN_SYMBOL_VIEW, false);
-            btnSymbolView.setToolTipText(rb.getString("PanDocument.view.symbol"));
-            btnSymbolView.setPreferredSize(new Dimension(UIConstants.BTN_SYMBOL_VIEW.getIconHeight() + 10, UIConstants.BTN_SYMBOL_VIEW.getIconWidth() + 10));
-            btnSymbolView.addActionListener(new ActionListener() {
+	private JPanel getViewSelectPan() {
+		if (panViewSelect == null) {
+			panViewSelect = new PanViewSelect();
+			panViewSelect.setPreferredSize(new Dimension(26, scrollPane.getHeight()));
+			btnListView = new JToggleButton(UIConstants.BTN_LIST_VIEW, true);
+			btnListView.setToolTipText(rb.getString("PanDocument.view.list"));
+			btnListView.setPreferredSize(new Dimension(UIConstants.BTN_LIST_VIEW.getIconHeight() + 10, UIConstants.BTN_LIST_VIEW.getIconWidth() + 10));
+			btnSymbolView = new JToggleButton(UIConstants.BTN_SYMBOL_VIEW, false);
+			btnSymbolView.setToolTipText(rb.getString("PanDocument.view.symbol"));
+			btnSymbolView.setPreferredSize(new Dimension(UIConstants.BTN_SYMBOL_VIEW.getIconHeight() + 10, UIConstants.BTN_SYMBOL_VIEW.getIconWidth() + 10));
+			btnSymbolView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Component current = scrollPane.getViewport().getView();
 					if (current != null) {
@@ -490,8 +529,8 @@ public class PanDocuments extends JPanel {
 					}
 					scrollPane.getViewport().add(panDocumentButtons, null);
 				}
-            });
-            btnListView.addActionListener(new ActionListener() {
+			});
+			btnListView.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					Component current = scrollPane.getViewport().getView();
 					if (current != null) {
@@ -499,18 +538,17 @@ public class PanDocuments extends JPanel {
 					}
 					scrollPane.getViewport().add(tblDocuments, null);
 				}
-            });
-            panViewSelect.addButton(btnListView);
-            panViewSelect.addButton(btnSymbolView);
-        }
-        return panViewSelect;
-    }
+			});
+			panViewSelect.addButton(btnListView);
+			panViewSelect.addButton(btnSymbolView);
+		}
+		return panViewSelect;
+	}
 
-    private void setMaxButtonWidth(JPanel pan) {
-    	int currentWidth = pan.getPreferredSize().width;
-    	if (this.maxButtonWidth < currentWidth)
-    		this.maxButtonWidth = currentWidth;
-    }
+	private void setMaxButtonWidth(JPanel pan) {
+		int currentWidth = pan.getPreferredSize().width;
+		if (this.maxButtonWidth < currentWidth) this.maxButtonWidth = currentWidth;
+	}
 
 	public JCheckBox getCbxDisplayTypeInline() {
 		return cbxDisplayTypeInline;
