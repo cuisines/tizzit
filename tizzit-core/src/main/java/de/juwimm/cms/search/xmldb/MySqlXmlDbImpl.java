@@ -34,16 +34,19 @@ public class MySqlXmlDbImpl extends AbstractXmlDbImpl {
 
 	@Override
 	protected PreparedStatement getSearchXmlStatement(Integer siteId, String xpathQuery) throws SQLException {
-		String select = "SELECT xdb.VIEW_COMPONENT_ID, xdb.UNIT_ID, xdb.INFO_TEXT, xdb.TEXT, xdb.CONTENT FROM XML_SEARCH_DB xdb WHERE xdb.SITE_ID = ? AND ExtractValue(xdb.CONTENT, ?) != ''"; 
+		String select = "SELECT xdb.VIEW_COMPONENT_ID, xdb.UNIT_ID, xdb.INFO_TEXT, xdb.TEXT, xdb.CONTENT FROM XML_SEARCH_DB xdb WHERE xdb.SITE_ID = ? AND ExtractValue(xdb.CONTENT, ?) > 0";
+		xpathQuery = "count(" + xpathQuery + ")";
 		PreparedStatement pstmt = super.getConnection().prepareStatement(select);
 		pstmt.setInt(1, siteId.intValue());
 		pstmt.setString(2, xpathQuery);
+
 		return pstmt;
 	}
 
 	@Override
 	protected PreparedStatement getSearchXmlByUnitStatement(Integer unitId, Integer viewDocumentId, String xpathQuery) throws SQLException {
-		String selectUnit = "SELECT xdb.VIEW_COMPONENT_ID, xdb.UNIT_ID, xdb.INFO_TEXT, xdb.TEXT, xdb.CONTENT FROM XML_SEARCH_DB xdb WHERE xdb.UNIT_ID = ? AND ExtractValue(xdb.CONTENT, ?) != ''";
+		String selectUnit = "SELECT xdb.VIEW_COMPONENT_ID, xdb.UNIT_ID, xdb.INFO_TEXT, xdb.TEXT, xdb.CONTENT FROM XML_SEARCH_DB xdb WHERE xdb.UNIT_ID = ? AND ExtractValue(xdb.CONTENT, ?) > 0";
+		xpathQuery = "count(" + xpathQuery + ")";
 		PreparedStatement pstmt = super.getConnection().prepareStatement(selectUnit);
 		pstmt.setInt(1, unitId.intValue());
 		pstmt.setString(2, xpathQuery);
