@@ -251,7 +251,7 @@
 		<xsl:param name="month" select="month"/>
 		<xsl:param name="year" select="year"/>
 
-		<xsl:text>Veröffentlicht am </xsl:text>
+		<xsl:text>Published on </xsl:text>
 		<xsl:variable name="date-string">
 			<xsl:value-of select="$year"/>
 			<xsl:text>-</xsl:text>
@@ -265,11 +265,12 @@
 			</xsl:if>
 			<xsl:value-of select="$day"/>
 		</xsl:variable>
-
+		
 		<xsl:variable name="date">
 			<xsl:value-of select="xs:date($date-string)"/>
 		</xsl:variable>
-		<xsl:value-of select="format-date($date, '[D]. [MNn] [Y]')"/>
+		
+		<xsl:value-of select="format-date($date, '[MNn] [D], [Y]')"/>
 	</xsl:template>
 	
 	<xsl:template match="head" priority="1.1">

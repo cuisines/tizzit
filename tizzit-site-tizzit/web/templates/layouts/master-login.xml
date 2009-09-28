@@ -35,7 +35,10 @@
 								<div class="clear">&#160;</div>
 							</div>
 						</div>
-						<div id="information_2">&#160;</div>
+						<div id="information_2">
+							<ctmpl:include name="teaser_bottom"/>
+							<div class="clear">&#160;</div>
+						</div>
 						<div id="footer">
 							<div id="f_content">
 								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>

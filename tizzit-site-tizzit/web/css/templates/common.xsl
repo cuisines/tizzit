@@ -263,7 +263,7 @@
 			font-family:Tahoma;
 		}
 		.secondlevel, #search_area, #search_button, #search_container, .copyright,
-		.firstlevel2 .firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
+		.firstlevel2 .firstlink, .firstlevel2 .last-of-firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
 		.fl_bg_l, .fl_bg, .flm_bg, #leftmenue, #right, #middle, .footer_item, .first-item, .breadcrumb-item,
 		.languageFlags {
 			float:left;
@@ -296,7 +296,7 @@
 		.firstlevel2 .firstlink{
 			margin-right:13px;
 		}
-		.firstlevel2 .firstlink a {
+		.firstlevel2 .firstlink a, .firstlevel2 .last-of-firstlink a {
 			color: #494949;
 			text-decoration:none;
 			font-size:17px;
@@ -304,28 +304,29 @@
 			padding:5px 8px 13px 8px;
 			font-weight:bold;
 		}
-		.firstlevel2 .firstlink .fl_bg_l {
+		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover {
+			color:#96CF48;
+		}
+		.firstlevel2 .firstlink .fl_bg_l, .firstlevel2 .last-of-firstlink .fl_bg_l {
 			background-image:url('/httpd/img/navi/nav_bg_left.gif');
 			background-repeat:no-repeat;
 			width:4px;
 		}
-		.firstlevel2 .firstlink .fl_bg {
+		.firstlevel2 .firstlink .fl_bg, .firstlevel2 .last-of-firstlink .fl_bg {
 			background-image:url('/httpd/img/navi/nav_bg_right.gif');
 			background-repeat:no-repeat;
 			width:4px;
 		}
-		.firstlevel2 .firstlink .flm_bg {
+		.firstlevel2 .firstlink .flm_bg, .firstlevel2 .last-of-firstlink .flm_bg {
 			background-image:url('/httpd/img/navi/nav_bg_middle.gif');
 			background-repeat:repeat-x;
 		}
-		.firstlevel2 .firstlink .actualClicked a, .firstlevel2 .firstlink .clicked a {
+		.firstlevel2 .firstlink .actualClicked a, .firstlevel2 .firstlink .clicked a,
+		.firstlevel2 .last-of-firstlink .actualClicked a, .firstlevel2 .last-of-firstlink .clicked a {
 			background-image:url('/httpd/img/navi/nav_bg_bottom.gif');
 			background-repeat:no-repeat;
 			background-position:center 29px;
 			color:#fff;
-		}
-		.firstlevel2 .firstlink a:hover {
-			color:#96cf48;
 		}
 		.leftmenue .firstlink a {
 			font-size:13px;

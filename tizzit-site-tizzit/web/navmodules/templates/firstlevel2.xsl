@@ -11,8 +11,15 @@
 	</xsl:template>
     
     <xsl:template match="viewcomponent" priority="3">
-        <div class="firstlink">
-            
+        <div>
+            <xsl:attribute name="class">
+                <xsl:choose>
+                    <xsl:when test="position()!=last()">
+                        <xsl:text>firstlink</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>last-of-firstlink</xsl:otherwise>
+                </xsl:choose>
+            </xsl:attribute>
             <xsl:choose>
                 <xsl:when test="@id=$viewComponentId">
                     <div class="fl_bg_l">&#160;</div>
