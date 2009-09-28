@@ -304,7 +304,8 @@
 			padding:5px 8px 13px 8px;
 			font-weight:bold;
 		}
-		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover {
+		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover,
+		.firstlevel2 .firstlink .clicked a:hover, .firstlevel2 .last-of-firstlink .clicked a:hover {
 			color:#96CF48;
 		}
 		.firstlevel2 .firstlink .fl_bg_l, .firstlevel2 .last-of-firstlink .fl_bg_l {
