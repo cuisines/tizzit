@@ -335,11 +335,13 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public boolean hasSiblingsWithLinkName(String testName) {
-		Collection siblings = this.getParent().getChildren();
-		Iterator it = siblings.iterator();
-		while (it.hasNext()) {
-			ViewComponentHbm vc = (ViewComponentHbm) it.next();
-			if (vc.getUrlLinkName().equalsIgnoreCase(this.getUrlLinkName()) && !this.equals(vc)) { return true; }
+		if (this.getParent() != null) {
+			Collection siblings = this.getParent().getChildren();
+			Iterator it = siblings.iterator();
+			while (it.hasNext()) {
+				ViewComponentHbm vc = (ViewComponentHbm) it.next();
+				if (vc.getUrlLinkName().equalsIgnoreCase(this.getUrlLinkName()) && !this.equals(vc)) { return true; }
+			}
 		}
 		return false;
 	}
