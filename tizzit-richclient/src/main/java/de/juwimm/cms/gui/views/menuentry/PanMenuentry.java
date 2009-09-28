@@ -70,40 +70,40 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 	private JButton btnReindexPage;
 	private static Logger log = Logger.getLogger(PanMenuentry.class);
 	private ViewComponentValue viewComponent;
-	private JLabel lblDisplayedLinkname = new JLabel();
-	private JTextField txtDisplayedLinkName = new JTextField();
-	private JLabel lblLinkDescription = new JLabel();
-	private JTextField txtLinkDescription = new JTextField();
-	private JLabel lblUrlLinkName = new JLabel();
-	private JTextField txtUrlLinkName = new JTextField();
-	private JPanel panStati = new JPanel();
-	private JPanel panDefault = new JPanel();
+	private final JLabel lblDisplayedLinkname = new JLabel();
+	private final JTextField txtDisplayedLinkName = new JTextField();
+	private final JLabel lblLinkDescription = new JLabel();
+	private final JTextField txtLinkDescription = new JTextField();
+	private final JLabel lblUrlLinkName = new JLabel();
+	private final JTextField txtUrlLinkName = new JTextField();
+	private final JPanel panStati = new JPanel();
+	private final JPanel panDefault = new JPanel();
 	private TitledBorder borderStati;
-	private JLabel lblStateDeploy = new JLabel();
-	private JLabel lblStateDeployContent = new JLabel();
-	private Communication communication = ((Communication) getBean(Beans.COMMUNICATION));
-	private JLabel lblStateOnlineContent = new JLabel();
-	private JLabel lblStateOnline = new JLabel();
-	private JCheckBox chkOpenNewNavi = new JCheckBox();
-	private PanSimpleDate txtOnlineStart = new PanSimpleDate();
-	private PanSimpleDate txtOnlineStop = new PanSimpleDate();
-	private JPanel panOnlineOfflineDates = new JPanel();
-	private DefaultComboBoxModel showTypeModel = new DefaultComboBoxModel();
-	private JComboBox optSelectShow = new JComboBox(showTypeModel);
-	private JPanel panOptPan = new JPanel();
-	private JLabel lblVcId = new JLabel();
-	private JLabel lblVcIdcontent = new JLabel();
+	private final JLabel lblStateDeploy = new JLabel();
+	private final JLabel lblStateDeployContent = new JLabel();
+	private final Communication communication = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JLabel lblStateOnlineContent = new JLabel();
+	private final JLabel lblStateOnline = new JLabel();
+	private final JCheckBox chkOpenNewNavi = new JCheckBox();
+	private final PanSimpleDate txtOnlineStart = new PanSimpleDate();
+	private final PanSimpleDate txtOnlineStop = new PanSimpleDate();
+	private final JPanel panOnlineOfflineDates = new JPanel();
+	private final DefaultComboBoxModel showTypeModel = new DefaultComboBoxModel();
+	private final JComboBox optSelectShow = new JComboBox(showTypeModel);
+	private final JPanel panOptPan = new JPanel();
+	private final JLabel lblVcId = new JLabel();
+	private final JLabel lblVcIdcontent = new JLabel();
 	private DropDownHolder showType0 = null;
 	private DropDownHolder showType1 = null;
 	private DropDownHolder showType2 = null;
 	private DropDownHolder showType3 = null;
-	private JCheckBox chkSetInvisible = new JCheckBox();
-	private JCheckBox chkSearchIndexed = new JCheckBox();
-	private JCheckBox chkXmlSearchIndexed = new JCheckBox();
-	private JLabel lblLastModifiedText = new JLabel();
-	private JLabel lblLastModifiedData = new JLabel();
-	private JLabel lblUserLastModifiedText = new JLabel();
-	private JLabel lblUserLastModifiedData = new JLabel();
+	private final JCheckBox chkSetInvisible = new JCheckBox();
+	private final JCheckBox chkSearchIndexed = new JCheckBox();
+	private final JCheckBox chkXmlSearchIndexed = new JCheckBox();
+	private final JLabel lblLastModifiedText = new JLabel();
+	private final JLabel lblLastModifiedData = new JLabel();
+	private final JLabel lblUserLastModifiedText = new JLabel();
+	private final JLabel lblUserLastModifiedData = new JLabel();
 	private boolean saveStatus;
 
 	public PanMenuentry() {
@@ -732,11 +732,13 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 	private boolean checkUrlLinkNameUnique(String urlName) {
 		boolean flag = true;
 		try {
-			ViewComponentValue[] children = communication.getViewComponentChildren(viewComponent.getParentId());
+			if (viewComponent.getParentId() != null) {
+				ViewComponentValue[] children = communication.getViewComponentChildren(viewComponent.getParentId());
 
-			for (ViewComponentValue viewComponentValue : children) {
-				if ((viewComponentValue.getUrlLinkName().equalsIgnoreCase(urlName)) && (viewComponent.getViewComponentId().intValue() != viewComponentValue.getViewComponentId().intValue())) {
-					flag = false;
+				for (ViewComponentValue viewComponentValue : children) {
+					if ((viewComponentValue.getUrlLinkName().equalsIgnoreCase(urlName)) && (viewComponent.getViewComponentId().intValue() != viewComponentValue.getViewComponentId().intValue())) {
+						flag = false;
+					}
 				}
 			}
 		} catch (Exception e) {
