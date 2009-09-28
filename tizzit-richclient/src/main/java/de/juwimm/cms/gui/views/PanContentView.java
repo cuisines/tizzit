@@ -293,6 +293,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		try {
 			// Menu entry
 			panMenuentry.save();
+			viewComponent = panMenuentry.getViewComponent();
 			saveStatus = true;
 			if (!panMenuentry.getSaveStatus()) {
 				saveStatus = false;
