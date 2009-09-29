@@ -12,7 +12,7 @@
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format_xhtml.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/standard.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/date.lib.xsl"/>
-	
+
 	<xsl:include href="include/footer.xsl"/>
 	<xsl:include href="include/teaser.xsl"/>
 	<xsl:include href="include/image_div.xsl"/> 

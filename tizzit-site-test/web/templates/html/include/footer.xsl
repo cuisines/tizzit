@@ -9,7 +9,7 @@
 	    		<xsl:apply-templates select="twitter" mode="sn"/>
 	    		<xsl:apply-templates select="digg" mode="sn"/>
 	    		<xsl:apply-templates select="stumble" mode="sn"/>
-	    		<xsl:apply-templates select="rrs" mode="sn"/>
+	    		<!--<xsl:apply-templates select="rrs" mode="sn"/>-->
 	    	</div>
 	    </ctmpl:module>	
 	</xsl:template>

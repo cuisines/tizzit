@@ -30,7 +30,7 @@
 								<div id="toparea">
 									<ctmpl:include name="secondlevel"/>
 									<ctmpl:include name="language"/>
-									<ctmpl:include name="search"/>
+									<!--<ctmpl:include name="search"/>-->
 								</div>
 								<div class="clear">&#160;</div>
 								<ctmpl:include name="firstlevel2"/>
