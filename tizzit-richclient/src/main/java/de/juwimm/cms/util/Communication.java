@@ -1739,6 +1739,14 @@ public class Communication implements ExitListener, ActionListener {
 		}
 	}
 
+	public void setLiveServer(String hostName, boolean liveServer) {
+		try {
+			getClientService().setLiveServer(hostName, liveServer);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+
 	/* Safeguard start */
 
 	public void addSimplePwRealmToVC(Integer simplePwRealmId, Integer viewComponentId, String neededRole, Integer loginPageId) throws Exception {
