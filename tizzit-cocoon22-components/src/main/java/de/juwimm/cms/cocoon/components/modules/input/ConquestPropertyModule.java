@@ -29,6 +29,8 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.thread.ThreadSafe;
 import org.apache.cocoon.components.modules.input.AbstractJXPathModule;
 import org.apache.cocoon.components.modules.input.InputModule;
+import org.apache.cocoon.environment.ObjectModelHelper;
+import org.apache.cocoon.environment.Request;
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.beans.WebServiceSpring;
@@ -68,6 +70,7 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 	 */
 	@Override
 	public Object getAttribute(String name, Configuration modeConf, Map objectModel) throws ConfigurationException {
+		String result;
 		if (this.webSpringBean == null) {
 			try {
 				this.webSpringBean = (WebServiceSpring) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.WEB_SERVICE_SPRING);
@@ -75,8 +78,18 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 				log.error("Could not load webservicespringbean!", exf);
 			}
 		}
-		reload();
-		String result = prop.get(name).toString();
+		if ("liveserver".equals(name)) {
+			Request request = ObjectModelHelper.getRequest(objectModel);
+			String host = request.getHeader("Host");
+			int portPosition = host.lastIndexOf(":");
+			if (portPosition > 0) {
+				host = host.substring(0, portPosition);
+			}
+			result = webSpringBean.getLiveserver(host).toString();
+		} else {
+			reload();
+			result = prop.get(name).toString();
+		}
 		return result;
 	}
 
@@ -91,7 +104,7 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 		if (siteLastModifiedTime > this.lastLoadTime) {
 			this.lastLoadTime = siteLastModifiedTime;
 			prop = new Properties();
-			loadConquestProperties(); 
+			loadConquestProperties();
 			loadSiteProperties();
 		} else {
 			// load variables from conquest.properties
@@ -137,7 +150,7 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 		try {
 			prop.load(is);
 			System.setProperty("cqCmsTemplatesPath", prop.get("cqPropertiesBeanSpring.cmsTemplatesPath").toString());
-			System.setProperty("cqLiveserver", prop.get("cqPropertiesBeanSpring.liveserver").toString()); 
+			System.setProperty("cqLiveserver", prop.get("cqPropertiesBeanSpring.liveserver").toString());
 		} catch (Exception exe) {
 			log.warn("Unable to load props from \"" + PROPERTIES_FILENAME + "\"!");
 		}
