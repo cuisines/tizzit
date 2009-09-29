@@ -233,6 +233,9 @@
 		<div class="announcement_text">
 			<xsl:apply-templates select="text" mode="format"/>
 		</div>
+		<div class="backLink">
+			<a href="page.html">back</a>
+		</div>
 	</xsl:template>
 
 	<xsl:template match="newsname" mode="format" priority="1.1">
@@ -282,8 +285,8 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:choose>
-							<xsl:when test="//newsname">
-								<xsl:value-of select="//newsname"/>
+							<xsl:when test="$doc//news/newslist/item/newsname!='' and $newsNr!='0'">
+								<xsl:value-of select="$doc//news/newslist/item[@timestamp=$newsNr]/newsname"/>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:value-of select="title"/>

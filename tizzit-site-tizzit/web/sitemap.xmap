@@ -339,7 +339,7 @@
 					</map:call>
 					<map:transform src="templates/html/{template}.xsl">
 						<map:parameter name="language" value="{language}"/>
-						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="url" value="{path}"/>
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
@@ -361,9 +361,9 @@
 					<map:call resource="generalContentTransformation">
 						<map:parameter name="template" value="{template}"/>
 					</map:call>
-					<map:transform src="templates/html/{template}.xsl">
+					<map:transform src="templates/html/{template}.xsl"> 
 						<map:parameter name="language" value="{language}"/>
-						<map:parameter name="url" value="{url}"/>
+						<map:parameter name="url" value="{path}"/>
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
@@ -549,7 +549,7 @@
 					label="content">
 					<map:parameter name="currentDate" value="{currentDate}"/>
 					<map:parameter name="language" value="{language}"/>
-					<map:parameter name="url" value="{url}"/>
+					<map:parameter name="url" value="{../url}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
 					<map:parameter name="template" value="{template}"/>
@@ -572,7 +572,7 @@
 								<map:transform
 									src="{global:parentMandator}templates/layouts/master.xsl">
 									<map:parameter name="language" value="{../language}"/>
-									<map:parameter name="url" value="{../path}"/>
+									<map:parameter name="url" value="{../url}"/>
 									<map:parameter name="currentDate" value="{currentDate}"/>
 									<map:parameter name="viewComponentId"
 										value="{viewComponentId}"/>
@@ -603,17 +603,17 @@
 							<map:parameter name="parameter-selector-test" value="{login}"/>
 							<map:when test="'-1'">
 								<map:redirect-to
-									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{../url}/&amp;login={login}"
 								/>
 							</map:when>
 							<map:when test="'-2'">
 								<map:redirect-to
-									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/&amp;login={login}"
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{../url}/&amp;login={login}"
 								/>
 							</map:when>
 							<map:otherwise>
 								<map:redirect-to
-									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{path}/page.html%3Flogin={login}"
+									uri="/{language}/{redirecttologin}/page.html?resource=/{language}/{../url}/page.html%3Flogin={login}"
 								/>
 							</map:otherwise>
 						</map:select>

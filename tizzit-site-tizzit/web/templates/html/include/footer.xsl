@@ -16,7 +16,7 @@
 	
 	<xsl:template match="delicious" mode="sn">
 		<div class="footer_item">
-			<a href="http://del.icio.us/submit?url=http://{$serverName}/{$url}/page.html&amp;title=Tizzit.org" target="_blank">
+			<a href="http://del.icio.us/submit?url=http://{$serverName}/{$language}/{$url}/page.html&amp;title=Tizzit.org" target="_blank">
 				<img src="/httpd/img/footer/delicious.gif" alt="SAVE TO DELICIOUS" border="0"/>
 			</a>
 		</div>
@@ -24,7 +24,7 @@
 	
 	<xsl:template match="facebook" mode="sn">
 		<div class="footer_item">
-			<a href="http://www.facebook.com/sharer.php?u=http://{$serverName}/{$url}/page.html&amp;t=Tizzit.org" target="_blank">
+			<a href="http://www.facebook.com/sharer.php?u=http://{$serverName}/{$language}/{$url}/page.html&amp;t=Tizzit.org" target="_blank">
 				<img src="/httpd/img/footer/facebook.gif" alt="SHARE ON FACEBOOK" border="0"/>
 			</a>
 		</div>
@@ -32,7 +32,7 @@
 		
 	<xsl:template match="twitter" mode="sn">
 		<div class="footer_item">
-			<a href="http://twitthis.com/twit?url=http://{$serverName}/{$url}/page.html" target="_blank">
+			<a href="http://twitthis.com/twit?url=http://{$serverName}/{$language}/{$url}/page.html" target="_blank">
 				<img src="/httpd/img/footer/twitter.gif" alt="TWEET THIS!" border="0"/>
 			</a>
 		</div>
@@ -40,7 +40,7 @@
 	            
 	<xsl:template match="digg" mode="sn">
 		<div class="footer_item">
-			<a href="http://www.digg.com/submit?phase=2&amp;url=http://{$serverName}/{$url}/page.html" target="_blank">
+			<a href="http://www.digg.com/submit?phase=2&amp;url=http://{$serverName}/{$language}/{$url}/page.html" target="_blank">
 				<img src="/httpd/img/footer/digg.gif" alt="DIGG IT!" borer="0"/>
 			</a>
 		</div>
@@ -48,7 +48,7 @@
 	        	
 	<xsl:template match="stumble" mode="sn">
 		<div class="footer_item">
-			<a href="http://www.stumbleupon.com/submit?url=http://{$serverName}/{$url}/page.html&amp;title=Tizzit.org" target="_blank">
+			<a href="http://www.stumbleupon.com/submit?url=http://{$serverName}/{$language}/{$url}/page.html&amp;title=Tizzit.org" target="_blank">
 				<img src="/httpd/img/footer/stumbleUpon.gif" alt="STUMBLE THIS!" border="0"/>
 			</a>
 		</div>

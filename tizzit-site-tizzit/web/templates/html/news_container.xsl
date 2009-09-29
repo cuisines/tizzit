@@ -232,15 +232,16 @@
 			<xsl:if test="text!=''">
 				<div class="newsContent">
 					<xsl:value-of select="substring(text, 0, 300)"/>
-					<a class="moreLink">
-						<xsl:attribute name="href">
-							<xsl:text>?newsNr=</xsl:text>
-							<xsl:value-of select="@timestamp"/>
-						</xsl:attribute>
-						<xsl:if test="string-length(text)&gt;300">
-							<xsl:text> ...more</xsl:text>
-						</xsl:if>
-					</a>
+					<xsl:if test="string-length(text)&gt;300">
+						&#160;
+						<a class="moreLink">
+							<xsl:attribute name="href">
+								<xsl:text>?newsNr=</xsl:text>
+								<xsl:value-of select="@timestamp"/>
+							</xsl:attribute>
+							<xsl:text>...more</xsl:text>
+						</a>
+					</xsl:if>
 				</div>
 			</xsl:if>
 		</div>

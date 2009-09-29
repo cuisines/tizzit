@@ -17,7 +17,11 @@
                 <description>Tizzit Content Management System</description>
                 <language>en-en</language>
                 <copyright>2009 - Tizzit.org</copyright>
-                <xsl:apply-templates select="$doc//news/newslist/item"/>
+                <xsl:apply-templates select="$doc//news/newslist/item">
+                    <xsl:sort select="newsdate/year" data-type="number" order="descending"/>
+                    <xsl:sort select="newsdate/month" data-type="number" order="descending"/>
+                    <xsl:sort select="newsdate/day" data-type="number" order="descending"/>
+                </xsl:apply-templates>
             </channel>
         </rss>
     </xsl:template>
@@ -35,7 +39,7 @@
                 <xsl:text>/page.html?newsNr=</xsl:text>
                 <xsl:value-of select="@timestamp"/>
             </link>
-            <description><xsl:apply-templates select="text/p"/></description>
+            <description><xsl:apply-templates select="text"/></description>
         </item>
     </xsl:template>
     

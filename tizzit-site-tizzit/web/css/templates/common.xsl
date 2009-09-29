@@ -91,7 +91,7 @@
 		}
 		a {
 			color: #193140;
-			text-decoration:none;
+			text-decoration:underline;
 		}
 		a:hover {
 			color:#96CF48;
@@ -341,6 +341,7 @@
 		}
 		.leftmenue .firstlink a:hover, .leftmenue .firstlink .clicked a {
 			font-weight:bold;
+			color:#96CF48;
 		}
 		.leftmenue .thirdlinks a {
 			padding:3px 10px 3px 48px;

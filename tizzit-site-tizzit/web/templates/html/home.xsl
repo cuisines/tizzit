@@ -138,10 +138,141 @@
     
     <xsl:template match="information_1">
         <ctmpl:module name="information_1"> 
-            <div class="latestNews">
-               as
-            </div>           
+            <xsl:choose>
+                <xsl:when test="//newslist != ''">
+                    <div class="latestNews">
+                        <h1>Latest News</h1>
+                        <xsl:apply-templates select="//newslist" mode="latestnews"/>
+                        <div class="clear">&#160;</div>
+                    </div>  
+                </xsl:when>
+                <xsl:otherwise>
+                    <div class="clear">&#160;</div>
+                </xsl:otherwise>
+            </xsl:choose>
         </ctmpl:module> 
+    </xsl:template>
+    
+    <xsl:template match="newslist" mode="latestnews">
+        <xsl:choose>
+            <xsl:when test="count(item)&gt;2">
+                <div class="newsLeft">
+                    <xsl:apply-templates select="item" mode="latestnews">
+                        <xsl:sort select="newsdate/year" data-type="number" order="descending"/>
+                        <xsl:sort select="newsdate/month" data-type="number" order="descending"/>
+                        <xsl:sort select="newsdate/day" data-type="number" order="descending"/>
+                    </xsl:apply-templates>
+                </div>
+                <div class="newsRight">
+                    <xsl:apply-templates select="item" mode="latestnews">
+                        <xsl:sort select="newsdate/year" data-type="number" order="descending"/>
+                        <xsl:sort select="newsdate/month" data-type="number" order="descending"/>
+                        <xsl:sort select="newsdate/day" data-type="number" order="descending"/>
+                        <xsl:with-param name="counter" select="'1'"/>
+                    </xsl:apply-templates>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="item" mode="latestnews">
+                    <xsl:sort select="newsdate/year" data-type="number" order="descending"/>
+                    <xsl:sort select="newsdate/month" data-type="number" order="descending"/>
+                    <xsl:sort select="newsdate/day" data-type="number" order="descending"/>
+                </xsl:apply-templates>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="item" mode="latestnews">
+        <xsl:param name="counter"/>
+
+        <xsl:choose>
+            <xsl:when test="$counter='1'">
+                <xsl:if test="position()&gt;2 and position()&lt;5">
+                    <div class="newsItem">
+                        <div class="newsDate">
+                            <xsl:value-of select="newsdate/month"/>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="newsdate/day"/>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="newsdate/year"/>
+                        </div>
+                        <h2 class="newsHeadline">
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:text>/</xsl:text>
+                                    <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@language"/>
+                                    <xsl:text>/</xsl:text>
+                                    <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@url"/>
+                                    <xsl:text>/page.html?newsNr=</xsl:text>
+                                    <xsl:value-of select="@timestamp"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="newsname"/>
+                            </a>
+                        </h2>
+                        <div class="newsContent">
+                            <xsl:value-of select="substring(text, 0, 300)"/>
+                            <xsl:if test="string-length(text)&gt;300">
+                                &#160;
+                                <a class="moreLink">
+                                    <xsl:attribute name="href">
+                                        <xsl:text>/</xsl:text>
+                                        <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@language"/>
+                                        <xsl:text>/</xsl:text>
+                                        <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@url"/>
+                                        <xsl:text>/page.html?newsNr=</xsl:text>
+                                        <xsl:value-of select="@timestamp"/>
+                                    </xsl:attribute>
+                                    <xsl:text>...more</xsl:text>
+                                </a>
+                            </xsl:if>
+                        </div>
+                    </div>
+                </xsl:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="position()&gt;0 and position()&lt;3">
+                    <div class="newsItem">
+                        <div class="newsDate">
+                            <xsl:value-of select="newsdate/month"/>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="newsdate/day"/>
+                            <xsl:text>/</xsl:text>
+                            <xsl:value-of select="newsdate/year"/>
+                        </div>
+                        <h2 class="newsHeadline">
+                            <a>
+                                <xsl:attribute name="href">
+                                    <xsl:text>/</xsl:text>
+                                    <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@language"/>
+                                    <xsl:text>/</xsl:text>
+                                    <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@url"/>
+                                    <xsl:text>/page.html?newsNr=</xsl:text>
+                                    <xsl:value-of select="@timestamp"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="newsname"/>
+                            </a>
+                        </h2>
+                        <div class="newsContent">
+                            <xsl:value-of select="substring(text, 0, 300)"/>
+                            <xsl:if test="string-length(text)&gt;300">
+                                &#160;
+                                <a class="moreLink">
+                                    <xsl:attribute name="href">
+                                        <xsl:text>/</xsl:text>
+                                        <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@language"/>
+                                        <xsl:text>/</xsl:text>
+                                        <xsl:value-of select="//internalLink[@dcfname='linkToNews']/internalLink/@url"/>
+                                        <xsl:text>/page.html?newsNr=</xsl:text>
+                                        <xsl:value-of select="@timestamp"/>
+                                    </xsl:attribute>
+                                    <xsl:text>...more</xsl:text>
+                                </a>
+                            </xsl:if>
+                        </div>
+                    </div>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
 </xsl:stylesheet>

@@ -22,6 +22,9 @@
                         </div>
                     </div>
                 </div>
+                <xsl:if test="position()!=last()">
+                    <hr/>
+                </xsl:if>
             </xsl:for-each>
         </xsl:if>
     </xsl:template>

@@ -18,6 +18,15 @@
         .moreLink {
             font-weight:bold;
         }
+        .metadata {
+            font-style:italic;
+            color:#8c8c8c;
+            font-size:11px;
+            font-family:Arial;
+        }
+        h1.headline {
+            padding-bottom:10px;
+        }
         
     </xsl:template>
     

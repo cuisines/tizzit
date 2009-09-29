@@ -6,7 +6,7 @@
     
     <xsl:param name="layout" select="'default'"/>
     <xsl:param name="content-template" select="'standard'"/>
-    
+
     <!-- Master nach layout und template auswaehlen -->
     <xsl:variable name="masterlayout">
         <xsl:choose>
@@ -26,6 +26,6 @@
     </xsl:variable>
     
     <!--reads the mastertemplate into the variable template-->
-    <xsl:variable name="template" select="document(concat('master-',$masterlayout,'.xml'))"/>
+    <xsl:variable name="template" select="document(concat('master-',$masterlayout, '.xml'))"/>
     
 </xsl:stylesheet>

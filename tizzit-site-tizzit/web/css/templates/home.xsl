@@ -132,7 +132,24 @@
         #cloudlist {
             position:absolute;
         }
-        
+        .latestNews {
+            padding:15px 0 15px 0;
+        }
+        .newsItem {
+            width:490px;
+            padding:0 10px 15px 0;
+        }
+        .newsLeft, .newsRight {
+            float:left;
+        }
+        .newsDate {
+            color:#8c8c8c;
+            font-size:11px;
+            font-family:Arial;
+        }
+        .newsContent {
+            color:#474747;
+        }
         
     </xsl:template>
         

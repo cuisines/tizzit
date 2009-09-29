@@ -108,9 +108,9 @@
 						<label>Display Social Network Icons?</label>
 						<elementName>display</elementName>
 						<properties>true</properties>
-						<selected>true</selected>
 					</property>				
 				</dcfConfig>
+				<dcfInitial>true</dcfInitial>
 			</display>
 			<xsl:apply-templates/>
 		</sn_footer>
