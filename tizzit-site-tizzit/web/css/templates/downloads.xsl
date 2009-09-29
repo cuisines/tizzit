@@ -31,7 +31,7 @@
             background-image:url('/httpd/img/downloads/downloads_bg_right.jpg');
             background-repeat:no-repeat;
             width:47px;
-            padding:24px 0 0 16px;
+            padding:24px 0 0 14px;
         }
         .downloadLink {
             float:right;
@@ -45,8 +45,9 @@
         }
         .downloadUpload {
             padding-left:10px;
-            font-family:Trebuchet MS;
-            font-size:12px;
+            color:#8c8c8c;
+            font-size:11px;
+            font-family:Arial;
         }
         
     </xsl:template>

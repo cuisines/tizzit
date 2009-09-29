@@ -354,13 +354,15 @@
 			padding-left:40px;
 		}
 		#right .teaseritem {
-			<!--border:7px solid #eceef0;-->
-			margin-bottom:10px;
+			border:7px solid #eceef0;
+			margin-bottom:15px;
+			padding:9px;
 		}
-		#right .teaserheadline {
+		#right h1.teaserheadline {
 			font-size:16px;
 			color:#254559;
 			font-weight:bold;
+			padding-bottom:5px;
 		}
 		#right .teaser_content {
 			font-size:13px;
