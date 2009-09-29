@@ -20,7 +20,11 @@
  */
 package de.juwimm.cms.remote;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -31,7 +35,12 @@ import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.components.model.AddressHbm;
 import de.juwimm.cms.components.model.PersonHbm;
 import de.juwimm.cms.exceptions.UserException;
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.HostHbmDao;
+import de.juwimm.cms.model.HostHbmImpl;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.vo.HostValue;
 import de.juwimm.cms.vo.SiteValue;
@@ -179,9 +188,7 @@ public class AdministrationServiceSpringImpl extends AdministrationServiceSpring
 	@Override
 	protected String handleGetStartPage(String hostName) throws Exception {
 		HostHbm host = getHostHbmDao().load(hostName);
-		if (host != null && host.getStartPage() != null) {
-			return host.getStartPage().getViewComponentId().toString();
-		}
+		if (host != null && host.getStartPage() != null) { return host.getStartPage().getViewComponentId().toString(); }
 		return "";
 	}
 
@@ -288,7 +295,7 @@ public class AdministrationServiceSpringImpl extends AdministrationServiceSpring
 			Iterator<UnitHbm> it = getUnitHbmDao().findAll(site.getSiteId()).iterator();
 			while (it.hasNext()) {
 				UnitHbm currentUnit = it.next();
-				
+
 				Collection<PersonHbm> persons = getPersonHbmDao().findByUnit(currentUnit.getUnitId());
 				for (PersonHbm currentPerson : persons) {
 					Iterator<AddressHbm> addressIt = currentPerson.getAddresses().iterator();
@@ -367,6 +374,19 @@ public class AdministrationServiceSpringImpl extends AdministrationServiceSpring
 		} catch (Exception e) {
 			throw new UserException("Host \"" + hostName + "\" or \"" + redirectHostName + "\" not found!\n" + e.getMessage());
 		}
+	}
+
+	@Override
+	protected void handleSetLiveServer(String hostname, boolean liveServer) throws Exception {
+		if (log.isDebugEnabled()) log.debug("setLiveServer host: " + hostname);
+		HostHbm host = null;
+		try {
+			host = getHostHbmDao().load(hostname);
+			host.setLiveserver(liveServer);
+		} catch (Exception e) {
+			throw new UserException("Error in setLiveServer" + e.getMessage());
+		}
+
 	}
 
 }
