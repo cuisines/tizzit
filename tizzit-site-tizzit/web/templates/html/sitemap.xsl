@@ -3,8 +3,13 @@
 	
 	<xsl:include href="common.xsl"/>
 	
-	<xsl:template match="content" mode="format" priority="1.1">
-		<xsl:apply-templates select="sitemap/navigation" mode="sitemap"/>
+	<xsl:template match="content" mode="format" priority="1">
+		<xsl:apply-templates select="../sitemap"/>
+		<xsl:apply-templates/>
+	</xsl:template>
+	
+	<xsl:template match="sitemap">
+		<xsl:apply-templates select="navigation" mode="sitemap"/>
 	</xsl:template>
 	
 	<xsl:template match="navigation" mode="sitemap">
