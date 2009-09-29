@@ -1796,4 +1796,14 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected Integer handleGetDocumentIdForNameAndUnit(String name, Integer unitId) throws Exception {
 		return getContentServiceSpring().getDocumentIdForNameAndUnit(name, unitId);
 	}
+
+	@Override
+	protected void handleSetLiveServer(String hostname, boolean liveServer) throws Exception {
+		try {
+			this.getAdministrationServiceSpring().setLiveServer(hostname, liveServer);
+		} catch (Exception e) {
+			log.error("Error setting live server");
+		}
+
+	}
 }
