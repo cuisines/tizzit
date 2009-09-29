@@ -18,8 +18,8 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -29,7 +29,15 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.CDATASection;
@@ -82,6 +90,8 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 	private JTextField txtRedirectUrl = null;
 	private JLabel lblRedirectHost = null;
 	private JComboBox cbRedirectHost = null;
+	private JLabel lblLiveServer = null;
+	private JCheckBox liveServer = null;
 
 	/**
 	 * This constructor can be used to edit an existing host 
@@ -115,6 +125,7 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			}
 			this.txtStartPage.setText(startPageName);
 			this.txtRedirectUrl.setText(host.getRedirectUrl());
+			this.liveServer.setSelected(host.getLiveServer());
 			this.mode = CreateNewHostDialog.MODE_EDIT_HOST;
 			this.updateValues();
 		}
@@ -172,6 +183,8 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints21 = new GridBagConstraints();
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
+			GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints12 = new GridBagConstraints();
 			java.awt.GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
@@ -196,12 +209,12 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			gridBagConstraints10.insets = new java.awt.Insets(10, 5, 0, 10);
 			gridBagConstraints10.gridwidth = 1;
 			gridBagConstraints11.gridx = 0;
-			gridBagConstraints11.gridy = 5;
+			gridBagConstraints11.gridy = 6;
 			gridBagConstraints11.anchor = java.awt.GridBagConstraints.SOUTHWEST;
 			gridBagConstraints11.insets = new java.awt.Insets(5, 10, 10, 0);
 			gridBagConstraints11.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints12.gridx = 1;
-			gridBagConstraints12.gridy = 5;
+			gridBagConstraints12.gridy = 6;
 			gridBagConstraints12.anchor = java.awt.GridBagConstraints.SOUTHEAST;
 			gridBagConstraints12.insets = new java.awt.Insets(5, 5, 10, 10);
 			gridBagConstraints13.gridx = 0;
@@ -225,11 +238,24 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			gridBagConstraints21.insets = new java.awt.Insets(10, 5, 0, 10);
 			gridBagConstraints21.gridwidth = 2;
 			gridBagConstraints3.gridx = 0;
-			gridBagConstraints3.gridy = 4;
+			gridBagConstraints3.gridy = 5;
 			gridBagConstraints3.gridwidth = 2;
 			gridBagConstraints3.fill = java.awt.GridBagConstraints.BOTH;
 			gridBagConstraints3.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints3.insets = new java.awt.Insets(10, 10, 0, 10);
+			lblLiveServer = new JLabel();
+			lblLiveServer.setText(rb.getString("panel.admin.host.liveServer"));
+			gridBagConstraints4.gridx = 0;
+			gridBagConstraints4.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			gridBagConstraints4.insets = new java.awt.Insets(10, 10, 0, 0);
+			gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints4.gridy = 4;
+			gridBagConstraints41.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints41.gridy = 4;
+			gridBagConstraints41.weightx = 1.0;
+			gridBagConstraints41.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			gridBagConstraints41.insets = new java.awt.Insets(5, 5, 0, 10);
+			gridBagConstraints41.gridx = 1;
 			panContentPane.add(lblHost, gridBagConstraints9);
 			panContentPane.add(getTxtHost(), gridBagConstraints10);
 			panContentPane.add(getBtnAddHost(), gridBagConstraints11);
@@ -240,8 +266,17 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			panContentPane.add(getTxtRedirectUrl(), gridBagConstraints1);
 			panContentPane.add(lblRedirectHost, gridBagConstraints8);
 			panContentPane.add(getCbRedirectHost(), gridBagConstraints14);
+			panContentPane.add(lblLiveServer, gridBagConstraints4);
+			panContentPane.add(getLiveServer(), gridBagConstraints41);
 		}
 		return panContentPane;
+	}
+
+	private JCheckBox getLiveServer() {
+		if (liveServer == null) {
+			liveServer = new JCheckBox();
+		}
+		return liveServer;
 	}
 
 	/**
@@ -345,6 +380,7 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 					communication.setStartPage(newHost, this.startPageId.toString());
 				}
 			}
+			communication.setLiveServer(newHost, liveServer.isSelected());
 			model.addElement(new DropDownHolder(hv, hv.getHostName()));
 			txtHost.setText("");
 			this.currentHost = hv;
@@ -358,6 +394,9 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 				if (this.assignSiteAutomatically) {
 					String currSite = communication.getSiteName();
 					communication.setSite(this.currentHost.getHostName(), currSite);
+				}
+				if (liveServer.isSelected() != this.currentHost.getLiveServer()) {
+					communication.setLiveServer(this.currentHost.getHostName(), liveServer.isSelected());
 				}
 				((PanHost) parent).getHostListModel().fireContentsChanged();
 			}
@@ -383,6 +422,7 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			}
 			((PanHost) parent).reload();
 		}
+
 		this.setVisible(false);
 	}
 
