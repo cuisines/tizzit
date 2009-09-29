@@ -18,7 +18,11 @@ package de.juwimm.cms.search.xmldb;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.sql.*;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -43,11 +47,11 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 	private static Logger log = Logger.getLogger(AbstractXmlDbImpl.class);
 	private static String xmldbDatasource = null;
 	private Connection xmldbConnection = null;
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring; 
+	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
 	protected static final String DELETE_STATEMENT = "DELETE FROM XML_SEARCH_DB WHERE SITE_ID=? AND VIEW_COMPONENT_ID=?";
 	protected static final String SELECT_COUNT_STATEMENT = "SELECT COUNT(SITE_ID) FROM XML_SEARCH_DB WHERE SITE_ID=? AND VIEW_COMPONENT_ID=?";
 	protected static final String SELECT_COUNT_HASHCODE_STATEMENT = "SELECT COUNT(SITE_ID) FROM XML_SEARCH_DB WHERE SITE_ID=? AND VIEW_COMPONENT_ID=? AND HASHCODE=?";
-	
+
 	abstract protected String getInsertStatementSql();
 
 	abstract protected PreparedStatement getSearchXmlStatement(Integer siteId, String xpathQuery) throws SQLException;
@@ -130,6 +134,11 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 		return retVal;
 	}
 
+	/**
+	 * @toDo TODO: Remove this method!
+	 * @deprecated will be removed soon!
+	 */
+	@Deprecated
 	protected String clobToString(Clob clob) {
 		if (log.isTraceEnabled()) log.trace("clobToString(...) -> begin");
 		String retVal = "";
@@ -177,7 +186,7 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param siteId
 	 * @param viewComponentId
 	 * @param contentText
