@@ -27,31 +27,36 @@ public class SearchCronService {
 
 	@SuppressWarnings("unchecked")
 	public void cronRunSearchIndexer() throws Exception {
-		if(!cqPropertiesBeanSpring.getSearch().isIndexerEnabled()) {
+		if (!cqPropertiesBeanSpring.getSearch().isIndexerEnabled()) {
 			log.info("Cron SearchIndex has been invoked but indexer is disabled");
 			return;
 		}
-		if(cronIsRunning) {
+		if (cronIsRunning) {
 			log.info("Cron already running, ignoring crontask");
 			return;
 		}
 		log.info("Cronjob SearchIndex has been started");
 		cronIsRunning = true;
 
-		Collection<ContentHbm> contentsToUpdate = contentHbmDao.findByUpdateSearchIndex(true);
-		log.info("Found " + contentsToUpdate.size() + " Contents to update");
-		for (ContentHbm content : contentsToUpdate) {
-			searchengineService.indexPage(content.getContentId());
-		}
+		try {
+			Collection<ContentHbm> contentsToUpdate = contentHbmDao.findByUpdateSearchIndex(true);
+			log.info("Found " + contentsToUpdate.size() + " Contents to update");
+			for (ContentHbm content : contentsToUpdate) {
+				searchengineService.indexPage(content.getContentId());
+			}
 
-		Collection<DocumentHbm> documentsToUpdate = documentHbmDao.findByUpdateSearchIndex(true);
-		log.info("Found " + documentsToUpdate.size() + " Documents to update");
-		for (DocumentHbm doc : documentsToUpdate) {
-			searchengineService.indexDocument(doc.getDocumentId());
+			Collection<DocumentHbm> documentsToUpdate = documentHbmDao.findByUpdateSearchIndex(true);
+			log.info("Found " + documentsToUpdate.size() + " Documents to update");
+			for (DocumentHbm doc : documentsToUpdate) {
+				searchengineService.indexDocument(doc.getDocumentId());
+			}
+		} catch (Exception exe) {
+			throw exe;
+		} finally {
+			cronIsRunning = false;
 		}
-		cronIsRunning = false;
 	}
-	
+
 	public void setSearchengineService(SearchengineService searchengineService) {
 		this.searchengineService = searchengineService;
 	}
