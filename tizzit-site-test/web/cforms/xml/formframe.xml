@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<html xmlns:ctmpl="http://www.conquest-cms.net/template">
+    <head>
+        <link  rel="stylesheet" type="text/css" href="/css/main-.css"/>
+        <title>Formular</title>
+        <script language="JavaScript" src="/jscript/scripts.js"></script>
+        <script language="JavaScript" src="/cms/cforms/resources/forms-lib.js"></script>
+    </head>
+    <body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0">
+        <div class="formframe">
+            <!--Formulare einfuegen (ueber formframe_preparser.xsl und cinclude) -->
+            <includexml/>            
+        </div>   
+    </body>
+</html>

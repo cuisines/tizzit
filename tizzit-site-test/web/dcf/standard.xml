@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<textfield name="content"/>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser rechts"/>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
+		<web20/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
+	</all>
+</source>

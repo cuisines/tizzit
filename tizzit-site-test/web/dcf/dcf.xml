@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<dcf>
+		<availableTemplates>
+			<item filename="standard">Standard</item>
+			<!--<item filename="home">Startseite</item>
+			<item filename="news_new">Newsinhalte</item>
+			<item filename="news_container">News</item>
+			<item filename="video">Video</item>
+			<item filename="downloads">Downloads</item>
+			<item filename="sitemap">Sitemap</item>
+			<item filename="images">Bilder</item>
+			<item filename="faq">FAQ</item>
+			<item filename="searchresult">Suchergebnisse</item>
+			<item filename="teaser">Teaser</item>
+			<item filename="loginform">Login</item>-->
+			
+			<!--
+				<item filename="cinclude4flow">Verweis aufs Formular</item>
+				<item filename="formular">Formular</item>
+			-->
+			<!-- Use the Templates below if needed -->
+			<!--<item filename="standard-without-teaser">Standard ohne Teaser</item>-->
+		</availableTemplates>
+	</dcf>
+</config>

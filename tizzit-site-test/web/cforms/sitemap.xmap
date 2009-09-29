@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    <map:components>
+        <map:transformers default="xalan"/>
+    </map:components>
+    <map:views>
+        <map:view name="content" from-label="content">
+            <map:serialize type="xml"/>
+        </map:view>
+        <map:view from-label="content" name="pretty-content">
+            <map:transform src="context://stylesheets/system/xml2html.xslt"/>
+            <map:serialize type="html"/>
+        </map:view>
+        <map:view name="links" from-position="last">
+            <map:serialize type="links"/>
+        </map:view>
+    </map:views>
+    
+    <map:resources>
+        <!-- this will later become a virtual transformer -->
+        <map:resource name="simple-page2html">
+            <map:transform src="xsl/simple-page2html.xsl"/>
+        </map:resource>
+    </map:resources>
+    
+    <!-- indicates what flowscript to attach to this sitemap -->
+    <map:flow language="javascript">
+        <map:script src="flow/mail.js"/>    
+        <map:script src="flow/register.js"/> 
+        <map:script src="flow/userChangeData.js"/> 
+    </map:flow>
+    <map:pipelines>
+        <map:component-configurations>
+            <global-variables>
+            </global-variables>
+        </map:component-configurations>
+        <map:pipeline>
+        
+        <!--ConQuest generated Forms -->
+            <map:match pattern="**-conQuestForm">
+                <!-- pipeline to show the form -->
+                <map:generate src="cocoon://{1}/formtemplate.xml"/>
+                <map:transform type="forms"/>
+                <map:call resource="simple-page2html">
+                    <map:parameter name="file" value="forms/{1}/{2}.xml"/>
+                </map:call>
+                <map:transform src="{system-property:cqCmsTemplatesPath}cforms/resources/forms-samples-styling.xsl"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:match pattern="**-conQuestForm.jx">
+                <!-- pipeline to show the form -->
+                <map:generate type="jx" src="cocoon://{1}/formtemplate.xml"/>
+                 <map:call resource="simple-page2html">
+                    <map:parameter name="file" value="forms/{1}/{2}.xml"/>
+                </map:call>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:match pattern="*-*-pipeline">
+                <!-- pipeline to show the form -->
+                <map:generate src="forms/{1}/{2}.xml"/>
+                <map:transform type="cinclude"/>
+                <map:transform type="forms"/>
+                <map:call resource="simple-page2html">
+                    <map:parameter name="file" value="forms/{1}/{2}.xml"/>
+                </map:call>
+                <map:transform src="{system-property:cqCmsTemplatesPath}cforms/resources/forms-samples-styling.xsl"/>
+                <map:serialize type="xml"/>
+            </map:match>
+            
+            <map:match pattern="*-*-pipeline.jx">
+                <map:generate type="jx" src="forms/{1}/{2}_jx.xml"/>
+                <map:transform type="cinclude"/>
+                <map:call resource="simple-page2html">
+                    <map:parameter name="file" value="forms/{1}/{2}_jx.xml"/>
+                </map:call>
+                <map:serialize type="xml"/>
+            </map:match>
+            
+            <map:match pattern="*/*-*-pipeline.jx">
+                <map:generate type="jx" src="forms/{2}/{3}.xml"/>
+                <map:transform type="cinclude"/>
+                <map:transform type="forms"/>
+                <map:call resource="simple-page2html">
+                    <map:parameter name="file" value="forms/{2}/{3}_jx.xml"/>
+                </map:call>
+                <map:transform src="{system-property:cqCmsTemplatesPath}cforms/resources/forms-samples-styling.xsl">
+                    <map:parameter name="language" value="{1}"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+            
+            <map:match pattern="*-*-binding">
+                <map:generate src="forms/{1}/{2}.xml"/>
+                <map:transform src="xsl/model2simplebinding.xsl"/>
+                <map:serialize type="xml"/>
+            </map:match>
+                
+            <map:match pattern="*_simple.flow">
+               <map:act type="request">
+                    <map:parameter name="parameters" value="true"/>
+                    <map:select type="parameter">
+                        <map:parameter name="parameter-selector-test" value="{continuation-id}"/>
+                        <map:when test="">
+                            <map:call function="{../1}">
+                                <map:parameter name="form-definition" value="forms/{../1}/model.xml"/>
+                                <map:parameter name="requestURI" value="{request:requestURI}"/>
+                                <map:parameter name="serverName" value="{request:serverName}"/>
+                                <map:parameter name="viewComponentId" value="{viewComponentId}"/>
+                                <map:parameter name="use-request-parameters" value="true"/>
+                            </map:call>
+                        </map:when>
+                        <map:otherwise>
+                            <map:call continuation="{continuation-id}"/>                         
+                        </map:otherwise>
+                    </map:select>
+                </map:act>
+            </map:match>
+            
+            <map:match pattern="*.flow">
+                <map:act type="request">
+                    <map:parameter name="parameters" value="true"/>
+                    <map:select type="parameter">
+                        <map:parameter name="parameter-selector-test" value="{continuation-id}"/>
+                        <map:when test="">
+                            <map:call function="handleForm">
+                                <map:parameter name="function" value="{../1}"/>
+                                <map:parameter name="form-definition" value="forms/{../1}/model.xml"/>
+                                <map:parameter name="baseDocumentURI" value="/deutsch/cforms/{../1}/content.xml"/>
+                                <map:parameter name="bindingURI" value="forms/{../1}/bind.xml"/>
+                                <map:parameter name="hostname" value="{request:serverName}"/>
+                           </map:call>
+                        </map:when>
+                        <map:otherwise>
+                            <map:call continuation="{continuation-id}"/>
+                        </map:otherwise>
+                    </map:select>
+                </map:act>
+            </map:match>
+
+            <map:match pattern="*.html">
+                <map:generate type="file" src="xml/formframe.xml"/>
+                <map:transform src="xsl/formframe_preparser.xsl">
+                    <map:parameter name="formURI" value="{1}"/>
+                </map:transform>
+                <map:transform type="cinclude"/>
+                <map:serialize type="html"/>
+            </map:match>
+            
+            <map:match pattern="resources/**">
+                <map:read src="{system-property:cqCmsTemplatesPath}cforms/{0}"/>
+            </map:match>
+
+            <map:match pattern="*">
+                <map:redirect-to uri="{1}/"/>
+            </map:match>
+            
+            <map:match pattern="**">
+                <map:generate src="{1}"/>
+                <map:serialize type="xml"/>
+            </map:match>
+            
+            <map:match pattern="*/**">
+                <map:mount check-reload="yes" src="{1}/" uri-prefix="{1}"/>
+            </map:match>
+           
+        </map:pipeline>
+    </map:pipelines>
+</map:sitemap>

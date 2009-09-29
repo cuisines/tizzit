@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<fd:form xmlns:fd="http://apache.org/cocoon/forms/1.0#definition" xmlns:i18n="http://apache.org/cocoon/i18n/2.1">
+    <fd:widgets>
+        <!-- Nachname /-->
+        <fd:field id="lastname" required="true">                          
+            <fd:label>Name</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:length min="2">
+                    <fd:failmessage>Bitte geben Sie Ihren Nachnamen ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- Vorname -->
+        <fd:field id="firstname" required="true">                          
+            <fd:label>Vorname</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:length min="2" max="150">
+                    <fd:failmessage>Bitte geben Sie Ihren Vornamen ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- Strasse -->
+        <fd:field id="strasse" required="true">                          
+            <fd:label>Straße</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:length min="2">
+                    <fd:failmessage>Bitte geben Sie hier Ihren Titel ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- Stadt -->
+        <fd:field id="stadt" required="true">                          
+            <fd:label>Stadt</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:length min="2">
+                    <fd:failmessage>Bitte geben Sie Ihren Wohnort ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- Postleizahl -->
+        <fd:field id="plz" required="true">                          
+            <fd:label>PLZ</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:length min="2">
+                    <fd:failmessage>Bitte geben Sie hier Ihre Postleitzahl ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- E-Mail-Adresse -->
+        <fd:field id="email" required="true">                          
+            <fd:label>E-mail</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:email>
+                    <fd:failmessage>Obiges Feld korrekt ausfüllen.</fd:failmessage>
+                </fd:email>
+            </fd:validation>
+        </fd:field>
+        <!-- Benutzername -->
+        <fd:field id="logname" required="true">                          
+            <fd:label>Username</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:length min="2">
+                    <fd:failmessage>Bitte geben Sie Ihren Benutzernamen ein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- password -->
+        <fd:field id="passwd" required="true">                          
+            <fd:label>Passwort</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:regexp pattern="[0-9a-z_A-Z]+">
+                    <fd:failmessage>Das Passwort darf nur aus alphanumerischen Zeichen bestehen und darf nicht länger als 6 Zeichen sein.</fd:failmessage>
+                </fd:regexp>
+                <fd:length min="3">
+                    <fd:failmessage>Das Passwort darf nur aus alphanumerischen Zeichen bestehen und darf nicht länger als 6 Zeichen sein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+        <!-- Confirm Password -->
+        <fd:field id="confirmpasswd" required="true">                          
+            <fd:label>Bestätigung</fd:label>
+            <fd:datatype base="string"/>
+            <fd:validation>
+                <fd:assert test="passwd = confirmpasswd">
+                    <fd:failmessage>Passwort und Passwort-Bestätigung müssen identisch sein.</fd:failmessage>
+                </fd:assert>
+                <fd:regexp pattern="[0-9a-z_A-Z]+">
+                    <fd:failmessage>Die Passwort darf nur aus alphanumerischen Zeichen bestehen und darf nicht länger als 6 Zeichen sein.</fd:failmessage>
+                </fd:regexp>
+                <fd:length min="3">
+                    <fd:failmessage>Das Passwort darf nur aus alphanumerischen Zeichen bestehen und darf nicht länger als 6 Zeichen sein.</fd:failmessage>
+                </fd:length>
+            </fd:validation>
+        </fd:field>
+    </fd:widgets>
+</fd:form>

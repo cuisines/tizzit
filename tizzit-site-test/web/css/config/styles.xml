@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<styles>
+	<colors>
+		<background-common>#fff</background-common>
+		<firstlevel1_text>#CBDADF</firstlevel1_text>
+		
+		<firstlevel2_text>#00496E</firstlevel2_text>
+		<firstlevel2_bg>#DAE6F0</firstlevel2_bg>
+		<firstlevel2_secondlink_bg>#F4F8FB</firstlevel2_secondlink_bg>
+		
+		<firstlevel3_bg>#E0DAF0</firstlevel3_bg>
+		<firstlevel3_secondlink_bg>#F0EDF8</firstlevel3_secondlink_bg>
+		<firstlevel2_3_clicked>#9C1E3D</firstlevel2_3_clicked>
+		
+		<teaser-header-text>#fff</teaser-header-text>
+		<teaser-text>#A793C4</teaser-text>
+		<teaser-border>#A793C4</teaser-border>
+		
+		<minipage-header-text>#fff</minipage-header-text>
+		<minipage-text>#58869D</minipage-text>
+		<minipage-border>#58869D</minipage-border>
+		
+		<text-common>#000</text-common>
+		<text-headline>#2C5BB1</text-headline>				
+		<text-subline>#000</text-subline>
+		<text-enumeration>#2C5BB1</text-enumeration>			
+		<stress>#2C5BB1</stress>
+		
+		<link-content>#586FAD</link-content>
+		<link-hover-content>#2C5BB1</link-hover-content>
+		<link-visited-content>#A793C4</link-visited-content>
+		
+		<link-breadcrumbs>#004989</link-breadcrumbs>
+		<link-footer>#004989</link-footer>				
+		
+		<searchbox-border>#EBF3FF</searchbox-border>
+		<search-bg>#EBF3FF</search-bg>	
+		<searchbox-bg>#fff</searchbox-bg>				
+		<searchbox-button-text>#004989</searchbox-button-text>
+	</colors>
+	<fonts>
+		<font-family-common>Verdana</font-family-common>
+		<font-weight-common>normal</font-weight-common>
+		<font-size-common>12px</font-size-common>
+
+		<font-weight-headline>bold</font-weight-headline>
+		<font-size-headline>20px</font-size-headline>
+
+		<font-size-firstlevel2-3>11px</font-size-firstlevel2-3>	
+		<font-size-breadcrumbs>9px</font-size-breadcrumbs>
+		<font-size-teaser>11px</font-size-teaser>
+	</fonts>
+	<images>
+		<print>/httpd/img/print.gif</print>
+		<mail>/httpd/img/mail.gif</mail>
+		<pdf>/httpd/img/pdf.gif</pdf>
+		<favorite>/httpd/img/favorite.gif</favorite>
+	</images>
+</styles>

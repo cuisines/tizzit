@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<teaser>
+			<simpletextfield name="headline" label="headline"/>
+			<picture label="Teaser Image (max. 158px)"/>
+			<textfield name="content" height="250" label="textfield"/>	  
+			<internalLink/>
+		</teaser>
+	</all>
+</source>

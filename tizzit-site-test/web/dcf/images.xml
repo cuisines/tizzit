@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<textfield name="content" height="200"/>
+		<iteration descriptionDcfName="image-name" name="images">
+			<picture name="image-name" label="Detail-Bild"/>
+		</iteration>  
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
+	</all>
+</source>

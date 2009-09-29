@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<content/>
+		<notice name="n_01" dcfname="n01">## Slide 1 - Target Group ##</notice>
+		<internalLink label="Link 01" dcfname="01"/>
+		<picture dcfname="bg_01" label="Bild 01 *" mandatory="true"/>
+		<internalLink label="Link 02" dcfname="02"/>
+		<picture dcfname="bg_02" label="Bild 02 *" mandatory="true"/>
+		<internalLink label="Link 03" dcfname="03"/>
+		<picture dcfname="bg_03" label="Bild 03 *" mandatory="true"/>
+		<notice name="n_02" dcfname="n02">## Slide 2 - Bild ##</notice>
+		<picture dcfname="sl2_picture" label="Bild *" mandatory="true"/>
+		<notice name="n_03" dcfname="n03">## Slide 3 - Video ##</notice>
+		<simpletextfield name="videoUrl" label="Pfad zum Video 500x200 *" mandatory="true"/>
+		<picture dcfname="video_picture" label="Vorschaubild fürs Video"/>
+		<checkBox name="videoAutostart" label="Video automatisch starten?">
+			<box label="Ja" elementname="autostartSelect" selected="false">true</box>
+		</checkBox>	
+		<checkBox name="videoControlbar" label="controlbar anzeigen?">
+			<box label="Ja" elementname="videoControlbarSelect" selected="true">true</box>
+		</checkBox>
+		<internalLink label="Link zu den News" dcfname="linkToNews"/>
+		<information_1>
+			<news>
+				<fulltextsearch nodename="newslist" searchOnlyInThisUnit="true"/>
+			</news>
+		</information_1>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
+		<tagCloud/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
+	</all>
+</source>

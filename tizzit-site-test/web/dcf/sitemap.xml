@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+        <content/>
+		<sitemap>
+			<navigation since="root" depth="5" />
+		</sitemap>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser rechts"/>
+		<singleTeaserInclude dcfname="teaserInclude_bottom" label="Teaser unten"/>
+		<web20/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
+	</all>
+</source>

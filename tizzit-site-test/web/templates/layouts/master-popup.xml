@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<html xmlns:ctmpl="http://www.conquest-cms.net/template">
+	<head>
+		<ctmpl:include name="meta"/>
+		<ctmpl:include name="css"/>
+		<script language="JavaScript" src="/jscript/scripts.js"/>
+	</head>
+	<body marginheight="0" marginwidth="0" topmargin="0" leftmargin="0">
+		<ctmpl:include name="headline"/>
+		<ctmpl:include name="content"/>
+	</body>
+</html>

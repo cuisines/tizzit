@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<stickyPad/>
+		<textfield name="content"/>
+		<textfield name="contentOverLoginForm" label="Text direkt über dem Login"/>
+		<textfield name="contentBesideLoginForm" label="Text rechts vom Login"/>
+		<textfield name="contentAfterLoginForm" height="250" label="Text nach Loginmaske"/>
+		<simpletextfield name="errorMsg" label="Error Message bei fehlgeschlagenem Login"/>
+		<notice>Unterhalb des Textes steht das Loginformular</notice>
+		<singleTeaserInclude dcfname="teaserInclude" label="Teaser"/>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
+	</all>
+</source>

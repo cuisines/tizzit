@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page>
+  <div>
+    Vielen Dank. Ihre Daten wurden erfolgreich geändert. Bitte melden Sie sich auf der Plattform neu an. 
+    Erst dann werden Ihre Änderungen vollständig angezeigt.
+  </div>
+  <div>
+    <a href="/do-logout">Logout</a>
+  </div>
+</page>
+

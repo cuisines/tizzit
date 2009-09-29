@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<html xmlns:ctmpl="http://www.conquest-cms.net/template">
+	<head>
+		<ctmpl:include name="meta"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<ctmpl:include name="css"/>
+        <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
+	</head>
+	<body>
+		<div id="cloudsrepeat">
+			<div id="wavesrepeat">
+				<div id="whitewaverepeat">
+					<div id="contentSeperator">
+						<div id="layout">
+							<div id="header">
+								<a href="/" id="homelink">&#160;</a>
+								<div id="toparea">
+									&#160;
+								</div>
+								<div class="clear">&#160;</div>
+								&#160;
+								<div class="clear">&#160;</div>
+							</div>
+							<div id="contentcontainer">
+								<div id="leftmenue">
+									&#160;
+								</div>
+								<div id="middle">
+									<ctmpl:include name="headline"/> 
+									<ctmpl:include name="content"/>
+								</div>
+								<div id="right">
+									&#160;
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
+						</div>
+						<div id="information_2">
+							<ctmpl:include name="teaser_bottom"/>
+							<div class="clear">&#160;</div>
+						</div>
+						<div id="footer">
+							<div id="f_content">
+								<div class="copyright">Copyright © 2009 Juwi MacMillan Group GmbH.<br/>All rights reserved.</div>
+								<div class="twitter">
+									&#160;
+								</div>
+								<div class="clear">&#160;</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

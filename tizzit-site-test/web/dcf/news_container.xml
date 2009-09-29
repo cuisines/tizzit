@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+	<head/>
+	<all>
+		<content>
+			<textfield name="preTxt" label="Text Before News" height="300"/>
+    	    <newsArchive/>
+    	    <internalLink label="Link zu den Newsinhalten"/>			
+			<textfield name="afterTxt" label="Text After News" height="300"/>
+    	</content>
+		<sn_footer>
+			<delicious/>
+			<facebook/>
+			<twitter/>
+			<digg/>
+			<stumble/>
+			<rrs/>
+		</sn_footer>
+	</all>
+</source>
