@@ -524,9 +524,10 @@ public class SearchengineService {
 		SiteHbm site = vdl.getSite();
 		CompassSession session = null;
 		CompassTransaction tx = null;
+		File file = null;
 		try {
 			String currentUrl = searchengineDeleteService.getUrl(viewComponent);
-			File file = this.downloadFile(currentUrl);
+			file = this.downloadFile(currentUrl);
 			if (file != null) {
 				String cleanUrl = viewComponent.getViewDocument().getSite().getPageNameSearch();
 				cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
@@ -540,11 +541,16 @@ public class SearchengineService {
 			} else {
 				log.warn("Critical Error during indexPage4Lucene - cound not find Ressource: " + currentUrl);
 			}
+				
 		} catch (Exception e) {
 			log.warn("Error indexPage4Lucene, VCID " + viewComponent.getViewComponentId().toString() + ": " + e.getMessage(), e);
 			if (tx != null) tx.rollback();
 		} finally {
 			if (session != null) session.close();
+			//delete temp file		
+			if (file != null){
+				file.delete();
+			}			
 		}
 		if (log.isDebugEnabled()) log.debug("finished indexPage4Lucene");
 	}
