@@ -19,7 +19,15 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -33,7 +41,11 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.ResourceNotFoundException;
 import org.apache.cocoon.caching.CacheableProcessingComponent;
 import org.apache.cocoon.components.source.SourceUtil;
-import org.apache.cocoon.environment.*;
+import org.apache.cocoon.environment.ObjectModelHelper;
+import org.apache.cocoon.environment.Request;
+import org.apache.cocoon.environment.Response;
+import org.apache.cocoon.environment.Session;
+import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.cocoon.webapps.session.ContextManager;
 import org.apache.cocoon.webapps.session.context.SessionContext;
@@ -46,7 +58,12 @@ import org.apache.log4j.Logger;
 import org.springframework.aop.target.CommonsPoolTargetSource;
 import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
-import org.w3c.dom.*;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -59,7 +76,10 @@ import de.juwimm.cms.cocoon.generation.helper.RequestImpl;
 import de.juwimm.cms.cocoon.generation.helper.ResponseImpl;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.components.vo.*;
+import de.juwimm.cms.components.vo.AddressValue;
+import de.juwimm.cms.components.vo.DepartmentValue;
+import de.juwimm.cms.components.vo.PersonValue;
+import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.SearchResultValue;
 import de.juwimm.cms.search.vo.WebSearchValue;
@@ -120,7 +140,7 @@ import de.juwimm.cms.vo.ViewDocumentValue;
  * <li><strong>disableInternalLinks</strong> - default: false, controls if InternalLinks in the content of this page should be resolved, i.e. are expanded with their url and language to create a hyperlink on the webpage</li>
  * <li><strong>disableUnitInformation</strong> - default: false, if the content of the page contains the tag &quot;unitInformation&quot; the generator appends the name and url for the current unit or a given unitId-attribute</li>
  * <li><strong>disableFulltext</strong> - default: false<p>
- * if the content of the page contains the tag &quot;fulltextsearch&quot; the generator performs a xpath-search in the xml-content of all pages for this 
+ * if the content of the page contains the tag &quot;fulltextsearch&quot; the generator performs a xpath-search in the xml-content of all pages for this
  * site containing a node with the name of the attribute &quot;nodename&quot; and appends the whole content of the pages found to the page-data. The search can be limited to the current unit by setting the attribute &quot;searchOnlyInThisUnit&quot; to true</p></li>
  * <li><strong>disableNavigation</strong> - default: false, </li>
  * <li><strong>disableNavigationAxis</strong> - default: false, </li>
@@ -184,7 +204,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private boolean disableLastModifiedPages = true;
 	private Serializable uniqueKey;
 	private Request request = null;
-	private Response response = null; 
+	private Response response = null;
 	private String webSearchquery = null;
 	private long chgDate = 0;
 	private SAXParser parser = null;
@@ -260,7 +280,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 					log.debug(e.getMessage());
 				}
 			}
-			
+
 			Session session = this.request.getSession(true);
 			try {
 				this.safeguardMap = (Map<String, String>) session.getAttribute("safeGuardService");
@@ -278,8 +298,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			}
 			try {
 				webSearchquery = request.getParameter("conquest-searchquery");
-				if(webSearchquery == null)
-					webSearchquery = this.request.getParameter("cqWebSearchQuery");
+				if (webSearchquery == null) webSearchquery = this.request.getParameter("cqWebSearchQuery");
 			} catch (Exception exe) {
 			}
 
@@ -387,7 +406,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		disableUsedDocumentsSearch = true;
 		disableContentInclude = true;
 		disableHtmlSearch = false;
-		disableLastModifiedPages = true; 
+		disableLastModifiedPages = true;
 		webSearchquery = null;
 		request = null;
 		response = null;
@@ -485,7 +504,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		*/
 		if (log.isDebugEnabled()) log.debug("end generate");
 	}
-	
+
 	private void fillWebSearch(Document doc) throws Exception {
 		Node head = XercesHelper.findNode(doc, "//source/head");
 		if (head != null) {
@@ -509,12 +528,12 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 
 			ArrayList<SearchResultValue> resultList = new ArrayList<SearchResultValue>();
 			SearchResultValue[] results = null;
-			if(urlSearch == null) {
+			if (urlSearch == null) {
 				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber);
 			} else {
 				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber, urlSearch);
 			}
-			
+
 			if (results != null) {
 				resultList.addAll(Arrays.asList(results));
 				Integer totalHits = null;
@@ -621,7 +640,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			Element fulltextsearch = (Element) itFulltext.next();
 			ifOnlyUnit = Boolean.valueOf(fulltextsearch.getAttribute("searchOnlyInThisUnit")).booleanValue();
 			if (ifOnlyUnit && myUnitId == null) {
-				myUnitId = viewComponentValue.getUnitId();
+				myUnitId = this.webSpringBean.getUnit4ViewComponent(viewComponentValue.getViewComponentId()).getUnitId();
 			}
 			String xpath = "//" + fulltextsearch.getAttribute("nodename").trim();
 			if (log.isDebugEnabled()) log.debug("STARTING FULLTEXT with XPATH: " + xpath);
@@ -1434,17 +1453,17 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	 * 		<unit>root</unit>
 	 * 	</teaserRandomized>
 	 * </teaserInclude>
-	 * 
+	 *
 	 * <teaserInclude dcfname="teaserInclude" label="Teaser">
 	 * 	<teaserRef viewComponentId="23" teaserIdentifier="1234" xpathTeaserElement="//teaser" xpathTeaserIdentifier="@id"/>
 	 * 	<teaserRef viewComponentId="23" teaserIdentifier="3434343" xpathTeaserElement="//teaser" xpathTeaserIdentifier="@id"/>
 	 * </teaserInclude>
-	 * 
+	 *
 	 * <teaserInclude dcfname="teaserInclude" label="Teaser">
 	 * 	<teaserRef viewComponentId="23" xpathTeaserElement="//teaser"/>
 	 * 	<teaserRef viewComponentId="34" xpathTeaserElement="//teaser"/>
 	 * </teaserInclude>
-	 * 
+	 *
 	 * Result:
 	 * <teaserInclude dcfname="teserInclude" label="Teaser">
 	 * 	<teaser>
@@ -1509,8 +1528,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 
 				elm.setAttribute("url", path);
 				elm.setAttribute("language", lang);
-				if (unitId != null)
-					elm.setAttribute("unitid", unitId.toString());
+				if (unitId != null) elm.setAttribute("unitid", unitId.toString());
 			} catch (Exception exe) {
 				log.info("Could not solve internalLink with vcid " + vcid + " in content of vcid " + this.viewComponentId + " (\"" + this.getPath4CurrentRequest() + "\")");
 			}
@@ -1688,13 +1706,13 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		Node scoreTxt = doc.createCDATASection(value.getScore() + "%");
 		score.appendChild(scoreTxt);
 		parent.appendChild(score);
-		
+
 		String summary = "";
 		try {
 			summary = "<root><summary>" + value.getSummary().replaceAll("&", "&#38;") + "</summary></root>";
 			Node node = XercesHelper.findNode(XercesHelper.string2Dom(summary), "//summary");
 			Node importNode = doc.importNode(node, true);
-			parent.appendChild(importNode); 
+			parent.appendChild(importNode);
 		} catch (Exception exe) {
 			log.warn("Searchresult could not be parsed as XML. Returning as CDATA. Search:" + webSearchquery + " Summary:" + summary, exe);
 			Node s = doc.createElement("summary");
@@ -1734,7 +1752,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			result = this.siteValue.getShortName() + "/" + requestLang + "/" + requestPath;
 			this.path4ViewComponentCacheMap.put(this.viewComponentId, result);
 		}
-		
+
 		return result;
 	}
 

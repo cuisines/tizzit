@@ -624,7 +624,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			Element fulltextsearch = (Element) itFulltext.next();
 			ifOnlyUnit = Boolean.valueOf(fulltextsearch.getAttribute("searchOnlyInThisUnit")).booleanValue();
 			if (ifOnlyUnit && myUnitId == null) {
-				myUnitId = viewComponentValue.getUnitId();
+				myUnitId = this.webSpringBean.getUnit4ViewComponent(viewComponentValue.getViewComponentId()).getUnitId();
 			}
 			String xpath = "//" + fulltextsearch.getAttribute("nodename").trim();
 			if (log.isDebugEnabled()) log.debug("STARTING FULLTEXT with XPATH: " + xpath);
