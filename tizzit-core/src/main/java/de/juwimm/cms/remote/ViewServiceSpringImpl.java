@@ -736,6 +736,15 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected ViewComponentValue handleMoveViewComponentUp(Integer viewComponentId) throws Exception {
+		return moveComponentUp(viewComponentId);
+	}
+
+	/**
+	 * 
+	 * @param viewComponentId
+	 * @return ViewComponentValue
+	 */
+	private ViewComponentValue moveComponentUp(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
 			if (view.getPrevNode() == null) { throw new UserException("Node is already first child."); }
@@ -780,6 +789,16 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected ViewComponentValue handleMoveViewComponentDown(Integer viewComponentId) throws Exception {
+		return moveComponentDown(viewComponentId);
+	}
+
+	/**
+	 * 
+	 * @param viewComponentId
+	 * @return ViewComponentValue
+	 * @throws Exception
+	 */
+	private ViewComponentValue moveComponentDown(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
 			if (view.getNextNode() == null) { throw new UserException("Node is already last child."); }
@@ -823,6 +842,16 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected ViewComponentValue handleMoveViewComponentLeft(Integer viewComponentId) throws Exception {
+		return moveComponentLeft(viewComponentId);
+	}
+
+	/**
+	 * 
+	 * @param viewComponentId
+	 * @return ViewComponentValue
+	 * @throws Exception
+	 */
+	private ViewComponentValue moveComponentLeft(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm thisNode = getViewComponentHbmDao().load(viewComponentId);
 			if (thisNode.getParent().getParent().getViewType() == 0) {
@@ -869,6 +898,16 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected ViewComponentValue handleMoveViewComponentRight(Integer viewComponentId) throws Exception {
+		return moveComponentRight(viewComponentId);
+	}
+
+	/**
+	 * 
+	 * @param viewComponentId
+	 * @return ViewComponentValue
+	 * @throws Exception
+	 */
+	private ViewComponentValue moveComponentRight(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
 			ViewComponentHbm prev, next, firstChild, parent;
@@ -1367,6 +1406,42 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			getViewComponentHbmDao().remove(vdh.getViewComponent());
 		}
 		getViewDocumentHbmDao().remove(viewDocuments);
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsDown(Integer[] viewComponentsId) throws Exception {
+		ViewComponentValue[] localValues = new ViewComponentValue[viewComponentsId.length];
+		for (int i = 0; i < viewComponentsId.length; i++) {
+			localValues[i] = moveComponentDown(viewComponentsId[i]);
+		}
+		return localValues;
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsLeft(Integer[] viewComponentsId) throws Exception {
+		ViewComponentValue[] localValues = new ViewComponentValue[viewComponentsId.length];
+		for (int i = 0; i < viewComponentsId.length; i++) {
+			localValues[i] = moveComponentLeft(viewComponentsId[i]);
+		}
+		return localValues;
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsRight(Integer[] viewComponentsId) throws Exception {
+		ViewComponentValue[] localValues = new ViewComponentValue[viewComponentsId.length];
+		for (int i = 0; i < viewComponentsId.length; i++) {
+			localValues[i] = moveComponentRight(viewComponentsId[i]);
+		}
+		return localValues;
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsUp(Integer[] viewComponentsId) throws Exception {
+		ViewComponentValue[] localValues = new ViewComponentValue[viewComponentsId.length];
+		for (int i = 0; i < viewComponentsId.length; i++) {
+			localValues[i] = moveComponentUp(viewComponentsId[i]);
+		}
+		return localValues;
 	}
 
 }
