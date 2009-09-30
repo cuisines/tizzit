@@ -1806,4 +1806,24 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		}
 
 	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsDown(Integer[] viewComponentsId) throws Exception {
+		return getViewServiceSpring().moveViewComponentsDown(viewComponentsId);
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsLeft(Integer[] viewComponentsId) throws Exception {
+		return getViewServiceSpring().moveViewComponentsLeft(viewComponentsId);
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsRight(Integer[] viewComponentsId) throws Exception {
+		return getViewServiceSpring().moveViewComponentsRight(viewComponentsId);
+	}
+
+	@Override
+	protected ViewComponentValue[] handleMoveViewComponentsUp(Integer[] viewComponentsId) throws Exception {
+		return getViewServiceSpring().moveViewComponentsUp(viewComponentsId);
+	}
 }
