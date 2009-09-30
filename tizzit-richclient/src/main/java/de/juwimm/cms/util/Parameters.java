@@ -60,8 +60,13 @@ public final class Parameters {
 		SiteParameter.ParameterType[] onlyBoolean = new SiteParameter.ParameterType[] {
 				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.FALSE)
 				};
-		SiteParameter.ParameterType[] boolAndText = new SiteParameter.ParameterType[] {
+		SiteParameter.ParameterType[] boolAndTextFalse = new SiteParameter.ParameterType[] {
 				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.FALSE),
+				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")
+				};
+		
+		SiteParameter.ParameterType[] boolAndTextTrue = new SiteParameter.ParameterType[] {
+				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.TRUE),
 				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")
 				};
 		/*SiteParameter.ParameterType[] onlyText = new SiteParameter.ParameterType[] {
@@ -70,17 +75,17 @@ public final class Parameters {
 		//These are the Parameters
 		availableSiteParameter = new Parameter[13];
 		availableSiteParameter[0] = new SiteParameter(PARAM_SHOW_PREVIEW_FRAMESET, rb.getString("PARAM_SHOW_PREVIEW_FRAMESET"), onlyBoolean);
-		availableSiteParameter[1] = new SiteParameter(PARAM_PICTURE_POSITION_1, rb.getString("PARAM_PICTURE_POSITION_1"), boolAndText);
-		availableSiteParameter[2] = new SiteParameter(PARAM_PICTURE_POSITION_2, rb.getString("PARAM_PICTURE_POSITION_2"), boolAndText);
-		availableSiteParameter[3] = new SiteParameter(PARAM_PICTURE_POSITION_3, rb.getString("PARAM_PICTURE_POSITION_3"), boolAndText);
+		availableSiteParameter[1] = new SiteParameter(PARAM_PICTURE_POSITION_1, rb.getString("PARAM_PICTURE_POSITION_1"), boolAndTextTrue);
+		availableSiteParameter[2] = new SiteParameter(PARAM_PICTURE_POSITION_2, rb.getString("PARAM_PICTURE_POSITION_2"), boolAndTextTrue);
+		availableSiteParameter[3] = new SiteParameter(PARAM_PICTURE_POSITION_3, rb.getString("PARAM_PICTURE_POSITION_3"), boolAndTextTrue);
 		availableSiteParameter[4] = new SiteParameter(PARAM_EXTLINK_OPENWITHSTYLE, rb.getString("PARAM_EXTLINK_OPENWITHSTYLE"), onlyBoolean);
-		availableSiteParameter[5] = new SiteParameter(PARAM_SHOWTYPE_0, "ShowType 0", boolAndText);
-		availableSiteParameter[6] = new SiteParameter(PARAM_SHOWTYPE_1, "ShowType 1", boolAndText);
-		availableSiteParameter[7] = new SiteParameter(PARAM_SHOWTYPE_2, "ShowType 2", boolAndText);
-		availableSiteParameter[8] = new SiteParameter(PARAM_SHOWTYPE_3, "ShowType 3", boolAndText);
-		availableSiteParameter[9] = new SiteParameter(PARAM_MAX_EDITION_STACK, "max. Editions", boolAndText);
-		availableSiteParameter[10] = new SiteParameter(PARAM_MAX_DISPLAY_LINK_NAME_LENGTH, rb.getString("PARAM_MAX_DISPLAY_LINK_NAME_LENGTH"), boolAndText);
-		availableSiteParameter[11] = new SiteParameter(PARAM_INCLUDE_XML_SEARCH_NAME, rb.getString("PARAM_INCLUDE_XML_SEARCH_NAME"), boolAndText);
+		availableSiteParameter[5] = new SiteParameter(PARAM_SHOWTYPE_0, "ShowType 0", boolAndTextTrue);
+		availableSiteParameter[6] = new SiteParameter(PARAM_SHOWTYPE_1, "ShowType 1", boolAndTextTrue);
+		availableSiteParameter[7] = new SiteParameter(PARAM_SHOWTYPE_2, "ShowType 2", boolAndTextTrue);
+		availableSiteParameter[8] = new SiteParameter(PARAM_SHOWTYPE_3, "ShowType 3", boolAndTextTrue);
+		availableSiteParameter[9] = new SiteParameter(PARAM_MAX_EDITION_STACK, "max. Editions", boolAndTextFalse);
+		availableSiteParameter[10] = new SiteParameter(PARAM_MAX_DISPLAY_LINK_NAME_LENGTH, rb.getString("PARAM_MAX_DISPLAY_LINK_NAME_LENGTH"), boolAndTextFalse);
+		availableSiteParameter[11] = new SiteParameter(PARAM_INCLUDE_XML_SEARCH_NAME, rb.getString("PARAM_INCLUDE_XML_SEARCH_NAME"), boolAndTextFalse);
 		availableSiteParameter[12] = new SiteParameter(PARAM_USER_CHANGE_PAGE_MODIFIED_DATE, rb.getString("PARAM_USER_CHANGE_PAGE_MODIFIED_DATE"), onlyBoolean);
 	}
 

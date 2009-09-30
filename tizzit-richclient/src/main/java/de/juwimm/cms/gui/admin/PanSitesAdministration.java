@@ -797,7 +797,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			//new site
 			dlgSiteparams.load(null);
 			txtImageUrl.setText("http://");
-			txtHelpUrl.setText("http://213.252.141.120/bugtracker/");
+			txtHelpUrl.setText("http://wiki.tizzit.org/");
 			txtDcfUrl.setText("http://");
 			txtPreviewUrl.setText("http://");
 			txtPageNameFull.setText("page.html");
