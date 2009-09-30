@@ -3,7 +3,7 @@
 
 	<xsl:include href="common.xsl"/>
 
-    <xsl:template match="content" mode="include-after" priority="2">
+    <xsl:template match="content" mode="include-before" priority="2">
         <div id="loopedSlider">	
             <div class="container">
                 <div class="slides">
@@ -28,6 +28,12 @@
             ]]>
         </script>
         <div class="clear">&#160;</div>
+    </xsl:template>
+    
+    <xsl:template match="content[@dcfname='homeContent']" mode="format" priority="1">
+        <div class="homeContent">
+            <xsl:apply-templates mode="format"/>
+        </div>
     </xsl:template>
     
     <xsl:template name="content1">
@@ -137,13 +143,16 @@
     </xsl:template>
     
     <xsl:template match="information_1">
-        <ctmpl:module name="information_1"> 
+        <ctmpl:module name="information_1">
             <xsl:choose>
                 <xsl:when test="//newslist != ''">
                     <div class="latestNews">
                         <h1>Latest News</h1>
                         <xsl:apply-templates select="//newslist" mode="latestnews"/>
                         <div class="clear">&#160;</div>
+                        <div class="allNews">
+                            <xsl:call-template name="allNews"/>
+                        </div>
                     </div>  
                 </xsl:when>
                 <xsl:otherwise>
@@ -210,8 +219,8 @@
                             </a>
                         </h2>
                         <div class="newsContent">
-                            <xsl:value-of select="substring(text, 0, 300)"/>
-                            <xsl:if test="string-length(text)&gt;300">
+                            <xsl:value-of select="substring(text, 0, 150)"/>
+                            <xsl:if test="string-length(text)&gt;150">
                                 &#160;
                                 <a class="moreLink">
                                     <xsl:attribute name="href">
@@ -253,8 +262,8 @@
                             </a>
                         </h2>
                         <div class="newsContent">
-                            <xsl:value-of select="substring(text, 0, 300)"/>
-                            <xsl:if test="string-length(text)&gt;300">
+                            <xsl:value-of select="substring(text, 0, 150)"/>
+                            <xsl:if test="string-length(text)&gt;150">
                                 &#160;
                                 <a class="moreLink">
                                     <xsl:attribute name="href">
@@ -273,6 +282,11 @@
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="allNews">
+        <xsl:apply-templates select="//internalLink[@dcfname='linkToNews']/internalLink" mode="format"/>
+        <div class="clear">&#160;</div>
     </xsl:template>
     
 </xsl:stylesheet>

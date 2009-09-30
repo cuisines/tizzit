@@ -2,7 +2,7 @@
 <source>
 	<head/>
 	<all>
-		<content/>
+		<textfield label="Text über News" height="300" dcfname="homeContent"/>
 		<notice name="n_01" dcfname="n01">## Slide 1 - Target Group ##</notice>
 		<internalLink label="Link 01" dcfname="01"/>
 		<picture dcfname="bg_01" label="Bild 01 *" mandatory="true"/>

@@ -59,9 +59,12 @@
             background-position:right 0px;
         }
         .content {
-            padding: 30px 0px 0 300px;
+            padding: 30px 0px 0 0;
             background-image:url('/httpd/img/underwater.gif');
             background-repeat:no-repeat;
+        }
+        #loopedSlider {
+            margin-left:300px;
         }
         .container { 
             <!--width:500px;--> 
@@ -133,11 +136,14 @@
             position:absolute;
         }
         .latestNews {
-            padding:15px 0 15px 0;
+            padding:30px 10px 30px 30px;
         }
         .newsItem {
-            width:490px;
+            width:470px;
             padding:0 10px 15px 0;
+        }
+        .newsRight .newsItem {
+            padding:0 0 15px 15px;
         }
         .newsLeft, .newsRight {
             float:left;
@@ -149,6 +155,14 @@
         }
         .newsContent {
             color:#474747;
+        }
+        .homeContent {
+            padding:30px 10px 0 30px;
+            color:#474747;
+        }
+        .allNews {
+            float:right;
+            padding-right:60px;
         }
         
     </xsl:template>

@@ -202,6 +202,8 @@
 			line-height:0px;
 			color:#fff;
 			font-size:0px;
+			top:0px;
+			z-index:255;
 		}
 		#f_content {
 			color: #aeb9bf;
