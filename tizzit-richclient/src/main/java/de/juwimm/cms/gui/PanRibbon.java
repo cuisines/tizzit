@@ -186,43 +186,34 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 
 	}
 
-	private void addButton(JCommandButton component, int index, JRibbonBand band,String description) {
+	private void addButton(JCommandButton component, int index, JRibbonBand band) {
 		GridBagConstraints compnentConstraints = new GridBagConstraints();
 		compnentConstraints.gridx = index;
 		compnentConstraints.gridy = 0;
+		band.addCommandButton(component,RibbonElementPriority.TOP);
+		/**Tooltips
 		RichTooltip tooltip = new RichTooltip();
 		tooltip.setTitle(band.getTitle());
 		tooltip.addDescriptionSection(description);
 		component.setActionRichTooltip(tooltip);
 		band.addCommandButton( component, RibbonElementPriority.TOP);
+		*/
 	}
 	
-	private void addButton(JCommandButton component, int index, JRibbonBand band) {	
-		addButton(component, index, band,component.getText());
-	}
 
 	private void arrangeButtons() {
 		editBand.startGroup();
 		this.addButton(newContentButton, 0, editBand);
 		this.addButton(moveButton, 1, editBand);
 		this.addButton(refreshTreeButton, 2, editBand);
-		this.addButton(deleteNodeButton, 3, editBand,rb.getString("actions.ACTION_TREE_NODE_DELETE"));
+		this.addButton(deleteNodeButton, 3, editBand);
 		editBand.startGroup();
 		this.addButton(checkOutButton, 5, editBand);
 		this.addButton(checkInButton, 6, editBand);
 
 		this.addButton(reviseSiteButton, 1, publishBand);
 		this.addButton(releaseSiteButton, 2, publishBand);
-		
-		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
-			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardRoot"));
-		} else if (comm.isUserInRole(UserRights.DEPLOY)) {
-			this.addButton(deployButton, 3, publishBand,rb.getString("ribbon.publish.wizardEditor"));
-		} else {
-			deployButton.setText(rb.getString("ribbon.publish.wizardAuthor"));
-			this.addButton(deployButton, 3, publishBand);
-		}
-
+		this.addButton(deployButton, 3, publishBand);
 		this.addButton(editViewButton, 0, viewSelectBand);
 		this.addButton(taskViewButton, 1, viewSelectBand);
 		this.addButton(adminViewButton, 2, viewSelectBand);
@@ -290,7 +281,11 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		deleteNodeButton = createButton(rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
 		releaseSiteButton = createButton(rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
 		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);		
-		deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
+		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
+			deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);			
+		}else{
+			deployButton = createButton(rb.getString("ribbon.publish.wizardAuthor"), UIConstants.RIBBON_ACTION_DEPLOY);
+		}
 		checkInButton = createButton(rb.getString("actions.ACTION_CHECKIN"), UIConstants.RIBBON_ACTION_CHECKIN);
 		checkOutButton = createButton(rb.getString("actions.ACTION_CHECKOUT"), UIConstants.RIBBON_ACTION_CHECKOUT);
 		languageButton = createButton(rb.getString("ribbon.language"), UIConstants.RIBBON_LANGUAGE);
