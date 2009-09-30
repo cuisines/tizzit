@@ -5,6 +5,8 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<ctmpl:include name="css"/>
 		<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="content.rss" />
+		<link rel="shortcut icon" type="image/x-icon" href="/httpd/img/favicon.ico" /> 
+		<link rel="icon" type="image/x-icon" href="/httpd/img/favicon.ico" />
         <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
 		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
 		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
