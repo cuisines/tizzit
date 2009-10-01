@@ -59,6 +59,13 @@ public class EditorTableModel extends AbstractTableModel {
 		addRows(vec);
 	}
 
+	public void setNewData(ViewComponentValue[] vec){	
+		this.vRows.removeAllElements();
+		addRows(vec);
+		fireTableDataChanged();
+	}
+		
+	
 	public void addRows(ViewComponentValue[] vec) {
 		String s = "";
 		for (int i = 0; i < vec.length; i++) {

@@ -239,11 +239,11 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 		this.task = null;
 	}
 
-	public void load(TaskValue taskValue) {
+	public void load(TaskValue taskValue){
 		this.panFat.setVisible(true);
 		this.panButtons.setVisible(true);
 		this.task = taskValue;
-		this.fillTable(task.getStatus());
+		this.fillTable();
 		this.txtMessage.setText(task.getComment());
 		this.btnPreview.setEnabled(false);
 	}
@@ -320,12 +320,11 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 			TaskValue[] tv = comm.getAllTasks();
 			if (tv != null) {
 				for (int i = 0; i < tv.length; i++) {
-					if (tv[i].getTaskId() == task.getTaskId()) {
+					if (tv[i].getTaskId().equals(task.getTaskId())) {
 						load(tv[i]);
 					}
 				}
 			}
-			fillTable(Constants.DEPLOY_STATUS_FOR_APPROVAL);
 		} catch (Exception exe) {
 			log.error("error removing vcs from task", exe);
 		}
@@ -336,30 +335,34 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 		this.setCursor(Cursor.getDefaultCursor());
 	}
 
-	private void fillTable(int status) {
+	private void fillTable() {
 		try {
 			if (task != null) {
 				ViewComponentValue[] viewComponents = task.getViewComponents();
-				tableModel = new EditorTableModel(viewComponents);
-				TableSorter sorter = new TableSorter(tableModel, table.getTableHeader());
-				table.setModel(sorter);
-				//m_Sorter.addMouseListenerToHeaderInTable(m_Table);
-				table.getSelectionModel().addListSelectionListener(new ApproveListSelectionListener());
-				if (table.getColumnModel().getColumnCount() == 5) {
-					TableColumn column = table.getColumnModel().getColumn(0);
-					column.setPreferredWidth(40);
-					ImageCellRenderer cellrend = new ImageCellRenderer();
-					column.setCellRenderer(cellrend);
-					column.setResizable(false);
-					column = table.getColumnModel().getColumn(1);
-					column.setPreferredWidth(40);
-					PageTypeCellRenderer ptypeCell = new PageTypeCellRenderer();
-					column.setCellRenderer(ptypeCell);
-					column.setResizable(false);
-					column = table.getColumnModel().getColumn(2);
-					column.setPreferredWidth(290);
-					column = table.getColumnModel().getColumn(3);
-					column.setPreferredWidth(100);
+				if(tableModel == null){
+					tableModel = new EditorTableModel(viewComponents);
+					TableSorter sorter = new TableSorter(tableModel, table.getTableHeader());
+					table.setModel(sorter);
+					//m_Sorter.addMouseListenerToHeaderInTable(m_Table);
+					table.getSelectionModel().addListSelectionListener(new ApproveListSelectionListener());
+					if (table.getColumnModel().getColumnCount() == 5) {
+						TableColumn column = table.getColumnModel().getColumn(0);
+						column.setPreferredWidth(40);
+						ImageCellRenderer cellrend = new ImageCellRenderer();
+						column.setCellRenderer(cellrend);
+						column.setResizable(false);
+						column = table.getColumnModel().getColumn(1);
+						column.setPreferredWidth(40);
+						PageTypeCellRenderer ptypeCell = new PageTypeCellRenderer();
+						column.setCellRenderer(ptypeCell);
+						column.setResizable(false);
+						column = table.getColumnModel().getColumn(2);
+						column.setPreferredWidth(290);
+						column = table.getColumnModel().getColumn(3);
+						column.setPreferredWidth(100);
+					}
+				}else{
+					((EditorTableModel)tableModel).setNewData(viewComponents);
 				}
 			} else {
 				tableModel = new DefaultTableModel();

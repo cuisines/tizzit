@@ -37,7 +37,7 @@ import de.juwimm.cms.vo.TaskValue;
  */
 public class TaskTableModel extends AbstractTableModel {
 	private SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
-	private Vector columnNames = new Vector(3);
+	private Vector columnNames = new Vector(4);
 	private Vector vRows = new Vector();
 
 	public TaskTableModel() {

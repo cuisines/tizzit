@@ -126,9 +126,9 @@ public class PanTaskTable extends JPanel implements ActionListener {
 			column.setPreferredWidth(60);
 			column = table.getColumnModel().getColumn(1);
 			column.setPreferredWidth(120);
-			column = table.getColumnModel().getColumn(3);
+			column = table.getColumnModel().getColumn(2);
 			column.setCellRenderer(new MyTableCellRenderer());
-			column = table.getColumnModel().getColumn(4);
+			column = table.getColumnModel().getColumn(3);
 			column.setPreferredWidth(60);
 		} catch (Exception ex) {
 		}
