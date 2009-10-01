@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ import de.juwimm.cms.search.beans.SearchengineService;
 
 @Transactional(propagation = Propagation.SUPPORTS, isolation = Isolation.DEFAULT)
 public class SearchCronService {
-	private static Log log = LogFactory.getLog(SearchCronService.class);
+	private static Logger log = Logger.getLogger(SearchCronService.class);
 	private boolean cronIsRunning = false;
 
 	private SearchengineService searchengineService;
@@ -42,13 +43,21 @@ public class SearchCronService {
 			Collection<ContentHbm> contentsToUpdate = contentHbmDao.findByUpdateSearchIndex(true);
 			log.info("Found " + contentsToUpdate.size() + " Contents to update");
 			for (ContentHbm content : contentsToUpdate) {
-				searchengineService.indexPage(content.getContentId());
+				try {
+					searchengineService.indexPage(content.getContentId());
+				} catch (Exception e) {
+					if (log.isInfoEnabled()) log.info("Error indexing Content " + content.getContentId() + ": " + e.getMessage());
+				}
 			}
 
 			Collection<DocumentHbm> documentsToUpdate = documentHbmDao.findByUpdateSearchIndex(true);
 			log.info("Found " + documentsToUpdate.size() + " Documents to update");
 			for (DocumentHbm doc : documentsToUpdate) {
-				searchengineService.indexDocument(doc.getDocumentId());
+				try {
+					searchengineService.indexDocument(doc.getDocumentId());
+				} catch (Exception e) {
+					if (log.isInfoEnabled()) log.info("Error indexing Document " + doc.getDocumentId() + ": " + e.getMessage());
+				}
 			}
 		} catch (Exception exe) {
 			throw exe;

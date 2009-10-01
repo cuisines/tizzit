@@ -3,8 +3,7 @@ package de.juwimm.cms.beans;
 import java.io.File;
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,7 +16,7 @@ import de.juwimm.cms.remote.EditionServiceSpring;
 
 @Transactional(propagation = Propagation.REQUIRED)
 public class EditionCronService {
-	private static Log log = LogFactory.getLog(EditionCronService.class);
+	private static Logger log = Logger.getLogger(EditionCronService.class);
 	private boolean cronEditionImportIsRunning = false;
 
 	private EditionHbmDao editionHbmDao;

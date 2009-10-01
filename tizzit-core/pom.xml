@@ -125,14 +125,12 @@
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcmail-jdk14</artifactId>
 			<version>136</version>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>bouncycastle</groupId>
 			<artifactId>bcprov-jdk14</artifactId>
 			<version>136</version>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
