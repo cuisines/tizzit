@@ -157,7 +157,7 @@
                         <h1>Latest News</h1>
                         <xsl:apply-templates select="//newslist" mode="latestnews"/>
                         <div class="clear">&#160;</div>
-                        <xsl:if test="//internalLink[@dcfname='linkToNews']/internalLink/@url!=''">
+                        <xsl:if test="//internalLink[@dcfname='linkToNews']/internalLink!=''">
                             <div class="allNews">
                                 <xsl:call-template name="allNews"/>
                             </div>
