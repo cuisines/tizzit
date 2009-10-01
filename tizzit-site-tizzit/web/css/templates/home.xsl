@@ -19,30 +19,29 @@
             margin: 0;  
             padding: 0;  
             float:right;
+            display:block;
         }  
-        .kwicks a{  
+        .kwicks a {  
             display: block;
             height: 310px;
             text-decoration: none;  
         } 
-        .kwicks li{  
+        .kwicks li {  
             display: block;  
             overflow: hidden;  
-            padding: 0;  
+            padding: 0;
             cursor: pointer;  
-        }  
-        .kwicks li{  
             float: left;  
             width: 220px;  
             height: 310px;  
             margin-right: 20px;  
-        } 
-        .kwicks li.kwick_last{  
+        }
+        .kwicks li.kwick_last {  
             margin-right: 0px;  
             float: left;  
             width: 220px;  
             height: 310px;  
-        } 
+        }
         .kwick_bg_01 {
             background-image: url('/httpd/img/home/round_decisionmaker.png');
             background-repeat: no-repeat;
@@ -67,7 +66,7 @@
             margin-left:300px;
         }
         .container { 
-            <!--width:500px;--> 
+           <!-- width:550px; -->
             height:315px; 
             overflow:hidden;
             position:relative; 
@@ -81,16 +80,31 @@
         .slides div { 
             position:absolute; 
             top:0; 
+            *width:300px;
         }
         a.previous { 
             position:absolute; 
             top:370px; 
-            left:278px; 
+            left:278px;
+            background-image:url('/httpd/img/home/arrow_l.png'); 
+            background-repeat:no-repeat;
+            filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/httpd/img/home/arrow_l.png',sizingMethod='crop');
+            _background:none;
+            height:60px;
+            width:20px;
+            coursor:pointer;
         }
         a.next { 
             position:absolute; 
             top:370px; 
-            right:0px; 
+            right:0px;
+            background-image:url('/httpd/img/home/arrow_r.png'); 
+            background-repeat:no-repeat;
+            filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/httpd/img/home/arrow_r.png',sizingMethod='crop');
+            _background:none;
+            height:60px;
+            width:20px;
+            coursor:pointer;
         }
         ul.pagination { 
             list-style-type:none; 

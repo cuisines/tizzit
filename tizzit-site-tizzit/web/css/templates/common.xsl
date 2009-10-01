@@ -129,6 +129,8 @@
 			background-image:url('/httpd/img/white_wave.png');
 			background-repeat: repeat-x;
 			background-position: 0 188px;
+			<!--filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/httpd/img/white_wave.png',sizingMethod='crop');
+			_background:none;-->
 		}
 		#underwaterrepeat {
 			background-image:url('/httpd/img/underwater_repeat.png');

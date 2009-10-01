@@ -12,8 +12,8 @@
                     <div><xsl:call-template name="content3"/></div>
                 </div>
             </div>
-            <a href="#" class="previous"><img src="/httpd/img/home/arrow_l.png" alt="Previous" border="0"/></a>
-            <a href="#" class="next"><img src="/httpd/img/home/arrow_r.png" alt="Next" border="0"/></a>
+            <a href="#" class="previous"><img src="/httpd/img/spacer.gif" alt=""/></a>
+            <a href="#" class="next"><img src="/httpd/img/spacer.gif" alt=""/></a>
             <ul class="pagination">
                 <li><a href="#">1</a></li>
                 <li><a href="#">2</a></li>
@@ -84,9 +84,9 @@
     </xsl:template>
     
     <xsl:template name="content3">
-        <div id="video_container">
+        <span id="video_container">
             <a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this player.
-        </div>
+        </span>
         <script language="JavaScript" type="text/JavaScript" src="/httpd/js/swfobject.js">&#160;</script>
         <script language="JavaScript" type="text/JavaScript">
             <xsl:variable name="autostart">
@@ -120,6 +120,13 @@
         <xsl:text>?id=</xsl:text>
         <xsl:value-of select="../picture[@dcfname=$bg]/image/@src"/>
         <xsl:text>');</xsl:text>
+        
+        <xsl:text>filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/img/ejbimage/</xsl:text>
+        <xsl:value-of select="../picture[@dcfname=$bg]/image/filename"/>
+        <xsl:text>?id=</xsl:text>
+        <xsl:value-of select="../picture[@dcfname=$bg]/image/@src"/>
+        <xsl:text>',sizingMethod='crop');</xsl:text>
+        <xsl:text>_background:none;</xsl:text>
     </xsl:template>
     
     <xsl:template name="writeLink">
@@ -150,9 +157,11 @@
                         <h1>Latest News</h1>
                         <xsl:apply-templates select="//newslist" mode="latestnews"/>
                         <div class="clear">&#160;</div>
-                        <div class="allNews">
-                            <xsl:call-template name="allNews"/>
-                        </div>
+                        <xsl:if test="//internalLink[@dcfname='linkToNews']/internalLink/@url!=''">
+                            <div class="allNews">
+                                <xsl:call-template name="allNews"/>
+                            </div>
+                        </xsl:if>
                     </div>  
                 </xsl:when>
                 <xsl:otherwise>
