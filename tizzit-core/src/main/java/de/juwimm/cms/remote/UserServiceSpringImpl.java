@@ -22,6 +22,7 @@ package de.juwimm.cms.remote;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -177,6 +178,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		TaskValue taskValue = new TaskValue();
 		taskValue.setComment(comment);
 		taskValue.setTaskType(taskType);
+		taskValue.setCreationDate(new Date().getTime());
 		task.setUnit(super.getUnitHbmDao().load(unitId));
 		try {
 			task.setSender(super.getUserHbmDao().load(AuthenticationHelper.getUserName()));
