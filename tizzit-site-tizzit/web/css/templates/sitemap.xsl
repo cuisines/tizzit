@@ -19,14 +19,14 @@
             background-image:url('/httpd/img/sitemap/link_bg.gif');
             background-repeat:no-repeat;
             background-position:0 6px;
-            padding:0 0 15px 9px; 
+            padding:0 0 17px 9px; 
             display:block;
             text-decoration:underline;
         }
         .sitemap a:hover {
             color:#96CF48;
         }
-        .s_firstlevel, .s_secondlevel, .sitemap_left, .root, .s_links {
+        .s_firstlevel, .s_secondlevel, .sitemap_left, .root, .s_links, .link, .s_secondlinks, .s_thirdlinks {
             float:left;
         }
         .root {
@@ -49,7 +49,7 @@
         .s_links {
             width:400px;
         }
-        .s_firstlevel, .s_secondlevel {
+        .s_firstlevel, .s_secondlevel, .link {
             padding-right:15px;
         }
         

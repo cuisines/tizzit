@@ -33,13 +33,16 @@
 				<xsl:with-param name="language" select="language"/>
 				<xsl:with-param name="url" select="url"/>
 			</xsl:call-template>
+			<xsl:choose>
+				<xsl:when test="@hasChild='true'">
+					<div class="s_secondlinks">
+						<xsl:apply-templates select="viewcomponent" mode="treeViewSecond"/>
+					</div>
+				</xsl:when>
+				<xsl:otherwise><div class="clear">&#160;</div></xsl:otherwise>
+			</xsl:choose>
 		</div>
-		<xsl:choose>
-			<xsl:when test="@hasChild='true'">
-				<xsl:apply-templates select="viewcomponent" mode="treeViewSecond"/>
-			</xsl:when>
-			<xsl:otherwise><div class="clear">&#160;</div></xsl:otherwise>
-		</xsl:choose>
+		<div class="clear">&#160;</div>
 	</xsl:template>
 	
 	<xsl:template match="viewcomponent" mode="treeViewSecond">
@@ -49,13 +52,16 @@
 				<xsl:with-param name="language" select="language"/>
 				<xsl:with-param name="url" select="url"/>
 			</xsl:call-template>
+			<xsl:choose>
+				<xsl:when test="@hasChild='true'">
+					<div class="s_thirdlinks">
+						<xsl:apply-templates select="viewcomponent" mode="treeViewThird"/>
+					</div>
+				</xsl:when>
+				<xsl:otherwise><div class="clear">&#160;</div></xsl:otherwise>
+			</xsl:choose>
 		</div>
-		<xsl:choose>
-			<xsl:when test="@hasChild='true'">
-				<xsl:apply-templates select="viewcomponent" mode="treeViewThird"/>
-			</xsl:when>
-			<xsl:otherwise><div class="clear">&#160;</div></xsl:otherwise>
-		</xsl:choose>
+		<div class="clear">&#160;</div>
 	</xsl:template>
 	
 	<xsl:template match="viewcomponent" mode="treeViewThird">
@@ -66,14 +72,16 @@
 				<xsl:with-param name="url" select="url"/>
 			</xsl:call-template>
 		</div>
+		<div class="clear">&#160;</div>
 	</xsl:template>
 	
 	<xsl:template name="writeLink">
 		<xsl:param name="linkName"/>
 		<xsl:param name="url"/>
 		<xsl:param name="language"/>
-		
-		<a href="/{$language}/{url}/page.html"><xsl:value-of select="$linkName"/></a>
+		<div class="link">
+			<a href="/{$language}/{url}/page.html"><xsl:value-of select="$linkName"/></a>
+		</div>
 	</xsl:template>
 	
 </xsl:stylesheet>

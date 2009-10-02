@@ -7,10 +7,10 @@
 		<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="/content.rss" />
 		<link rel="shortcut icon" type="image/x-icon" href="/httpd/img/favicon.ico" /> 
 		<link rel="icon" type="image/x-icon" href="/httpd/img/favicon.ico" />
-        <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
-		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
-		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
-		<script language="JavaScript" type="text/javaScript">
+        <script src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
+		<script type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
+		<script type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
+		<script type="text/javaScript">
 			<![CDATA[
 				Shadowbox.loadSkin('classic', '/httpd/js/skin');
 				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
@@ -21,6 +21,7 @@
 			]]>
 		</script>
 		<script src="/httpd/js/jquery-1.3.2.js" type="text/javascript"><![CDATA[&#160;]]></script>
+		<script type="text/javascript" src="/httpd/js/general.js"><![CDATA[ ]]></script>
 		<script src="/httpd/js/jquery.kwicks-1.5.1.pack.js" type="text/javascript"><![CDATA[&#160;]]></script>
 		<script type="text/javascript">
 			<![CDATA[
@@ -33,6 +34,15 @@
 			]]>
 		</script>
 		<script src="/httpd/js/loopedslider.js" type="text/javascript"><![CDATA[&#160;]]></script>
+		<script type="text/javascript" src="/httpd/js/hoverIntent.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/superfish.js"><![CDATA[ ]]></script>
+		<script type="text/javascript">
+			<![CDATA[
+				jQuery(function(){
+				jQuery('ul.sf-menu').superfish();
+				});
+			]]>
+		</script>
 	</head>
 	<body>
 		<div id="cloudsrepeat">

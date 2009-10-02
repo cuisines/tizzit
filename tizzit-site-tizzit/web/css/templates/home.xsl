@@ -150,10 +150,10 @@
             position:absolute;
         }
         .latestNews {
-            padding:30px 10px 30px 30px;
+            padding:20px 30px 40px 25px;
         }
         .newsItem {
-            width:470px;
+            width:445px;
             padding:0 10px 15px 0;
         }
         .newsRight .newsItem {
@@ -171,12 +171,18 @@
             color:#474747;
         }
         .homeContent {
-            padding:30px 10px 0 30px;
+            padding:30px 30px 0 25px;
             color:#474747;
         }
         .allNews {
             float:right;
             padding-right:60px;
+        }
+        .newsHeadline {
+            float:left;
+        }
+        .newsImg {
+            padding-right:10px;
         }
         
     </xsl:template>

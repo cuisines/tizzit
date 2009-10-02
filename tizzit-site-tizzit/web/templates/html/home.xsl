@@ -32,6 +32,9 @@
     
     <xsl:template match="content[@dcfname='homeContent']" mode="format" priority="1">
         <div class="homeContent">
+            <xsl:if test="//headline!=''">
+                <h1><xsl:value-of select="//headline"/></h1>
+            </xsl:if>
             <xsl:apply-templates mode="format"/>
         </div>
     </xsl:template>
@@ -154,7 +157,7 @@
             <xsl:choose>
                 <xsl:when test="//newslist != ''">
                     <div class="latestNews">
-                        <h1>Latest News</h1>
+                        <h2>Latest News</h2>
                         <xsl:apply-templates select="//newslist" mode="latestnews"/>
                         <div class="clear">&#160;</div>
                         <xsl:if test="//internalLink[@dcfname='linkToNews']/internalLink!=''">
@@ -214,6 +217,9 @@
                             <xsl:text>/</xsl:text>
                             <xsl:value-of select="newsdate/year"/>
                         </div>
+                        <xsl:if test="picture/image/@src!=''">
+                            <img src="/img/ejbimage/{picture/image/filename}?id={picture/image/@src}" class="newsImg" alt="{picture/image/alttext}" align="left" width="35" height="35"/>
+                        </xsl:if>
                         <h2 class="newsHeadline">
                             <a>
                                 <xsl:attribute name="href">
@@ -227,6 +233,7 @@
                                 <xsl:value-of select="newsname"/>
                             </a>
                         </h2>
+                        <div class="clear">&#160;</div>
                         <div class="newsContent">
                             <xsl:value-of select="substring(text, 0, 150)"/>
                             <xsl:if test="string-length(text)&gt;150">
@@ -257,6 +264,9 @@
                             <xsl:text>/</xsl:text>
                             <xsl:value-of select="newsdate/year"/>
                         </div>
+                        <xsl:if test="picture/image/@src!=''">
+                            <img src="/img/ejbimage/{picture/image/filename}?id={picture/image/@src}" class="newsImg" alt="{picture/image/alttext}" align="left" width="35" height="35"/>
+                        </xsl:if>
                         <h2 class="newsHeadline">
                             <a>
                                 <xsl:attribute name="href">
@@ -270,6 +280,7 @@
                                 <xsl:value-of select="newsname"/>
                             </a>
                         </h2>
+                        <div class="clear">&#160;</div>
                         <div class="newsContent">
                             <xsl:value-of select="substring(text, 0, 150)"/>
                             <xsl:if test="string-length(text)&gt;150">
