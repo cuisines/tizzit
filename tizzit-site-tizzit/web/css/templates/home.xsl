@@ -183,7 +183,6 @@
         }
         .newsImg {
             padding-right:10px;
-            border:1px solid black;
         }
         
     </xsl:template>
