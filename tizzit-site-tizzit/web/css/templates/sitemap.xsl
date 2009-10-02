@@ -7,7 +7,7 @@
     <xsl:template match="styles" mode="template" priority="1">
         
         #middle {
-            width:779px;
+            width:979px;
         }
         .headline {
             padding-left:280px;
@@ -47,10 +47,13 @@
             height:300px;
         }
         .s_links {
-            width:400px;
+            <!--width:400px;-->
         }
         .s_firstlevel, .s_secondlevel, .link {
             padding-right:15px;
+        }
+        .link {
+            width:130px;
         }
         
     </xsl:template>

@@ -19,18 +19,9 @@
 				});
 			]]>
 		</script>
-		<script type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
-		<script type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
-		<script type="text/javaScript">
-			<![CDATA[
-				Shadowbox.loadSkin('classic', '/httpd/js/skin');
-				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
-				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
-				window.onload = function(){
-					Shadowbox.init();
-				};
-			]]>
-		</script>
+		<script type="text/javascript" src="/httpd/js/custom.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/jquery.easing.1.3.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/jquery.fancybox-1.2.1.pack.js"><![CDATA[ ]]></script>
 	</head>
 	<body>
 		<div id="cloudsrepeat">
