@@ -317,10 +317,6 @@
 			padding:5px 8px 5px 8px;
 			font-weight:bold;
 		}
-		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover,
-		.firstlevel2 .firstlink .clicked a:hover, .firstlevel2 .last-of-firstlink .clicked a:hover {
-			color:#96CF48;
-		}
 		.firstlevel2 .firstlink .fl_bg_l, .firstlevel2 .last-of-firstlink .fl_bg_l {
 			background-image:url('/httpd/img/navi/nav_bg_left.gif');
 			background-repeat:no-repeat;
@@ -341,6 +337,12 @@
 			background-repeat:no-repeat;
 			background-position:center 29px;
 			color:#fff;
+		}
+		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover,
+		.firstlevel2 .firstlink .clicked a:hover, .firstlevel2 .last-of-firstlink .clicked a:hover,
+		.firstlevel2 .secondlink .actualClicked a, .firstlevel2 .secondlink .clicked a,
+		.firstlevel2 .last-of-secondlink .actualClicked a, .firstlevel2 .last-of-secondlink .clicked a{
+			color:#96CF48;
 		}
 		.leftmenue .firstlink a {
 			font-size:13px;
