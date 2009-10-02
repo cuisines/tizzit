@@ -32,8 +32,8 @@
     
     <xsl:template match="content[@dcfname='homeContent']" mode="format" priority="1">
         <div class="homeContent">
-            <xsl:if test="//headline!=''">
-                <h1><xsl:value-of select="//headline"/></h1>
+            <xsl:if test="//source/head/title!=''">
+                <h1><xsl:value-of select="//source/head/title"/></h1>
             </xsl:if>
             <xsl:apply-templates mode="format"/>
         </div>
