@@ -48,6 +48,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -440,6 +441,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		tree.addTreeSelectionListener(new MyTreeSelectionListener(this));
 		tree.setCellRenderer(new CmsTreeRenderer());
 		tree.setBorder(new EmptyBorder(6, 6, 6, 6));
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
 		NoResizeScrollPane treeView = new NoResizeScrollPane(tree);
 		Dimension treeSize = new Dimension(300, 600);
@@ -1246,94 +1248,273 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 	public void actionViewComponentPerformed(ViewComponentEvent e) {
 		PageNode entry = (PageNode) tree.getLastSelectedPathComponent();
-
+		TreePath[] entriesPath = tree.getSelectionPaths();
+		for (TreePath treePath : entriesPath) {
+			PageNode local = (PageNode) treePath.getLastPathComponent();
+			System.out.println(local.getViewComponent().getDisplayLinkName());
+		}
 		if (e.getType() == ViewComponentEvent.DELETE) {
-			boolean wasDeleted = comm.removeViewComponent(entry.getViewId(), entry.getViewComponent().getDisplayLinkName(), entry.getOnline());
-			if (wasDeleted) {
-				if (entry.getOnline() == Constants.ONLINE_STATUS_UNDEF || entry.getOnline() == Constants.ONLINE_STATUS_OFFLINE) {
-					treeModel.removeNodeFromParent(entry);
-					ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_DESELECT));
-				} else {
-					ViewComponentValue viewDao = entry.getViewComponent();
-					viewDao.setStatus(Constants.DEPLOY_STATUS_EDITED);
-					viewDao.setDeployCommand(Constants.DEPLOY_COMMAND_REMOVE);
-					ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
-					treeModel.nodeChanged(entry);
-					try {
-						comm.updateStatus4ViewComponent(viewDao);
-					} catch (Exception exe) {
-						log.error("Error updating status", exe);
+			if (entriesPath.length == 1) {
+				boolean wasDeleted = comm.removeViewComponent(entry.getViewId(), entry.getViewComponent().getDisplayLinkName(), entry.getOnline());
+				if (wasDeleted) {
+					if (entry.getOnline() == Constants.ONLINE_STATUS_UNDEF || entry.getOnline() == Constants.ONLINE_STATUS_OFFLINE) {
+						treeModel.removeNodeFromParent(entry);
+						ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_DESELECT));
+					} else {
+						ViewComponentValue viewDao = entry.getViewComponent();
+						viewDao.setStatus(Constants.DEPLOY_STATUS_EDITED);
+						viewDao.setDeployCommand(Constants.DEPLOY_COMMAND_REMOVE);
+						ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
+						treeModel.nodeChanged(entry);
+						try {
+							comm.updateStatus4ViewComponent(viewDao);
+						} catch (Exception exe) {
+							log.error("Error updating status", exe);
+						}
 					}
 				}
+				this.invalidateTreeCache();
 			}
-			this.invalidateTreeCache();
+			if (entriesPath.length > 1) {
+				int i = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), rb.getString("panel.tree.confirmMultipleDelete"), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+				if (i == JOptionPane.YES_OPTION) {
+					ArrayList<TreePath> wasDeleted = comm.removeViewComponents(entriesPath);
+					if (wasDeleted != null && wasDeleted.size() > 0) {
+						for (TreePath treePath : wasDeleted) {
+							PageNode local = (PageNode) treePath.getLastPathComponent();
+
+							if (local.getOnline() == Constants.ONLINE_STATUS_UNDEF || local.getOnline() == Constants.ONLINE_STATUS_OFFLINE) {
+								treeModel.removeNodeFromParent(local);
+								ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_DESELECT));
+							} else {
+								ViewComponentValue viewDao = local.getViewComponent();
+								viewDao.setStatus(Constants.DEPLOY_STATUS_EDITED);
+								viewDao.setDeployCommand(Constants.DEPLOY_COMMAND_REMOVE);
+								ActionHub.fireActionPerformed(new ActionEvent(local, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
+								treeModel.nodeChanged(local);
+								try {
+									comm.updateStatus4ViewComponent(viewDao);
+								} catch (Exception exe) {
+									log.error("Error updating status", exe);
+								}
+							}
+
+						}
+					}
+				}
+				this.invalidateTreeCache();
+			}
 		} else if (e.getType() == ViewComponentEvent.MOVE_UP) {
 			try {
-				entry.setViewComponent(comm.moveViewComponentUp(entry.getViewId()));
-				PageNode parent = (PageNode) entry.getParent();
-				parent.insert(entry, parent.getIndex(entry) - 1);
-				treeModel.nodeStructureChanged(parent);
-				tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
+				if (entriesPath.length == 1) {
+					entry.setViewComponent(comm.moveViewComponentUp(entry.getViewId()));
+					PageNode parent = (PageNode) entry.getParent();
+					parent.insert(entry, parent.getIndex(entry) - 1);
+					treeModel.nodeStructureChanged(parent);
+					tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
+				} else if (entriesPath.length > 1) {
+					TreePath[] toSetSelection = new TreePath[entriesPath.length];
+					Integer[] viewComponentsId = new Integer[entriesPath.length];
+					PageNode[] pageNodes = orderNodesForUp(entriesPath);
+					for (int i = 0; i < pageNodes.length; i++) {
+						viewComponentsId[i] = pageNodes[i].getViewComponent().getViewComponentId();
+					}
+
+					ViewComponentValue[] viewComponents = comm.moveViewComponentsUp(viewComponentsId);
+					PageNode local = entry;
+					for (int i = 0; i < pageNodes.length; i++) {
+						local = pageNodes[i];
+						local.setViewComponent(viewComponents[i]);
+						PageNode parent = (PageNode) local.getParent();
+						parent.insert(local, parent.getIndex(local) - 1);
+						treeModel.nodeStructureChanged(parent);
+						toSetSelection[i] = new TreePath(treeModel.getPathToRoot(local));
+					}
+					tree.setSelectionPaths(toSetSelection);
+
+				}
 			} catch (Exception exe) {
 				log.error("Error moving vc up", exe);
 			}
 			this.invalidateTreeCache();
 		} else if (e.getType() == ViewComponentEvent.MOVE_DOWN) {
 			try {
-				entry.setViewComponent(comm.moveViewComponentDown(entry.getViewId()));
-				PageNode parent = (PageNode) entry.getParent();
-				parent.insert(entry, parent.getIndex(entry) + 1);
-				treeModel.nodeStructureChanged(parent);
-				tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
+				if (entriesPath.length == 1) {
+					entry.setViewComponent(comm.moveViewComponentDown(entry.getViewId()));
+					PageNode parent = (PageNode) entry.getParent();
+					parent.insert(entry, parent.getIndex(entry) + 1);
+					treeModel.nodeStructureChanged(parent);
+					tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
+				} else if (entriesPath.length > 1) {
+					TreePath[] toSetSelection = new TreePath[entriesPath.length];
+					Integer[] viewComponentsId = new Integer[entriesPath.length];
+					PageNode[] pageNodes = orderNodesForDown(entriesPath);
+					for (int i = 0; i < pageNodes.length; i++) {
+						viewComponentsId[i] = pageNodes[i].getViewComponent().getViewComponentId();
+					}
+					ViewComponentValue[] viewComponents = comm.moveViewComponentsDown(viewComponentsId);
+					PageNode local = entry;
+					for (int i = 0; i < pageNodes.length; i++) {
+						local = pageNodes[i];
+						local.setViewComponent(viewComponents[i]);
+						PageNode parent = (PageNode) local.getParent();
+						parent.insert(local, parent.getIndex(local) + 1);
+						treeModel.nodeStructureChanged(parent);
+						toSetSelection[i] = new TreePath(treeModel.getPathToRoot(local));
+
+					}
+					tree.setSelectionPaths(toSetSelection);
+
+				}
 			} catch (Exception exe) {
 				log.error("Error moving vc down", exe);
 			}
 			this.invalidateTreeCache();
 		} else if (e.getType() == ViewComponentEvent.MOVE_LEFT) {
 			try {
-				entry.setViewComponent(comm.moveViewComponentLeft(entry.getViewId()));
-				PageNode parent = (PageNode) entry.getParent();
-				((PageNode) parent.getParent()).insert(entry, parent.getParent().getIndex(parent) + 1);
-				treeModel.nodeStructureChanged(parent.getParent());
-				tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
-				ActionHub.fireActionPerformed(new ActionEvent(entry.getViewComponent(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
+				if (entriesPath.length == 1) {
+					entry.setViewComponent(comm.moveViewComponentLeft(entry.getViewId()));
+					PageNode parent = (PageNode) entry.getParent();
+					((PageNode) parent.getParent()).insert(entry, parent.getParent().getIndex(parent) + 1);
+					treeModel.nodeStructureChanged(parent.getParent());
+					tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
+					ActionHub.fireActionPerformed(new ActionEvent(entry.getViewComponent(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
+				} else if (entriesPath.length > 1) {
+					TreePath[] toSetSelection = new TreePath[entriesPath.length];
+					Integer[] viewComponentsId = new Integer[entriesPath.length];
+					for (int i = 0; i < entriesPath.length; i++) {
+						PageNode local = (PageNode) entriesPath[i].getLastPathComponent();
+						viewComponentsId[i] = local.getViewId();
+					}
+					ViewComponentValue[] viewComponents = comm.moveViewComponentsLeft(viewComponentsId);
+					for (int i = 0; i < entriesPath.length; i++) {
+						PageNode local = (PageNode) entriesPath[i].getLastPathComponent();
+						local.setViewComponent(viewComponents[i]);
+						PageNode parent = (PageNode) local.getParent();
+						((PageNode) parent.getParent()).insert(local, parent.getParent().getIndex(parent) + 1);
+						treeModel.nodeStructureChanged(parent.getParent());
+						toSetSelection[i] = new TreePath(treeModel.getPathToRoot(local));
+						//tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(local)));
+						ActionHub.fireActionPerformed(new ActionEvent(local.getViewComponent(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
+					}
+					tree.setSelectionPaths(toSetSelection);
+				}
 			} catch (Exception exe) {
 				log.error("Error moving vc left", exe);
 			}
 			this.invalidateTreeCache();
 		} else if (e.getType() == ViewComponentEvent.MOVE_RIGHT) {
 			try {
-				entry.setViewComponent(comm.moveViewComponentRight(entry.getViewId()));
-				PageNode prevNode = (PageNode) entry.getPreviousSibling();
+				if (entriesPath.length == 1) {
+					entry.setViewComponent(comm.moveViewComponentRight(entry.getViewId()));
+					PageNode prevNode = (PageNode) entry.getPreviousSibling();
 
-				if (!prevNode.isLeaf() && !prevNode.isInit()) {
-					prevNode.removeAllChildren();
-					try {
-						prevNode.setViewComponent(comm.getViewComponent(prevNode.getViewId(), 1));
-						prevNode.loadChildren();
-						if (prevNode.isChildADao()) {
-							treeModel.nodeStructureChanged(prevNode); // THIS FUCKED ME UP TO 4 HOURES OF WORK.... OH MY GODNESS
+					if (!prevNode.isLeaf() && !prevNode.isInit()) {
+						prevNode.removeAllChildren();
+						try {
+							prevNode.setViewComponent(comm.getViewComponent(prevNode.getViewId(), 1));
+							prevNode.loadChildren();
+							if (prevNode.isChildADao()) {
+								treeModel.nodeStructureChanged(prevNode); // THIS FUCKED ME UP TO 4 HOURES OF WORK.... OH MY GODNESS
+							}
+						} catch (Exception ex) {
 						}
-					} catch (Exception ex) {
+						prevNode.setInit(true);
+						PageNode newNode = treeModel.findEntry4Id(prevNode, entry.getViewId());
+						entry.removeFromParent();
+						entry = newNode;
+					} else {
+						prevNode.insert(entry, 0);
+						prevNode.setInit(true);
 					}
-					prevNode.setInit(true);
-					PageNode newNode = treeModel.findEntry4Id(prevNode, entry.getViewId());
-					entry.removeFromParent();
-					entry = newNode;
-				} else {
-					prevNode.insert(entry, 0);
-					prevNode.setInit(true);
+					treeModel.nodeStructureChanged(prevNode.getParent());
+					treeModel.nodeStructureChanged(prevNode);
+					tree.expandPath(new TreePath(treeModel.getPathToRoot(entry)));
+					tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
+					ActionHub.fireActionPerformed(new ActionEvent(entry.getViewComponent(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
+				} else if (entriesPath.length > 1) {
+					TreePath[] toSetSelection = new TreePath[entriesPath.length];
+					Integer[] viewComponentsId = new Integer[entriesPath.length];
+					for (int i = 0; i < entriesPath.length; i++) {
+						PageNode local = (PageNode) entriesPath[i].getLastPathComponent();
+						viewComponentsId[i] = local.getViewId();
+					}
+					ViewComponentValue[] viewComponents = comm.moveViewComponentsRight(viewComponentsId);
+					for (int i = 0; i < entriesPath.length; i++) {
+						PageNode local = (PageNode) entriesPath[i].getLastPathComponent();
+						local.setViewComponent(viewComponents[i]);
+						PageNode prevNode = (PageNode) local.getPreviousSibling();
+
+						if (!prevNode.isLeaf() && !prevNode.isInit()) {
+							prevNode.removeAllChildren();
+							try {
+								prevNode.setViewComponent(comm.getViewComponent(prevNode.getViewId(), 1));
+								prevNode.loadChildren();
+								if (prevNode.isChildADao()) {
+									treeModel.nodeStructureChanged(prevNode); // THIS FUCKED ME UP TO 4 HOURES OF WORK.... OH MY GODNESS
+								}
+							} catch (Exception ex) {
+							}
+							prevNode.setInit(true);
+							PageNode newNode = treeModel.findEntry4Id(prevNode, local.getViewId());
+							local.removeFromParent();
+							local = newNode;
+						} else {
+							prevNode.insert(local, 0);
+							prevNode.setInit(true);
+						}
+						treeModel.nodeStructureChanged(prevNode.getParent());
+						treeModel.nodeStructureChanged(prevNode);
+						tree.expandPath(new TreePath(treeModel.getPathToRoot(local)));
+						//tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(local)));
+						ActionHub.fireActionPerformed(new ActionEvent(local.getViewComponent(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
+						toSetSelection[i] = new TreePath(treeModel.getPathToRoot(local));
+					}
+					tree.setSelectionPaths(toSetSelection);
 				}
-				treeModel.nodeStructureChanged(prevNode.getParent());
-				treeModel.nodeStructureChanged(prevNode);
-				tree.expandPath(new TreePath(treeModel.getPathToRoot(entry)));
-				tree.setSelectionPath(new TreePath(treeModel.getPathToRoot(entry)));
-				ActionHub.fireActionPerformed(new ActionEvent(entry.getViewComponent(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
 			} catch (Exception exe) {
 				log.error("Error moving vc right", exe);
 			}
 			this.invalidateTreeCache();
 		}
+	}
+
+	private PageNode[] orderNodesForDown(TreePath[] entriesPath) {
+		//necessary for consecutive nodes in multiselect
+		Integer[] viewComponentsId = new Integer[entriesPath.length];
+		PageNode[] pagenodes = new PageNode[entriesPath.length];
+		for (int i = 0; i < entriesPath.length; i++) {
+			pagenodes[i] = (PageNode) entriesPath[i].getLastPathComponent();
+		}
+		for (int i = 0; i < pagenodes.length - 1; i++) {
+			if (pagenodes[i].getViewComponent().getParentId().intValue() == pagenodes[i + 1].getViewComponent().getParentId().intValue()) {
+				if (pagenodes[i].getViewComponent().getNextId().intValue() == pagenodes[i + 1].getViewComponent().getViewComponentId().intValue()) {
+					PageNode val = pagenodes[i + 1];
+					pagenodes[i + 1] = pagenodes[i];
+					pagenodes[i] = val;
+				}
+			}
+		}
+		return pagenodes;
+	}
+
+	private PageNode[] orderNodesForUp(TreePath[] entriesPath) {
+		//necessary for consecutive nodes in multiselect
+		Integer[] viewComponentsId = new Integer[entriesPath.length];
+		PageNode[] pagenodes = new PageNode[entriesPath.length];
+		for (int i = 0; i < entriesPath.length; i++) {
+			pagenodes[i] = (PageNode) entriesPath[i].getLastPathComponent();
+		}
+		for (int i = 0; i < pagenodes.length - 1; i++) {
+			if (pagenodes[i].getViewComponent().getParentId().intValue() == pagenodes[i + 1].getViewComponent().getParentId().intValue()) {
+				if (pagenodes[i].getViewComponent().getPrevId().intValue() == pagenodes[i + 1].getViewComponent().getViewComponentId().intValue()) {
+					PageNode val = pagenodes[i + 1];
+					pagenodes[i + 1] = pagenodes[i];
+					pagenodes[i] = val;
+				}
+			}
+		}
+		return pagenodes;
 	}
 
 	private void showFrmEditor() {
@@ -1356,6 +1537,10 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 	public static TreeNode getSelectedEntry() {
 		return (TreeNode) tree.getLastSelectedPathComponent();
+	}
+
+	public static TreePath[] getSelectedTreePath() {
+		return tree.getSelectionPaths();
 	}
 
 	public UnitValue getSelectedUnit() {

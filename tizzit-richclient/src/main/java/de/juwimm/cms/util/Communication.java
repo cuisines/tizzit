@@ -36,6 +36,7 @@ import java.util.Vector;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.tree.TreePath;
 
 import org.andromda.spring.RemoteServiceLocator;
 import org.apache.commons.io.IOUtils;
@@ -899,6 +900,76 @@ public class Communication implements ExitListener, ActionListener {
 			UIConstants.setStatusInfo(rb.getString("comm.removevc.statusinfo"));
 		}
 		return retVal;
+	}
+
+	/**
+	 * delete in case of multiselect
+	 * @param entriesPath
+	 * @return
+	 */
+	public ArrayList<TreePath> removeViewComponents(TreePath[] entriesPath) {
+		boolean localVal;
+		ArrayList<TreePath> deleted = new ArrayList<TreePath>();
+
+		//		Arrays.<ViewComponentValue> sort(listofVC.toArray(arraysViewComponents), new Comparator<ViewComponentValue>() {
+		//			public int compare(ViewComponentValue o1, ViewComponentValue o2) {
+		//				if ((o1 != null) && (o2 != null)) { return (int) (Integer.valueOf(o2.getViewLevel()) - Integer.valueOf(o1.getViewLevel()));
+		//
+		//				}
+		//				return 0;
+		//			}
+		//
+		//		});
+		try {
+			for (TreePath treePath : entriesPath) {
+				localVal = true;
+				PageNode local = (PageNode) treePath.getLastPathComponent();
+				byte onlineState = local.getOnline();
+				int intViewComponentId = local.getViewComponent().getViewComponentId();
+				try {
+					ViewIdAndInfoTextValue[] str = getAllChildrenNamesWithUnit(intViewComponentId);
+					String units = "";
+					if (str != null && str.length > 0) {
+						StringBuffer sb = new StringBuffer();
+						for (int i = 0; i < str.length; i++) {
+							sb.append(str[i].getInfoText().trim()).append("\n");
+						}
+						units = sb.toString();
+					}
+					if (!units.equalsIgnoreCase("")) {
+						if (!isUserInRole(UserRights.SITE_ROOT)) {
+							// dazwischen, damit sparen wir uns das zweite...
+							String msg = Messages.getString("comm.removevc.containsunitsandcannotremove", units);
+							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+							localVal = false;
+						}
+						units = Messages.getString("comm.removevc.header_units", units);
+					}
+					if (localVal) {
+						if (onlineState == Constants.ONLINE_STATUS_UNDEF || onlineState == Constants.ONLINE_STATUS_OFFLINE) {
+							try {
+								getClientService().removeViewComponent(Integer.valueOf(intViewComponentId), true);
+							} catch (Exception e) {
+							}
+						}
+					}
+				} catch (Exception exe) {
+					log.error("Error removing vc", exe);
+				}
+				if (localVal) {
+					try {
+						checkOutPages.remove(new Integer(getViewComponent(intViewComponentId).getReference()));
+					} catch (Exception exe) {
+					}
+					UIConstants.setStatusInfo(rb.getString("comm.removevc.statusinfo"));
+				}
+				if (localVal) deleted.add(treePath);
+
+			}
+		} catch (Exception e) {
+			log.error("Error at multiple delete");
+		}
+		return deleted;
 	}
 
 	public ViewComponentValue[] getViewComponentsWithReferenceToViewComponentId(int viewComponentId) {
@@ -2379,5 +2450,29 @@ public class Communication implements ExitListener, ActionListener {
 
 	public Integer getDocumentIdForNameAndUnit(String name, Integer unitId) {
 		return getClientService().getDocumentIdForNameAndUnit(name, unitId);
+	}
+
+	public ViewComponentValue[] moveViewComponentsUp(Integer[] viewComponentsId) {
+		return getClientService().moveViewComponentsUp(viewComponentsId);
+	}
+
+	public ViewComponentValue[] moveViewComponentsDown(Integer[] viewComponentsId) {
+		return getClientService().moveViewComponentsDown(viewComponentsId);
+	}
+
+	public ViewComponentValue[] moveViewComponentsLeft(Integer[] viewComponentsId) {
+		return getClientService().moveViewComponentsLeft(viewComponentsId);
+	}
+
+	public ViewComponentValue[] moveViewComponentsRight(Integer[] viewComponentsId) {
+		return getClientService().moveViewComponentsRight(viewComponentsId);
+	}
+
+	public HostValue createHost(HostValue hostValue) {
+		return getClientService().createHost(hostValue);
+	}
+
+	public void updateHost(HostValue hostValue) {
+		getClientService().updateHost(hostValue);
 	}
 }

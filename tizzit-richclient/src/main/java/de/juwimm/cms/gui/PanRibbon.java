@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
 import org.jvnet.flamingo.common.CommandButtonDisplayState;
@@ -300,9 +301,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		optionsButton = createButton(rb.getString("ribbon.options"), UIConstants.RIBBON_OPTIONS);
 		moveButton = createButton(rb.getString("ribbon.move"), UIConstants.RIBBON_MOVE);
 
-		
-		
-	}		
+	}
 
 	private JCommandButton createButton(String text, ImageIcon img) {
 		return new CommandButton(text, ImageWrapperResizableIcon.getIcon(img.getImage(), new Dimension(img.getIconWidth(), img.getIconHeight())));
@@ -676,10 +675,30 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	private void updateRibbonButtonsOnSelect(TreeNode currentEntry) {
 		if (currentEntry == null) return;
 		setEnableEditPublishButtons(true);
-		leftItem.setEnabled(currentEntry.isMoveableToLeft());
-		upItem.setEnabled(currentEntry.isMoveableToUp());
-		downItem.setEnabled(currentEntry.isMoveableToDown());
-		rightItem.setEnabled(currentEntry.isMoveableToRight());
+		TreePath[] multipleTreeSelections = PanTree.getSelectedTreePath();//for multiple nodes selection
+		if (multipleTreeSelections.length == 1) {
+			leftItem.setEnabled(currentEntry.isMoveableToLeft());
+			upItem.setEnabled(currentEntry.isMoveableToUp());
+			downItem.setEnabled(currentEntry.isMoveableToDown());
+			rightItem.setEnabled(currentEntry.isMoveableToRight());
+		} else if (multipleTreeSelections.length > 1) {
+			boolean groupMoveableToLeft = true;
+			boolean groupMoveableToRight = true;
+			boolean groupMoveableToUp = true;
+			boolean groupMoveableToDown = true;
+			for (TreePath treePath : multipleTreeSelections) {
+				PageNode localPage = (PageNode) treePath.getLastPathComponent();
+				if (!localPage.isMoveableToDown()) groupMoveableToDown = false;
+				if (!localPage.isMoveableToUp()) groupMoveableToUp = false;
+				if (!localPage.isMoveableToLeft()) groupMoveableToLeft = false;
+				if (!localPage.isMoveableToRight()) groupMoveableToRight = false;
+			}
+
+			leftItem.setEnabled(groupMoveableToLeft);
+			upItem.setEnabled(groupMoveableToUp);
+			downItem.setEnabled(groupMoveableToDown);
+			rightItem.setEnabled(groupMoveableToRight);
+		}
 
 		deleteNodeButton.setEnabled(currentEntry.isDeleteable());
 
@@ -747,7 +766,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		deployButton.setEnabled(state);
 		releaseSiteButton.setEnabled(state);
 		//TODO
-		//		mnuPublishLetRelease.setEnabled(false);
+		//mnuPublishLetRelease.setEnabled(false);
 
 	}
 
@@ -761,7 +780,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		dialog.setLocation(midWidth - width / 2, midHeight - height / 2);
 		dialog.setVisible(true);
 	}
-	
+
 	public void actionFinished() {
 		editViewButton.setEnabled(true);
 	}
