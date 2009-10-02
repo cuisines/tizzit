@@ -53,6 +53,7 @@ import de.juwimm.cms.content.modules.Module;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.vo.HostValue;
+import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.DropDownHolder;
 import de.juwimm.swing.SortingListModel;
@@ -336,22 +337,26 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 		this.dispose();
 	}
 
+	private void setControlsStatus(boolean status) {
+		this.getTxtHost().setEnabled(status);
+		this.getTxtStartPage().setEnabled(status);
+		this.getTxtRedirectUrl().setEnabled(status);
+		this.getCbRedirectHost().setEnabled(status);
+		this.getBtnAddHost().setEnabled(status);
+		this.getBtnCancelHost().setEnabled(status);
+		this.getBtnChooseStartPage().setEnabled(status);
+		this.getBtnDeleteStartPage().setEnabled(status);
+	}
+
 	private void btnAddActionPerformed(ActionEvent e) {
-		this.getTxtHost().setEnabled(false);
-		this.getTxtStartPage().setEnabled(false);
-		this.getTxtRedirectUrl().setEnabled(false);
-		this.getCbRedirectHost().setEnabled(false);
-		this.getBtnAddHost().setEnabled(false);
-		this.getBtnCancelHost().setEnabled(false);
-		this.getBtnChooseStartPage().setEnabled(false);
-		this.getBtnDeleteStartPage().setEnabled(false);
+		setControlsStatus(false);
 		if (this.mode == CreateNewHostDialog.MODE_ADD_HOST) {
 			String newHost = txtHost.getText();
 			if ("".equalsIgnoreCase(newHost)) {
 				ActionHub.showMessageDialog(rb.getString("panel.admin.host.pleaseenterhost"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			HostValue hv = null;
+			HostValue hv = new HostValue();
 			SortingListModel model = ((PanHost) parent).getHostListModel();
 			boolean found = false;
 			for (int i = (model.getSize() - 1); i >= 0; i--) {
@@ -362,65 +367,88 @@ public class CreateNewHostDialog extends JDialog implements EditpaneFiredListene
 			}
 			if (found) {
 				ActionHub.showMessageDialog(rb.getString("dialog.entryAlreadyExists"), JOptionPane.ERROR_MESSAGE);
+				setControlsStatus(true);//set to true so that user can modify
 				return;
 			}
 			try {
-				hv = communication.createHost(newHost);
-			} catch (Exception e1) {
-				log.error(e1.getMessage());
-			}
-			if (this.assignSiteAutomatically && (hv != null)) {
-				String currSite = communication.getSiteName();
-				communication.setSite(newHost, currSite);
-			} else if (hv != null) {
-				((PanHost) parent).getPickListData().getLstRightModel().addElement(new DropDownHolder(hv, hv.getHostName()));
-			}
-			if (txtStartPage.getText().length() > 0) {
-				if (this.startPageId != null) {
-					communication.setStartPage(newHost, this.startPageId.toString());
+				hv.setHostName(newHost);
+				if (this.assignSiteAutomatically) {
+					SiteValue site = communication.getCurrentSite();
+					hv.setSiteId(site.getSiteId());
+				} else {
+					((PanHost) parent).getPickListData().getLstRightModel().addElement(new DropDownHolder(hv, hv.getHostName()));
 				}
+				if (txtStartPage.getText().length() > 0) {
+					if (this.startPageId != null) {
+						hv.setStartPageId(this.startPageId);
+					}
+				}
+
+				hv.setLiveServer(liveServer.isSelected());
+
+				if (this.getTxtRedirectUrl().getText().length() > 0) {
+					hv.setRedirectUrl(this.getTxtRedirectUrl().getText());
+				} else {
+					hv.setRedirectUrl(null);
+				}
+				if (this.getCbRedirectHost().getSelectedIndex() >= 0) {
+					Object selectedItem = this.getCbRedirectHost().getSelectedItem();
+					if (selectedItem != null && ((DropDownHolder) selectedItem).getObject() != null) {
+						String redirectHost = ((HostValue) ((DropDownHolder) selectedItem).getObject()).getHostName();
+						if (redirectHost.length() > 0) {
+							hv.setRedirectHostName(redirectHost);
+						} else {
+							hv.setRedirectHostName(null);
+						}
+					} else {
+						hv.setRedirectHostName(null);
+					}
+				}
+				hv = communication.createHost(hv);
+			} catch (Exception ex) {
+				log.error(ex.getMessage());
 			}
-			communication.setLiveServer(newHost, liveServer.isSelected());
 			model.addElement(new DropDownHolder(hv, hv.getHostName()));
 			txtHost.setText("");
+			((PanHost) parent).reload();
 			this.currentHost = hv;
 		} else if (this.mode == CreateNewHostDialog.MODE_EDIT_HOST) {
 			if (this.currentHost != null) {
+				HostValue hv = currentHost;
 				if (txtStartPage.getText().length() > 0) {
-					communication.setStartPage(this.currentHost.getHostName(), this.startPageId.toString());
+					hv.setStartPageId(this.startPageId);
 				} else {
-					communication.setStartPage(this.currentHost.getHostName(), null);
+					hv.setStartPageId(null);
 				}
 				if (this.assignSiteAutomatically) {
-					String currSite = communication.getSiteName();
-					communication.setSite(this.currentHost.getHostName(), currSite);
+					SiteValue site = communication.getCurrentSite();
+					hv.setSiteId(site.getSiteId());
 				}
 				if (liveServer.isSelected() != this.currentHost.getLiveServer()) {
-					communication.setLiveServer(this.currentHost.getHostName(), liveServer.isSelected());
+					hv.setLiveServer(liveServer.isSelected());
 				}
+				if (this.getTxtRedirectUrl().getText().length() > 0) {
+					hv.setRedirectUrl(this.getTxtRedirectUrl().getText());
+				} else {
+					hv.setRedirectUrl(null);
+				}
+				if (this.getCbRedirectHost().getSelectedIndex() >= 0) {
+					Object selectedItem = this.getCbRedirectHost().getSelectedItem();
+					if (selectedItem != null && ((DropDownHolder) selectedItem).getObject() != null) {
+						String redirectHost = ((HostValue) ((DropDownHolder) selectedItem).getObject()).getHostName();
+						if (redirectHost.length() > 0) {
+							hv.setRedirectHostName(redirectHost);
+						} else {
+							hv.setRedirectHostName(null);
+						}
+					} else {
+						hv.setRedirectHostName(null);
+					}
+					((PanHost) parent).reload();
+				}
+				communication.updateHost(hv);
 				((PanHost) parent).getHostListModel().fireContentsChanged();
 			}
-		}
-		if (this.currentHost != null) {
-			if (this.getTxtRedirectUrl().getText().length() > 0) {
-				communication.setRedirectUrl(this.currentHost.getHostName(), this.getTxtRedirectUrl().getText());
-			} else {
-				communication.setRedirectUrl(this.currentHost.getHostName(), null);
-			}
-			if (this.getCbRedirectHost().getSelectedIndex() >= 0) {
-				Object selectedItem = this.getCbRedirectHost().getSelectedItem();
-				if (selectedItem != null && ((DropDownHolder) selectedItem).getObject() != null) {
-					String redirectHost = ((HostValue) ((DropDownHolder) selectedItem).getObject()).getHostName();
-					if (redirectHost.length() > 0) {
-						communication.setRedirectHost(this.currentHost.getHostName(), redirectHost);
-					} else {
-						communication.setRedirectHost(this.currentHost.getHostName(), null);
-					}
-				} else {
-					communication.setRedirectHost(this.currentHost.getHostName(), null);
-				}
-			}
-			((PanHost) parent).reload();
 		}
 
 		this.setVisible(false);
