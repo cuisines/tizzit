@@ -1837,4 +1837,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		getAdministrationServiceSpring().updateHost(hostValue);
 
 	}
+
+	@Override
+	protected Integer handleGetViewComponentChildrenNumber(Integer[] viewComponentsIds) throws Exception {
+		return getViewServiceSpring().getViewComponentChildrenNumber(viewComponentsIds);
+	}
 }

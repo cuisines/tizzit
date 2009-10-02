@@ -1444,4 +1444,34 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return localValues;
 	}
 
+	@Override
+	protected Integer handleGetViewComponentChildrenNumber(Integer[] viewComponentsIds) throws Exception {
+		return getNumberOfChildren(viewComponentsIds);
+	}
+
+	private Integer getNumberOfChildren(Integer[] viewComponentsIds) {
+		int number = 0;
+		try {
+			for (Integer parentId : viewComponentsIds) {
+				//ViewComponentValue parent = getViewComponent(parentId);
+				ViewComponentValue[] childrenVec;
+				try {
+					childrenVec = getViewComponentChildren(parentId);
+				} catch (Exception e) {
+					return number++;
+				}
+				Integer[] childrenIds = new Integer[childrenVec.length];
+
+				for (int i = 0; i < childrenVec.length; i++) {
+					childrenIds[i] = childrenVec[i].getViewComponentId();
+				}
+				getNumberOfChildren(childrenIds);
+
+			}
+		} catch (Exception e) {
+			log.error("Error at counting children");
+		}
+		return number;
+	}
+
 }
