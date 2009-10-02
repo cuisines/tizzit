@@ -145,6 +145,7 @@ public final class Constants {
 	public static final String ACTION_TASK_VIEW_SELECTED = "atvs";
 	public static final String ACTION_TASK_VIEW_DESELECTED = "atvds";
 	public static final String ACTION_TASK_DONE = "atdo";
+	public static final String ACTION_TASK_VIEW_COMPONENT_REFRESH = "atvcr";
 
 	public static final String ACTION_NEW_TASK_FOR_USER = "antfu";
 
