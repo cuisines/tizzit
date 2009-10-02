@@ -246,6 +246,13 @@ public class PanTaskTable extends JPanel implements ActionListener {
 			table.clearSelection();
 		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_DONE)) {
 			btnDelete.doClick();
+		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_VIEW_COMPONENT_REFRESH)){
+			TaskValue source = (TaskValue)e.getSource();
+			for(int i=0;i<tableModel.getRowCount();i++){
+				if(((TaskValue)tableModel.getValueAt(i, 4)).getTaskId().equals(source.getTaskId())){
+					tableModel.setValueAt(source, i, 4);
+				}
+			}
 		}
 	}
 

@@ -322,6 +322,8 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 				for (int i = 0; i < tv.length; i++) {
 					if (tv[i].getTaskId().equals(task.getTaskId())) {
 						load(tv[i]);
+						ActionHub.fireActionPerformed(new ActionEvent(tv[i], ActionEvent.ACTION_PERFORMED,
+								Constants.ACTION_TASK_VIEW_COMPONENT_REFRESH));
 					}
 				}
 			}
