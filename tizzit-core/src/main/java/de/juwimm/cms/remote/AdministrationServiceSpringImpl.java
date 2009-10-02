@@ -389,4 +389,65 @@ public class AdministrationServiceSpringImpl extends AdministrationServiceSpring
 
 	}
 
+	@Override
+	protected HostValue handleCreateHost(HostValue hostValue) throws Exception {
+		HostHbm host = new HostHbmImpl();
+		try {
+			host.setHostName(hostValue.getHostName());
+			host = this.createHostHbmFromValue(hostValue, host);
+			HostHbmDao hostHbmDao = getHostHbmDao();
+			host = hostHbmDao.create(host);
+		} catch (Exception e) {
+			throw new UserException("Error at creating host" + e.getMessage());
+
+		}
+		return host.getHostValue();
+	}
+
+	@Override
+	protected void handleUpdateHost(HostValue hostValue) throws Exception {
+		try {
+			HostHbm hostHbm = null;
+			if (hostValue != null && hostValue.getHostName() != null) {
+				hostHbm = getHostHbmDao().load(hostValue.getHostName());
+				hostHbm = this.createHostHbmFromValue(hostValue, hostHbm);
+			}
+			getHostHbmDao().update(hostHbm);
+		} catch (Exception e) {
+			throw new UserException("Error at updating host" + e.getMessage());
+		}
+
+	}
+
+	private HostHbm createHostHbmFromValue(HostValue hostValue, HostHbm host) {
+		HostHbm hostHbm = host;
+		hostHbm.setLiveserver(hostValue.getLiveServer());
+		if (hostValue.getRedirectHostName() != null) {
+			hostHbm.setRedirectHostName(getHostHbmDao().load(hostValue.getRedirectHostName()));
+		} else {
+			hostHbm.setRedirectHostName(null);
+		}
+		hostHbm.setRedirectUrl(hostValue.getRedirectUrl());
+		if (hostValue.getSiteId() != null) {
+			SiteHbm site = getSiteHbmDao().load(hostValue.getSiteId());
+			hostHbm.setSite(site);
+		} else {
+			hostHbm.setSite(null);
+		}
+		if (hostValue.getStartPageId() != null) {
+			ViewComponentHbm startPage = getViewComponentHbmDao().load(hostValue.getStartPageId());
+			hostHbm.setStartPage(startPage);
+		} else {
+			hostHbm.setStartPage(null);
+		}
+		if (hostValue.getUnitId() != null) {
+			UnitHbm unit = getUnitHbmDao().load(hostValue.getUnitId());
+			hostHbm.setUnit(unit);
+		} else {
+			hostHbm.setUnit(null);
+		}
+
+		return hostHbm;
+	}
+
 }

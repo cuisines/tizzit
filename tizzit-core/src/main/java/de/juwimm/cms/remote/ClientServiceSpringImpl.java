@@ -1826,4 +1826,15 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected ViewComponentValue[] handleMoveViewComponentsUp(Integer[] viewComponentsId) throws Exception {
 		return getViewServiceSpring().moveViewComponentsUp(viewComponentsId);
 	}
+
+	@Override
+	protected HostValue handleCreateHost(HostValue hostValue) throws Exception {
+		return getAdministrationServiceSpring().createHost(hostValue);
+	}
+
+	@Override
+	protected void handleUpdateHost(HostValue hostValue) throws Exception {
+		getAdministrationServiceSpring().updateHost(hostValue);
+
+	}
 }

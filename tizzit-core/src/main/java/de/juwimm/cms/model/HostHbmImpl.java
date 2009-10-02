@@ -42,6 +42,9 @@ public class HostHbmImpl extends HostHbm {
 		value.setHostName(this.getHostName());
 		value.setRedirectUrl(this.getRedirectUrl());
 		value.setLiveServer(this.isLiveserver());
+		if (this.getSite() != null) {
+			value.setSiteId(this.getSite().getSiteId());
+		}
 		if (this.getRedirectHostName() != null) {
 			value.setRedirectHostName(this.getRedirectHostName().getHostName());
 		}
