@@ -19,7 +19,9 @@
                 <img src="/img/ejbimage/{image/filename}?id={image/@src}" width="130" alt="{image/alttext}" align="left"/>
             </a>
             <div class="clear">&#160;</div>
-            <div class="imgTxt"><xsl:value-of select="image/alttext"/></div>
+            <xsl:if test="image/alttext!=''">
+                <div class="imgTxt"><xsl:value-of select="image/alttext"/></div>
+            </xsl:if>
         </div>
     </xsl:template>
 	
