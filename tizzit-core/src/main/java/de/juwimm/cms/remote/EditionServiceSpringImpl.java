@@ -20,16 +20,38 @@
  */
 package de.juwimm.cms.remote;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.net.URL;
 import java.sql.Blob;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 import javax.ejb.CreateException;
 
+import org.andromda.spring.RemoteServiceLocator;
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Element;
@@ -40,12 +62,46 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.components.model.*;
+import de.juwimm.cms.common.http.HttpClientWrapper;
+import de.juwimm.cms.components.model.AddressHbm;
+import de.juwimm.cms.components.model.AddressHbmImpl;
+import de.juwimm.cms.components.model.DepartmentHbm;
+import de.juwimm.cms.components.model.DepartmentHbmImpl;
+import de.juwimm.cms.components.model.PersonHbm;
+import de.juwimm.cms.components.model.PersonHbmImpl;
+import de.juwimm.cms.components.model.TalktimeHbm;
+import de.juwimm.cms.components.model.TalktimeHbmImpl;
 import de.juwimm.cms.exceptions.UserException;
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentVersionHbm;
+import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.EditionHbm;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.HostHbmImpl;
+import de.juwimm.cms.model.PictureHbm;
+import de.juwimm.cms.model.PictureHbmImpl;
+import de.juwimm.cms.model.ShortLinkHbm;
+import de.juwimm.cms.model.ShortLinkHbmImpl;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.TaskHbm;
+import de.juwimm.cms.model.TaskHbmImpl;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.UnitHbmImpl;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewComponentHbmImpl;
+import de.juwimm.cms.model.ViewDocumentHbm;
+import de.juwimm.cms.model.ViewDocumentHbmImpl;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
-import de.juwimm.cms.safeguard.model.*;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmJaasHbm;
+import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
+import de.juwimm.cms.safeguard.model.RealmLdapHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDaoImpl;
 import de.juwimm.cms.util.EditionBlobContentHandler;
 import de.juwimm.cms.vo.ShortLinkValue;
 
@@ -212,11 +268,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
 				}
 				Collection units = getUnitHbmDao().findAll(siteId);
-				getUnitHbmDao().remove(units); 
-				
+				getUnitHbmDao().remove(units);
+
 				Collection realms = getRealmJdbcHbmDao().findBySiteId(siteId);
 				getRealmJdbcHbmDao().remove(realms);
-				
+
 				realms = getRealmLdapHbmDao().findBySiteId(siteId);
 				getRealmLdapHbmDao().remove(realms);
 
@@ -303,7 +359,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					{
 						// backing-up hosts with startpage
 						Collection hosts = super.getHostHbmDao().findAllWithStartPage4Site(siteId);
-						Iterator<HostHbm> hostIt = (Iterator<HostHbm>) hosts.iterator();
+						Iterator<HostHbm> hostIt = hosts.iterator();
 						while (hostIt.hasNext()) {
 							HostHbm currHost = hostIt.next();
 							this.startPageBackup.put(currHost.getHostName(), currHost.getStartPage().getViewComponentId());
@@ -639,7 +695,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 					if (log.isDebugEnabled()) log.debug("DELETING CURRENT ADDRESSES");
 					Collection cAddresses = unit.getAddresses();
-					getAddressHbmDao().remove(cAddresses); 
+					getAddressHbmDao().remove(cAddresses);
 
 					if (log.isDebugEnabled()) log.debug("DELETING CURRENT PERSONS");
 					Collection<PersonHbm> persons = getPersonHbmDao().findByUnit(unit.getUnitId());
@@ -660,13 +716,13 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					while (itAdr.hasNext()) {
 						Element adrEl = (Element) itAdr.next();
 						AddressHbm address = createAddressHbm(adrEl, useNewIds, mappingAddresses);
-						unit.getAddresses().add(address); 
+						unit.getAddresses().add(address);
 					}
 					if (log.isDebugEnabled()) log.debug("adding current PERSONS");
 					Iterator<Element> itPers = XercesHelper.findNodes(unitElm, "./person");
 					while (itPers.hasNext()) {
 						if (log.isDebugEnabled()) log.debug("found person to import");
-						Element elm = (Element) itPers.next();
+						Element elm = itPers.next();
 						createPersonHbm(unit, elm, useNewIds, mappingPersons, mappingAddresses, mappingTalktime);
 					}
 					if (log.isDebugEnabled()) log.debug("adding current DEPTS");
@@ -680,7 +736,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					if (log.isDebugEnabled()) log.debug("adding current TTIMES");
 					Iterator<Element> itTTimes = XercesHelper.findNodes(unitElm, "./talktime");
 					while (itTTimes.hasNext()) {
-						Element elm = (Element) itTTimes.next();
+						Element elm = itTTimes.next();
 						TalktimeHbm talktime = createTalktimeHbm(elm, useNewIds, mappingTalktime);
 						talktime.setUnit(unit);
 					}
@@ -695,7 +751,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		// }
 		log.info("end importDatabaseComponents for unit: " + unit.getName());
 
-	} 
+	}
 
 	private TalktimeHbm createTalktimeHbm(Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingTalktime2) {
 		TalktimeHbm talktime = new TalktimeHbmImpl();
@@ -736,7 +792,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			person.setPosition(new Byte(getNVal(ael, "position")).byteValue());
 			person.setSalutation(getNVal(ael, "salutation"));
 			person.setSex(new Byte(getNVal(ael, "sex")).byteValue());
-			person.setTitle(getNVal(ael, "title")); 
+			person.setTitle(getNVal(ael, "title"));
 
 			person.getUnits().add(unit);
 			person = getPersonHbmDao().create(person);
@@ -949,7 +1005,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		}
 
 		document.setDocumentName(strDocName);
-		document.setMimeType(strMimeType); 
+		document.setMimeType(strMimeType);
 
 		if (id == null) {
 			document.setUnit(unit);
@@ -1106,6 +1162,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 									ViewComponentHbm loginPage = super.getViewComponentHbmDao().load(Integer.valueOf(realmLdap.getLoginPageId()));
 									if (loginPage.getUnit4ViewComponent().intValue() == ul.getUnitId().intValue()) this.loginPagesLdapRealmBackup.put(realmLdap.getLdapRealmId(), view.getViewComponentId());
 								} catch (Exception e) {
+									log.error("Error occured backing up loginPages for JaasRealms!", e);
 									// skip faulty loginpage and continue with the rest
 								}
 							}
@@ -1388,11 +1445,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					String redirectUrl = XercesHelper.getNodeValue(elHost, "./redirectUrl");
 					String redirectHostName = XercesHelper.getNodeValue(elHost, "./redirectHostName");
 
-					if(getHostHbmDao().load(hostName) != null) {
+					if (getHostHbmDao().load(hostName) != null) {
 						log.info("wont import host " + hostName + " - it is already assigned to another site");
 					} else {
 						if (log.isDebugEnabled()) log.debug("Importing Host-Entry: " + hostName + " startPageId " + startPageId + " for site " + siteId + " and unitId " + unitId);
-						
+
 						HostHbm host = new HostHbmImpl();
 						host.setHostName(hostName.trim());
 						host = super.getHostHbmDao().create(host);
@@ -1405,7 +1462,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 								log.warn("Could not find siteId " + siteId + " or set the site to the current host!");
 							}
 						}
-	
+
 						if (startPageId != null && !startPageId.equalsIgnoreCase("")) {
 							try {
 								ViewComponentHbm viewComponent = super.getViewComponentHbmDao().load(Integer.valueOf(startPageId));
@@ -1488,17 +1545,16 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			} finally {
 				doc = null;
 			}
-			/*if (liveServerIP == null || liveServerIP.equals("") || "".equalsIgnoreCase(liveUserName)) {
-				AxisFault af = new AxisFault();
+			if (liveServerIP == null || liveServerIP.equals("") || "".equalsIgnoreCase(liveUserName)) {
+				//AxisFault af = new AxisFault();
 				log.error("LiveServerIP is not correct: " + liveServerIP);
-				af.setFaultDetailString("LiveServerIP, Username or Password is not correct or not given: " + liveServerIP + " user: " + liveUserName);
-				throw af;
+				//af.setFaultDetailString("LiveServerIP, Username or Password is not correct or not given: " + liveServerIP + " user: " + liveUserName);
+				//throw af;
+				//TODO: throw error
 			}
 			String soapURL = "http://" + liveServerIP + "/webservice/services/";
-			*/
-			throw new java.lang.RuntimeException("NOT IMPLEMENTED!!!");
 
-			/*try {
+			try {
 				log.info("publishEditionToLiveserver - using URL: " + soapURL);
 				EditionHbm edition = super.getEditionHbmDao().load(editionId);
 
@@ -1506,27 +1562,34 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				int viewDocumentId = edition.getViewDocumentId();
 
 				// Step one is to login on the deployserver. This is because of setting the activeSite Attribute
-				DynamicDeployServiceServiceLocator ddssl = new DynamicDeployServiceServiceLocator();
-				DynamicDeployServiceSoapBindingStub ddssStub = (DynamicDeployServiceSoapBindingStub) ddssl.getDynamicDeployService(new URL(soapURL + ddssl.getDynamicDeployServiceWSDDServiceName()));
-				ddssStub.setUsername(liveUserName);
-				ddssStub.setPassword(livePassword);
+				//				DynamicDeployServiceServiceLocator ddssl = new DynamicDeployServiceServiceLocator();
+				//				DynamicDeployServiceSoapBindingStub ddssStub = (DynamicDeployServiceSoapBindingStub) ddssl.getDynamicDeployService(new URL(soapURL + ddssl.getDynamicDeployServiceWSDDServiceName()));
+				//				ddssStub.setUsername(liveUserName);
+				//				ddssStub.setPassword(livePassword);
+				HttpClientWrapper hcw = HttpClientWrapper.getInstance();
+				HttpClient client = hcw.getNewHttpClient();
+				hcw.setHostConfiguration(client, new URL(soapURL));
 
+				System.setProperty("cq.remoteServer", client.getHostConfiguration().getHost() + "");
+				System.setProperty("cq.remotePort", client.getHostConfiguration().getPort() + "");
+				System.setProperty("cq.remoteContext", "remote");
+
+				ApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"/applicationContext-import-remoteServices.xml", "/applicationContext-client.xml"});
+
+				AuthorizationServiceSpring autoSpring = RemoteServiceLocator.instance().getAuthorizationServiceSpring();
 				log.info("Logging in on Liveserver...");
-				ddssStub.login(liveUserName, livePassword, site.getSiteId().intValue());
+				autoSpring.login(liveUserName, livePassword, site.getSiteId().intValue());
 				log.info("Successfully logged in!");
 
 				// Step two is sending the stuff
-				ddssStub.setUsername(liveUserName);
-				ddssStub.setPassword(livePassword);
-				ddssStub.setTimeout(1000 * 60 * 60 * 6);
+				//				ddssStub.setUsername(liveUserName);
+				//				ddssStub.setPassword(livePassword);
+				//				ddssStub.setTimeout(1000 * 60 * 60 * 6);
 
 				if (log.isDebugEnabled()) log.debug("Adding Attachment to Message Call");
-				ddssStub.clearAttachments();
-				ddssStub._setProperty(Call.ATTACHMENT_ENCAPSULATION_FORMAT, Call.ATTACHMENT_ENCAPSULATION_FORMAT_MIME);
-				AttachmentPart ap = new org.apache.axis.attachments.AttachmentPart();
-				ap.setContent(edition.getEditionDataRaw(), "application/x-gzip"); // octet-stream
-				ap.setContentId("attachment");
-				ddssStub.addAttachment(ap);
+
+				//TODO: create a inputstream from edition data to send to server
+				InputStream fis = new BufferedInputStream(new FileInputStream(edition.getEditionFileName()));
 
 				UnitHbm unit = null;
 				ViewDocumentHbm viewDocument = null;
@@ -1534,53 +1597,58 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					unit = super.getUnitHbmDao().load(Integer.valueOf(unitId));
 					viewDocument = super.getViewDocumentHbmDao().load(Integer.valueOf(viewDocumentId));
 				} catch (Exception e) {
+					log.error("error while loading unit/viewDocument.", e);
 				}
 				if ((unit != null) && (viewDocument != null)) {
 					info = "Site: \"" + unit.getSite().getShortName().trim() + "\" Unit: \"" + unit.getName().trim() + "\" Lang: \"" + viewDocument.getLanguage().trim() + "\"";
 				}
 				log.info("Starting transfer to Liveserver - " + info);
-				ddssStub.liveDeployment(unitId, viewDocumentId);
+				//				ddssStub.liveDeployment(unitId, viewDocumentId);
+				ClientServiceSpring clientServiceSpring = RemoteServiceLocator.instance().getClientServiceSpring();
+				clientServiceSpring.importEditionFromImport(fis, viewDocument.getViewComponent().getViewComponentId());
+
 				log.info("Liveserver has finished deploy - " + info);
 				try {
 					if (log.isDebugEnabled()) {
-						log.debug("DH " + ap.getDataHandler().getName());
-						log.debug("DHDS " + ap.getDataHandler().getDataSource().getName());
+						//						log.debug("DH " + ap.getDataHandler().getName());
+						//						log.debug("DHDS " + ap.getDataHandler().getDataSource().getName());
 					}
-					new File(ap.getDataHandler().getDataSource().getName()).delete();
+					//					new File(ap.getDataHandler().getDataSource().getName()).delete();
 				} catch (Exception exe) {
 					log.warn("Error occured deleting attachmentFile: " + exe.getMessage());
 				}
-				ap.clearContent();
-				// ap.dispose();
-				ap = null;
-				ddssStub.clearAttachments();
-				ddssStub = null;
+				//				ap.clearContent();
+				//				// ap.dispose();
+				//				ap = null;
+				//				ddssStub.clearAttachments();
+				//				ddssStub = null;
 				// log.info("Rotating Liveserver-Password..."); // TODO Rotate of Liveserver Password
 
 				log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
 				ViewComponentHbm vcl = super.getViewComponentHbmDao().find4Unit(new Integer(unitId), new Integer(viewDocumentId));
 				vcl.setUnitOnline();
-			} catch (java.rmi.RemoteException ri) {
+			}
+			//				catch (java.rmi.RemoteException ri) {
+			//				log.debug("Rolling back because of error on Liveserver");
+			//				//				// context.setRollbackOnly();
+			//				//				if (ri instanceof AxisFault) {
+			//				//					log.error("Rolling back because of error on Liveserver - FAULT ACTOR: " + ((AxisFault) ri).getFaultActor());
+			//				//					throw (AxisFault) ri;
+			//				//				}
+			//				//				log.error("Error occured in publishEditionToLiveserver: ", ri);
+			//				//				AxisFault af = new AxisFault();
+			//				//				af.setFaultDetailString(ri.getMessage());
+			//				//				throw af;
+			//			} 
+			catch (Exception exe) {
 				log.debug("Rolling back because of error on Liveserver");
-				// context.setRollbackOnly();
-				if (ri instanceof AxisFault) {
-					log.error("Rolling back because of error on Liveserver - FAULT ACTOR: " + ((AxisFault) ri).getFaultActor());
-					throw (AxisFault) ri;
-				}
-				log.error("Error occured in publishEditionToLiveserver: ", ri);
-				AxisFault af = new AxisFault();
-				af.setFaultDetailString(ri.getMessage());
-				throw af;
-			} catch (Exception exe) {
-				log.debug("Rolling back because of error on Liveserver");
-				// context.setRollbackOnly();
-				log.error("Rolling back because of error on Liveserver - Error occured in publishEditionToLiveserver: ", exe);
-				AxisFault af = new AxisFault();
-				af.setFaultDetailString(exe.getMessage());
-				throw af;
+				//				// context.setRollbackOnly();
+				//				log.error("Rolling back because of error on Liveserver - Error occured in publishEditionToLiveserver: ", exe);
+				//				AxisFault af = new AxisFault();
+				//				af.setFaultDetailString(exe.getMessage());
+				//				throw af;
 			}
 			log.info("Finished Live-Deployment successfully - " + info);
-			*/
 
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -2136,7 +2204,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						return null;
 					}
 				}
-				if (fulldeploy > 0) { 
+				if (fulldeploy > 0) {
 					viewComponent = getViewComponentHbmDao().create(viewDocument, reference, linkName, statusInfo, urlLinkName, null);
 					viewComponent.setApprovedLinkName(approvedLinkName);
 					mappingVCs.put(vcId, viewComponent.getViewComponentId());
@@ -2281,7 +2349,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				}
 				// CONTENT
 				Element cnde = (Element) XercesHelper.findNode(nde, "./content");
-				if (cnde != null) { 
+				if (cnde != null) {
 					ContentHbm content = getContentHbmDao().createFromXml(cnde, reusePrimaryKey, livedeploy);
 					viewComponent.setReference(content.getContentId().toString());
 				}
@@ -2339,7 +2407,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 							tempVC.setDisplayLinkName("SUB_ENTRY_NOT_DEPLOYED");
 							tempVC.setLinkDescription("SUB_ENTRY_NOT_DEPLOYED");
 							tempVC.setViewComponentId(vcId);
-							viewComponent = super.getViewComponentHbmDao().create(tempVC); 
+							viewComponent = super.getViewComponentHbmDao().create(tempVC);
 							viewComponent.setViewType(Constants.VIEW_TYPE_UNIT);
 							viewComponent.setVisible(false);
 							viewComponent.setAssignedUnit(unit);
@@ -2534,7 +2602,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			} else {
 				if (log.isDebugEnabled()) log.debug("importRealms reports: There are no /edition/realms nodes, so nothing to do");
 			}
-		} catch (Exception exe) { 
+		} catch (Exception exe) {
 			log.error("Error occured importRealms: " + exe.getMessage(), exe);
 		}
 	}

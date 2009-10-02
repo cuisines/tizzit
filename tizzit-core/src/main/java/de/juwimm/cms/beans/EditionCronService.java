@@ -18,6 +18,7 @@ import de.juwimm.cms.remote.EditionServiceSpring;
 public class EditionCronService {
 	private static Logger log = Logger.getLogger(EditionCronService.class);
 	private boolean cronEditionImportIsRunning = false;
+	private boolean cronEditionDeployIsRunning = false;
 
 	private EditionHbmDao editionHbmDao;
 	private EditionServiceSpring editionServiceSpring;
@@ -52,6 +53,39 @@ public class EditionCronService {
 			throw new RuntimeException(e);
 		} finally {
 			cronEditionImportIsRunning = false;
+		}
+	}
+
+	/**
+	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
+	 */
+	@SuppressWarnings("unchecked")
+	public void cronEditionDeploy() throws Exception {
+		if (cronEditionDeployIsRunning) {
+			log.info("Cron already running, ignoring crontask");
+			return;
+		}
+		log.info("start handleCronEditionDeploy");
+		cronEditionDeployIsRunning = true;
+		try {
+			Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
+			log.info("Found " + editionsToDeploy.size() + " Editions to import");
+			for (EditionHbm edition : editionsToDeploy) {
+				File edFile = new File(edition.getEditionFileName());
+				if (!edFile.exists()) {
+					log.warn("Edition " + edition.getEditionId() + " will be deleted because the editionfile isnt available anymore " + edition.getEditionFileName());
+				} else {
+					UserHbm creator = edition.getCreator();
+					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
+					getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
+				}
+				getEditionServiceSpring().removeEdition(edition.getEditionId());
+			}
+		} catch (Exception e) {
+			log.error("Error deploying Edition during crontask", e);
+			throw new RuntimeException(e);
+		} finally {
+			cronEditionDeployIsRunning = false;
 		}
 	}
 
