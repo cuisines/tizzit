@@ -1,7 +1,7 @@
 package de.juwimm.cms.gui;
 
-
 import static de.juwimm.cms.common.Constants.rb;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.jvnet.flamingo.common.CommandButtonDisplayState;
 import org.jvnet.flamingo.common.JCommandButton;
 import org.jvnet.flamingo.common.JCommandMenuButton;
-import org.jvnet.flamingo.common.RichTooltip;
 import org.jvnet.flamingo.common.icon.EmptyResizableIcon;
 import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 import org.jvnet.flamingo.common.model.ActionToggleButtonModel;
@@ -191,7 +190,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		GridBagConstraints compnentConstraints = new GridBagConstraints();
 		compnentConstraints.gridx = index;
 		compnentConstraints.gridy = 0;
-		band.addCommandButton(component,RibbonElementPriority.TOP);
+		band.addCommandButton(component, RibbonElementPriority.TOP);
 		/**Tooltips
 		RichTooltip tooltip = new RichTooltip();
 		tooltip.setTitle(band.getTitle());
@@ -200,7 +199,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		band.addCommandButton( component, RibbonElementPriority.TOP);
 		*/
 	}
-	
 
 	private void arrangeButtons() {
 		editBand.startGroup();
@@ -281,10 +279,10 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		refreshTreeButton = createButton(rb.getString("ribbon.ACTION_TREE_REFRESH"), UIConstants.RIBBON_ACTION_TREE_REFRESH);
 		deleteNodeButton = createButton(rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
 		releaseSiteButton = createButton(rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
-		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);		
+		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);
 		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
-			deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);			
-		}else{
+			deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
+		} else {
 			deployButton = createButton(rb.getString("ribbon.publish.wizardAuthor"), UIConstants.RIBBON_ACTION_DEPLOY);
 		}
 		checkInButton = createButton(rb.getString("actions.ACTION_CHECKIN"), UIConstants.RIBBON_ACTION_CHECKIN);
@@ -403,8 +401,8 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			@Override
 			public JPopupPanel getPopupPanel(JCommandButton commandButton) {
 				if (loaded == false) {
-					deItem = getSimpleItem("de");
-					enItem = getSimpleItem("en");
+					deItem = getSimpleItem(rb.getString("menubar.extras.options.chooseLanguage.german"));
+					enItem = getSimpleItem(rb.getString("menubar.extras.options.chooseLanguage.english"));
 					addItem(deItem, 0);
 					addItem(enItem, 1);
 					addListeners();
