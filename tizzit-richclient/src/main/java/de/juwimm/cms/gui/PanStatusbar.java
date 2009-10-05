@@ -15,16 +15,26 @@
  */
 package de.juwimm.cms.gui;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.AbstractBorder;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -52,6 +62,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 	private JPanel panMessage = new JPanel();
 	private BorderLayout borderLayout1 = new BorderLayout();
 	private JLabel lblMessage = new JLabel();
+	private JLabel lblCountPages = new JLabel();
 	private JLabel lblDate = new JLabel();
 	private JPanel panTask = new JPanel();
 	private JLabel lblTask = new JLabel();
@@ -67,7 +78,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 	private BorderLayout borderLayout2 = new BorderLayout();
 	private JPanel panMandant = new JPanel();
 	private JLabel lblMandant = new JLabel();
-	private static final Color statusBackgroundColor = new Color(140,140,140);
+	private static final Color statusBackgroundColor = new Color(140, 140, 140);
 	private static Border statusBorderLeft = new StatusBarBorder(StatusBarBorder.LEFT);
 	private static Border statusBorderRight = new StatusBarBorder(StatusBarBorder.RIGHT);
 
@@ -77,8 +88,9 @@ public class PanStatusbar extends JPanel implements ActionListener {
 			jbInit();
 			lblMandant.setIcon(UIConstants.ICON_MANDANT);
 			lblUser.setIcon(UIConstants.ICON_USER);
-			this.progressBar.setValue(0);			
-			this.setBackground(statusBackgroundColor);			
+			lblCountPages.setIcon(UIConstants.ICON_PAGES);
+			this.progressBar.setValue(0);
+			this.setBackground(statusBackgroundColor);
 			lblDate.setText(DateConverter.getSql2String(new Date(System.currentTimeMillis())));
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
@@ -136,7 +148,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		lblTask.setHorizontalAlignment(SwingConstants.CENTER);
 		progressBarPanel.setLayout(borderLayout5);
 		progressBarPanel.setBackground(statusBackgroundColor);
-		progressBar.setBackground(new Color(160,160,160));		
+		progressBar.setBackground(new Color(160, 160, 160));
 		progressBar.setBorderPainted(false);
 		panUser.setLayout(new BorderLayout());
 		lblUser.setOpaque(false);
@@ -153,16 +165,23 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		lblMandant.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMandant.setText(" ");
 		lblServername.setHorizontalAlignment(SwingConstants.CENTER);
-		this.add(lblDate, new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 10, 0));
-		this.add(panTask, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
+		this.add(lblDate, new GridBagConstraints(6, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 10, 0));
+		this.add(panTask, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 		panTask.add(lblTask, BorderLayout.CENTER);
-		this.add(panMessage, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
-		lblMessage.setBorder(new EmptyBorder(0,4,0,0));
+
+		lblCountPages.setOpaque(false);
+		lblCountPages.setText("0");
+		lblCountPages.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCountPages.setBorder(statusBorderLeft);
+		this.add(lblCountPages, new GridBagConstraints(1, 0, 1, 1, 0.05, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+
+		this.add(panMessage, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
+		lblMessage.setBorder(new EmptyBorder(0, 4, 0, 0));
 		panMessage.add(lblMessage, BorderLayout.CENTER);
 		panMessage.add(progressBarPanel, BorderLayout.EAST);
 		progressBarPanel.add(progressBar, BorderLayout.CENTER);
 		panUser.setBackground(statusBackgroundColor);
-		this.add(panUser, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
+		this.add(panUser, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 		panUser.add(lblUser, BorderLayout.CENTER);
 		borderLayout1.setHgap(5);
 		lblProxy.setIcon(UIConstants.ICON_PROXY);
@@ -178,7 +197,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		gridBagConstraints2.gridwidth = 1;
 		gridBagConstraints2.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gridBagConstraints2.insets = new java.awt.Insets(0, 5, 0, 0);
-		this.add(panMandant, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
+		this.add(panMandant, new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 		panMandant.add(lblMandant, BorderLayout.CENTER);
 		panSSL.setLayout(new GridBagLayout());
 		panSSL.add(lblProxy, gridBagConstraints2);
@@ -204,6 +223,12 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		}
 	}
 
+	public void setCount(String count) {
+		if (!count.equals(lblCountPages.getText())) {
+			lblCountPages.setText(count);
+		}
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
 
@@ -222,10 +247,10 @@ public class PanStatusbar extends JPanel implements ActionListener {
 				lblProxy.setToolTipText(Messages.getString("PanStatusbar.proxyConnected", hcl.getProxyServer()));
 			}
 			lblServername.setIcon(UIConstants.ICON_ENCRYPTED);
-			lblServername.setToolTipText(Messages.getString("panel.statusbar.ssl_yes.tooltip"));			
+			lblServername.setToolTipText(Messages.getString("panel.statusbar.ssl_yes.tooltip"));
 			lblServername.setText(Constants.SERVER_HOST);
 			Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-			lblUser.setText(comm.getUser().getUserName());			
+			lblUser.setText(comm.getUser().getUserName());
 			String siteDetails = null;
 			if (log.isDebugEnabled()) {
 				siteDetails = String.valueOf(comm.getSiteId()) + ": " + comm.getSiteName();
@@ -233,43 +258,44 @@ public class PanStatusbar extends JPanel implements ActionListener {
 				siteDetails = comm.getSiteName();
 			}
 			lblMandant.setText(siteDetails);
+		} else if (action.equals(Constants.ACTION_STATUSBAR_COUNT)) {
+			setCount((String) e.getSource());
 		}
 	}
 
 	public boolean isTaskShown() {
 		return (lblTask.getIcon() != null) ? true : false;
 	}
-} 
+}
 
-class StatusBarBorder extends AbstractBorder{
+class StatusBarBorder extends AbstractBorder {
 	private static final long serialVersionUID = 1978228083710165098L;
 	static final int LEFT = 0;
 	static final int RIGHT = 1;
-	
+
 	private int type = RIGHT;
-	
-	
-	StatusBarBorder(int type){
+
+	StatusBarBorder(int type) {
 		this.type = type;
 	}
-	
+
 	@Override
-	public void paintBorder(Component c, Graphics g, int x, int y, int w,int h) {
-		 Color color1 = new Color(72,72,72);
-		 Color color2 = new Color(160,160,160);
-		 g.translate(x, y);
-		 if(type == RIGHT){
-			 g.setColor(color1);
-		     g.drawLine(w-1, 0, w-1, h);
-		     g.setColor(color2);
-		     g.drawLine(w, 0, w, h);
-		 }else{
-			 g.setColor(color1);
-		     g.drawLine(0, 0, 0, h);
-		     g.setColor(color2);
-		     g.drawLine(1, 0, 1, h); 
-		 }
-	     g.translate(-x, -y);
-		
+	public void paintBorder(Component c, Graphics g, int x, int y, int w, int h) {
+		Color color1 = new Color(72, 72, 72);
+		Color color2 = new Color(160, 160, 160);
+		g.translate(x, y);
+		if (type == RIGHT) {
+			g.setColor(color1);
+			g.drawLine(w - 1, 0, w - 1, h);
+			g.setColor(color2);
+			g.drawLine(w, 0, w, h);
+		} else {
+			g.setColor(color1);
+			g.drawLine(0, 0, 0, h);
+			g.setColor(color2);
+			g.drawLine(1, 0, 1, h);
+		}
+		g.translate(-x, -y);
+
 	}
 }

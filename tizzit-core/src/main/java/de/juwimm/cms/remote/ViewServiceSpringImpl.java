@@ -1449,28 +1449,31 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return getNumberOfChildren(viewComponentsIds);
 	}
 
+	/**
+	 * Return the number of children of the selected item
+	 * @param viewComponentsIds
+	 * @return
+	 */
 	private Integer getNumberOfChildren(Integer[] viewComponentsIds) {
 		int number = 0;
-		try {
-			for (Integer parentId : viewComponentsIds) {
-				//ViewComponentValue parent = getViewComponent(parentId);
-				ViewComponentValue[] childrenVec;
-				try {
-					childrenVec = getViewComponentChildren(parentId);
-				} catch (Exception e) {
-					return number++;
-				}
+		for (Integer parentId : viewComponentsIds) {
+			ViewComponentValue[] childrenVec = null;
+			try {
+				childrenVec = getViewComponentChildren(parentId);
+			} catch (Exception e) {
+				number++;
+			}
+			if (childrenVec != null) {
 				Integer[] childrenIds = new Integer[childrenVec.length];
 
 				for (int i = 0; i < childrenVec.length; i++) {
 					childrenIds[i] = childrenVec[i].getViewComponentId();
 				}
-				getNumberOfChildren(childrenIds);
-
+				number = number + getNumberOfChildren(childrenIds) + 1;
 			}
-		} catch (Exception e) {
-			log.error("Error at counting children");
+
 		}
+
 		return number;
 	}
 

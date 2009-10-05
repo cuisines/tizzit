@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.util;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Cursor;
 import java.util.HashMap;
@@ -68,10 +68,11 @@ public final class UIConstants {
 	public static ImageIcon ICON_TALKTIME;
 	public static ImageIcon ICON_ADDRESS;
 	public static ImageIcon ICON_CALENDAR;
-	public static ImageIcon ICON_CLOSE_VERSION;	
+	public static ImageIcon ICON_CLOSE_VERSION;
 
 	public static ImageIcon ICON_USER;
 	public static ImageIcon ICON_MANDANT;
+	public static ImageIcon ICON_PAGES;
 
 	public static ImageIcon CONTENT_EDITED;
 	public static ImageIcon CONTENT_EDITED_INVISIBLE;
@@ -224,7 +225,7 @@ public final class UIConstants {
 	public static ImageIcon ICON_DECRYPTED;
 	public static ImageIcon ICON_ENCRYPTED;
 	public static ImageIcon ICON_PROXY;
-	
+
 	//Ribbon images
 	public static ImageIcon RIBBON_NEW;
 	public static ImageIcon RIBBON_CONTENT;
@@ -264,7 +265,7 @@ public final class UIConstants {
 	public static ImageIcon RIBBON_GENERAL_OPTIONS;
 	public static ImageIcon RIBBON_IMPORT_EXPORT_OPTIONS;
 	public static ImageIcon RIBBON_USER_OPTIONS;
-	
+
 	public static ImageIcon ICON_ARROW_RIGHT;
 	public static ImageIcon ICON_ARROW_DOWN;
 
@@ -274,9 +275,7 @@ public final class UIConstants {
 	private static ImageIcon load(String path) {
 		String image = IMAGE_PATH + path;
 
-		if (imageCache.containsKey(image)) {
-			return (ImageIcon) imageCache.get(image);
-		}
+		if (imageCache.containsKey(image)) { return (ImageIcon) imageCache.get(image); }
 		ImageIcon iimage = new ImageIcon(UIConstants.class.getResource(image));
 		imageCache.put(image, iimage);
 		return iimage;
@@ -307,7 +306,8 @@ public final class UIConstants {
 		ICON_DECRYPTED = load("16x16/decrypted.png");
 		ICON_ENCRYPTED = load("16x16/encrypted.png");
 		ICON_PROXY = load("16x16/proxy.png");
-		
+		ICON_PAGES = load("16x16/sb_pages.gif");
+
 		ICON_UNIT = load("16x16/einrichtung.gif");
 		ICON_DEPARTMENT = load("16x16/bereich.gif");
 		ICON_ADDRESS = load("16x16/adresse.gif");
@@ -316,7 +316,6 @@ public final class UIConstants {
 		ICON_PERSON_LINK = load("modules/databaseComponents/person_link.png");
 		ICON_CALENDAR = load("16x16/calendar.png");
 		ICON_CLOSE_VERSION = load("16x16/close_version.gif");
-		
 
 		CONTENT_OFFLINE = load("16x16/content_offline.gif");
 		CONTENT_EDITED = load("tree/content/c_edited.png");
@@ -455,7 +454,7 @@ public final class UIConstants {
 		MODULE_DATABASECOMPONENT_DELETE = load("modules/databaseComponents/Delete.gif");
 		MODULE_DATABASECOMPONENT_ADD = load("modules/databaseComponents/Plus.gif");
 		MODULE_DATABASECOMPONENT_SAVE = load("modules/databaseComponents/Save.png");
-		
+
 		//Ribbon images
 		//new
 		RIBBON_NEW = load("ribbon/new_content.png");
@@ -477,7 +476,7 @@ public final class UIConstants {
 		RIBBON_ACTION_TREE_REFRESH = load("ribbon/refresh.png");
 		RIBBON_TREE_NODE_DELETE = load("ribbon/tra_loesche_node.png");
 		RIBBON_RELEASE_SITE = load("ribbon/release.png");
-		RIBBON_REVISE_SITE = load("ribbon/revise.png");		
+		RIBBON_REVISE_SITE = load("ribbon/revise.png");
 		RIBBON_ACTION_DEPLOY = load("ribbon/wizard_icon_20.png");
 		RIBBON_ACTION_CHECKIN = load("ribbon/tra_check_in.png");
 		RIBBON_ACTION_CHECKOUT = load("ribbon/tra_check_out.png");
@@ -489,7 +488,7 @@ public final class UIConstants {
 		RIBBON_HELP = load("ribbon/help.png");
 		RIBBON_EXIT = load("ribbon/exit.png");
 		RIBBON_LOGOUT = load("ribbon/logout.png");
-		RIBBON_OPTIONS = load("ribbon/options.png");		
+		RIBBON_OPTIONS = load("ribbon/options.png");
 		RIBBON_SAVE = load("ribbon/save.png");
 		RIBBON_PREVIEW = load("ribbon/preview.png");
 		RIBBON_CLOSE = load("ribbon/close.png");
@@ -497,11 +496,10 @@ public final class UIConstants {
 		RIBBON_GENERAL_OPTIONS = load("ribbon/generalOptions.png");
 		RIBBON_IMPORT_EXPORT_OPTIONS = load("ribbon/importExportOptions.png");
 		RIBBON_USER_OPTIONS = load("ribbon/userOptions.png");
-		
+
 		ICON_ARROW_RIGHT = load("arrowRight.png");
 		ICON_ARROW_DOWN = load("arrowDown.png");
-		
-		
+
 	}
 
 	public static ImageIcon getWYSIWYGicon(String imgname) {
@@ -546,14 +544,10 @@ public final class UIConstants {
 
 		// TODO INTERIM!!!
 		if (propUniqueId.equalsIgnoreCase(PanelContent.PROP_CHECKIN)) {
-			if (imageSizeExpected == IMAGE_SIZE_16) {
-				return MNU_FILE_CHECKIN;
-			}
+			if (imageSizeExpected == IMAGE_SIZE_16) { return MNU_FILE_CHECKIN; }
 			return ACTION_CHECKIN;
 		} else if (propUniqueId.equalsIgnoreCase(PanelContent.PROP_CHECKOUT)) {
-			if (imageSizeExpected == IMAGE_SIZE_16) {
-				return MNU_FILE_CHECKOUT;
-			}
+			if (imageSizeExpected == IMAGE_SIZE_16) { return MNU_FILE_CHECKOUT; }
 			return ACTION_CHECKOUT;
 		}
 		// --- INTERIM END
@@ -591,7 +585,6 @@ public final class UIConstants {
 	}
 
 	private static boolean iAmWorking = false;
-	
 
 	public static void setWorker(boolean enable) {
 		try {

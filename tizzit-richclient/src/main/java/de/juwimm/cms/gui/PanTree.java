@@ -714,7 +714,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			miMoveUp.setEnabled(treeNode.isMoveableToUp());
 			miMoveDown.setEnabled(treeNode.isMoveableToDown());
 			miMoveRight.setEnabled(treeNode.isMoveableToRight());
-
 			miDELETE.setEnabled(treeNode.isDeleteable());
 
 			boolean append = treeNode.isAppendingAllowed();
@@ -755,6 +754,18 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 						miContentApprove.setEnabled(false);
 						break;
 				}
+				/**for counting number of pages*/
+				TreePath[] entriesPath = tree.getSelectionPaths();
+				Integer[] parents = new Integer[entriesPath.length];
+				for (int i = 0; i < entriesPath.length; i++) {
+					PageNode localNode = (PageNode) entriesPath[i].getLastPathComponent();
+					ViewComponentValue localViewComponent = localNode.getViewComponent();
+					parents[i] = localViewComponent.getViewComponentId();
+
+				}
+				String count = String.valueOf(comm.getViewComponentChildrenNumber(parents));
+				ActionHub.fireActionPerformed(new ActionEvent(count, ActionEvent.ACTION_PERFORMED, Constants.ACTION_STATUSBAR_COUNT));
+				
 				if (entry.getViewComponent().isUnit() && comm.isUserInRole(UserRights.UNIT_ADMIN)) {
 					miRootDeploysUnit.setEnabled(true);
 					miRootExportUnit.setEnabled(true);

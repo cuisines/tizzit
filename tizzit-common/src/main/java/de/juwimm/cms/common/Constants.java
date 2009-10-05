@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import org.tizzit.util.KeyOrderKeptHashMap;
 
-
 /**
  * <p>Title: ConQuest</p>
  * <p>Description: Enterprise Content Management<</p>
@@ -202,6 +201,7 @@ public final class Constants {
 	public static final String ACTION_VIEW_ROOT = "ROOT_VIEW";
 	public static final String ACTION_VIEW_EDITOR = "EDITOR_VIEW";
 
+	public static final String ACTION_STATUSBAR_COUNT = "asbc";
 	public static final String ACTION_SHOW_VERSION = "version";
 
 	public static final String ACTION_TREE_REFRESH = "REFRESH";

@@ -2475,4 +2475,8 @@ public class Communication implements ExitListener, ActionListener {
 	public void updateHost(HostValue hostValue) {
 		getClientService().updateHost(hostValue);
 	}
+
+	public Integer getViewComponentChildrenNumber(Integer[] viewComponentsIds) {
+		return getClientService().getViewComponentChildrenNumber(viewComponentsIds);
+	}
 }
