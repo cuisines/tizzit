@@ -310,11 +310,11 @@
 			font-weight:bold;
 		}
 		.firstlevel2 .secondlink a, .firstlevel2 .last-of-secondlink a {
-			color: #494949;
+			color: #fff;
 			text-decoration:none;
-			font-size:12px;
+			font-size:14px;
 			display:block;
-			padding:5px 8px 5px 8px;
+			padding:5px 8px 5px 13px;
 			font-weight:bold;
 		}
 		.firstlevel2 .firstlink .fl_bg_l, .firstlevel2 .last-of-firstlink .fl_bg_l {
@@ -442,7 +442,7 @@
 			margin:0;
 			padding:0;
 			list-style:none;
-			<!--z-index:255;-->
+			z-index:255;
 		}
 		.sf-menu {
 			line-height:1.0;
@@ -450,7 +450,7 @@
 		.sf-menu ul {
 			position:absolute;
 			top:-999em;
-			width:10em; /* left offset of submenus need to match (see below) */
+			width:162px; /* left offset of submenus need to match (see below) */
 		}
 		.sf-menu ul li {
 			width:100%;
@@ -470,7 +470,7 @@
 		.sf-menu li.sfHover ul {
 			left:0;
 			top:2.5em; /* match top ul list item height */
-			z-index:99;
+			z-index:255;
 		}
 		ul.sf-menu li:hover li ul,
 		ul.sf-menu li.sfHover li ul {
@@ -495,21 +495,37 @@
 			margin-bottom:1em;
 		}
 		.sf-menu a {
-			padding:.75em 1em;
+			<!--padding:.75em 1em;-->
 			text-decoration:none;
+		}
+		.secondlinks {
+			background-image:url('/httpd/img/navi/secondlinks_bg_top.gif');
+			background-repeat:no-repeat;
+			padding:3px 0 0 0;
+			background-color:transparent;
+		}
+		.last-item {
+			background-image:url('/httpd/img/navi/secondlinks_bg_bottom.png');
+			background-repeat:no-repeat;
+			filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/httpd/img/navi/secondlinks_bg_bottom.png',sizingMethod='crop');
+			_background:none;
+			line-height:0px;
+			font-size:0px;
+			height:4px;
+			clear:both;
 		}
 		<!--.sf-menu a, .sf-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
 			color:#13a;
-		}-->
+		}
 		.sf-menu li {
-			<!--background:		#BDD2FF;-->
-		}
+			background:		#BDD2FF;
+		}-->
 		.sf-menu li li {
-			background:#fff;
+			background:#254559;
 		}
-		.sf-menu li li li {
-			<!--background:		#9AAEDB;-->
-		}
+		<!--.sf-menu li li li {
+			background:		#9AAEDB;
+		}-->
 		.sf-menu li:hover, .sf-menu li.sfHover,
 		.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
 			<!--background:		#CFDEFF;-->
@@ -553,7 +569,7 @@
 			.sf-menu ul li:hover > a > .sf-sub-indicator,
 			.sf-menu ul li.sfHover > a > .sf-sub-indicator {
 				background-position: -10px 0; /* arrow hovers for modern browsers*/
-		}-->
+		}
 		/*** shadows for all but IE6 ***/
 			.sf-shadow ul {
 			background:	url('/httpd/img/navi/shadow.png') no-repeat bottom right;
@@ -565,7 +581,8 @@
 		}
 		.sf-shadow ul.sf-shadow-off {
 			background: transparent;
-		}
+			}-->
+		
 		<!--footer-->
 		#sn_footer li	{
 			position:relative;
@@ -587,7 +604,6 @@
 			color:#fff;
 			padding-left: 5px;
 		}
-		
 		<!--FancyBox-->
 		div#fancy_overlay {
 			position: fixed;

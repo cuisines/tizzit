@@ -81,6 +81,9 @@
                 </xsl:otherwise>
             </xsl:choose>
         </li>
+       <xsl:if test="position()=last()">
+            <div class="last-item">&#160;</div>
+        </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

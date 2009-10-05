@@ -20,6 +20,7 @@
             padding: 0;  
             float:right;
             display:block;
+            z-index:100px;
         }  
         .kwicks a {  
             display: block;
