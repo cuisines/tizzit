@@ -23,7 +23,11 @@ package de.juwimm.cms.model;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import javax.ejb.CreateException;
@@ -50,11 +54,11 @@ import de.juwimm.cms.util.EditionSliceOutputStream;
  */
 public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 	private static Log log = LogFactory.getLog(EditionHbmDaoImpl.class);
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	private final SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	protected EditionHbm handleCreate(String comment, Integer rootViewComponentId, PrintStream out, boolean includeUnused) throws Exception {
 		EditionHbm newEdition = new EditionHbmImpl();
@@ -116,7 +120,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					this.unitsToXmlRecursive(siteId, out, edition);
 					//				out.print(unit.toXmlRecursive(2));
 					out.println("\t</units>");
-					if (log.isDebugEnabled()) log.debug("realmsToXmlUsed");				
+					if (log.isDebugEnabled()) log.debug("realmsToXmlUsed");
 					this.realmsToXmlUsed(unitId, out, edition);
 				}
 				System.gc();
@@ -135,8 +139,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 				String siteConfig = vc.getViewDocument().getSite().getConfigXML();
 				org.w3c.dom.Document doc = XercesHelper.string2Dom(siteConfig);
 				String isEditionLimited = XercesHelper.getNodeValue(doc, "/config/default/parameters/maxEditionStack_1");
-				if (isEditionLimited != null && !"".equalsIgnoreCase(isEditionLimited)
-						&& Boolean.valueOf(isEditionLimited).booleanValue()) {
+				if (isEditionLimited != null && !"".equalsIgnoreCase(isEditionLimited) && Boolean.valueOf(isEditionLimited).booleanValue()) {
 					String maxEditionStack = XercesHelper.getNodeValue(doc, "/config/default/parameters/maxEditionStack_2");
 					if (maxEditionStack != null && !"".equalsIgnoreCase(maxEditionStack)) {
 						int max = Integer.valueOf(maxEditionStack);
@@ -157,10 +160,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 								if (oldestEdition != null) {
 									// delete oldest one
 									Date oldestCreateDate = new Date(oldestEdition.getCreationDate());
-									if (log.isDebugEnabled()) log.debug("Deleting edition " + oldestEdition.getEditionId() + " of unit \""
-											+ vc.getAssignedUnit().getName().trim() + "\" (" + unitId + ") from "
-											+ sdf.format(oldestCreateDate) + " for language \""
-											+ vc.getViewDocument().getLanguage().trim() + "\"");
+									if (log.isDebugEnabled()) log.debug("Deleting edition " + oldestEdition.getEditionId() + " of unit \"" + vc.getAssignedUnit().getName().trim() + "\" (" + unitId + ") from " + sdf.format(oldestCreateDate) + " for language \"" + vc.getViewDocument().getLanguage().trim() + "\"");
 									this.remove(oldestEdition);
 								}
 								editions = this.findByUnitAndViewDocument(vc.getAssignedUnit().getUnitId(), vc.getViewDocument().getViewDocumentId());
@@ -342,14 +342,14 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unit.getUnitId());
 					for (DocumentHbm doc : docs) {
 						if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
-						out.print(getDocumentHbmDao().toXml(doc.getDocumentId(),2));
+						out.print(getDocumentHbmDao().toXml(doc.getDocumentId(), 2));
 					}
 				}
 			} else {
 				Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unitId);
 				for (DocumentHbm doc : docs) {
 					if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
-					out.print(getDocumentHbmDao().toXml(doc.getDocumentId(),2));
+					out.print(getDocumentHbmDao().toXml(doc.getDocumentId(), 2));
 				}
 			}
 		} catch (Exception exe) {
@@ -392,12 +392,12 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					for (PictureHbm picture : pictures) {
 						out.print(picture.toXml(2));
 					}
-				} 
+				}
 			} else {
 				Collection<PictureHbm> pictures = getPictureHbmDao().findAllPerUnit(unitId);
 				for (PictureHbm pic : pictures) {
 					out.print(pic.toXml(2));
-				} 
+				}
 			}
 		} catch (Exception exe) {
 			log.error("Error occured", exe);
@@ -594,13 +594,34 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 		out.println("\t</viewDocuments>");
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByUnitAndViewDocument(final int transform, final java.lang.Integer unitId, final java.lang.Integer viewdocumentId) {
 		return this.findByUnitAndViewDocument(transform, "from de.juwimm.cms.model.EditionHbm as e where e.unitId = ? and e.viewDocumentId = ?", unitId, viewdocumentId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByUnitAndOnline(final int transform, final java.lang.Integer unitId) {
 		return this.findByUnitAndOnline(transform, "from de.juwimm.cms.model.EditionHbm as e where e.unitId = ? and e.status = 1", unitId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.EditionHbmDaoBase#handleCreate(java.lang.String, java.lang.String, java.lang.Integer, boolean, java.lang.Integer, java.lang.Integer, boolean, boolean)
+	 */
+	@Override
+	protected EditionHbm handleCreate(String creator, String comment, Integer viewComponentId, Integer unitId, Integer viewDocumentId, Integer siteId, boolean needsDeploy) throws Exception {
+		EditionHbm newEdition = new EditionHbmImpl();
+
+		newEdition.setStatus((byte) 0);
+		newEdition.setCreationDate((System.currentTimeMillis()));
+		newEdition.setCreator(getUserHbmDao().load(creator));
+		newEdition.setViewComponentId(viewComponentId);
+		newEdition.setViewDocumentId(viewDocumentId);
+		newEdition.setSiteId(siteId);
+		newEdition.setEditionFileName(null);
+		newEdition.setNeedsDeploy(needsDeploy);
+		newEdition.setComment(comment);
+		return super.create(newEdition);
 	}
 }

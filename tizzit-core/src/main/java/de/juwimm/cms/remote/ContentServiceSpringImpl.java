@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
@@ -357,15 +356,17 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				// logging should not endanger the normal process
 			}
 			try {
-				Properties prop = new Properties();
-				prop.setProperty("userName", AuthenticationHelper.getUserName());
-				prop.setProperty("comment", commentText);
-				prop.setProperty("rootViewComponentId", rootViewComponentId.toString());
-				prop.setProperty("siteId", site.getSiteId().toString());
-				prop.setProperty("deploy", Boolean.toString(deploy));
-				prop.setProperty("showMessage", Boolean.toString(succMessage));
-
+				//				Properties prop = new Properties();
+				//				prop.setProperty("userName", AuthenticationHelper.getUserName());
+				//				prop.setProperty("comment", commentText);
+				//				prop.setProperty("rootViewComponentId", rootViewComponentId.toString());
+				//				prop.setProperty("siteId", site.getSiteId().toString());
+				//				prop.setProperty("deploy", Boolean.toString(deploy));
+				//				prop.setProperty("showMessage", Boolean.toString(succMessage));
 				//TODO:	getMessagingHubInvoker().invokeQueue(MessageConstants.QUEUE_NAME_DEPLOY, MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY, prop);
+				boolean needsDeploy = true;
+				//FIXME: get right viewDocument
+				getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, site.getRootUnit().getUnitId(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
 				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
 			} catch (Exception e) {
 				throw new UserException(e.getMessage());

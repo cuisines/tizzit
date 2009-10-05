@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.model.EditionHbm;
 import de.juwimm.cms.model.EditionHbmDao;
+import de.juwimm.cms.remote.ContentServiceSpring;
 import de.juwimm.cms.remote.EditionServiceSpring;
 
 @Transactional(propagation = Propagation.REQUIRED)
@@ -22,6 +23,7 @@ public class EditionCronService {
 
 	private EditionHbmDao editionHbmDao;
 	private EditionServiceSpring editionServiceSpring;
+	private ContentServiceSpring contentServiceSpring;
 
 	/**
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
@@ -73,8 +75,11 @@ public class EditionCronService {
 			for (EditionHbm edition : editionsToDeploy) {
 				File edFile = new File(edition.getEditionFileName());
 				if (!edFile.exists()) {
+					//create deploy than
+					//getContentSpring().
 					log.warn("Edition " + edition.getEditionId() + " will be deleted because the editionfile isnt available anymore " + edition.getEditionFileName());
 				} else {
+					//deployFile exists - send to liveServer
 					UserHbm creator = edition.getCreator();
 					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 					getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
@@ -104,4 +109,13 @@ public class EditionCronService {
 	public EditionServiceSpring getEditionServiceSpring() {
 		return editionServiceSpring;
 	}
+
+	public void setContentServiceSpring(ContentServiceSpring contentServiceSpring) {
+		this.contentServiceSpring = contentServiceSpring;
+	}
+
+	public ContentServiceSpring getContentServiceSpring() {
+		return contentServiceSpring;
+	}
+
 }
