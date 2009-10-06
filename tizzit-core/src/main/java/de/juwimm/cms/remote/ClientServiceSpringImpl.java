@@ -1850,8 +1850,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
-		getViewServiceSpring().copyViewComponentsToParent(parentId, viewComponentsIds, position);
+	protected ViewComponentValue[] handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
+		return getViewServiceSpring().copyViewComponentsToParent(parentId, viewComponentsIds, position);
 
 	}
 }

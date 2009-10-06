@@ -1478,8 +1478,69 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	@Override
-	protected void handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
-		// TODO Auto-generated method stub
+	protected ViewComponentValue[] handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
+		//		try {
+		//			log.debug("begin insertViewComponent");
+		//			ViewComponentHbm tmpNode;
+		//			ViewComponentHbm node = super.getViewComponentHbmDao().load(childId);
+		//			ViewDocumentHbm vd = super.getViewDocumentHbmDao().load(viewDocumentId);
+		//			ViewComponentHbm newNode = getViewComponentHbmDao().create(vd, strReference, strDisplayLinkName, strInfo, null);
+		//
+		//			node.getParent().addChild(newNode);
+		//			newNode.setParentViewComponent(node.getParent());
+		//			newNode = super.getViewComponentHbmDao().create(newNode);
+		//			switch (intPos) {
+		//				case Constants.ADD_BEFORE:
+		//					if ((tmpNode = node.getPrevNode()) != null) {
+		//						tmpNode.setNextNode(newNode);
+		//						newNode.setPrevNode(tmpNode);
+		//					} else {
+		//						ViewComponentHbm parent = node.getParent();
+		//						parent.setFirstChild(newNode);
+		//					}
+		//					newNode.setNextNode(node);
+		//					node.setPrevNode(newNode);
+		//					break;
+		//
+		//				default:
+		//					if ((tmpNode = node.getNextNode()) != null) {
+		//						tmpNode.setPrevNode(newNode);
+		//						newNode.setNextNode(tmpNode);
+		//					}
+		//					newNode.setPrevNode(node);
+		//					node.setNextNode(newNode);
+		//					break;
+		//			}
+		//
+		//			log.debug("end insertViewComponent");
+		//			return newNode.getDao(-1);
+		//		} catch (Exception e) {
+		//			log.error("Could not insert viewComponent: " + e.getMessage(), e);
+		//			throw new UserException(e.getMessage());
+		//		}
+		try {
+			ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
+			ViewComponentHbm firstChild = parent.getFirstChild();
+			for (Integer childId : viewComponentsIds) {
+				ViewComponentHbm oldViewComponent = getViewComponentHbmDao().load(childId);
+				ViewComponentHbm viewComponent = getViewComponentHbmDao().create(oldViewComponent.getViewDocument(), oldViewComponent.getReference(), oldViewComponent.getDisplayLinkName(), oldViewComponent.getLinkDescription(), oldViewComponent.getUrlLinkName(), null);
+				parent.addChild(viewComponent);
+				viewComponent.setParentViewComponent(parent);
+				viewComponent.setViewIndex(oldViewComponent.getViewIndex());
+				viewComponent.setViewLevel(oldViewComponent.getViewLevel());
+				getViewComponentHbmDao().create(viewComponent);
+				if (firstChild != null) {
+					viewComponent.setNextNode(firstChild);
+					firstChild.setPrevNode(viewComponent);
+					parent.setFirstChild(viewComponent);
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("Error at Copy view components" + e.getMessage());
+			throw new UserException(e.getMessage());
+		}
+		return null;
 
 	}
 
