@@ -218,22 +218,24 @@ public class SearchengineService {
 	}
 
 	private void setUpdateSearchIndex4AllVCs(ViewComponentHbm viewComponent) {
-		if (viewComponent.getViewType() == Constants.VIEW_TYPE_CONTENT || viewComponent.getViewType() == Constants.VIEW_TYPE_UNIT) {
-			ContentHbm content = null;
-			try {
-				content = getContentHbmDao().load(new Integer(viewComponent.getReference()));
-				// -- Indexing through No-Messaging
-				content.setUpdateSearchIndex(true);
-			} catch (Exception exe) {
-				log.warn("Could not resolve Content with Id: " + viewComponent.getReference(), exe);
+		if (!"DUMMY".equals(viewComponent.getReference())) {
+			if (viewComponent.getViewType() == Constants.VIEW_TYPE_CONTENT || viewComponent.getViewType() == Constants.VIEW_TYPE_UNIT) {
+				ContentHbm content = null;
+				try {
+					content = getContentHbmDao().load(new Integer(viewComponent.getReference()));
+					// -- Indexing through No-Messaging
+					content.setUpdateSearchIndex(true);
+				} catch (Exception exe) {
+					log.warn("Could not resolve Content with Id: " + viewComponent.getReference(), exe);
+				}
 			}
-		}
-		if (!viewComponent.isLeaf()) {
-			Collection children = viewComponent.getChildren();
-			Iterator itChildren = children.iterator();
-			while (itChildren.hasNext()) {
-				ViewComponentHbm child = (ViewComponentHbm) itChildren.next();
-				setUpdateSearchIndex4AllVCs(child);
+			if (!viewComponent.isLeaf()) {
+				Collection children = viewComponent.getChildren();
+				Iterator itChildren = children.iterator();
+				while (itChildren.hasNext()) {
+					ViewComponentHbm child = (ViewComponentHbm) itChildren.next();
+					setUpdateSearchIndex4AllVCs(child);
+				}
 			}
 		}
 	}
@@ -541,16 +543,16 @@ public class SearchengineService {
 			} else {
 				log.warn("Critical Error during indexPage4Lucene - cound not find Ressource: " + currentUrl);
 			}
-				
+
 		} catch (Exception e) {
 			log.warn("Error indexPage4Lucene, VCID " + viewComponent.getViewComponentId().toString() + ": " + e.getMessage(), e);
 			if (tx != null) tx.rollback();
 		} finally {
 			if (session != null) session.close();
 			//delete temp file		
-			if (file != null){
+			if (file != null) {
 				file.delete();
-			}			
+			}
 		}
 		if (log.isDebugEnabled()) log.debug("finished indexPage4Lucene");
 	}
