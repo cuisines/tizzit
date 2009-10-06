@@ -4,7 +4,9 @@
       <title>Tizzit 3.0 Open Source</title>
       <vendor>Juwi MacMillan Group GmbH</vendor>
       <homepage href="http://www.tizzit.org"> </homepage>
-      <icon href="/cms/img/cms_64x64.gif"> </icon>
+      <icon width="64" height="64" href="/64_tizzit.png"> </icon>
+      <icon width="32" height="32" href="/32_tizzit.png"> </icon>
+      <icon width="16" height="16" href="/16_tizzit.png"> </icon>
       <icon href="/cms/img/cms_450x300.gif" kind="splash"> </icon>
       <description>Contains the Client module</description>
       <description kind="short">Swing Client</description>
