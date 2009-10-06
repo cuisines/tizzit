@@ -1450,7 +1450,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	/**
-	 * Return the number of children of the selected item
+	 * Return the number of children of the selected item + itself
 	 * @param viewComponentsIds
 	 * @return
 	 */
@@ -1475,6 +1475,12 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 
 		return number;
+	}
+
+	@Override
+	protected void handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 
 }

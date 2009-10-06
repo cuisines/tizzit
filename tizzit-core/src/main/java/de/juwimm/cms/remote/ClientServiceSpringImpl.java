@@ -1843,9 +1843,15 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected Integer handleGetViewComponentChildrenNumber(Integer[] viewComponentsIds) throws Exception {
 		return getViewServiceSpring().getViewComponentChildrenNumber(viewComponentsIds);
 	}
-	
+
 	@Override
-	protected List handleGetUnusedResources4Unit(Integer unitId) throws Exception {		
+	protected List handleGetUnusedResources4Unit(Integer unitId) throws Exception {
 		return getContentServiceSpring().getUnusedResources4Unit(unitId);
+	}
+
+	@Override
+	protected void handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
+		getViewServiceSpring().copyViewComponentsToParent(parentId, viewComponentsIds, position);
+
 	}
 }
