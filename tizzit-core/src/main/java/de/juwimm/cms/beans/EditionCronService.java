@@ -73,11 +73,14 @@ public class EditionCronService {
 			Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
 			log.info("Found " + editionsToDeploy.size() + " Editions to import");
 			for (EditionHbm edition : editionsToDeploy) {
-				File edFile = new File(edition.getEditionFileName());
-				if (!edFile.exists()) {
+				String fileName = edition.getEditionFileName();
+				File edFile = null;
+				if (fileName != null) {
+					edFile = new File(fileName);
+				}
+				if (edFile == null || !edFile.exists()) {
 					//create deploy than
-					//getContentSpring().
-					log.warn("Edition " + edition.getEditionId() + " will be deleted because the editionfile isnt available anymore " + edition.getEditionFileName());
+					getContentServiceSpring().deployEdition(edition.getEditionId());
 				} else {
 					//deployFile exists - send to liveServer
 					UserHbm creator = edition.getCreator();

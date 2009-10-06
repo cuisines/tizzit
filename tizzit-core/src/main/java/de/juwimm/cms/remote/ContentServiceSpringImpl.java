@@ -1434,7 +1434,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleDeployEdition(Integer editionId) throws Exception {
 		try {
-			log.info("createDeployFile " + AuthenticationHelper.getUserName());
+			//log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			//create dir for deploys
