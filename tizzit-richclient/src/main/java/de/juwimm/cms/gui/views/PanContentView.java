@@ -117,11 +117,11 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			panMetaData = new PanelMetaData();
 			panSafeGuard = new PanelSafeGuard();
 			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32, 32)));
-			this.btnCancel.setPreferredSize(new Dimension(45, 52));
+			this.btnCancel.setPreferredSize(new Dimension(55, 55));
 			this.btnSave = new CommandButton(rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(), new Dimension(32, 32)));
-			this.btnSave.setPreferredSize(new Dimension(45, 52));
+			this.btnSave.setPreferredSize(new Dimension(55, 55));
 			this.btnPreview = new CommandButton(rb.getString("dialog.preview"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_PREVIEW.getImage(), new Dimension(32, 32)));
-			this.btnPreview.setPreferredSize(new Dimension(45, 52));
+			this.btnPreview.setPreferredSize(new Dimension(55, 55));
 			jbInit();
 			this.radioPreviewFrameset.setText(rb.getString("panel.toolContent.previewInFrameset"));
 			this.radioPreviewWithoutFrame.setText(rb.getString("panel.toolContent.previewWithoutFrameset"));
@@ -199,7 +199,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		radioPreviewWithoutFrame.setSelected(true);
 		radioPreviewWithoutFrame.setText("Preview without Frame");
 		panBottom.setMinimumSize(new Dimension(540, 40));
-		
+
 		this.add(panTab, BorderLayout.CENTER);
 
 		this.add(panBottom, BorderLayout.SOUTH);
@@ -253,10 +253,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																					 panMenuentry.unload();
-																																																																																																																					 } else if (lastIndex == 2) {
-																																																																																																																					 panMetaData.unload();
-																																																																																																																					 }*/
+																																																																																																																											 panMenuentry.unload();
+																																																																																																																											 } else if (lastIndex == 2) {
+																																																																																																																											 panMetaData.unload();
+																																																																																																																											 }*/
 
 			String strTabName = "";
 			try {
