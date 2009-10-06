@@ -138,7 +138,7 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 			HashMap hm = (HashMap) Constants.CMS_AVAILABLE_DCF.get(strTplName);
 			if (hm == null) {
 				// Template not found
-				setEnabled(false);
+				setMenuentryEnabled(false);
 				shouldBeEditable = false;
 				String msg = Messages.getString("exception.TemplateNotFound", strTplName);
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
@@ -149,10 +149,10 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 			}
 			String editableBy = (String) hm.get("editableBy");
 			if (!editableBy.equals("") && !comm.isUserInRole(editableBy)) {
-				setEnabled(false);
+				setMenuentryEnabled(false);
 				shouldBeEditable = false;
 			} else {
-				setEnabled(true);
+				setMenuentryEnabled(true);
 				shouldBeEditable = true;
 			}
 			lblTemplateText.setText((String) hm.get("description"));
@@ -218,7 +218,7 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 		return shouldBeEditable;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setMenuentryEnabled(boolean enabled) {
 		this.btnChangeTemplate.setEnabled(enabled);
 		this.getTxtOnlineStart().setDateButtonEnabled(enabled);
 		this.getTxtOnlineStop().setDateButtonEnabled(enabled);
