@@ -22,6 +22,7 @@ package de.juwimm.cms.remote;
 
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -1841,5 +1842,10 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected Integer handleGetViewComponentChildrenNumber(Integer[] viewComponentsIds) throws Exception {
 		return getViewServiceSpring().getViewComponentChildrenNumber(viewComponentsIds);
+	}
+	
+	@Override
+	protected List handleGetUnusedResources4Unit(Integer unitId) throws Exception {		
+		return getContentServiceSpring().getUnusedResources4Unit(unitId);
 	}
 }

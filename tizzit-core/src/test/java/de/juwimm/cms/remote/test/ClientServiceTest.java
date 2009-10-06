@@ -840,55 +840,6 @@ public class ClientServiceTest extends AbstractRemoteInterfaceTest {
 		assertEquals(1, persons.length);
 	}
 
-	public void testAddPerson2Unit() {
-		ClientServiceSpring cs = getClientService();
-		int unitId = 3227;
-		long personId = 517;
-		PersonValue[] pv = cs.getUnit(unitId).getPersons();
-		for (PersonValue p : pv) {
-			assertTrue(p.getPersonId() != personId);
-		}
-		cs.addPerson2Unit(unitId, personId);
-		pv = cs.getUnit(unitId).getPersons();
-		boolean ok = false;
-		for (PersonValue p : pv) {
-			if (p.getPersonId() == personId) {
-				ok = true;
-				break;
-			}
-		}
-		assertTrue(ok);
-		cs.removePersonFromUnit(unitId, personId);
-		pv = cs.getUnit(unitId).getPersons();
-		for (PersonValue p : pv) {
-			assertTrue(p.getPersonId() != personId);
-		}
-	}
-
-	public void testAddPerson2Department() {
-		ClientServiceSpring cs = getClientService();
-		long departmentId = 1;
-		long personId = 517;
-		PersonValue[] pv = cs.getDepartment(departmentId).getPersons();
-		for (PersonValue p : pv) {
-			assertTrue(p.getPersonId() != personId);
-		}
-		cs.addPerson2Department(departmentId, personId);
-		pv = cs.getDepartment(departmentId).getPersons();
-		boolean ok = false;
-		for (PersonValue p : pv) {
-			if (p.getPersonId() == personId) {
-				ok = true;
-				break;
-			}
-		}
-		assertTrue(ok);
-		cs.removePersonFromDepartment(departmentId, personId);
-		pv = cs.getDepartment(departmentId).getPersons();
-		for (PersonValue p : pv) {
-			assertTrue(p.getPersonId() != personId);
-		}
-	}
 
 	public void testCreateDepartment() {
 		ClientServiceSpring cs = getClientService();

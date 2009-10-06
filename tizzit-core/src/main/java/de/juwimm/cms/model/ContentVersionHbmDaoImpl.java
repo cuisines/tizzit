@@ -20,10 +20,13 @@
  */
 package de.juwimm.cms.model;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.Base64;
 import org.tizzit.util.DateConverter;
@@ -136,4 +139,25 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 
 		return contentVersion;
 	}
+
+//	@Override
+//	protected ContentVersionValue[] handleFindContentVersionsByUnitId(Integer unitId) throws Exception {
+//		Query query = getSession().createQuery("select content.contentVersions from de.juwimm.cms.model.ContentHbm content" +				
+//				" ,de.juwimm.cms.model.ViewComponentHbm viewComponent" +
+//				" where content.contentId = viewComponent.reference and viewComponent.assignedUnit.unitId = :unitId");
+//		query.setParameter("unitId", unitId);
+//		List<ContentVersionHbm> results = query.list();
+//		ContentVersionValue[] returns = new ContentVersionValue[results.size()];
+//		int i=0;
+//		for(ContentVersionHbm contentVersion:results){
+//			returns[i++] = this.getDao(contentVersion);			
+//		}
+//		return returns;
+//	}
+		
+	protected Collection handleFindContentVersionsByViewComponent(Integer unitId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -35,6 +35,7 @@ import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
 import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
@@ -588,6 +589,15 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByParent(final int transform, final java.lang.Integer vcId) {
 		return this.findByParent(transform, "from de.juwimm.cms.model.ViewComponentHbm v WHERE v.parent.viewComponentId = ?", vcId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleFindRootViewComponent4Unit(java.lang.Integer)
+	 */
+	@Override
+	protected ViewComponentValue handleFindRootViewComponent4Unit(Integer unitId)
+			throws Exception {		
+		return null;
 	}
 
 }
