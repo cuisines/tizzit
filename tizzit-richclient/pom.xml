@@ -157,6 +157,142 @@
 	</dependencies>
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<!-- thirdparty -->
+					<!-- needed in tizzit-cocoon22-components but the damn jnlp plugin below, is strangely trying to resolve it-->
+					<execution>
+						<id>thirdparty-saxon</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-dom4j</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-dom4j-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-dom4j</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-dom</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-dom-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-dom</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-jdom</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-jdom-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-jdom</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-s9api</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-s9api-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-s9api</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-sql</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-sql-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-sql</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-xom</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-xom-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-xom</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-xpath</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-xpath-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-xpath</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>thirdparty-saxon-xqj</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<file>${pom.basedir}/src/thirdparty/resources/saxon-xqj-9.1.0.7B.jar</file>
+							<groupId>net.sf.saxon</groupId>
+							<artifactId>saxon-xqj</artifactId>
+							<version>9.1.0.7B</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -175,7 +311,7 @@
 						<phase>compile</phase>
 						<configuration>
 							<tasks>
-								<copy file="${pom.basedir}/../tizzit/pom.xml" tofile="${pom.basedir}/target/classes/pom.xml" overwrite="true" />
+								<copy file="${pom.basedir}/../tizzit/pom.xml" overwrite="true" tofile="${pom.basedir}/target/classes/pom.xml" />
 							</tasks>
 						</configuration>
 						<goals>
