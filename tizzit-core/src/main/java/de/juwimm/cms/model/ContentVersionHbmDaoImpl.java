@@ -147,8 +147,19 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 
 	@Override
 	protected ContentVersionHbm handleCloneContentVersion(ContentVersionHbm oldContentVersion) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ContentVersionHbm contentVersionHbm = ContentVersionHbm.Factory.newInstance();;
+		try {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("contentversion.content_version_id");
+			contentVersionHbm.setContentVersionId(id);
+		} catch (Exception e) {
+			log.error("Error creating primary key for contentVersion", e);
+		}
+		contentVersionHbm.setText(oldContentVersion.getText());
+		contentVersionHbm.setVersion("1");
+		contentVersionHbm.setHeading(oldContentVersion.getHeading());
+		contentVersionHbm.setCreateDate(System.currentTimeMillis());
+		contentVersionHbm.setCreator(AuthenticationHelper.getUserName());
+		return super.create(contentVersionHbm);
 	}
 
 }

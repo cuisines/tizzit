@@ -29,6 +29,8 @@ public class ViewComponentEvent {
 	public static final int MOVE_DOWN = 2;
 	public static final int MOVE_LEFT = 3;
 	public static final int MOVE_RIGHT = 4;
+	public static final int COPY = 5;
+	public static final int PASTE = 6;
 
 	private int i;
 

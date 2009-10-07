@@ -130,6 +130,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private JMenuItem miTreeSeparatorAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"));
 	private JMenuItem miTreeJumpAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_JUMP_ADD"));
 	private JMenuItem miDELETE = new JMenuItem(rb.getString("ribbon.delete"));
+	private JMenuItem miCopy = new JMenuItem(rb.getString("actions.ACTION_COPY"));
+	private JMenuItem miPaste = new JMenuItem(rb.getString("actions.ACTION_PASTE"));
 	private JMenuItem miRootDeploysUnit = new JMenuItem();
 	private JMenuItem miRootExportUnit = new JMenuItem();
 	private JMenuItem miRootImportUnit = new JMenuItem();
@@ -140,6 +142,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
 	private String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
 	private HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
+	private Integer[] viewComponentIdsCopy = null;
 	private TreePath previousTreeNodePath = null;
 	private boolean stop = true;
 
@@ -363,6 +366,18 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.MOVE_DOWN));
 				}
 			});
+			miCopy.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					setCopyPaste(false);
+					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.COPY));
+				}
+			});
+			miPaste.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					setCopyPaste(true);
+					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.PASTE));
+				}
+			});
 			miTreeNodeAppend.addActionListener(comm);
 			miTreeSymlinkAdd.addActionListener(comm);
 			miTreeJumpAdd.addActionListener(comm);
@@ -533,9 +548,12 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			miContentApprove.setActionCommand(Constants.ACTION_CONTENT_APPROVE);
 			popup.add(miContentApprove);
 		}
+		miPaste.setEnabled(false);
+		popup.add(miCopy);
+		popup.add(miPaste);
+
 		miDELETE.setIcon(UIConstants.MODULE_ITERATION_CONTENT_DELETE);
 		miDELETE.setActionCommand(Constants.ACTION_TREE_NODE_DELETE);
-
 		popup.add(miDELETE);
 		popup.addSeparator();
 		miMoveLeft.setIcon(UIConstants.MOVE_LEFT);
@@ -765,7 +783,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				}
 				String count = String.valueOf(comm.getViewComponentChildrenNumber(parents));
 				ActionHub.fireActionPerformed(new ActionEvent(count, ActionEvent.ACTION_PERFORMED, Constants.ACTION_STATUSBAR_COUNT));
-				
+
 				if (entry.getViewComponent().isUnit() && comm.isUserInRole(UserRights.UNIT_ADMIN)) {
 					miRootDeploysUnit.setEnabled(true);
 					miRootExportUnit.setEnabled(true);
@@ -1260,10 +1278,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	public void actionViewComponentPerformed(ViewComponentEvent e) {
 		PageNode entry = (PageNode) tree.getLastSelectedPathComponent();
 		TreePath[] entriesPath = tree.getSelectionPaths();
-		for (TreePath treePath : entriesPath) {
-			PageNode local = (PageNode) treePath.getLastPathComponent();
-			System.out.println(local.getViewComponent().getDisplayLinkName());
-		}
+
 		if (e.getType() == ViewComponentEvent.DELETE) {
 			if (entriesPath.length == 1) {
 				boolean wasDeleted = comm.removeViewComponent(entry.getViewId(), entry.getViewComponent().getDisplayLinkName(), entry.getOnline());
@@ -1487,6 +1502,41 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				log.error("Error moving vc right", exe);
 			}
 			this.invalidateTreeCache();
+		} else if (e.getType() == ViewComponentEvent.COPY) {
+			viewComponentIdsCopy = new Integer[entriesPath.length];
+			for (int i = 0; i < entriesPath.length; i++) {
+				PageNode local = (PageNode) entriesPath[i].getLastPathComponent();
+				viewComponentIdsCopy[i] = local.getViewComponent().getViewComponentId();
+			}
+
+		} else if (e.getType() == ViewComponentEvent.PASTE) {
+			if (viewComponentIdsCopy != null) {
+				PageNode temp = null;
+				ViewComponentValue[] values = comm.copyViewComponentToParent(entry.getViewComponent().getViewComponentId(), viewComponentIdsCopy, Constants.ADD_APPEND);
+				for (int i = 0; i < values.length; i++) {
+					ViewComponentValue viewComponentValue = values[i];
+					switch (viewComponentValue.getViewType()) {
+						case Constants.VIEW_TYPE_EXTERNAL_LINK:
+							temp = new PageExternallinkNode(viewComponentValue, treeModel);
+							break;
+						case Constants.VIEW_TYPE_INTERNAL_LINK:
+							temp = new PageInternallinkNode(viewComponentValue, treeModel);
+							break;
+						case Constants.VIEW_TYPE_SYMLINK:
+							//viewComponentValue.setMetaData(anchor);
+							temp = new PageSymlinkNode(viewComponentValue, treeModel);
+							break;
+						case Constants.VIEW_TYPE_SEPARATOR:
+							temp = new PageSeparatorNode(viewComponentValue, treeModel);
+							break;
+						default:
+							temp = new PageContentNode(viewComponentValue, treeModel);
+							break;
+					}
+					entry.insert(temp, i);
+				}
+				treeModel.nodeStructureChanged(entry);
+			}
 		}
 	}
 
@@ -1603,6 +1653,15 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				UIConstants.setStatusInfo("Content wurde freigegeben und kann deployed werden.");
 			}
 		}
+	}
+
+	/**
+	 * Set the buttons depending on action Copy/Paste
+	 * @param flag
+	 */
+	private void setCopyPaste(boolean flag) {
+		//miCopy.setEnabled(flag);
+		miPaste.setEnabled(!flag);
 	}
 
 }

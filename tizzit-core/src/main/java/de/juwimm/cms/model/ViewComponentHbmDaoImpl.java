@@ -599,8 +599,44 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 
 	@Override
 	protected ViewComponentHbm handleCloneViewComponent(ViewComponentHbm oldViewComponent) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ViewComponentHbm viewComponentHbm = ViewComponentHbm.Factory.newInstance();
+		try {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("viewcomponent.view_component_id");
+			viewComponentHbm.setViewComponentId(id);
+		} catch (Exception e) {
+			log.error("Error creating/setting primary key", e);
+		}
+		viewComponentHbm.setApprovedLinkName(oldViewComponent.getApprovedLinkName());
+		if (oldViewComponent.getAssignedUnit() != null) {
+			viewComponentHbm.setAssignedUnit(oldViewComponent.getAssignedUnit());
+		}
+		viewComponentHbm.setCreateDate(System.currentTimeMillis());
+		viewComponentHbm.setDeployCommand(oldViewComponent.getDeployCommand());
+		viewComponentHbm.setDisplayLinkName("copy_" + oldViewComponent.getDisplayLinkName());
+		viewComponentHbm.setDisplaySettings(oldViewComponent.getDisplaySettings());
+		viewComponentHbm.setLinkDescription(oldViewComponent.getLinkDescription());
+		viewComponentHbm.setMetaData(oldViewComponent.getMetaData());
+		viewComponentHbm.setMetaDescription(oldViewComponent.getMetaDescription());
+		viewComponentHbm.setOnline(oldViewComponent.getOnline());
+		viewComponentHbm.setOnlineStart(oldViewComponent.getOnlineStart());
+		viewComponentHbm.setOnlineStop(oldViewComponent.getOnlineStop());
+		viewComponentHbm.setRealm2vc(oldViewComponent.getRealm2vc());
+		//viewComponentHbm.setRealm4login(oldViewComponent.getRealm4login());
+		viewComponentHbm.setSearchIndexed(oldViewComponent.isSearchIndexed());
+		viewComponentHbm.setShowType(oldViewComponent.getShowType());
+		viewComponentHbm.setStatus(oldViewComponent.getStatus());
+		viewComponentHbm.setUrlLinkName("copy_" + oldViewComponent.getUrlLinkName());
+		viewComponentHbm.setViewDocument(oldViewComponent.getViewDocument());
+		viewComponentHbm.setViewIndex(oldViewComponent.getViewIndex());
+		viewComponentHbm.setViewLevel(oldViewComponent.getViewLevel());
+		viewComponentHbm.setViewType(oldViewComponent.getViewType());
+		viewComponentHbm.setVisible(oldViewComponent.isVisible());
+		viewComponentHbm.setXmlSearchIndexed(oldViewComponent.isXmlSearchIndexed());
+
+		ContentHbm oldContent = getContentHbmDao().load(Integer.valueOf(oldViewComponent.getReference()));
+		ContentHbm newContent = getContentHbmDao().cloneContent(oldContent);
+		viewComponentHbm.setReference(String.valueOf(newContent.getContentId()));
+		return create(viewComponentHbm);
 	}
 
 }

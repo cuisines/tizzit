@@ -282,7 +282,18 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 
 	@Override
 	protected ContentHbm handleCloneContent(ContentHbm oldContent) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ContentHbm contentHbm = ContentHbm.Factory.newInstance();
+		try {
+			contentHbm.setContentId(sequenceHbmDao.getNextSequenceNumber("content.content_id"));
+		} catch (Exception e) {
+			log.error("error at creating primary key for content");
+		}
+		contentHbm.setStatus(oldContent.getStatus());
+		contentHbm.setTemplate(oldContent.getTemplate());
+		contentHbm.setUpdateSearchIndex(oldContent.isUpdateSearchIndex());
+		ContentVersionHbm contentVersion = getContentVersionHbmDao().cloneContentVersion(oldContent.getLastContentVersion());
+		contentHbm = this.create(contentHbm);
+		contentHbm.getContentVersions().add(contentVersion);
+		return contentHbm;
 	}
 }

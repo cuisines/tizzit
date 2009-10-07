@@ -2488,4 +2488,8 @@ public class Communication implements ExitListener, ActionListener {
 	public void removeResources(Integer[] pictureIds,Integer[] documentIds){
 		getClientService().removeResources(pictureIds, documentIds);
 	}
+	
+	public ViewComponentValue[] copyViewComponentToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) {
+		return getClientService().copyViewComponentsToParent(parentId, viewComponentsIds, position);
+	}
 }
