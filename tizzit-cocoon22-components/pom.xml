@@ -39,6 +39,13 @@
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-servlet-service-components</artifactId>
       <version>1.0.0</version>
+      <!-- exclude the broken cocoon-sitemap-impl-1.0 -->
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-sitemap-impl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cocoon</groupId>
@@ -57,6 +64,26 @@
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-sitemap-impl</artifactId>
       <version>1.0.0-pl2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-sitemap-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-pipeline-impl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cocoon</groupId>
+      <artifactId>cocoon-sitemap-api</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cocoon</groupId>
+      <artifactId>cocoon-pipeline-impl</artifactId>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cocoon</groupId>
