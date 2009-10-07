@@ -51,6 +51,8 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 	private PanUserSites panUserSites;
 	private PanSafeguardRealmManager panSafeguard;
 	private PanSiteGroups panSiteGroups = null;
+	private PanCmsResources panCmsResources;
+	
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 
 	public PanAdministrationRoot() {
@@ -76,7 +78,6 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 
 		panUnit = new PanUnitGroup();
 		panTab.add(panUnit, rb.getString("panel.admin.tab.unit"));
-		
 		
 		
 		if ((comm.isUserInRole(UserRights.MANAGE_HOSTS))
@@ -106,6 +107,9 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 			panTab.add(panSiteGroups, rb.getString("panel.admin.tab.sitegroups"));
 		}
 
+		panCmsResources = new PanCmsResources(comm);		
+		panTab.add(panCmsResources,rb.getString(PanCmsResources.TitleKey));
+		
 		panTab.setSelectedIndex(0);
 
 		/* Change the Tab in panel */
@@ -173,6 +177,12 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 							}
 							panSiteGroups.reload();
 							lastIndex = panTab.indexOfTab(rb.getString("panel.admin.tab.sitegroups"));
+						} else if (strTabName.equalsIgnoreCase(rb.getString(PanCmsResources.TitleKey))){
+							if (lastIndex == panTab.indexOfTab(rb.getString("panel.admin.tab.user"))) {
+								panUser.unload();
+							}
+							panCmsResources.reload();
+							lastIndex = panTab.indexOfTab(rb.getString(PanCmsResources.TitleKey));
 						}
 						setCursor(Cursor.getDefaultCursor());
 					}

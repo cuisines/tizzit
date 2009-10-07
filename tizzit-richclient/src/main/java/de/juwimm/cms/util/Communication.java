@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -2475,8 +2476,16 @@ public class Communication implements ExitListener, ActionListener {
 	public void updateHost(HostValue hostValue) {
 		getClientService().updateHost(hostValue);
 	}
+	
+	public List getUnsusedResources4Unit(Integer unitId){
+		return getClientService().getUnusedResources4Unit(unitId);
+	}
 
 	public Integer getViewComponentChildrenNumber(Integer[] viewComponentsIds) {
 		return getClientService().getViewComponentChildrenNumber(viewComponentsIds);
+	}
+	
+	public void removeResources(Integer[] pictureIds,Integer[] documentIds){
+		getClientService().removeResources(pictureIds, documentIds);
 	}
 }
