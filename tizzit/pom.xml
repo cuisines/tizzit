@@ -513,19 +513,43 @@
 			</dependency>
 			<dependency>
 				<groupId>net.sf.saxon</groupId>
-				<artifactId>saxon-xpath</artifactId>
-				<version>${saxon.xpath.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>net.sf.saxon</groupId>
-						<artifactId>saxon</artifactId>
-					</exclusion>
-				</exclusions>
+				<artifactId>saxon-dom</artifactId>
+				<version>${saxon.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.saxon</groupId>
-				<artifactId>saxon-dom</artifactId>
-				<version>${saxon.dom.version}</version>
+				<artifactId>saxon-dom4j</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-jdom</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-s9api</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-sql</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-xom</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-xpath</artifactId>
+				<version>${saxon.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.saxon</groupId>
+				<artifactId>saxon-xqj</artifactId>
+				<version>${saxon.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -654,10 +678,7 @@
 		<spring.security.version>2.0.4</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
 
-		<saxon.version>9.0.0.2b-patched</saxon.version>
-		<saxon.xpath.version>9.0.0.2b</saxon.xpath.version>
-		<saxon.dom.version>9.0.0.2b</saxon.dom.version>
-
+		<saxon.version>9.1.0.7B</saxon.version>
 		<!--
 			Change this to generate to the correct MDA database mappings, For
 			MySql use: MySQL For Hypersonic use: HypersonicSql For Oracle9i use:

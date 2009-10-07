@@ -44,6 +44,19 @@
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-core</artifactId>
       <version>2.2.0</version>
+      <exclusions>
+        <!-- exclude the broken cocoon-sitemap-impl-1.0 -->
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-sitemap-impl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- include the fixed cocoon-sitemap-impl-1.0 -->
+    <dependency>
+      <groupId>org.apache.cocoon</groupId>
+      <artifactId>cocoon-sitemap-impl</artifactId>
+      <version>1.0.0-pl2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.cocoon</groupId>
@@ -133,9 +146,34 @@
       <version>3.2</version>
     </dependency>
 
+
     <dependency>
       <groupId>net.sf.saxon</groupId>
       <artifactId>saxon</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-dom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-dom4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-jdom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-s9api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-sql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.saxon</groupId>
+      <artifactId>saxon-xom</artifactId>
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
@@ -143,7 +181,7 @@
     </dependency>
     <dependency>
       <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-dom</artifactId>
+      <artifactId>saxon-xqj</artifactId>
     </dependency>
 
     <!-- Dependenies für geforkte Komponenten -->
@@ -218,32 +256,32 @@
         <executions>
           <!-- patched -->
           <execution>
-            <id>patched-saxon</id>
+            <id>patched-cocoon-sitemap-impl</id>
             <phase>validate</phase>
             <goals>
               <goal>install-file</goal>
             </goals>
             <configuration>
-              <file>${pom.basedir}/src/patched/resources/saxon-9.0.0.2b-patched.jar</file>
-              <groupId>net.sf.saxon</groupId>
-              <artifactId>saxon</artifactId>
-              <version>9.0.0.2b-patched</version>
+              <file>${pom.basedir}/src/patched/resources/cocoon-sitemap-impl-1.0.0-pl2.jar</file>
+              <groupId>org.apache.cocoon</groupId>
+              <artifactId>cocoon-sitemap-impl</artifactId>
+              <version>1.0.0-pl2</version>
               <packaging>jar</packaging>
             </configuration>
           </execution>
 
           <!-- thirdparty -->
           <execution>
-            <id>thirdparty-saxon-xpath</id>
+            <id>thirdparty-saxon-dom4j</id>
             <phase>validate</phase>
             <goals>
               <goal>install-file</goal>
             </goals>
             <configuration>
-              <file>${pom.basedir}/src/thirdparty/resources/saxon-xpath-9.0.0.2b.jar</file>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-dom4j-9.1.0.7B.jar</file>
               <groupId>net.sf.saxon</groupId>
-              <artifactId>saxon-xpath</artifactId>
-              <version>9.0.0.2b</version>
+              <artifactId>saxon-dom4j</artifactId>
+              <version>9.1.0.7B</version>
               <packaging>jar</packaging>
             </configuration>
           </execution>
@@ -254,10 +292,80 @@
               <goal>install-file</goal>
             </goals>
             <configuration>
-              <file>${pom.basedir}/src/thirdparty/resources/saxon-dom-9.0.0.2b.jar</file>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-dom-9.1.0.7B.jar</file>
               <groupId>net.sf.saxon</groupId>
               <artifactId>saxon-dom</artifactId>
-              <version>9.0.0.2b</version>
+              <version>9.1.0.7B</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>thirdparty-saxon-jdom</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-jdom-9.1.0.7B.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-jdom</artifactId>
+              <version>9.1.0.7B</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>thirdparty-saxon-s9api</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-s9api-9.1.0.7B.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-s9api</artifactId>
+              <version>9.1.0.7B</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>thirdparty-saxon-sql</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-sql-9.1.0.7B.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-sql</artifactId>
+              <version>9.1.0.7B</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>thirdparty-saxon-xpath</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-xpath-9.1.0.7B.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-xpath</artifactId>
+              <version>9.1.0.7B</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+          <execution>
+            <id>thirdparty-saxon-xqj</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${pom.basedir}/src/thirdparty/resources/saxon-xqj-9.1.0.7B.jar</file>
+              <groupId>net.sf.saxon</groupId>
+              <artifactId>saxon-xqj</artifactId>
+              <version>9.1.0.7B</version>
               <packaging>jar</packaging>
             </configuration>
           </execution>
