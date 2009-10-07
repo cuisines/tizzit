@@ -25,7 +25,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 
@@ -36,7 +35,6 @@ import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
 import de.juwimm.cms.vo.ContentValue;
-import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
@@ -593,10 +591,16 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	}
 
 	@Override
-	protected java.util.Collection handleFindRootViewComponents4Unit(Integer unitId)throws Exception {		
+	protected java.util.Collection handleFindRootViewComponents4Unit(Integer unitId) throws Exception {
 		Query query = getSession().createQuery("from de.juwimm.cms.model.ViewComponentHbm v where v.assignedUnit.unitId = :unitId");
-		query.setParameter("unitId", unitId);		
+		query.setParameter("unitId", unitId);
 		return query.list();
+	}
+
+	@Override
+	protected ViewComponentHbm handleCloneViewComponent(ViewComponentHbm oldViewComponent) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

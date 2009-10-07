@@ -32,7 +32,6 @@ import org.w3c.dom.Element;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.vo.ContentValue;
 
-
 /**
  * @see de.juwimm.cms.model.ContentHbm
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a> ,
@@ -279,5 +278,11 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		content.getContentVersions().add(cv);
 
 		return content;
+	}
+
+	@Override
+	protected ContentHbm handleCloneContent(ContentHbm oldContent) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

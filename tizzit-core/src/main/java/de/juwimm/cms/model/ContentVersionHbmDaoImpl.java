@@ -22,7 +22,6 @@ package de.juwimm.cms.model;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,7 +95,7 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		sb.append("</contentVersion>\n");
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @see de.juwimm.cms.model.ContentVersionHbm#getDao()
 	 */
@@ -140,13 +139,16 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		return contentVersion;
 	}
 
-	
 	protected Collection handleFindContentVersionsByViewComponent(Integer viewComponentId) throws Exception {
-		Query query = getSession().createQuery("select content.contentVersions from de.juwimm.cms.model.ContentHbm content" +				
-				" ,de.juwimm.cms.model.ViewComponentHbm viewComponent" +
-				" where content.contentId = viewComponent.reference and viewComponent.viewComponentId = :viewComponentId");
+		Query query = getSession().createQuery("select content.contentVersions from de.juwimm.cms.model.ContentHbm content" + " ,de.juwimm.cms.model.ViewComponentHbm viewComponent" + " where content.contentId = viewComponent.reference and viewComponent.viewComponentId = :viewComponentId");
 		query.setParameter("viewComponentId", viewComponentId);
 		return query.list();
+	}
+
+	@Override
+	protected ContentVersionHbm handleCloneContentVersion(ContentVersionHbm oldContentVersion) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
