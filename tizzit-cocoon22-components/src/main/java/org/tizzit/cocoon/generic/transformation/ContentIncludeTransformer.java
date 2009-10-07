@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.tizzit.cocoon.generic.transformation;
 
 import java.io.IOException;

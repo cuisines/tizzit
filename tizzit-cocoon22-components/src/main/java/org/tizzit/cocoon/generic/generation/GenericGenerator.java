@@ -17,7 +17,7 @@ import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.log4j.Logger;
-import org.tizzit.cocoon.generic.ClassLoadingHelper;
+import org.tizzit.classloading.ClassloadingHelper;
 import org.tizzit.cocoon.generic.util.ConfigurationHelper;
 import org.xml.sax.SAXException;
 
@@ -52,7 +52,7 @@ public class GenericGenerator extends AbstractCacheableGenerator implements Conf
 	private AbstractGenerator generator = null;
 	private Configurable configurable = null;
 	private Configuration config = null;
-	private ClassLoadingHelper classHelper = null;
+	private ClassloadingHelper classloadingHelper = null;
 
 	/**
 	 * @see org.apache.avalon.framework.configuration.Configurable#configure(org.apache.avalon.framework.configuration.Configuration)
@@ -72,13 +72,11 @@ public class GenericGenerator extends AbstractCacheableGenerator implements Conf
 		if (log.isDebugEnabled()) log.debug("setup() -> begin");
 		//if (this.generator == null) {
 		try {
-			String clientCode = parameters.getParameter("clientCode", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			String siteShort = clientCode.length() > 0 ? clientCode : ConfigurationHelper.getSiteShort(this.config);
+			this.classloadingHelper = new ClassloadingHelper();
 
-			this.classHelper = new ClassLoadingHelper(siteShort, ConfigurationHelper.getJarNames(this.config));
-			String clzName = ConfigurationHelper.getClassName(this.config);
+			String clazzName = ConfigurationHelper.getClassName(this.config);
+			this.generator = (AbstractGenerator) this.classloadingHelper.getInstance(clazzName);
 
-			this.generator = (AbstractGenerator) this.classHelper.instanciateClass(clzName);
 			if (this.generator instanceof Configurable) {
 				this.configurable = (Configurable) this.generator;
 				// during the first call of configure (see below) there was

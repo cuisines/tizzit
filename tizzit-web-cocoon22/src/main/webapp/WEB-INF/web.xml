@@ -3,9 +3,7 @@
   <distributable />
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>
-      classpath:applicationContext-base-cocoon22.xml
-    </param-value>
+    <param-value> classpath:applicationContext-base-cocoon22.xml </param-value>
   </context-param>
 
   <!-- Servlet Filters ================================================ -->
@@ -19,6 +17,18 @@
     <filter-name>CocoonMultipartFilter</filter-name>
     <filter-class>org.apache.cocoon.servlet.multipart.MultipartFilter</filter-class>
   </filter>
+  <!--
+  <filter>
+    <filter-name>CocoonMultipartFilter</filter-name>
+    <display-name>Cocoon multipart filter</display-name>
+    <description>Multipart MIME handling filter for Cocoon</description>
+    <filter-class>org.tizzit.classloading.tools.rcl.wrapper.servlet.ReloadingServletFilter</filter-class>
+    <init-param>
+      <param-name>filter-class</param-name>
+      <param-value>org.apache.cocoon.servlet.multipart.MultipartFilter</param-value>
+    </init-param>
+  </filter>
+  -->
 
   <!--
     - Declare a filter for debugging incoming request
@@ -108,11 +118,25 @@
   <!--
     - Servlet that dispatches requests to the Spring managed block servlets
     -->
+  <!-- RCL
   <servlet>
     <description>Cocoon blocks dispatcher</description>
     <display-name>DispatcherServlet</display-name>
     <servlet-name>DispatcherServlet</servlet-name>
     <servlet-class>org.apache.cocoon.servletservice.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  -->
+  <servlet>
+    <servlet-name>DispatcherServlet</servlet-name>
+    <display-name>DispatcherServlet</display-name>
+    <description>Cocoon blocks dispatcher</description>
+    <!--<servlet-class>org.apache.cocoon.tools.rcl.wrapper.servlet.ReloadingServlet</servlet-class>-->
+    <servlet-class>org.tizzit.classloading.ReloadingServlet</servlet-class>
+    <init-param>
+      <param-name>servlet-class</param-name>
+      <param-value>org.apache.cocoon.servletservice.DispatcherServlet</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
@@ -124,15 +148,13 @@
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>
-         classpath:applicationContext-export-remoteServices.xml
-         <!-- web-contextConfigLocations merge-point -->
+      <param-value> classpath:applicationContext-export-remoteServices.xml <!-- web-contextConfigLocations merge-point -->
       </param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-    <!-- URL space mappings ============================================= -->
+  <!-- URL space mappings ============================================= -->
 
   <!--
     - Cocoon handles all the URL space assigned to the webapp using its sitemap.

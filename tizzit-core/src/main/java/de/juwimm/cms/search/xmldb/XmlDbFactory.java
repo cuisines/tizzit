@@ -19,13 +19,14 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.classloading.ClassloadingHelper;
 
 import de.juwimm.cms.beans.SpringPluginServerClassloadingHelper;
 import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
- * 
+ *
  * @author <a href="mailto:j2ee@juwimm.com">Sascha-Matthias Kulawik</a>
  * company Juwi|MacMillan Group GmbH, Walsrode, Germany
  * @version $Id$
@@ -34,12 +35,12 @@ import de.juwimm.cms.search.vo.XmlSearchValue;
 public class XmlDbFactory {
 	private static Logger log = Logger.getLogger(XmlDbFactory.class);
 	private static XmlDb instance = null;
-	
+
 	@Autowired
 	private SpringPluginServerClassloadingHelper springPluginServerClassloadingHelper = null;
-	
+
 	private CqPropertiesBeanSpring cqPropertiesBeanSpring = null;
-	
+
 	@Autowired
 	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
 		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
@@ -48,23 +49,28 @@ public class XmlDbFactory {
 	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
 		return cqPropertiesBeanSpring;
 	}
-	
+
 	public XmlDb getInstance() {
 		if (instance == null) {
 			String clazz = getCqPropertiesBeanSpring().getSearch().getXmlDb();
 			log.info("Resolving XmlDb Instance for class " + clazz);
-			if(clazz == null || "".equals(clazz)) {
+			if (clazz == null || "".equals(clazz)) {
 				log.warn("No useful classname found for XmlDb Search - XmlSearch disabled!");
 				instance = new NullXmlDb();
 			} else {
-				instance = (XmlDb) springPluginServerClassloadingHelper.loadServerClass(clazz);
+				//instance = (XmlDb) springPluginServerClassloadingHelper.loadServerClass(clazz);
+				try {
+					instance = (XmlDb) ClassloadingHelper.getInstance(clazz, cqPropertiesBeanSpring);
+				} catch (Exception exe) {
+					instance = null;
+				}
 			}
 		}
 		return instance;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @author <a href="mailto:j2ee@juwimm.com">Sascha-Matthias Kulawik</a>
 	 * company Juwi|MacMillan Group GmbH, Walsrode, Germany
 	 * @version $Id$
@@ -72,24 +78,24 @@ public class XmlDbFactory {
 	 */
 	private static class NullXmlDb implements XmlDb {
 		private static Logger log = Logger.getLogger(NullXmlDb.class);
-		
+
 		public void deleteXml(Integer siteId, Integer viewComponentId) {
-			if(log.isDebugEnabled()) log.debug("NullXmlDb does not support deleteXml");
+			if (log.isDebugEnabled()) log.debug("NullXmlDb does not support deleteXml");
 		}
 
 		public boolean saveXml(Integer siteId, Integer viewComponentId, String contentText, Map<String, String> metaAttributes) {
-			if(log.isDebugEnabled()) log.debug("NullXmlDb does not support saveXml");
+			if (log.isDebugEnabled()) log.debug("NullXmlDb does not support saveXml");
 			return true;
 		}
 
 		public XmlSearchValue[] searchXml(Integer siteId, String xpathQuery) {
-			if(log.isDebugEnabled()) log.debug("NullXmlDb does not support searchXml");
+			if (log.isDebugEnabled()) log.debug("NullXmlDb does not support searchXml");
 			return new XmlSearchValue[0];
 		}
 
 		public XmlSearchValue[] searchXmlByUnit(Integer unitId, Integer viewDocumentId, String xpathQuery) {
-			if(log.isDebugEnabled()) log.debug("NullXmlDb does not support searchXml");
+			if (log.isDebugEnabled()) log.debug("NullXmlDb does not support searchXml");
 			return new XmlSearchValue[0];
-		}		
+		}
 	}
 }

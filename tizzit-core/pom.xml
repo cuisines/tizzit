@@ -186,6 +186,17 @@
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jci-core</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jci-fam</artifactId>
+			<version>1.0</version>
+		</dependency>
 		<!-- ab hier nicht von Haupt-POM vorgegeben -->
 		
 		<!--test -->

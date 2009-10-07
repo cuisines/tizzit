@@ -15,12 +15,21 @@
  */
 package de.juwimm.cms.beans.foreign;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
-/** 
+/**
  * @author <a href="mailto:sascha-matthias.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
+ * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
  * @version $Id$
- * @since cqcms-core 18.02.2009 
+ * @since cqcms-core 18.02.2009
  */
 public class CqPropertiesBeanSpring {
 	private static final int conquestPropertiesUCSversionNeeded = 30000;
@@ -36,10 +45,10 @@ public class CqPropertiesBeanSpring {
 	private String mailDS;
 	private int version;
 	private String hibernateSqlDialect;
-	private boolean hibernateShowSql; 
+	private boolean hibernateShowSql;
 	private String editionCronExpression;
 	private ClientMailAppenderConfig clientMailAppenderConfig = new ClientMailAppenderConfig();
-	
+
 	public ClientMailAppenderConfig getClientMailAppenderConfig() {
 		return clientMailAppenderConfig;
 	}
@@ -71,11 +80,12 @@ public class CqPropertiesBeanSpring {
 
 	public void setHibernateShowSql(boolean hibernateShowSql) {
 		this.hibernateShowSql = hibernateShowSql;
-	} 
+	}
 
 	private Logfile logfile = new Logfile();
 	private Cocoon cocoon = new Cocoon();
 	private Search search = new Search();
+	private ExternalLib externalLib = new ExternalLib();
 
 	public static class Search {
 		private String luceneStore;
@@ -237,31 +247,36 @@ public class CqPropertiesBeanSpring {
 	}
 
 	public static class ClientMailAppenderConfig {
-		public ClientMailAppenderConfig(){
+		public ClientMailAppenderConfig() {
 		}
-		
+
 		private String SMTPHost;
 		private String from;
 		private String to;
-		
+
 		public String getSMTPHost() {
 			return SMTPHost;
 		}
+
 		public void setSMTPHost(String host) {
 			SMTPHost = host;
 		}
+
 		public String getFrom() {
 			return from;
 		}
+
 		public void setFrom(String from) {
 			this.from = from;
 		}
+
 		public String getTo() {
 			return to;
 		}
+
 		public void setTo(String to) {
 			this.to = to;
-		}		
+		}
 	}
 	public static class Logfile {
 		private String logfileSource = "/conquest/data/log/apache/access.log";
@@ -365,6 +380,89 @@ public class CqPropertiesBeanSpring {
 		}
 	}
 
+	// TODO: Class description
+	/**
+	 *
+	 * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+	 * company Juwi MacMillan Group GmbH, Walsrode, Germany
+	 * @version $Id$
+	 * @since tizzit-core 29.09.2009
+	 */
+	public static class ExternalLib {
+		private String path;
+		private boolean reloadingEnabled;
+
+		/**
+		 * @return the path
+		 */
+		public String getPath() {
+			return path;
+		}
+
+		/**
+		 * @param path the path to set
+		 */
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		/**
+		 * @return the reloadingEnabled
+		 */
+		public boolean isReloadingEnabled() {
+			return reloadingEnabled;
+		}
+
+		/**
+		 * @param reloadingEnabled the reloadingEnabled to set
+		 */
+		public void setReloadingEnabled(boolean reloadingEnabled) {
+			this.reloadingEnabled = reloadingEnabled;
+		}
+
+		public List<File> getFileList() throws Exception {
+			File startFileOrDir = new File(new URI(this.path));
+			validateDirectory(startFileOrDir);
+			List<File> result = getFileList(startFileOrDir);
+			return result;
+		}
+
+		private List<File> getFileList(File startDir) throws Exception {
+			List<File> result = new ArrayList<File>();
+			File[] filesAndDirs = startDir.listFiles();
+			List<File> filesDirs = Arrays.asList(filesAndDirs);
+			for (File file : filesDirs) {
+				if (file.isDirectory()) {
+					//recursive call!
+					result.addAll(getFileList(file));
+				} else {
+					result.add(file);
+				}
+			}
+			return result;
+		}
+
+		public List<URL> getURLList() throws Exception {
+			List<URL> retVal = null;
+
+			List<File> files = this.getFileList();
+			if (files != null && files.size() > 0) {
+				retVal = new ArrayList<URL>(files.size());
+				for (File file : files) {
+					retVal.add(file.toURL());
+				}
+			}
+			return retVal;
+		}
+
+		private void validateDirectory(File directory) throws FileNotFoundException {
+			if (directory == null) { throw new IllegalArgumentException("Directory should not be null."); }
+			if (!directory.exists()) { throw new FileNotFoundException("Directory does not exist: " + directory); }
+			if (!directory.isDirectory()) { throw new IllegalArgumentException("Is not a directory: " + directory); }
+			if (!directory.canRead()) { throw new IllegalArgumentException("Directory cannot be read: " + directory); }
+		}
+	}
+
 	public Logfile getLogfile() {
 		return logfile;
 	}
@@ -372,7 +470,7 @@ public class CqPropertiesBeanSpring {
 	public void setLogfile(Logfile logfile) {
 		this.logfile = logfile;
 	}
-  
+
 	public String getMandatorParent() {
 		return mandatorParent;
 	}
@@ -473,4 +571,17 @@ public class CqPropertiesBeanSpring {
 		return editionCronExpression;
 	}
 
+	/**
+	 * @return the externalLib
+	 */
+	public ExternalLib getExternalLib() {
+		return externalLib;
+	}
+
+	/**
+	 * @param externalLib the externalLib to set
+	 */
+	public void setExternalLib(ExternalLib externalLib) {
+		this.externalLib = externalLib;
+	}
 }

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:security="http://www.springframework.org/schema/security"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:p="http://www.springframework.org/schema/p" xmlns:security="http://www.springframework.org/schema/security" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
 	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
-	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd 
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
 	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
 
@@ -18,25 +16,25 @@
 	<context:component-scan base-package="de.juwimm.cms" />
 
 	<aop:config proxy-target-class="false">
-		<aop:pointcut id="hourCachePointcut" expression="@annotation(de.juwimm.cms.common.annotation.HourCache)" />
-		<aop:pointcut id="webserviceSpring" expression="execution(* de.juwimm.cms.beans.WebServiceSpring+.*(..))" />
-		<aop:pointcut id="clientService" expression="execution(* de.juwimm.cms.remote.ClientServiceSpring+.*(..))" />
-		<aop:pointcut id="contentService" expression="execution(* de.juwimm.cms.remote.ContentServiceSpring+.*(..))" />
-		<aop:pointcut id="editionCronServicePointcut" expression="execution(* de.juwimm.cms.beans.EditionCronService+.*(..))" /> 
+		<aop:pointcut expression="@annotation(de.juwimm.cms.common.annotation.HourCache)" id="hourCachePointcut" />
+		<aop:pointcut expression="execution(* de.juwimm.cms.beans.WebServiceSpring+.*(..))" id="webserviceSpring" />
+		<aop:pointcut expression="execution(* de.juwimm.cms.remote.ClientServiceSpring+.*(..))" id="clientService" />
+		<aop:pointcut expression="execution(* de.juwimm.cms.remote.ContentServiceSpring+.*(..))" id="contentService" />
+		<aop:pointcut expression="execution(* de.juwimm.cms.beans.EditionCronService+.*(..))" id="editionCronServicePointcut" />
 		<aop:advisor advice-ref="nanoCacheInterceptor" pointcut-ref="webserviceSpring" />
 		<aop:advisor advice-ref="hourCacheInterceptor" pointcut-ref="hourCachePointcut" />
 		<aop:advisor advice-ref="noTxAdvice" pointcut-ref="webserviceSpring" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="clientService" />
 		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="contentService" />
-		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="editionCronServicePointcut" /> 
+		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="editionCronServicePointcut" />
 	</aop:config>
 
-	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="false" />
- 
+	<tx:annotation-driven proxy-target-class="false" transaction-manager="transactionManager" />
+
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="*" rollback-for="java.lang.Exception" isolation="READ_COMMITTED" propagation="REQUIRED" />
-			<tx:method name="cronEditionImport*" rollback-for="java.lang.Exception" isolation="SERIALIZABLE"/> 
+			<tx:method isolation="READ_COMMITTED" name="*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+			<tx:method isolation="SERIALIZABLE" name="cronEditionImport*" rollback-for="java.lang.Exception" />
 			<tx:method name="find*" read-only="true" />
 			<tx:method name="get*" read-only="true" />
 		</tx:attributes>
@@ -44,11 +42,11 @@
 
 	<tx:advice id="txTimeoutAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="exportEdition*" rollback-for="java.lang.Exception" isolation="SERIALIZABLE" propagation="REQUIRED" timeout="86400" />
+			<tx:method isolation="SERIALIZABLE" name="exportEdition*" propagation="REQUIRED" rollback-for="java.lang.Exception" timeout="86400" />
 			<tx:method name="getDocument*" timeout="3600" />
 			<tx:method name="getPictureData*" timeout="3600" />
-			<tx:method name="importDocument*" rollback-for="java.lang.Exception" timeout="18000" isolation="SERIALIZABLE" />
-			<tx:method name="importEdition*" rollback-for="java.lang.Exception" timeout="86400" isolation="SERIALIZABLE" />
+			<tx:method isolation="SERIALIZABLE" name="importDocument*" rollback-for="java.lang.Exception" timeout="18000" />
+			<tx:method isolation="SERIALIZABLE" name="importEdition*" rollback-for="java.lang.Exception" timeout="86400" />
 		</tx:attributes>
 	</tx:advice>
 
@@ -58,7 +56,7 @@
 		</tx:attributes>
 	</tx:advice>
 
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+	<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" id="cacheManager">
 		<property name="configLocation">
 			<value>classpath:ehcache-conquest.xml</value>
 		</property>
@@ -66,8 +64,8 @@
 	<!--
 		please note: http://galaxy.andromda.org/forum/viewtopic.php?t=3393
 	-->
-	<bean id="hourCacheInterceptor" class="de.juwimm.cms.common.beans.MethodCacheInterceptor" p:cacheManager-ref="cacheManager" p:defaultCacheName="hourCache" />
-	<bean id="nanoCacheInterceptor" class="de.juwimm.cms.common.beans.MethodCacheInterceptor" p:cacheManager-ref="cacheManager" p:defaultCacheName="nanoCache" />
+	<bean class="de.juwimm.cms.common.beans.MethodCacheInterceptor" id="hourCacheInterceptor" p:cacheManager-ref="cacheManager" p:defaultCacheName="hourCache" />
+	<bean class="de.juwimm.cms.common.beans.MethodCacheInterceptor" id="nanoCacheInterceptor" p:cacheManager-ref="cacheManager" p:defaultCacheName="nanoCache" />
 
 	<!-- **************************************************** -->
 	<!-- ***************** GENERAL BEANS ******************** -->
@@ -75,18 +73,18 @@
 	<context:property-placeholder location="classpath:conquest.properties" />
 	<context:property-override location="classpath:/conquest.properties" />
 
-	<bean id="xmlDbFactory" class="de.juwimm.cms.search.xmldb.XmlDbFactory" lazy-init="true" />
-	<bean id="xmlDb" factory-bean="xmlDbFactory" factory-method="getInstance" lazy-init="true" />
+	<bean class="de.juwimm.cms.search.xmldb.XmlDbFactory" id="xmlDbFactory" lazy-init="true" />
+	<bean factory-bean="xmlDbFactory" factory-method="getInstance" id="xmlDb" lazy-init="true" />
 
-	<bean id="conQuestSqlDaoSpring" class="de.juwimm.cms.beans.foreign.ConQuestSqlDaoSpringImpl">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-	
-	<bean id="blobJdbcDao" class="de.juwimm.cms.beans.BlobJdbcDao">
+	<bean class="de.juwimm.cms.beans.foreign.ConQuestSqlDaoSpringImpl" id="conQuestSqlDaoSpring">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="searchengineService" class="de.juwimm.cms.search.beans.SearchengineService">
+	<bean class="de.juwimm.cms.beans.BlobJdbcDao" id="blobJdbcDao">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean class="de.juwimm.cms.search.beans.SearchengineService" id="searchengineService">
 		<property name="viewComponentHbmDao" ref="viewComponentHbmDao" />
 		<property name="documentHbmDao" ref="documentHbmDao" />
 		<property name="siteHbmDao" ref="siteHbmDao" />
@@ -94,27 +92,23 @@
 		<property name="viewDocumentHbmDao" ref="viewDocumentHbmDao" />
 		<property name="unitHbmDao" ref="unitHbmDao" />
 	</bean>
-	<bean id="searchengineDeleteService" class="de.juwimm.cms.search.beans.SearchengineDeleteService" />
+	<bean class="de.juwimm.cms.search.beans.SearchengineDeleteService" id="searchengineDeleteService" />
 
-	<bean id="cqPropertiesBeanSpring" class="de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring" lazy-init="false" scope="singleton" />
-	<bean id="editionCronService" class="de.juwimm.cms.beans.EditionCronService"
-		p:editionHbmDao-ref="editionHbmDao"
-		p:editionServiceSpring-ref="editionServiceSpring"/>
-	<bean id="searchCronService" class="de.juwimm.cms.beans.SearchCronService"
-		p:searchengineService-ref="searchengineService"
-		p:cqPropertiesBeanSpring-ref="cqPropertiesBeanSpring"
-		p:contentHbmDao-ref="contentHbmDao"
-		p:documentHbmDao-ref="documentHbmDao"/>
-	<bean id="webServiceSpring" class="de.juwimm.cms.beans.WebServiceSpring" />
+	<bean class="de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring" id="cqPropertiesBeanSpring" lazy-init="false" scope="singleton" />
+	<bean class="de.juwimm.cms.beans.EditionCronService" id="editionCronService" p:editionHbmDao-ref="editionHbmDao" p:editionServiceSpring-ref="editionServiceSpring" />
+	<bean class="de.juwimm.cms.beans.SearchCronService" id="searchCronService" p:contentHbmDao-ref="contentHbmDao" p:cqPropertiesBeanSpring-ref="cqPropertiesBeanSpring" p:documentHbmDao-ref="documentHbmDao" p:searchengineService-ref="searchengineService" />
+	<bean class="de.juwimm.cms.beans.WebServiceSpring" id="webServiceSpring" />
+
+	<bean class="org.tizzit.classloading.ClassloadingHelper" id="classloadingHelper" />
 
 	<!-- **************************************************** -->
 	<!-- ******************* JMX BEANS ********************** -->
 	<!-- **************************************************** -->
-	<bean id="jmxBeanSearchengineIndexer" class="de.juwimm.cms.beans.jmx.SearchIndex">
+	<bean class="de.juwimm.cms.beans.jmx.SearchIndex" id="jmxBeanSearchengineIndexer">
 		<property name="enabled" value="%%%cqPropertiesBeanSpring.search.indexerEnabled%%%" />
 	</bean>
 
-	<bean id="searchengineIndexerCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="searchengineIndexerCronTrigger">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 				<property name="targetObject" ref="searchCronService" />
@@ -124,7 +118,7 @@
 		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.search.indexerCronExpression%%%" />
 	</bean>
 
-	<bean id="logfileCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="logfileCronTrigger">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 				<property name="targetObject" ref="logfileServiceSpring" />
@@ -134,7 +128,7 @@
 		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.logfile.cronExpression%%%" />
 	</bean>
 
-	<bean id="editionCronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="editionCronTrigger">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 				<property name="targetObject" ref="editionCronService" />
@@ -161,11 +155,11 @@
 		</bean> Sometimes this wont work on some jboss servers (exposed JMX beans are not found). Maybe some rework needs to be done here. For now the "locateJBoss"
 		is working. http://www.jboss.org/community/wiki/FindMBeanServer
 	-->
-	<bean id="jmxMbeanServer" class="org.jboss.mx.util.MBeanServerLocator" factory-method="locateJBoss" />
+	<bean class="org.jboss.mx.util.MBeanServerLocator" factory-method="locateJBoss" id="jmxMbeanServer" />
 
-	<bean id="jmxAnnotationAttributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+	<bean class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" id="jmxAnnotationAttributeSource" />
 
-	<bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+	<bean class="org.springframework.jmx.export.MBeanExporter" id="jmxExporter" lazy-init="false">
 		<property name="namingStrategy">
 			<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
 				<property name="attributeSource" ref="jmxAnnotationAttributeSource" />
@@ -183,28 +177,28 @@
 	<!-- **************************************************** -->
 	<!-- ****************** COCOON BEANS ******************** -->
 	<!-- **************************************************** -->
-	<bean id="springPluginServerClassloadingHelper" class="de.juwimm.cms.beans.SpringPluginServerClassloadingHelper" />
+	<bean class="de.juwimm.cms.beans.SpringPluginServerClassloadingHelper" id="springPluginServerClassloadingHelper" />
 
-	<bean id="pluginCache" class="de.juwimm.cms.beans.cocoon.PluginCache" scope="singleton" init-method="renewCacheFromDcf" lazy-init="false">
+	<bean class="de.juwimm.cms.beans.cocoon.PluginCache" id="pluginCache" init-method="renewCacheFromDcf" lazy-init="false" scope="singleton">
 		<property name="webServiceSpringBean" ref="webServiceSpring" />
 	</bean>
-	<bean id="pluginCacheAccessorBean" class="de.juwimm.cms.beans.cocoon.PluginCacheAccessor" scope="prototype" />
-	<bean id="pluginCacheAccessorPool" class="org.springframework.aop.target.CommonsPoolTargetSource">
+	<bean class="de.juwimm.cms.beans.cocoon.PluginCacheAccessor" id="pluginCacheAccessorBean" scope="prototype" />
+	<bean class="org.springframework.aop.target.CommonsPoolTargetSource" id="pluginCacheAccessorPool">
 		<property name="targetBeanName">
 			<value>pluginCacheAccessorBean</value>
 		</property>
 	</bean>
-	<bean id="pluginCacheAccessor" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<bean class="org.springframework.aop.framework.ProxyFactoryBean" id="pluginCacheAccessor">
 		<property name="targetSource" ref="pluginCacheAccessorPool" />
 	</bean>
-	<bean id="modifiedDateContentHandler" destroy-method="destroy" class="de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler">
+	<bean class="de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler" destroy-method="destroy" id="modifiedDateContentHandler">
 		<property name="pluginCache" ref="pluginCacheAccessor" />
 		<property name="webSpringBean" ref="webServiceSpring" />
 	</bean>
-	<bean id="flowscriptUtils" class="de.juwimm.cms.cocoon.support.FlowscriptUtils">
+	<bean class="de.juwimm.cms.cocoon.support.FlowscriptUtils" id="flowscriptUtils">
 		<property name="webSpringBean" ref="webServiceSpring" />
 	</bean>
-	<bean id="conquestMail" class="de.juwimm.cms.cocoon.support.ConquestMail" scope="prototype">
+	<bean class="de.juwimm.cms.cocoon.support.ConquestMail" id="conquestMail" scope="prototype">
 		<property name="webSpringBean" ref="webServiceSpring" />
 	</bean>
 </beans>
