@@ -140,24 +140,13 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		return contentVersion;
 	}
 
-//	@Override
-//	protected ContentVersionValue[] handleFindContentVersionsByUnitId(Integer unitId) throws Exception {
-//		Query query = getSession().createQuery("select content.contentVersions from de.juwimm.cms.model.ContentHbm content" +				
-//				" ,de.juwimm.cms.model.ViewComponentHbm viewComponent" +
-//				" where content.contentId = viewComponent.reference and viewComponent.assignedUnit.unitId = :unitId");
-//		query.setParameter("unitId", unitId);
-//		List<ContentVersionHbm> results = query.list();
-//		ContentVersionValue[] returns = new ContentVersionValue[results.size()];
-//		int i=0;
-//		for(ContentVersionHbm contentVersion:results){
-//			returns[i++] = this.getDao(contentVersion);			
-//		}
-//		return returns;
-//	}
-		
-	protected Collection handleFindContentVersionsByViewComponent(Integer unitId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	
+	protected Collection handleFindContentVersionsByViewComponent(Integer viewComponentId) throws Exception {
+		Query query = getSession().createQuery("select content.contentVersions from de.juwimm.cms.model.ContentHbm content" +				
+				" ,de.juwimm.cms.model.ViewComponentHbm viewComponent" +
+				" where content.contentId = viewComponent.reference and viewComponent.viewComponentId = :viewComponentId");
+		query.setParameter("viewComponentId", viewComponentId);
+		return query.list();
 	}
 
 }

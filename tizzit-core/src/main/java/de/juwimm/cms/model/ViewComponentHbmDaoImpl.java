@@ -25,6 +25,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 
@@ -591,13 +592,11 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return this.findByParent(transform, "from de.juwimm.cms.model.ViewComponentHbm v WHERE v.parent.viewComponentId = ?", vcId);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleFindRootViewComponent4Unit(java.lang.Integer)
-	 */
 	@Override
-	protected ViewComponentValue handleFindRootViewComponent4Unit(Integer unitId)
-			throws Exception {		
-		return null;
+	protected java.util.Collection handleFindRootViewComponents4Unit(Integer unitId)throws Exception {		
+		Query query = getSession().createQuery("from de.juwimm.cms.model.ViewComponentHbm v where v.assignedUnit.unitId = :unitId");
+		query.setParameter("unitId", unitId);		
+		return query.list();
 	}
 
 }
