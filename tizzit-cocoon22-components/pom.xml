@@ -47,6 +47,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-core</artifactId>
@@ -64,6 +65,7 @@
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-sitemap-impl</artifactId>
       <version>1.0.0-pl2</version>
+      <!-- fix bamboo builds -->
       <exclusions>
         <exclusion>
           <groupId>org.apache.cocoon</groupId>
@@ -75,6 +77,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- fix bamboo builds -->
     <dependency>
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-sitemap-api</artifactId>
@@ -85,6 +88,8 @@
       <artifactId>cocoon-pipeline-impl</artifactId>
       <version>1.0.0</version>
     </dependency>
+
+
     <dependency>
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-store-impl</artifactId>
