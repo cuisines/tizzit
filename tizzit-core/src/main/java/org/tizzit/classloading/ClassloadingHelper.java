@@ -11,7 +11,6 @@
 package org.tizzit.classloading;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.tizzit.classloading.tools.rcl.wrapper.servlet.ReloadingClassloaderManager;
 
 import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
 
