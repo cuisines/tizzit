@@ -70,4 +70,15 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 		}
 
 	}
+
+	@Override
+	protected void handleDeletePictures(Integer[] ids) throws Exception {
+		if(ids == null || ids.length == 0){
+			return;
+		}		
+		for(Integer pictureId:ids){
+			remove(pictureId);
+		}
+		
+	}
 }

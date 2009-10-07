@@ -1854,4 +1854,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		return getViewServiceSpring().copyViewComponentsToParent(parentId, viewComponentsIds, position);
 
 	}
+
+	@Override
+	protected void handleRemoveResources(Integer[] picturesIds,
+			Integer[] documentsIds) throws Exception {
+		getContentServiceSpring().removeResources(picturesIds,documentsIds);
+		
+	}
 }

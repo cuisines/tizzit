@@ -69,7 +69,6 @@ import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.UnitValue;
-import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
@@ -1488,6 +1487,16 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		} catch (Exception e) {
 			throw new UserException(e.getMessage(), e);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleRemoveResources(java.lang.Integer[], java.lang.Integer[])
+	 */
+	@Override
+	protected void handleRemoveResources(Integer[] pictureIds,
+			Integer[] documentsIds) throws Exception {
+		getDocumentHbmDao().deleteDocuments(documentsIds);
+		getPictureHbmDao().deletePictures(pictureIds);
 	}
 
 }
