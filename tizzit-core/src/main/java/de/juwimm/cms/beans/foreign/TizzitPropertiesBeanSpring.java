@@ -15,9 +15,15 @@
  */
 package de.juwimm.cms.beans.foreign;
 
-import org.apache.log4j.Logger;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring.ExternalLib;
+import org.apache.log4j.Logger;
 
 /** 
  * @author <a href="mailto:sascha-matthias.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -161,6 +167,89 @@ public class TizzitPropertiesBeanSpring {
 
 		public void setXindicePort(String xindicePort) {
 			this.xindicePort = xindicePort;
+		}
+	}
+
+	// TODO: Class description
+	/**
+	 *
+	 * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+	 * company Juwi MacMillan Group GmbH, Walsrode, Germany
+	 * @version $Id: CqPropertiesBeanSpring.java 369 2009-10-07 19:10:56Z eduard.siebert@online.de $
+	 * @since tizzit-core 29.09.2009
+	 */
+	public static class ExternalLib {
+		private String path;
+		private boolean reloadingEnabled;
+
+		/**
+		 * @return the path
+		 */
+		public String getPath() {
+			return path;
+		}
+
+		/**
+		 * @param path the path to set
+		 */
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		/**
+		 * @return the reloadingEnabled
+		 */
+		public boolean isReloadingEnabled() {
+			return reloadingEnabled;
+		}
+
+		/**
+		 * @param reloadingEnabled the reloadingEnabled to set
+		 */
+		public void setReloadingEnabled(boolean reloadingEnabled) {
+			this.reloadingEnabled = reloadingEnabled;
+		}
+
+		public List<File> getFileList() throws Exception {
+			File startFileOrDir = new File(new URI(this.path));
+			validateDirectory(startFileOrDir);
+			List<File> result = getFileList(startFileOrDir);
+			return result;
+		}
+
+		private List<File> getFileList(File startDir) throws Exception {
+			List<File> result = new ArrayList<File>();
+			File[] filesAndDirs = startDir.listFiles();
+			List<File> filesDirs = Arrays.asList(filesAndDirs);
+			for (File file : filesDirs) {
+				if (file.isDirectory()) {
+					//recursive call!
+					result.addAll(getFileList(file));
+				} else {
+					result.add(file);
+				}
+			}
+			return result;
+		}
+
+		public List<URL> getURLList() throws Exception {
+			List<URL> retVal = null;
+
+			List<File> files = this.getFileList();
+			if (files != null && files.size() > 0) {
+				retVal = new ArrayList<URL>(files.size());
+				for (File file : files) {
+					retVal.add(file.toURL());
+				}
+			}
+			return retVal;
+		}
+
+		private void validateDirectory(File directory) throws FileNotFoundException {
+			if (directory == null) { throw new IllegalArgumentException("Directory should not be null."); }
+			if (!directory.exists()) { throw new FileNotFoundException("Directory does not exist: " + directory); }
+			if (!directory.isDirectory()) { throw new IllegalArgumentException("Is not a directory: " + directory); }
+			if (!directory.canRead()) { throw new IllegalArgumentException("Directory cannot be read: " + directory); }
 		}
 	}
 
