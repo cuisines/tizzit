@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:p="http://www.springframework.org/schema/p" xmlns:security="http://www.springframework.org/schema/security" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd"> 
+	
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	    <property name="ignoreResourceNotFound" value="true"/>
+	    <property name="locations">
+	      <list>
+	        <value>classpath:/tizzit-liveserver.properties</value>
+	      </list>
+	    </property>
+	    <property name="systemPropertiesModeName">
+	      <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
+	    </property>
+  	</bean>
 
-<beans>
-    <!--
-        Modified for ConQuest to support  de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter.
-        All other available exports (hessian, rmi, burlap) has been removed.
-        Some other errors regarding  <bean id="remoteRemoteAuthenticationManagerService" fixed.
-    -->
-    <!-- ========================= Start of BEAN POSTPROCESSORS ======================== -->
-
-    <!-- bean id="propertyPlaceholderConfigurer"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location">
-            <value>classpath:applicationContext-import-remoteServices.properties</value>
-        </property>        
-        <property name="systemPropertiesModeName">
-            <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
-        </property>        
-    </bean-->
-
-    <!-- ========================= End of BEAN POSTPROCESSORS ========================== -->
-
-
-    <!-- ========================= Start of SERVICE DEFINITIONS ========================= -->
-
-    <!-- AuthorizationServiceSpring Remote Service Local Proxy with inner AuthorizationServiceSpring Remote Service invoker -->
     <bean id="authorizationServiceDeploySpring" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
             <bean class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
-                <property name="serviceUrl"><value>http://${cq.remoteServer}:${cq.remotePort}/${cq.remoteContext}/authorizationServiceDeploySpring</value></property>
+                <property name="serviceUrl"><value>http://${tizzit-liveserver.}:${tizzit-liveserver.remotePort}/remote/authorizationServiceDeploySpring</value></property>
                 <property name="serviceInterface"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
                 <property name="httpInvokerRequestExecutor">
                     <ref local="httpInvokerRequestExecutor"/>

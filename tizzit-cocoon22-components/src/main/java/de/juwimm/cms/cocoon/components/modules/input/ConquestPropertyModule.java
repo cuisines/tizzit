@@ -117,7 +117,7 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 					loadConquestProperties();
 				}
 			} catch (URISyntaxException e) {
-				log.error("URI Syntax for conquest.properties file is wrong", e);
+				log.error("URI Syntax for tizzit.properties file is wrong", e);
 			}
 		}
 		if (log.isDebugEnabled()) log.debug("end load");

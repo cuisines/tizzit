@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 
 /**
- * Helper to configure Compass with values from conquest.properties
+ * Helper to configure Compass with values from tizzit.properties
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a> , Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
  */

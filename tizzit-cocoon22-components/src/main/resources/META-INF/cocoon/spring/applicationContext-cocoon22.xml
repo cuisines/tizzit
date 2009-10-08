@@ -38,5 +38,5 @@
   <import resource="classpath:applicationContext.xml" />
   <import resource="classpath:applicationContext-compass.xml" />
   <import resource="classpath:applicationContext-server-authentication.xml" />
-  <import resource="classpath:applicationContext-ds.xml" />
+  <import resource="classpath:applicationContext-ds.xml" /> 
 </beans>

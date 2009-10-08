@@ -70,8 +70,8 @@
 	<!-- **************************************************** -->
 	<!-- ***************** GENERAL BEANS ******************** -->
 	<!-- **************************************************** -->
-	<context:property-placeholder location="classpath:conquest.properties" />
-	<context:property-override location="classpath:/conquest.properties" />
+	<context:property-placeholder location="classpath:tizzit.properties" />
+	<context:property-override location="classpath:/tizzit.properties" />
 
 	<bean class="de.juwimm.cms.search.xmldb.XmlDbFactory" id="xmlDbFactory" lazy-init="true" />
 	<bean factory-bean="xmlDbFactory" factory-method="getInstance" id="xmlDb" lazy-init="true" />
@@ -127,11 +127,21 @@
 		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.logfile.cronExpression%%%" />
 	</bean>
 
-	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="editionCronTrigger">
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="editionCronDeployTrigger">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 				<property name="targetObject" ref="editionCronService" />
 				<property name="targetMethod" value="cronEditionDeploy" />
+			</bean>
+		</property>
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="editionCronImportTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="editionCronService" />
+				<property name="targetMethod" value="cronEditionImport" />
 			</bean>
 		</property>
 		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
@@ -142,7 +152,8 @@
 			<list>
 				<ref bean="logfileCronTrigger" />
 				<ref bean="searchengineIndexerCronTrigger" />
-				<ref bean="editionCronTrigger" />
+				<ref bean="editionCronDeployTrigger" />
+				<ref bean="editionCronImportTrigger" />
 			</list>
 		</property>
 	</bean>

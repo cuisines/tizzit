@@ -1570,9 +1570,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				HttpClient client = hcw.getNewHttpClient();
 				hcw.setHostConfiguration(client, new URL(soapURL));
 
-				System.setProperty("cq.remoteServer", client.getHostConfiguration().getHost() + "");
-				System.setProperty("cq.remotePort", client.getHostConfiguration().getPort() + "");
-				System.setProperty("cq.remoteContext", "remote");
+				System.setProperty("tizzit-liveserver.remoteServer", client.getHostConfiguration().getHost() + "");
+				System.setProperty("tizzit-liveserver.remotePort", client.getHostConfiguration().getPort() + ""); 
 
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
@@ -1587,25 +1586,17 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				//				ddssStub.setTimeout(1000 * 60 * 60 * 6);
 
 				if (log.isDebugEnabled()) log.debug("Adding Attachment to Message Call");
-
+				if(true) return;
+				
+				
 				//TODO: create a inputstream from edition data to send to server
 				InputStream fis = new BufferedInputStream(new FileInputStream(edition.getEditionFileName()));
 
-				UnitHbm unit = null;
-				ViewDocumentHbm viewDocument = null;
-				try {
-					unit = super.getUnitHbmDao().load(Integer.valueOf(unitId));
-					viewDocument = super.getViewDocumentHbmDao().load(Integer.valueOf(viewDocumentId));
-				} catch (Exception e) {
-					log.error("error while loading unit/viewDocument.", e);
-				}
-				if ((unit != null) && (viewDocument != null)) {
-					info = "Site: \"" + unit.getSite().getShortName().trim() + "\" Unit: \"" + unit.getName().trim() + "\" Lang: \"" + viewDocument.getLanguage().trim() + "\"";
-				}
+		 
 				log.info("Starting transfer to Liveserver - " + info);
 				//				ddssStub.liveDeployment(unitId, viewDocumentId);
-				ClientServiceSpring clientServiceSpring = RemoteServiceLocator.instance().getClientServiceSpring();
-				clientServiceSpring.importEditionFromImport(fis, viewDocument.getViewComponent().getViewComponentId());
+				//ClientServiceSpring clientServiceSpring = RemoteServiceLocator.instance().getClientServiceSpring();
+				//clientServiceSpring.importEditionFromImport(fis, viewDocument.getViewComponent().getViewComponentId());
 
 				log.info("Liveserver has finished deploy - " + info);
 				try {
