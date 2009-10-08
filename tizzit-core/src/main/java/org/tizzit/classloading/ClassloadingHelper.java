@@ -42,8 +42,8 @@ public class ClassloadingHelper {
 		return ReloadingClassloaderManager.getClassLoader(this.tizzitPropertiesBeanSpring).loadClass(clazz);
 	}
 
-	public static Class< ? > loadClass(String clazzName, TizzitPropertiesBeanSpring cqPropertiesBeanSpring) throws Exception {
-		return ClassloadingHelper.loadClass(clazzName, ReloadingClassloaderManager.getClassLoader(cqPropertiesBeanSpring));
+	public static Class< ? > loadClass(String clazzName, TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) throws Exception {
+		return ClassloadingHelper.loadClass(clazzName, ReloadingClassloaderManager.getClassLoader(tizzitPropertiesBeanSpring));
 	}
 
 	public static Class< ? > loadClass(String clazzName, ClassLoader classLoader) throws Exception {

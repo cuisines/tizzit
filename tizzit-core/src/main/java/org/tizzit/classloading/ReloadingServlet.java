@@ -63,7 +63,7 @@ public class ReloadingServlet extends HttpServlet {
 
 		if (tizzitPropertiesBeanSpring == null) {
 			WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(this.context);
-			tizzitPropertiesBeanSpring = (TizzitPropertiesBeanSpring) webApplicationContext.getBean("cqPropertiesBeanSpring");
+			tizzitPropertiesBeanSpring = (TizzitPropertiesBeanSpring) webApplicationContext.getBean("tizzitPropertiesBeanSpring");
 		}
 
 		String servletName = config.getInitParameter("servlet-class");
