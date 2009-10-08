@@ -175,7 +175,7 @@ public class TizzitPropertiesBeanSpring {
 	 *
 	 * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
 	 * company Juwi MacMillan Group GmbH, Walsrode, Germany
-	 * @version $Id: CqPropertiesBeanSpring.java 369 2009-10-07 19:10:56Z eduard.siebert@online.de $
+	 * @version $Id: TizzitPropertiesBeanSpring.java 369 2009-10-07 19:10:56Z eduard.siebert@online.de $
 	 * @since tizzit-core 29.09.2009
 	 */
 	public static class ExternalLib {
