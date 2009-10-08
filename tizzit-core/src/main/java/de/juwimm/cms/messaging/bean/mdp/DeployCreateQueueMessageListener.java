@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.model.UserHbmDao;
 import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.remote.EditionServiceSpring;
 
@@ -44,16 +44,16 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 	private EditionServiceSpring editionService = null;
 	private AuthorizationServiceSpring authorizationService = null;
 	private UserHbmDao userHbmDao = null;
-	private UserHbm user = null;
-	private SiteHbm previousSite = null;
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private final UserHbm user = null;
+	private final SiteHbm previousSite = null;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
 	public void setEditionServiceSpring(EditionServiceSpring editionService) {
@@ -83,21 +83,17 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 		String messageType = "";
 		try {
 			messageType = message.getJMSType();
-	 
 
-		//	if (messageType.equalsIgnoreCase(MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY)) {
-				createLiveEdition(message);
+			//	if (messageType.equalsIgnoreCase(MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY)) {
+			createLiveEdition(message);
 
-		//	}
+			//	}
 
 		} catch (Exception exe) {
 			log.error("Error occured in onMessage doing " + messageType + ": ", exe);
 		}
 		log.debug("Finished queue with Job: " + id);
 	}
-
-
- 
 
 	private void createLiveEdition(Message message) {
 		try {
@@ -107,15 +103,15 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 			boolean deploy = message.getBooleanProperty("deploy");
 			boolean showMessage = Boolean.parseBoolean(message.getStringProperty("showMessage"));
 			Integer siteId = new Integer(message.getStringProperty("siteId"));
-			
- 			editionService.createLiveDeploy(userName, comment, rootViewComponentId, deploy, showMessage);
+
+			editionService.createLiveDeploy(userName, comment, rootViewComponentId, deploy, showMessage);
 			//createLiveDeploy(userName, comment, rootViewComponentId, deploy, showMessage);
 			//restoreUserState();
 		} catch (Exception exe) {
 			log.error("Error occured in CreateLiveEditionPrivilegedAction: ", exe);
 		}
 	}
-	
+
 	/*
 	private void createLiveDeploy(String userName, String comment, Integer rootViewComponentId, boolean deploy, boolean showMessage) throws Exception {
 		if (rootViewComponentId != null) {
@@ -193,6 +189,5 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 		}
 	}
 	*/
- 
 
 }

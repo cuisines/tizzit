@@ -38,8 +38,8 @@ import de.juwimm.cms.vo.SiteValue;
 // TODO: verify behavior
 // TODO: verify class comment
 /**
- * @Deprecated TODO After switching to Cocoon 2.2 this should be implemented by resolving CqPropertiesBeanSpring
- * Provides the conquest.properties functionality for ConQuest 2.2 systems
+ * @Deprecated TODO After switching to Cocoon 2.2 this should be implemented by resolving TizzitPropertiesBeanSpring
+ * Provides the tizzit.properties functionality for Tizzit 2.2 systems
  * with a synthetic Cocoon deployment.
  *
  * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
@@ -50,11 +50,11 @@ import de.juwimm.cms.vo.SiteValue;
 public class TizzitPropertyModule extends AbstractJXPathModule implements InputModule, ThreadSafe {
 	private static final Log log = LogFactory.getLog(TizzitPropertyModule.class);
 
-	private static final String PROPERTIES_FILENAME = "conquest.properties";
+	private static final String PROPERTIES_FILENAME = "tizzit.properties";
 	private Properties prop;
 	private long lastLoadTime = -1L;
 	private WebServiceSpring webSpringBean = null;
-	private long lastLoadTimeConquestProperties = -1L;
+	private long lastLoadTimeTizzitProperties = -1L;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -92,7 +92,7 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 				this.instantiateWebServiceSpringBean(objectModel);
 				this.load();
 				result = super.getAttribute(name, modeConf, objectModel);
-			} 
+			}
 		}
 		if (log.isDebugEnabled()) log.debug("getAttribute() -> end");
 		return result;
@@ -113,11 +113,11 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 				this.prop = new Properties();
 				InputStream is = this.getClass().getClassLoader().getResourceAsStream(TizzitPropertyModule.PROPERTIES_FILENAME);
 				if (is == null) {
-					super.getLogger().warn("Unable to load \"" + TizzitPropertyModule.PROPERTIES_FILENAME + "\" for ConquestPropertyModule!");
+					super.getLogger().warn("Unable to load \"" + TizzitPropertyModule.PROPERTIES_FILENAME + "\" for TizzitPropertyModule!");
 				} else {
 					this.prop.load(is);
 				}
-				this.loadConquestProperties();
+				this.loadTizzitProperties();
 				this.loadSiteProperties();
 			} catch (Exception ex) {
 				log.error("an unknown Exception ", ex);
@@ -125,17 +125,17 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 
 			this.lastLoadTime = System.currentTimeMillis();
 		} else {
-			// load variables from conquest.properties
+			// load variables from tizzit.properties
 			URL url = this.getClass().getResource("/" + PROPERTIES_FILENAME);
 			File f;
 			try {
 				f = new File(url.toURI());
-				if (lastLoadTimeConquestProperties < f.lastModified()) {
-					lastLoadTimeConquestProperties = f.lastModified();
-					loadConquestProperties();
+				if (lastLoadTimeTizzitProperties < f.lastModified()) {
+					lastLoadTimeTizzitProperties = f.lastModified();
+					loadTizzitProperties();
 				}
 			} catch (URISyntaxException e) {
-				log.error("URI Syntax for conquest.properties file is wrong", e);
+				log.error("URI Syntax for tizzit.properties file is wrong", e);
 			}
 		}
 
@@ -153,7 +153,7 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 				String defaultLaguage = this.webSpringBean.getDefaultLanguage(site.getSiteId());
 				prop.put("mandator-id-" + site.getShortName(), site.getSiteId());
 				prop.put("default-language-" + site.getShortName(), defaultLaguage);
-				if (!Boolean.parseBoolean(prop.get("cqPropertiesBeanSpring.liveserver").toString())) {
+				if (!Boolean.parseBoolean(prop.get("tizzitPropertiesBeanSpring.liveserver").toString())) {
 					prop.put("expires-" + site.getShortName(), "0");
 				} else {
 					prop.put("expires-" + site.getShortName(), site.getCacheExpire());
@@ -167,17 +167,17 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 		if (log.isDebugEnabled()) log.debug("loadSiteProperties() -> end");
 	}
 
-	private void loadConquestProperties() {
-		if (log.isDebugEnabled()) log.debug("loadConquestProperties() -> begin");
+	private void loadTizzitProperties() {
+		if (log.isDebugEnabled()) log.debug("loadTizzitProperties() -> begin");
 		InputStream is = this.getClass().getResourceAsStream("/" + PROPERTIES_FILENAME);
 		try {
 			prop.load(is);
-			System.setProperty("cqCmsTemplatesPath", prop.get("cqPropertiesBeanSpring.cmsTemplatesPath").toString());
-			System.setProperty("cqLiveserver", prop.get("cqPropertiesBeanSpring.liveserver").toString());
+			System.setProperty("tizzitCmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
+			System.setProperty("tizzitLiveserver", prop.get("tizzitPropertiesBeanSpring.liveserver").toString());
 		} catch (Exception exe) {
 			log.warn("Unable to load props from \"" + PROPERTIES_FILENAME + "\"!");
 		}
-		if (log.isDebugEnabled()) log.debug("loadConquestProperties() -> end");
+		if (log.isDebugEnabled()) log.debug("loadTizzitProperties() -> end");
 	}
 
 	@SuppressWarnings("unchecked")

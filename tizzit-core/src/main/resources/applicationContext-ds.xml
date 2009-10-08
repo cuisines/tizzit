@@ -10,7 +10,7 @@
 
 	<!-- HIBERNATE -->
 	<jee:jndi-lookup id="dataSource"
-		jndi-name="%%%cqPropertiesBeanSpring.datasource%%%"> 
+		jndi-name="%%%tizzitPropertiesBeanSpring.datasource%%%"> 
 	</jee:jndi-lookup>
 
 </beans>

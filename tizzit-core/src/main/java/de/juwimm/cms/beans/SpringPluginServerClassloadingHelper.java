@@ -6,30 +6,30 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.classloading.PluginServerClassloadingHelper;
 
 public class SpringPluginServerClassloadingHelper extends PluginServerClassloadingHelper {
 	private static Logger log = Logger.getLogger(SpringPluginServerClassloadingHelper.class);
 	@Autowired
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
 	private URL[] urls = null;
-	
+
 	/**
 	 * This is the loader for all extension points
 	 * @param clazzName
 	 * @return
 	 */
 	public Object loadServerClass(String clazzName) {
-		if (log.isDebugEnabled()){
-			log.debug("loadServerClass - with parameter: "+clazzName);
+		if (log.isDebugEnabled()) {
+			log.debug("loadServerClass - with parameter: " + clazzName);
 			log.debug("Thread " + Thread.currentThread().getId() + " \"" + Thread.currentThread().getName() + "\": ");
 		}
 		try {
-			if(urls == null) {
-				String parentDir = cqPropertiesBeanSpring.getCocoon().getComponentLibrariesParent() + File.separatorChar + "server" + File.separatorChar;
-				log.info("The ConQuest server starts caching the plugin extensions from " + parentDir);
+			if (urls == null) {
+				String parentDir = tizzitPropertiesBeanSpring.getCocoon().getComponentLibrariesParent() + File.separatorChar + "server" + File.separatorChar;
+				log.info("The Tizzit server starts caching the plugin extensions from " + parentDir);
 				File dir = new File(parentDir.substring(7));
 				File[] files = dir.listFiles();
 				urls = new URL[files.length];

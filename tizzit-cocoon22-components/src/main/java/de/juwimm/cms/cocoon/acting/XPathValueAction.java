@@ -110,7 +110,7 @@ import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
  * @since ConQuest 2.0
  */
 public class XPathValueAction extends AbstractAction implements CacheableProcessingComponent, Poolable {
-	private Logger log = Logger.getLogger(XPathValueAction.class);
+	private final Logger log = Logger.getLogger(XPathValueAction.class);
 	private boolean iAmTheLiveserver = false;
 	private WebServiceSpring webSpringBean = null;
 	private Serializable uniqueKey;
@@ -197,8 +197,7 @@ public class XPathValueAction extends AbstractAction implements CacheableProcess
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("An unknown error occured " + exe.getMessage());
 		}
-		if (contentDoc == null) { throw new ResourceNotFoundException("Could not find resource with viewComponentId " + viewComponentId);
-		}
+		if (contentDoc == null) { throw new ResourceNotFoundException("Could not find resource with viewComponentId " + viewComponentId); }
 		if (log.isDebugEnabled()) log.debug("finished acting");
 
 		return sitemapParams;

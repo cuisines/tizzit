@@ -2,14 +2,12 @@ package de.juwimm.cms.beans;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.DocumentHbm;
@@ -22,13 +20,13 @@ public class SearchCronService {
 	private boolean cronIsRunning = false;
 
 	private SearchengineService searchengineService;
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 	private ContentHbmDao contentHbmDao;
 	private DocumentHbmDao documentHbmDao;
 
 	@SuppressWarnings("unchecked")
 	public void cronRunSearchIndexer() throws Exception {
-		if (!cqPropertiesBeanSpring.getSearch().isIndexerEnabled()) {
+		if (!tizzitPropertiesBeanSpring.getSearch().isIndexerEnabled()) {
 			log.info("Cron SearchIndex has been invoked but indexer is disabled");
 			return;
 		}
@@ -70,8 +68,8 @@ public class SearchCronService {
 		this.searchengineService = searchengineService;
 	}
 
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
 	public void setContentHbmDao(ContentHbmDao contentHbmDao) {

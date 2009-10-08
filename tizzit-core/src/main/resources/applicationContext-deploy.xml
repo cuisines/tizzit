@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <!--
+        Modified for ConQuest to support  de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerServiceExporter.
+        All other available exports (hessian, rmi, burlap) has been removed.
+        Some other errors regarding  <bean id="remoteRemoteAuthenticationManagerService" fixed.
+    -->
+    <!-- ========================= Start of BEAN POSTPROCESSORS ======================== -->
+
+    <bean id="propertyPlaceholderConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>classpath:applicationContext-import-remoteServices.properties</value>
+        </property>        
+        <property name="systemPropertiesModeName">
+            <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
+        </property>        
+    </bean>
+
+    <!-- ========================= End of BEAN POSTPROCESSORS ========================== -->
+
+
+    <!-- ========================= Start of SERVICE DEFINITIONS ========================= -->
+
+    <!-- AuthorizationServiceSpring Remote Service Local Proxy with inner AuthorizationServiceSpring Remote Service invoker -->
+    <bean id="authorizationServiceDeploySpring" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
+                <property name="serviceUrl"><value>http://${cq.remoteServer}:${cq.remotePort}/${cq.remoteContext}/authorizationServiceDeploySpring</value></property>
+                <property name="serviceInterface"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
+                <property name="httpInvokerRequestExecutor">
+                    <ref local="httpInvokerRequestExecutor"/>
+                </property>
+            </bean>
+        </property>
+        <property name="proxyInterfaces"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
+    </bean>
+
+    
+
+    <!-- ========================= End of SERVICE DEFINITIONS ========================= -->
+
+</beans>

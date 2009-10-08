@@ -10,8 +10,8 @@
 	</bean>
 	
 	<bean id="compassSettings" class="de.juwimm.cms.search.compass.CompassSettings" lazy-init="false" scope="singleton">
-		<constructor-arg><value>%%%cqPropertiesBeanSpring.hibernateSqlDialect%%%</value></constructor-arg>
-		<constructor-arg><ref bean="cqPropertiesBeanSpring"/></constructor-arg>
+		<constructor-arg><value>%%%tizzitPropertiesBeanSpring.hibernateSqlDialect%%%</value></constructor-arg>
+		<constructor-arg><ref bean="tizzitPropertiesBeanSpring"/></constructor-arg>
 	</bean>
 	
 	<!--

@@ -16,7 +16,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 
 /**
  *
@@ -34,14 +34,14 @@ public class ReloadingClassloaderManager {
 		// only allow static usage
 	}
 
-	public static synchronized ClassLoader getClassLoader(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
+	public static synchronized ClassLoader getClassLoader(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
 		// if there is no classloader, create one
 		if (ReloadingClassloaderManager.reloadingClassloader == null) {
 
 			// create the URL classloader
-			final ClassLoader urlClassloader = createExternalLibClassLoader(cqPropertiesBeanSpring);
+			final ClassLoader urlClassloader = createExternalLibClassLoader(tizzitPropertiesBeanSpring);
 			// check, if the reloading classloader should be used
-			if (isReloadingClassloaderEnabled(cqPropertiesBeanSpring)) {
+			if (isReloadingClassloaderEnabled(tizzitPropertiesBeanSpring)) {
 				log.warn("Reloading is not yet implemented!");
 				ReloadingClassloaderManager.reloadingClassloader = urlClassloader;
 			} else {
@@ -51,12 +51,12 @@ public class ReloadingClassloaderManager {
 		return ReloadingClassloaderManager.reloadingClassloader;
 	}
 
-	protected static ClassLoader createExternalLibClassLoader(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		String externalLibPath = cqPropertiesBeanSpring.getExternalLib().getPath();
+	protected static ClassLoader createExternalLibClassLoader(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		String externalLibPath = tizzitPropertiesBeanSpring.getExternalLib().getPath();
 		try {
 			URL[] urls = null;
 
-			List<URL> urlList = cqPropertiesBeanSpring.getExternalLib().getURLList();
+			List<URL> urlList = tizzitPropertiesBeanSpring.getExternalLib().getURLList();
 			if (urlList != null && urlList.size() > 0) {
 				urls = new URL[urlList.size()];
 				urlList.toArray(urls);
@@ -69,7 +69,7 @@ public class ReloadingClassloaderManager {
 		}
 	}
 
-	protected static boolean isReloadingClassloaderEnabled(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		return cqPropertiesBeanSpring.getExternalLib().isReloadingEnabled();
+	protected static boolean isReloadingClassloaderEnabled(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		return tizzitPropertiesBeanSpring.getExternalLib().isReloadingEnabled();
 	}
 }

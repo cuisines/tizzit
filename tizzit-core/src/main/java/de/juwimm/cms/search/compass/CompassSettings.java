@@ -19,7 +19,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 
 /**
  * Helper to configure Compass with values from conquest.properties
@@ -28,28 +28,27 @@ import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
  */
 public class CompassSettings extends Properties {
 	private static final long serialVersionUID = 1834535436381958163L;
-	private Logger log = Logger.getLogger(CompassSettings.class);
+	private final Logger log = Logger.getLogger(CompassSettings.class);
 	private String hibernateDialect = null;
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
-	public CompassSettings(String hibernateDialect, CqPropertiesBeanSpring cqPropertiesBeanSpring) {
+	public CompassSettings(String hibernateDialect, TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
 		super();
 		this.hibernateDialect = hibernateDialect;
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
-		String luceneStore = getCqPropertiesBeanSpring().getSearch().getLuceneStore();
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
+		String luceneStore = getTizzitPropertiesBeanSpring().getSearch().getLuceneStore();
 		if ("luceneFile".equalsIgnoreCase(luceneStore)) {
-			String filePath = getCqPropertiesBeanSpring().getDatadir();
+			String filePath = getTizzitPropertiesBeanSpring().getDatadir();
 			filePath += "/" + "search";
-			if(!filePath.startsWith("file://"))
-			{
+			if (!filePath.startsWith("file://")) {
 				filePath = "file://" + filePath;
 			}
 			log.info("using filesystem to store searchindex: " + filePath);
 			super.put("compass.engine.connection", filePath);
 			super.put("compass.engine.store.lockFactory.type", "nativefs");
 		} else {
-			String dataSource = getCqPropertiesBeanSpring().getSearch().getSearchDataSource();
-			if (dataSource == null) dataSource = getCqPropertiesBeanSpring().getSearch().getXmlDatasource();
+			String dataSource = getTizzitPropertiesBeanSpring().getSearch().getSearchDataSource();
+			if (dataSource == null) dataSource = getTizzitPropertiesBeanSpring().getSearch().getXmlDatasource();
 			log.info("using database to store searchindex: " + dataSource);
 			super.put("compass.engine.store.jdbc.connection.provider.class", "org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider");
 			// FIXME why does this not work properly?
@@ -67,16 +66,15 @@ public class CompassSettings extends Properties {
 		super.put("compass.engine.queryParser.default.defaultOperator", "AND");
 		super.put("compass.engine.optimizer.schedule.period", "300");
 		// super.put("compass.engine.analyzer.default.name", "German2");
-		
 
 	}
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
 	private String getJdbcDialect() {

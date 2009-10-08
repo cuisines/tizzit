@@ -20,16 +20,28 @@
  */
 package de.juwimm.cms.beans;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring.Logfile;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.beans.vo.LogfileValue;
 import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.SiteHbm;
@@ -49,21 +61,21 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 	private static final String NO_RUNNER = "null";
 	private HashMap<String, Integer> pathCache = new HashMap<String, Integer>();
 	private HashMap<String, Integer> siteCache = new HashMap<String, Integer>();
-	private HashMap<Integer, Collection<HostValue>> hostsCache = new HashMap<Integer, Collection<HostValue>>();
-	private LogfileValue logfileValue = new LogfileValue();
+	private final HashMap<Integer, Collection<HostValue>> hostsCache = new HashMap<Integer, Collection<HostValue>>();
+	private final LogfileValue logfileValue = new LogfileValue();
 	private boolean processRunning = false;
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring = null;
-	
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring = null;
+
 	@Autowired
 	private WebServiceSpring webServiceSpring;
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
-		Logfile lfv = getCqPropertiesBeanSpring().getLogfile();
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
+		de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring.Logfile lfv = getTizzitPropertiesBeanSpring().getLogfile();
 		this.logfileValue.setLogfileSource(lfv.getLogfileSource());
 		this.logfileValue.setLogfileDestDir(lfv.getLogfileDestDir());
 		this.logfileValue.setPurgeLogfileDestDirOnExit(lfv.isPurgeLogfileDestDirOnExit());
@@ -442,7 +454,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 						cmdArr[9] = "\"Statistik f\u00FCr " + unitName + " auf Server\"";
 						cmdArr[10] = this.fileName;
 						cmdArr[11] = ">>";
-						cmdArr[12] = logfileValue.getScriptName().charAt(0) + ":\\conquest\\data\\log\\webalizer\\webalizer.log";
+						cmdArr[12] = logfileValue.getScriptName().charAt(0) + ":\\tizzit\\data\\log\\webalizer\\webalizer.log";
 						cmdArr[13] = "2>&1";
 						writeCommand(stringArray2String(cmdArr));
 					}
@@ -562,7 +574,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 						cmdArr[9] = "\"Statistik f\u00FCr " + siteName + " auf Server\"";
 						cmdArr[10] = fileName;
 						cmdArr[11] = ">>";
-						cmdArr[12] = logfileValue.getScriptName().charAt(0) + ":\\conquest\\data\\log\\webalizer\\webalizer.log";
+						cmdArr[12] = logfileValue.getScriptName().charAt(0) + ":\\tizzit\\data\\log\\webalizer\\webalizer.log";
 						cmdArr[13] = "2>&1";
 						writeCommand(stringArray2String(cmdArr));
 					}

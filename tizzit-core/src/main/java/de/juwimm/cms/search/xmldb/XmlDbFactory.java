@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.classloading.ClassloadingHelper;
 
 import de.juwimm.cms.beans.SpringPluginServerClassloadingHelper;
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
@@ -30,29 +30,29 @@ import de.juwimm.cms.search.vo.XmlSearchValue;
  * @author <a href="mailto:j2ee@juwimm.com">Sascha-Matthias Kulawik</a>
  * company Juwi|MacMillan Group GmbH, Walsrode, Germany
  * @version $Id$
- * @since cqcms-core 27.03.2009
+ * @since tizzitcms-core 27.03.2009
  */
 public class XmlDbFactory {
 	private static Logger log = Logger.getLogger(XmlDbFactory.class);
 	private static XmlDb instance = null;
 
 	@Autowired
-	private SpringPluginServerClassloadingHelper springPluginServerClassloadingHelper = null;
+	private final SpringPluginServerClassloadingHelper springPluginServerClassloadingHelper = null;
 
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring = null;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring = null;
 
 	@Autowired
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
 	public XmlDb getInstance() {
 		if (instance == null) {
-			String clazz = getCqPropertiesBeanSpring().getSearch().getXmlDb();
+			String clazz = getTizzitPropertiesBeanSpring().getSearch().getXmlDb();
 			log.info("Resolving XmlDb Instance for class " + clazz);
 			if (clazz == null || "".equals(clazz)) {
 				log.warn("No useful classname found for XmlDb Search - XmlSearch disabled!");
@@ -60,7 +60,7 @@ public class XmlDbFactory {
 			} else {
 				//instance = (XmlDb) springPluginServerClassloadingHelper.loadServerClass(clazz);
 				try {
-					instance = (XmlDb) ClassloadingHelper.getInstance(clazz, cqPropertiesBeanSpring);
+					instance = (XmlDb) ClassloadingHelper.getInstance(clazz, tizzitPropertiesBeanSpring);
 				} catch (Exception exe) {
 					instance = null;
 				}
@@ -74,7 +74,7 @@ public class XmlDbFactory {
 	 * @author <a href="mailto:j2ee@juwimm.com">Sascha-Matthias Kulawik</a>
 	 * company Juwi|MacMillan Group GmbH, Walsrode, Germany
 	 * @version $Id$
-	 * @since cqcms-core 27.03.2009
+	 * @since tizzitcms-core 27.03.2009
 	 */
 	private static class NullXmlDb implements XmlDb {
 		private static Logger log = Logger.getLogger(NullXmlDb.class);

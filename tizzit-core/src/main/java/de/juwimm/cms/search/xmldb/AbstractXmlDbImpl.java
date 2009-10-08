@@ -34,7 +34,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
@@ -47,7 +47,7 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 	private static Logger log = Logger.getLogger(AbstractXmlDbImpl.class);
 	private static String xmldbDatasource = null;
 	private Connection xmldbConnection = null;
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 	protected static final String DELETE_STATEMENT = "DELETE FROM XML_SEARCH_DB WHERE SITE_ID=? AND VIEW_COMPONENT_ID=?";
 	protected static final String SELECT_COUNT_STATEMENT = "SELECT COUNT(SITE_ID) FROM XML_SEARCH_DB WHERE SITE_ID=? AND VIEW_COMPONENT_ID=?";
 	protected static final String SELECT_COUNT_HASHCODE_STATEMENT = "SELECT COUNT(SITE_ID) FROM XML_SEARCH_DB WHERE SITE_ID=? AND VIEW_COMPONENT_ID=? AND HASHCODE=?";
@@ -58,13 +58,13 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 
 	abstract protected PreparedStatement getSearchXmlByUnitStatement(Integer unitId, Integer viewDocumentId, String xpathQuery) throws SQLException;
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
 	@Autowired
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
 	protected Connection getConnection() {
@@ -100,7 +100,7 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 	}
 
 	private String getXmldbDatasource() {
-		return getCqPropertiesBeanSpring().getSearch().getXmlDatasource();
+		return getTizzitPropertiesBeanSpring().getSearch().getXmlDatasource();
 	}
 
 	protected String getHashCode(String value) {
@@ -287,7 +287,7 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 		PreparedStatement pstmt = null;
 
 		try {
-			pstmt = (PreparedStatement) this.getConnection().prepareStatement(AbstractXmlDbImpl.SELECT_COUNT_STATEMENT);
+			pstmt = this.getConnection().prepareStatement(AbstractXmlDbImpl.SELECT_COUNT_STATEMENT);
 			pstmt.setInt(1, siteId);
 			pstmt.setInt(2, viewComponentId);
 			ResultSet qResult = pstmt.executeQuery();

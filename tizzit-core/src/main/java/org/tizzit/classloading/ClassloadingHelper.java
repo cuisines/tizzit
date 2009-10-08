@@ -12,7 +12,7 @@ package org.tizzit.classloading;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 
 // TODO: Class description
 /**
@@ -24,14 +24,14 @@ import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
  */
 public class ClassloadingHelper {
 	@Autowired
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
 	public Object getInstance(String clazzName) throws Exception {
 		return this.loadClass(clazzName).newInstance();
 	}
 
-	public static Object getInstance(String clazzName, CqPropertiesBeanSpring cqPropertiesBeanSpring) throws Exception {
-		return ClassloadingHelper.getInstance(clazzName, ReloadingClassloaderManager.getClassLoader(cqPropertiesBeanSpring));
+	public static Object getInstance(String clazzName, TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) throws Exception {
+		return ClassloadingHelper.getInstance(clazzName, ReloadingClassloaderManager.getClassLoader(tizzitPropertiesBeanSpring));
 	}
 
 	public static Object getInstance(String clazzName, ClassLoader classLoader) throws Exception {
@@ -39,10 +39,10 @@ public class ClassloadingHelper {
 	}
 
 	public Class< ? > loadClass(String clazz) throws Exception {
-		return ReloadingClassloaderManager.getClassLoader(this.cqPropertiesBeanSpring).loadClass(clazz);
+		return ReloadingClassloaderManager.getClassLoader(this.tizzitPropertiesBeanSpring).loadClass(clazz);
 	}
 
-	public static Class< ? > loadClass(String clazzName, CqPropertiesBeanSpring cqPropertiesBeanSpring) throws Exception {
+	public static Class< ? > loadClass(String clazzName, TizzitPropertiesBeanSpring cqPropertiesBeanSpring) throws Exception {
 		return ClassloadingHelper.loadClass(clazzName, ReloadingClassloaderManager.getClassLoader(cqPropertiesBeanSpring));
 	}
 

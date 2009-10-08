@@ -81,12 +81,10 @@ public class EditionCronService {
 				if (edFile == null || !edFile.exists()) {
 					//create deploy than
 					getContentServiceSpring().deployEdition(edition.getEditionId());
-				} else {
-					//deployFile exists - send to liveServer
-					UserHbm creator = edition.getCreator();
-					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
-					getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
 				}
+				UserHbm creator = edition.getCreator();
+				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
+				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
 				getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}
 		} catch (Exception e) {

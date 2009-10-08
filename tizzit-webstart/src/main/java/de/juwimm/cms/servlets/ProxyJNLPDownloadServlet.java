@@ -15,11 +15,21 @@
  */
 package de.juwimm.cms.servlets;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Properties;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,17 +44,17 @@ import org.apache.log4j.Logger;
  */
 public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servlet.Filter {
 	private static final long serialVersionUID = 5961639019230634706L;
-	private static final String PROPERTIES_FILENAME = "conquest.properties";
+	private static final String PROPERTIES_FILENAME = "tizzit.properties";
 	private static final String PLACEHOLDER_PROXY_HOST = "$$fake80codebase";
 	private static final String PLACEHOLDER_LOG4J_PROPERTIES = "$$fakeClientMailAppenderProperties";
-	
+
 	//Mail appender key properties
 	private static final String log4jPrefix = "log4j.appender.email.";
-	private static final String conquestPropetiesMailAppenderPrefix = "cqPropertiesBeanSpring.clientMailAppenderConfig.";
-	private static final String SMTPHostKey="cqPropertiesBeanSpring.clientMailAppenderConfig.SMTPHost";
-	private static final String fromKey="cqPropertiesBeanSpring.clientMailAppenderConfig.from";
-	private static final String toKey="cqPropertiesBeanSpring.clientMailAppenderConfig.to";
-	
+	private static final String tizzitPropetiesMailAppenderPrefix = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.";
+	private static final String SMTPHostKey = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.SMTPHost";
+	private static final String fromKey = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.from";
+	private static final String toKey = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.to";
+
 	private static Logger log = Logger.getLogger(ProxyJNLPDownloadServlet.class);
 	private static final String MAX_HEAP = "max-heap-size=\"";
 	private static final String INITIAL_HEAP = "initial-heap-size=\"";
@@ -59,7 +69,7 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 		URL cp = this.getClass().getClassLoader().getResource(PROPERTIES_FILENAME);
 		try {
 			InputStream is = new FileInputStream(cp.getFile());
-			props = new Properties();			
+			props = new Properties();
 			try {
 				is = new FileInputStream(cp.getFile());
 			} catch (FileNotFoundException e) {
@@ -86,12 +96,12 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 					log.error("Unable to load \"" + PROPERTIES_FILENAME + "\"! You MUST restart the server!");
 				} else {
 					if (serverHost == null) {
-						serverHost = props.getProperty("cqPropertiesBeanSpring.jnlpHost", "");
+						serverHost = props.getProperty("tizzitPropertiesBeanSpring.jnlpHost", "");
 						if (serverHost.equalsIgnoreCase("")) {
 							serverHost = serverName.getHost();
 						}
 
-						serverPort = props.getProperty("cqPropertiesBeanSpring.jnlpPort", "");
+						serverPort = props.getProperty("tizzitPropertiesBeanSpring.jnlpPort", "");
 						if (serverPort.equalsIgnoreCase("")) {
 							if (serverName.getProtocol().equalsIgnoreCase("https")) {
 								serverPort = "443";
@@ -108,10 +118,12 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 				final HttpServletResponse resp = (HttpServletResponse) response;
 				final ByteArrayPrintWriter pw = new ByteArrayPrintWriter();
 				HttpServletResponse wrappedResp = new HttpServletResponseWrapper(resp) {
+					@Override
 					public PrintWriter getWriter() {
 						return pw.getWriter();
 					}
 
+					@Override
 					public ServletOutputStream getOutputStream() {
 						return pw.getStream();
 					}
@@ -122,19 +134,19 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 				String newJnlp = new String(bytes);
 				//server argument
 				newJnlp = newJnlp.replace(PLACEHOLDER_PROXY_HOST, server80Name);
-				
+
 				//mail appender argument
 				//should be log4jProperties="k1=v1;k2=v2"			
 				addLog4jPropertyArgument(SMTPHostKey);
 				addLog4jPropertyArgument(fromKey);
 				addLog4jPropertyArgument(toKey);
-				clientMailAppenderProperties +="\"";				
-				newJnlp = newJnlp.replace(PLACEHOLDER_LOG4J_PROPERTIES,clientMailAppenderProperties);
-				
+				clientMailAppenderProperties += "\"";
+				newJnlp = newJnlp.replace(PLACEHOLDER_LOG4J_PROPERTIES, clientMailAppenderProperties);
+
 				if (isMacClient(req)) {
 					newJnlp = this.cutMemorySettings(newJnlp);
 				}
-				if (log.isDebugEnabled()) log.debug("newJnlp new: " + newJnlp);				
+				if (log.isDebugEnabled()) log.debug("newJnlp new: " + newJnlp);
 				resp.setContentLength(newJnlp.length());
 				resp.getOutputStream().print(newJnlp);
 				resp.getOutputStream().close();
@@ -150,17 +162,18 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 		}
 	}
 
-	private void addLog4jPropertyArgument(String propertyKey){
-		String propertyValue = props.getProperty(propertyKey);		
-		if(propertyValue == null || "".equals(propertyValue)){
-			log.error("Property " + propertyKey +"is missing from conquest.properties");
+	private void addLog4jPropertyArgument(String propertyKey) {
+		String propertyValue = props.getProperty(propertyKey);
+		if (propertyValue == null || "".equals(propertyValue)) {
+			log.error("Property " + propertyKey + "is missing from tizzit.properties");
 			return;
-		}		
+		}
 		//properties of the email appender e.g. log4j.appender.email.BufferSize=1
-		propertyKey=propertyKey.replace(conquestPropetiesMailAppenderPrefix, log4jPrefix);		
-		this.clientMailAppenderProperties +=propertyKey+"="+propertyValue+";";		
-	}		
-	
+		propertyKey = propertyKey.replace(tizzitPropetiesMailAppenderPrefix, log4jPrefix);
+		this.clientMailAppenderProperties += propertyKey + "=" + propertyValue + ";";
+	}
+
+	@Override
 	public void destroy() {
 		if (log.isDebugEnabled()) log.debug("destroy");
 	}
@@ -169,12 +182,13 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 	 * 
 	 */
 	private static class ByteArrayServletStream extends ServletOutputStream {
-		private ByteArrayOutputStream baos;
+		private final ByteArrayOutputStream baos;
 
 		ByteArrayServletStream(ByteArrayOutputStream baos) {
 			this.baos = baos;
 		}
 
+		@Override
 		public void write(int param) throws java.io.IOException {
 			baos.write(param);
 		}
@@ -184,9 +198,9 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 	 * 
 	 */
 	private static class ByteArrayPrintWriter {
-		private ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		private PrintWriter pw = new PrintWriter(baos);
-		private ServletOutputStream sos = new ByteArrayServletStream(baos);
+		private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		private final PrintWriter pw = new PrintWriter(baos);
+		private final ServletOutputStream sos = new ByteArrayServletStream(baos);
 
 		public PrintWriter getWriter() {
 			return pw;

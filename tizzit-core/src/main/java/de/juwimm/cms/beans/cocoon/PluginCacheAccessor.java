@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.juwimm.cms.beans.SpringPluginServerClassloadingHelper;
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.model.SiteHbmDao;
 import de.juwimm.cms.plugins.server.ConquestPlugin;
 import de.juwimm.cms.vo.ContentPluginValue;
@@ -35,15 +35,15 @@ import de.juwimm.cms.vo.ContentPluginValue;
  */
 public class PluginCacheAccessor {
 	private static Logger log = Logger.getLogger(PluginCacheAccessor.class);
-	private HashMap<PluginIdentifier, ConquestPlugin> plugins = new HashMap<PluginIdentifier, ConquestPlugin>();
+	private final HashMap<PluginIdentifier, ConquestPlugin> plugins = new HashMap<PluginIdentifier, ConquestPlugin>();
 	@Autowired
-	private SpringPluginServerClassloadingHelper springPluginServerClassloadingHelper = null;
+	private final SpringPluginServerClassloadingHelper springPluginServerClassloadingHelper = null;
 	@Autowired
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 	@Autowired
 	private SiteHbmDao siteHbmDao;
 	@Autowired
-	private PluginCache pluginCache = null;
+	private final PluginCache pluginCache = null;
 
 	public ConquestPlugin getPlugin(PluginIdentifier pluginIdent) {
 		if (log.isDebugEnabled()) log.debug("getPlugin for identifier");
@@ -56,10 +56,10 @@ public class PluginCacheAccessor {
 				URL[] url = new URL[pluginValue.getClasspath().length];
 				for (int j = 0; j < pluginValue.getClasspath().length; j++) {
 					String siteShort = siteHbmDao.load(pluginIdent.getSiteId()).getMandatorDir();
-					String myurl = cqPropertiesBeanSpring.getMandatorParent() + siteShort + "dcf" + File.separatorChar + pluginValue.getClasspath()[j];
+					String myurl = tizzitPropertiesBeanSpring.getMandatorParent() + siteShort + "dcf" + File.separatorChar + pluginValue.getClasspath()[j];
 
 					if (log.isDebugEnabled()) {
-						log.debug("cqMandatorParent " + cqPropertiesBeanSpring.getMandatorParent());
+						log.debug("tizzitMandatorParent " + tizzitPropertiesBeanSpring.getMandatorParent());
 						log.debug("SITE SHORT " + siteShort);
 						log.debug("CLASSPATH " + pluginValue.getClasspath()[j]);
 						log.debug("URL " + myurl);

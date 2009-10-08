@@ -23,18 +23,18 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.components.store.impl.CocoonStoreJanitor;
 
 /**
- * Special CocoonStoreJanitor loading values from conquest.properties-file.<br/>
+ * Special CocoonStoreJanitor loading values from tizzit.properties-file.<br/>
  * The file &quot;cocoon.xconf&quot; for configuring the behavior of the StoreJanitor contains fixed absolute values.<br/>
  * To adjust these values for every server the <code>ConquestCocoonStoreJanitor</code> takes absolute or - for memory-settings - relative values<br/>
- * from the &quot;conquest.properties&quot;.<br/>
+ * from the &quot;tizzit.properties&quot;.<br/>
  * On error we use all the values of &quot;cocoon.xconf&quot; untouched.<br/>
  * Possible values:
  * <ul>
- * <li>&quot;cqCocoonJanitorFreeMemoryRatio&quot; - freememory (X% of Xmx) or &quot;cqCocoonJanitorFreeMemory&quot; for fixed absolute value, default 2097152 Bytes = 2 MB</li>
- * <li>&quot;cqCocoonJanitorHeapSizeRatio&quot; - heapsize (Xmx - X%) or &quot;cqCocoonJanitorHeapSize&quot; for fixed absolute value, default 66600000 Bytes</li>
- * <li>&quot;cqCocoonCleanupThreadIntervalSecs&quot; - cleanupthreadinterval, default 15 seconds</li>
- * <li>&quot;cqCocoonPercentToFree&quot; - percent_to_free, default 10 %</li>
- * <li>&quot;cqCocoonInvokeGC&quot; - invokegc, default true</li>
+ * <li>&quot;tizzitCocoonJanitorFreeMemoryRatio&quot; - freememory (X% of Xmx) or &quot;tizzitCocoonJanitorFreeMemory&quot; for fixed absolute value, default 2097152 Bytes = 2 MB</li>
+ * <li>&quot;tizzitCocoonJanitorHeapSizeRatio&quot; - heapsize (Xmx - X%) or &quot;tizzitCocoonJanitorHeapSize&quot; for fixed absolute value, default 66600000 Bytes</li>
+ * <li>&quot;tizzitCocoonCleanupThreadIntervalSecs&quot; - cleanupthreadinterval, default 15 seconds</li>
+ * <li>&quot;tizzitCocoonPercentToFree&quot; - percent_to_free, default 10 %</li>
+ * <li>&quot;tizzitCocoonInvokeGC&quot; - invokegc, default true</li>
  * </ul>
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
  * company Juwi|MacMillan Group Gmbh, Walsrode, Germany
@@ -42,11 +42,11 @@ import org.apache.cocoon.components.store.impl.CocoonStoreJanitor;
  * @since ConQuest 2.4.8
  */
 public class ConquestCocoonStoreJanitor extends CocoonStoreJanitor {
-	private static final String PROPERTIES_FILENAME = "conquest.properties";
+	private static final String PROPERTIES_FILENAME = "tizzit.properties";
 
 	/**
 	 * Normally this method is called with the values from the file &quot;cocoon.xconf&quot;.<br/>
-	 * Here we try to load the settings from the &quot;conquest.properties&quot; and replace these of the &quot;cocoon.xconf&quot;.<br/>
+	 * Here we try to load the settings from the &quot;tizzit.properties&quot; and replace these of the &quot;cocoon.xconf&quot;.<br/>
 	 * Values for the memory-setting are calculated in relation of Xmx.<br/>
 	 * On error we use all the values of &quot;cocoon.xconf&quot; untouched.
 	 * @see org.apache.cocoon.components.store.impl.CocoonStoreJanitor#parameterize(org.apache.avalon.framework.parameters.Parameters)
@@ -64,31 +64,31 @@ public class ConquestCocoonStoreJanitor extends CocoonStoreJanitor {
 
 				String minFreeMemory = "";
 				String maxHeapSize = "";
-				String janitorFreeMemoryRatio = props.getProperty("cqPropertiesBeanSpring.cocoon.janitorFreeMemoryRatio");
-				String janitorHeapSizeRatio = props.getProperty("cqPropertiesBeanSpring.cocoon.janitorHeapSizeRatio");
-				String cleanupThreadIntervalSecs = props.getProperty("cqPropertiesBeanSpring.cocoon.cleanupThreadIntervalSecs", "15");
-				String percentToFree = props.getProperty("cqPropertiesBeanSpring.cocoon.percentToFree", "10");
-				String invokeGC = props.getProperty("cqPropertiesBeanSpring.cocoon.invokeGC", "true");
+				String janitorFreeMemoryRatio = props.getProperty("tizzitPropertiesBeanSpring.cocoon.janitorFreeMemoryRatio");
+				String janitorHeapSizeRatio = props.getProperty("tizzitPropertiesBeanSpring.cocoon.janitorHeapSizeRatio");
+				String cleanupThreadIntervalSecs = props.getProperty("tizzitPropertiesBeanSpring.cocoon.cleanupThreadIntervalSecs", "15");
+				String percentToFree = props.getProperty("tizzitPropertiesBeanSpring.cocoon.percentToFree", "10");
+				String invokeGC = props.getProperty("tizzitPropertiesBeanSpring.cocoon.invokeGC", "true");
 				if (janitorFreeMemoryRatio == null) {
-					minFreeMemory = props.getProperty("cqPropertiesBeanSpring.cocoon.janitorFreeMemory", "2097152"); // 2 MB 
+					minFreeMemory = props.getProperty("tizzitPropertiesBeanSpring.cocoon.janitorFreeMemory", "2097152"); // 2 MB 
 				} else {
 					try {
 						int ratio = Integer.parseInt(janitorFreeMemoryRatio);
 						minFreeMemory = Long.toString(xmx * ratio / 100); // ratio % of Xmx
 					} catch (Exception e) {
-						super.getLogger().warn("Error parsing value " + janitorFreeMemoryRatio + " for cqCocoonJanitorFreeMemoryRatio: " + e.getMessage(), e);
-						minFreeMemory = props.getProperty("cqPropertiesBeanSpring.cocoon.janitorFreeMemory", "2097152"); // 2 MB
+						super.getLogger().warn("Error parsing value " + janitorFreeMemoryRatio + " for tizzitCocoonJanitorFreeMemoryRatio: " + e.getMessage(), e);
+						minFreeMemory = props.getProperty("tizzitPropertiesBeanSpring.cocoon.janitorFreeMemory", "2097152"); // 2 MB
 					}
 				}
 				if (janitorHeapSizeRatio == null) {
-					maxHeapSize = props.getProperty("cqPropertiesBeanSpring.cocoon.janitorHeapSize", "66600000");
+					maxHeapSize = props.getProperty("tizzitPropertiesBeanSpring.cocoon.janitorHeapSize", "66600000");
 				} else {
 					try {
 						int ratio = Integer.parseInt(janitorHeapSizeRatio);
 						maxHeapSize = Long.toString(xmx * (100 - ratio) / 100); // Xmx - ratio %
 					} catch (Exception e) {
-						super.getLogger().warn("Error parsing value " + janitorHeapSizeRatio + " for cqCocoonJanitorHeapSizeRatio: " + e.getMessage(), e);
-						maxHeapSize = props.getProperty("cqPropertiesBeanSpring.cocoon.janitorHeapSize", "66600000");
+						super.getLogger().warn("Error parsing value " + janitorHeapSizeRatio + " for tizzitCocoonJanitorHeapSizeRatio: " + e.getMessage(), e);
+						maxHeapSize = props.getProperty("tizzitPropertiesBeanSpring.cocoon.janitorHeapSize", "66600000");
 					}
 				}
 				params.setParameter("freememory", minFreeMemory);
@@ -97,8 +97,7 @@ public class ConquestCocoonStoreJanitor extends CocoonStoreJanitor {
 				params.setParameter("percent_to_free", percentToFree);
 				params.setParameter("invokegc", invokeGC);
 				if (super.getLogger().isDebugEnabled()) {
-					super.getLogger().debug("freememory: " + minFreeMemory + " Bytes\nheapsize: " + maxHeapSize + " Bytes\ncleanupthreadinterval: " + cleanupThreadIntervalSecs
-							+ " Secs\npercent_to_free: " + percentToFree + " %\ninvokegc: " + invokeGC);
+					super.getLogger().debug("freememory: " + minFreeMemory + " Bytes\nheapsize: " + maxHeapSize + " Bytes\ncleanupthreadinterval: " + cleanupThreadIntervalSecs + " Secs\npercent_to_free: " + percentToFree + " %\ninvokegc: " + invokeGC);
 				}
 			} catch (Exception e) {
 				super.getLogger().error("Error loading properties or replacing values from cocoon.xconf: " + e.getMessage(), e);

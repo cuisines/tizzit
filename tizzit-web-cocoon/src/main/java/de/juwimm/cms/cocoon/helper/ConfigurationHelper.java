@@ -15,7 +15,11 @@
  */
 package de.juwimm.cms.cocoon.helper;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
@@ -32,24 +36,24 @@ import org.apache.log4j.Logger;
  */
 public class ConfigurationHelper {
 	private static Logger log = Logger.getLogger(ConfigurationHelper.class);
-	public static final String CQ_COCOON_COMPONENT_LIBRARIES_PARENT = "cqCocoonComponentLibrariesParent";
+	public static final String TIZZIT_COCOON_COMPONENT_LIBRARIES_PARENT = "tizzitCocoonComponentLibrariesParent";
 	private static Properties props = null;
 
 	public static String getDCFUrl(String siteShort) {
 		if (props == null) {
-			URL cp = ConfigurationHelper.class.getResource("/conquest.properties");
+			URL cp = ConfigurationHelper.class.getResource("/tizzit.properties");
 			try {
 				InputStream is = new FileInputStream(cp.getFile());
 				props = new Properties();
 				is = new FileInputStream(cp.getFile());
 				props.load(is);
 			} catch (FileNotFoundException e) {
-				log.error("Could not find conquest.properties");
+				log.error("Could not find tizzit.properties");
 			} catch (IOException e) {
-				log.warn("Unable to load jnlpHost / jnlpPort props from \"conquest.properties\"!");
+				log.warn("Unable to load jnlpHost / jnlpPort props from \"tizzit.properties\"!");
 			}
 		}
-		String parent = props.getProperty("cqPropertiesBeanSpring.cocoon.componentLibrariesParent", "");
+		String parent = props.getProperty("tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent", "");
 		return parent + siteShort + File.separatorChar;
 	}
 

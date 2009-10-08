@@ -32,7 +32,7 @@ import org.xmldb.api.base.ErrorCodes;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XPathQueryService;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 
 /**
  * Helperclass for performing operations on the Xindice XML Database.
@@ -133,7 +133,7 @@ public final class XindiceHelper {
 		collman.dropXMLObject(documentId);
 	}
 
-	public static synchronized Collection getCollection(CqPropertiesBeanSpring cqProps, String uri, String collectionName, Integer siteId) throws XMLDBException {
+	public static synchronized Collection getCollection(TizzitPropertiesBeanSpring cqProps, String uri, String collectionName, Integer siteId) throws XMLDBException {
 		collectionName += "_" + siteId.toString();
 		if (log.isDebugEnabled()) log.debug("start getCollection: " + collectionName);
 

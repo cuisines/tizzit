@@ -118,7 +118,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, null);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
-		return pictureHbm.getPictureId();		
+		return pictureHbm.getPictureId();
 	}
 
 	/**
@@ -1228,7 +1228,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	private String storeEditionFile(InputStream in) throws IOException {
-		String dir = getCqPropertiesBeanSpring().getDatadir() + File.separatorChar + "editions";
+		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "editions";
 		File fDir = new File(dir);
 		fDir.mkdirs();
 		File storedEditionFile = File.createTempFile("edition_import_", ".xml.gz", fDir);
@@ -1240,7 +1240,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	private File storeTempFile(InputStream in, String name) throws IOException {
-		String dir = getCqPropertiesBeanSpring().getDatadir() + File.separatorChar + "tmp";
+		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "tmp";
 		File fDir = new File(dir);
 		fDir.mkdirs();
 		File storedEditionFile = File.createTempFile(name, "bak", fDir);
@@ -1323,100 +1323,100 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		List result = new ArrayList();
 		List<Integer> usedDocuments = new ArrayList<Integer>();
 		List<Integer> usedPictures = new ArrayList<Integer>();
-		
+
 		DocumentSlimValue[] dbDocuments = this.getAllSlimDocuments4Unit(unitId);
 		PictureSlimstValue[] dbPictures = this.getAllSlimPictures4Unit(unitId);
-		
+
 		List<ContentVersionHbm> contentVersions = getAllContentVersions4Unit(unitId);
-		getUsedResourcesFromContentVersions(contentVersions,usedDocuments,usedPictures);
-				
-		result.addAll(new UnusedResourceComparer<DocumentSlimValue>(){
+		getUsedResourcesFromContentVersions(contentVersions, usedDocuments, usedPictures);
+
+		result.addAll(new UnusedResourceComparer<DocumentSlimValue>() {
 			@Override
-			Integer getId(DocumentSlimValue resource) {				
+			Integer getId(DocumentSlimValue resource) {
 				return resource.getDocumentId();
-			}}.extract(dbDocuments, usedDocuments));
-		
-		result.addAll(new UnusedResourceComparer<PictureSlimstValue>(){
+			}
+		}.extract(dbDocuments, usedDocuments));
+
+		result.addAll(new UnusedResourceComparer<PictureSlimstValue>() {
 			@Override
-			Integer getId(PictureSlimstValue resource) {				
+			Integer getId(PictureSlimstValue resource) {
 				return resource.getPictureId();
-			}}.extract(dbPictures, usedPictures));
-		
+			}
+		}.extract(dbPictures, usedPictures));
+
 		return result;
 	}
-	
-	
-	private List<ContentVersionHbm> getAllContentVersions4Unit(Integer unitId){
+
+	private List<ContentVersionHbm> getAllContentVersions4Unit(Integer unitId) {
 		List<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
-		List<ViewComponentHbm> rootViewDocuments= (List<ViewComponentHbm>)getViewComponentHbmDao().findRootViewComponents4Unit(unitId);
-		if(rootViewDocuments != null && rootViewDocuments.size() > 0){
-			for(ViewComponentHbm root:rootViewDocuments){
+		List<ViewComponentHbm> rootViewDocuments = (List<ViewComponentHbm>) getViewComponentHbmDao().findRootViewComponents4Unit(unitId);
+		if (rootViewDocuments != null && rootViewDocuments.size() > 0) {
+			for (ViewComponentHbm root : rootViewDocuments) {
 				contentVersions.addAll(getContentVersionsRecursive(root));
 			}
 		}
 		return contentVersions;
 	}
-	
-	private List<ContentVersionHbm> getContentVersionsRecursive(ViewComponentHbm root){
-		
+
+	private List<ContentVersionHbm> getContentVersionsRecursive(ViewComponentHbm root) {
+
 		List<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
 		contentVersions.addAll(getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
 		Collection children = root.getChildren();
-		if(children != null && children.size() > 0){
-			for(Object child:children){
-				contentVersions.addAll(getContentVersionsRecursive((ViewComponentHbm)child));
+		if (children != null && children.size() > 0) {
+			for (Object child : children) {
+				contentVersions.addAll(getContentVersionsRecursive((ViewComponentHbm) child));
 			}
 		}
-		
+
 		return contentVersions;
 	}
-	
+
 	/**
 	 * Used to compare list of resources from database (image/pictures) with used resources in contents
 	 * to extract resources that are not used
 	 * @param <T> can be PictureSlimstValue or DocumentValue
 	 */
-	private abstract class UnusedResourceComparer<T>{
-		abstract Integer getId(T resource); 
+	private abstract class UnusedResourceComparer<T> {
+		abstract Integer getId(T resource);
+
 		@SuppressWarnings("unchecked")
-		public List extract(T[] resources, List<Integer> used){
-			List unusedResources = new ArrayList(); 
-			if(resources != null && resources.length >0){
+		public List extract(T[] resources, List<Integer> used) {
+			List unusedResources = new ArrayList();
+			if (resources != null && resources.length > 0) {
 				boolean emptyUsedResources = false;
-				if(used == null || used.size() == 0){
+				if (used == null || used.size() == 0) {
 					emptyUsedResources = true;
 				}
-				for(T resource:resources){
-					if(emptyUsedResources){					
+				for (T resource : resources) {
+					if (emptyUsedResources) {
 						unusedResources.add(resource);
 						continue;
 					}
-					
-					if(!used.contains(this.getId(resource))){
+
+					if (!used.contains(this.getId(resource))) {
 						unusedResources.add(resource);
 					}
-				}								
+				}
 			}
 			return unusedResources;
 		}
 	}
-	
-	private void getUsedResourcesFromContentVersions(List<ContentVersionHbm> contentVersions, List<Integer> documents,List<Integer> pictures){
-		if(contentVersions == null || contentVersions.size() == 0){
-			return;
-		}		
-		for(ContentVersionHbm contentVersion:contentVersions){
+
+	private void getUsedResourcesFromContentVersions(List<ContentVersionHbm> contentVersions, List<Integer> documents, List<Integer> pictures) {
+		if (contentVersions == null || contentVersions.size() == 0) { return; }
+		for (ContentVersionHbm contentVersion : contentVersions) {
 			String content = contentVersion.getText();
 			try {
 				Document document = XercesHelper.string2Dom(content);
-				getResourcesFromContentVersion(document,documents,"document","src");
-				getResourcesFromContentVersion(document,pictures,"picture","description");
-			} catch (Exception e) {				
+				getResourcesFromContentVersion(document, documents, "document", "src");
+				getResourcesFromContentVersion(document, pictures, "picture", "description");
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param contentVersionNode xml node
@@ -1424,10 +1424,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @param type tag name of the resource
 	 * @param attributeName attribute that indicates the id of the resource
 	 */
-	private void getResourcesFromContentVersion(Node contentVersionNode, List<Integer> resources,String type,String attributeName){
-		Iterator it = XercesHelper.findNodes(contentVersionNode, "//"+type);
-		while(it.hasNext()){
-			Node node = (Node)it.next();
+	private void getResourcesFromContentVersion(Node contentVersionNode, List<Integer> resources, String type, String attributeName) {
+		Iterator it = XercesHelper.findNodes(contentVersionNode, "//" + type);
+		while (it.hasNext()) {
+			Node node = (Node) it.next();
 			resources.add(Integer.parseInt(node.getAttributes().getNamedItem(attributeName).getNodeValue()));
 		}
 	}
@@ -1442,11 +1442,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			//create dir for deploys
-			String dir = getCqPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
+			String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
 			File fDir = new File(dir);
 			fDir.mkdirs();
 
-			File fle = File.createTempFile("deploy_site_" + edition.getSiteId() + "_" + edition.getCreator() + "_" + edition.getCreationDate(), ".xml.gz", fDir);
+			File fle = File.createTempFile("deploy_site_" + edition.getSiteId() + "_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate(), ".xml.gz", fDir);
 			FileOutputStream fout = new FileOutputStream(fle);
 			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
 			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");

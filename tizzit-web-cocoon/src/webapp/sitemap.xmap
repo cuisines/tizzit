@@ -370,8 +370,8 @@
 				</map:act>
 			</map:match>
 			<map:match pattern="img/svg*.*">
-				<map:generate src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}juwimm-web-cms/web/svg/dummy.xml" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}juwimm-web-cms/web/svg/{1}.xsl">
+				<map:generate src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}juwimm-web-cms/web/svg/dummy.xml" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}juwimm-web-cms/web/svg/{1}.xsl">
 					<map:parameter name="text" value="{2}" />
 				</map:transform>
 				<map:serialize type="svg2png" />
@@ -390,73 +390,73 @@
 				<map:read src="system/{1}.js" />
 			</map:match>
 			<map:match pattern="fop-fonts">
-				<map:generate src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}/xml/dummy.xml" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}/templates/config/config_fop.xsl">
-					<map:parameter name="absCmsPath" value="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}" />
+				<map:generate src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}/xml/dummy.xml" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}/templates/config/config_fop.xsl">
+					<map:parameter name="absCmsPath" value="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}" />
 				</map:transform>
 				<map:serialize type="xml" />
 			</map:match>
 			<map:match pattern="**error-trythis.jpg">
-				<map:read mime-type="image/x-icon" src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}/img/error-trythis.jpg" />
+				<map:read mime-type="image/x-icon" src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}/img/error-trythis.jpg" />
 			</map:match>
 			<map:match pattern="**error-roteskreuz.gif">
-				<map:read mime-type="image/x-icon" src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}/img/error-roteskreuz.gif" />
+				<map:read mime-type="image/x-icon" src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}/img/error-roteskreuz.gif" />
 			</map:match>
 			<map:match pattern="robots.txt">
 				<map:read src="robots.txt" mime-type="text/plain" />
 			</map:match>
 			<!--dcfliste in xml, wird von CMS client verwendet-->
 			<map:match pattern="**/dcf/dcf.xml">
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" mime-type="text/xml" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" mime-type="text/xml" />
 			</map:match>
 			<!--dcfliste als html, nur zur besseren Uebersicht fuer developer-->
 			<map:match pattern="**/dcf/dcf.html">
-				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}dcf/dcf.xsl">
+				<map:generate type="file" src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}dcf/dcf.xsl">
 					<map:parameter name="clientCode" value="{1}" />
 				</map:transform>
 				<map:serialize type="html" />
 			</map:match>
 			<map:match pattern="**/dcf/**/*.jar">
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{3}.jar" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{3}.jar" />
 			</map:match>
 			<map:match pattern="dcf/**/*.jar">
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
 			</map:match>
 			<map:match pattern="**/dcf/*.jar">
 				<!--
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.jar" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.jar" />
 				-->
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
 
 			</map:match>
 			<map:match pattern="**/dcf/*.xml">
-				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />
+				<map:generate type="file" src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />
 				<map:serialize type="xml-iso" />
 			</map:match>
 			<map:match pattern="list4dcf/xml/**.xml">
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}xml/{1}.xml" mime-type="text/xml" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}xml/{1}.xml" mime-type="text/xml" />
 			</map:match>
 			<map:match pattern="*/list4dcf/xml/**.xml">
-				<map:read src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{1}/web/httpd/xml/{2}.xml" mime-type="text/xml" />
+				<map:read src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/httpd/xml/{2}.xml" mime-type="text/xml" />
 			</map:match>
 			<map:match pattern="cms/**">
-				<map:mount check-reload="yes" src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}" uri-prefix="cms/" />
+				<map:mount check-reload="yes" src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}" uri-prefix="cms/" />
 			</map:match>
 			<map:match pattern="*/popupimg.html">
-				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}xml/dummy.xml" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}templates/popupimg.xsl">
+				<map:generate type="file" src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}xml/dummy.xml" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}templates/popupimg.xsl">
 					<map:parameter name="use-request-parameters" value="true" />
 					<map:parameter name="clientCode" value="{1}" />
 				</map:transform>
 				<map:serialize type="html" />
 			</map:match>
 			<map:match pattern="*/popupimgnr.html">
-				<map:generate type="file" src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}xml/dummy.xml" />
-				<map:transform src="{conquest-properties:cqPropertiesBeanSpring.cmsTemplatesPath}templates/popupimgnr.xsl">
+				<map:generate type="file" src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}xml/dummy.xml" />
+				<map:transform src="{conquest-properties:tizzitPropertiesBeanSpring.cmsTemplatesPath}templates/popupimgnr.xsl">
 					<map:parameter name="use-request-parameters" value="true" />
 					<map:parameter name="clientCode" value="{1}" />
 				</map:transform>
@@ -469,7 +469,7 @@
 				<map:redirect-to uri="admin/" />
 			</map:match>
 			<map:match pattern="stats/**">
-				<map:mount check-reload="yes" src="{conquest-properties:cqPropertiesBeanSpring.statsDir}" uri-prefix="stats/" />
+				<map:mount check-reload="yes" src="{conquest-properties:tizzitPropertiesBeanSpring.statsDir}" uri-prefix="stats/" />
 			</map:match>
 			<map:match pattern=".*" type="regexp">
 				<map:match pattern="">
@@ -480,7 +480,7 @@
 								<map:select type="parameter">
 									<map:parameter name="parameter-selector-test" value="{startpageURL}" />
 									<map:when test="0">
-										<map:mount check-reload="yes" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
+										<map:mount check-reload="yes" src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
 									</map:when>
 									<map:otherwise>
 										<map:redirect-to uri="{startpageURL}" />
@@ -498,7 +498,7 @@
 						<map:select type="parameter">
 							<map:parameter name="parameter-selector-test" value="{redirectURL}" />
 							<map:when test="0">
-								<map:mount check-reload="yes" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
+								<map:mount check-reload="yes" src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
 							</map:when>
 							<map:otherwise>
 								<map:redirect-to uri="{redirectURL}" />
@@ -511,7 +511,7 @@
 						<map:select type="parameter">
 							<map:parameter name="parameter-selector-test" value="{redirectURL}" />
 							<map:when test="0">
-								<map:mount check-reload="yes" src="{conquest-properties:cqPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
+								<map:mount check-reload="yes" src="{conquest-properties:tizzitPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
 							</map:when>
 							<map:otherwise>
 								<map:redirect-to uri="{redirectURL}" />

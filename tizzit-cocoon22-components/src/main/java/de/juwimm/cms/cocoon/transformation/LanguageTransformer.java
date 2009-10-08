@@ -40,7 +40,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
-import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;

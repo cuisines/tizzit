@@ -6,8 +6,8 @@
 		</from>
 		<to>
 			<![CDATA[
-			<prop key="hibernate.dialect">%%%cqPropertiesBeanSpring.hibernateSqlDialect%%%</prop>
-			<prop key="hibernate.show_sql">%%%cqPropertiesBeanSpring.hibernateShowSql%%%</prop>
+			<prop key="hibernate.dialect">%%%tizzitPropertiesBeanSpring.hibernateSqlDialect%%%</prop>
+			<prop key="hibernate.show_sql">%%%tizzitPropertiesBeanSpring.hibernateShowSql%%%</prop>
 			<!--<prop key="hibernate.hbm2ddl.auto">update</prop>-->
 		]]>
 		</to>

@@ -28,7 +28,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
@@ -46,7 +46,7 @@ import de.juwimm.cms.vo.ViewDocumentValue;
 public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	private static Logger log = Logger.getLogger(ViewComponentHbmDaoImpl.class);
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
 	@Autowired
 	private SearchengineDeleteService searchengineDeleteService;
@@ -54,13 +54,13 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
 	@Autowired
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
 	@Override
@@ -291,7 +291,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 						if (refId != null) {
 							ContentVersionHbm contentVersion = null;
 							ContentHbm vc = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, refId);
-							if (getCqPropertiesBeanSpring().isLiveserver()) {
+							if (getTizzitPropertiesBeanSpring().isLiveserver()) {
 								contentVersion = vc.getContentVersionForPublish();
 							} else {
 								contentVersion = vc.getLastContentVersion();

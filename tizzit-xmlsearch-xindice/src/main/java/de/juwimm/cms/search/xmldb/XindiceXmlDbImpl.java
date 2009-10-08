@@ -30,27 +30,27 @@ import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XPathQueryService;
 
-import de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
- * cqXindiceHost and cqXindicePort must be set up in conquest.properties!
+ * tizzitXindiceHost and tizzitXindicePort must be set up in tizzit.properties!
  * @author Michael Frankfurter (michael.frankfurter@juwimm.com)
  * @version $Id$
  */
 public class XindiceXmlDbImpl implements XmlDb {
 	private static Logger log = Logger.getLogger(XindiceXmlDbImpl.class);
 	public static final String XMLDB_COLLECTION_NAME = "viewComponentContent";
-	private CqPropertiesBeanSpring cqPropertiesBeanSpring;
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
-	public CqPropertiesBeanSpring getCqPropertiesBeanSpring() {
-		return cqPropertiesBeanSpring;
+	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
+		return tizzitPropertiesBeanSpring;
 	}
 
-	@Autowired 
-	public void setCqPropertiesBeanSpring(CqPropertiesBeanSpring cqPropertiesBeanSpring) {
+	@Autowired
+	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
 		// TODO: Test if autowire is working
-		this.cqPropertiesBeanSpring = cqPropertiesBeanSpring;
+		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 	}
 
 	public XmlSearchValue[] searchXml(Integer siteId, String xpathQuery) {
@@ -65,10 +65,10 @@ public class XindiceXmlDbImpl implements XmlDb {
 		org.xmldb.api.base.Collection col = null;
 
 		try {
-			String serverHost = cqPropertiesBeanSpring.getSearch().getXindiceHost();
-			String port = cqPropertiesBeanSpring.getSearch().getXindicePort();
+			String serverHost = tizzitPropertiesBeanSpring.getSearch().getXindiceHost();
+			String port = tizzitPropertiesBeanSpring.getSearch().getXindicePort();
 
-			col = XindiceHelper.getCollection(getCqPropertiesBeanSpring(), "xmldb:xindice://" + serverHost + ":" + port + "/db/", "viewComponentContent", siteId);
+			col = XindiceHelper.getCollection(getTizzitPropertiesBeanSpring(), "xmldb:xindice://" + serverHost + ":" + port + "/db/", "viewComponentContent", siteId);
 
 			//index erstellen
 			if (xpathQuery.indexOf("[") < 0 && xpathQuery.indexOf("'") < 0 && xpathQuery.startsWith("//")) {
@@ -98,7 +98,7 @@ public class XindiceXmlDbImpl implements XmlDb {
 						retArray[i].setInfoText((String) metaData.getAttribute("infoText"));
 						retArray[i].setText((String) metaData.getAttribute("text"));
 						retArray[i].setUnitId(new Integer((String) metaData.getAttribute("unitId")));
-						retArray[i].setViewComponentId(new Integer((String) res.getDocumentId()));
+						retArray[i].setViewComponentId(new Integer(res.getDocumentId()));
 					} catch (Exception e) {
 						log.error("searchXml(...) -> error iterating results for search for: siteId " + siteId + " query " + xpathQuery, e);
 					}
@@ -129,11 +129,11 @@ public class XindiceXmlDbImpl implements XmlDb {
 
 		boolean retVal = false;
 
-		String serverHost = cqPropertiesBeanSpring.getSearch().getXindiceHost();
-		String port = cqPropertiesBeanSpring.getSearch().getXindicePort();
+		String serverHost = tizzitPropertiesBeanSpring.getSearch().getXindiceHost();
+		String port = tizzitPropertiesBeanSpring.getSearch().getXindicePort();
 
 		try {
-			org.xmldb.api.base.Collection col = XindiceHelper.getCollection(getCqPropertiesBeanSpring(), "xmldb:xindice://" + serverHost + ":" + port + "/db/", XMLDB_COLLECTION_NAME, siteId.intValue());
+			org.xmldb.api.base.Collection col = XindiceHelper.getCollection(getTizzitPropertiesBeanSpring(), "xmldb:xindice://" + serverHost + ":" + port + "/db/", XMLDB_COLLECTION_NAME, siteId.intValue());
 
 			XMLResource doc = (XMLResource) col.createResource(viewComponentId.toString(), "XMLResource");
 			doc.setContent(contentText);
@@ -165,11 +165,11 @@ public class XindiceXmlDbImpl implements XmlDb {
 	public void deleteXml(Integer siteId, Integer viewComponentId) {
 		if (log.isDebugEnabled()) log.debug("deleteXml(...) -> begin");
 
-		String serverHost = System.getProperty("cqXindiceHost", "localhost");
-		String port = System.getProperty("cqXindicePort", "8080");
+		String serverHost = System.getProperty("tizzitXindiceHost", "localhost");
+		String port = System.getProperty("tizzitXindicePort", "8080");
 
 		try {
-			org.xmldb.api.base.Collection col = XindiceHelper.getCollection(getCqPropertiesBeanSpring(), "xmldb:xindice://" + serverHost + ":" + port + "/db/", XMLDB_COLLECTION_NAME, siteId.intValue());
+			org.xmldb.api.base.Collection col = XindiceHelper.getCollection(getTizzitPropertiesBeanSpring(), "xmldb:xindice://" + serverHost + ":" + port + "/db/", XMLDB_COLLECTION_NAME, siteId.intValue());
 			org.xmldb.api.base.Resource doc = col.getResource(viewComponentId.toString());
 			if (doc != null) {
 				col.removeResource(doc);
@@ -196,8 +196,8 @@ public class XindiceXmlDbImpl implements XmlDb {
 		try {
 			Integer siteId = UnitUtil.getLocalHome().findByPrimaryKey(unitId).getSite().getSiteId();
 
-			String serverHost = System.getProperty("cqXindiceHost", "localhost");
-			String port = System.getProperty("cqXindicePort", "8080");
+			String serverHost = System.getProperty("tizzitXindiceHost", "localhost");
+			String port = System.getProperty("tizzitXindicePort", "8080");
 
 			col = XindiceHelper.getCollection("xmldb:xindice://" + serverHost + ":" + port + "/db/", SearchUpdateMessageListener.XMLDB_COLLECTION_NAME, siteId);
 

@@ -618,6 +618,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 		newEdition.setCreator(getUserHbmDao().load(creator));
 		newEdition.setViewComponentId(viewComponentId);
 		newEdition.setViewDocumentId(viewDocumentId);
+		newEdition.setUnitId(unitId);
 		newEdition.setSiteId(siteId);
 		newEdition.setEditionFileName(null);
 		newEdition.setNeedsDeploy(needsDeploy);

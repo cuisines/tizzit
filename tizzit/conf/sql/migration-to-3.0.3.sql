@@ -44,4 +44,4 @@ DROP TABLE COMP_PERSONTOUNITLINK;
 ALTER TABLE contentversion DROP COLUMN version_comment;
 Add to conquest.properties
 # EDITION MANAGEMENT ##########################################################
-cqPropertiesBeanSpring.editionCronExpression=0 * * * * ?
+tizzitPropertiesBeanSpring.editionCronExpression=0 * * * * ?

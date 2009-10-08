@@ -1574,9 +1574,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				System.setProperty("cq.remotePort", client.getHostConfiguration().getPort() + "");
 				System.setProperty("cq.remoteContext", "remote");
 
-				ApplicationContext ctx = new ClassPathXmlApplicationContext(new String[] {"/applicationContext-import-remoteServices.xml", "/applicationContext-client.xml"});
-
-				AuthorizationServiceSpring autoSpring = RemoteServiceLocator.instance().getAuthorizationServiceSpring();
+				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
+				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
+				//AuthorizationServiceSpring autoSpring = RemoteServiceLocator.instance().getAuthorizationServiceSpring();
 				log.info("Logging in on Liveserver...");
 				autoSpring.login(liveUserName, livePassword, site.getSiteId().intValue());
 				log.info("Successfully logged in!");

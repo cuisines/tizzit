@@ -94,18 +94,17 @@
 	</bean>
 	<bean class="de.juwimm.cms.search.beans.SearchengineDeleteService" id="searchengineDeleteService" />
 
-	<bean class="de.juwimm.cms.beans.foreign.CqPropertiesBeanSpring" id="cqPropertiesBeanSpring" lazy-init="false" scope="singleton" />
+	<bean class="de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring" id="tizzitPropertiesBeanSpring" lazy-init="false" scope="singleton" />
 	<bean class="de.juwimm.cms.beans.EditionCronService" id="editionCronService" p:editionHbmDao-ref="editionHbmDao" p:editionServiceSpring-ref="editionServiceSpring" />
-	<bean class="de.juwimm.cms.beans.SearchCronService" id="searchCronService" p:contentHbmDao-ref="contentHbmDao" p:cqPropertiesBeanSpring-ref="cqPropertiesBeanSpring" p:documentHbmDao-ref="documentHbmDao" p:searchengineService-ref="searchengineService" />
+	<bean class="de.juwimm.cms.beans.SearchCronService" id="searchCronService" p:contentHbmDao-ref="contentHbmDao" p:tizzitPropertiesBeanSpring-ref="tizzitPropertiesBeanSpring" p:documentHbmDao-ref="documentHbmDao" p:searchengineService-ref="searchengineService" />
 	<bean class="de.juwimm.cms.beans.WebServiceSpring" id="webServiceSpring" />
-
 	<bean class="org.tizzit.classloading.ClassloadingHelper" id="classloadingHelper" />
 
 	<!-- **************************************************** -->
 	<!-- ******************* JMX BEANS ********************** -->
 	<!-- **************************************************** -->
 	<bean class="de.juwimm.cms.beans.jmx.SearchIndex" id="jmxBeanSearchengineIndexer">
-		<property name="enabled" value="%%%cqPropertiesBeanSpring.search.indexerEnabled%%%" />
+		<property name="enabled" value="%%%tizzitPropertiesBeanSpring.search.indexerEnabled%%%" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="searchengineIndexerCronTrigger">
@@ -115,7 +114,7 @@
 				<property name="targetMethod" value="cronRunSearchIndexer" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.search.indexerCronExpression%%%" />
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.search.indexerCronExpression%%%" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="logfileCronTrigger">
@@ -125,17 +124,17 @@
 				<property name="targetMethod" value="startParsing" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.logfile.cronExpression%%%" />
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.logfile.cronExpression%%%" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="editionCronTrigger">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 				<property name="targetObject" ref="editionCronService" />
-				<property name="targetMethod" value="cronEditionImport" />
+				<property name="targetMethod" value="cronEditionDeploy" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="%%%cqPropertiesBeanSpring.editionCronExpression%%%" />
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
