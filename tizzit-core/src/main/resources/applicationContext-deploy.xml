@@ -9,7 +9,7 @@
     -->
     <!-- ========================= Start of BEAN POSTPROCESSORS ======================== -->
 
-    <bean id="propertyPlaceholderConfigurer"
+    <!-- bean id="propertyPlaceholderConfigurer"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location">
             <value>classpath:applicationContext-import-remoteServices.properties</value>
@@ -17,7 +17,7 @@
         <property name="systemPropertiesModeName">
             <value>SYSTEM_PROPERTIES_MODE_OVERRIDE</value>
         </property>        
-    </bean>
+    </bean-->
 
     <!-- ========================= End of BEAN POSTPROCESSORS ========================== -->
 
@@ -37,9 +37,4 @@
         </property>
         <property name="proxyInterfaces"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
     </bean>
-
-    
-
-    <!-- ========================= End of SERVICE DEFINITIONS ========================= -->
-
 </beans>

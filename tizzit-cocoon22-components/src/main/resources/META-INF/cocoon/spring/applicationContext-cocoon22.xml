@@ -9,14 +9,14 @@
   <!-- 
   <bean id="overrideConfigurerCocoon" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
     <property name="location">
-      <value>classpath:/conquest.properties</value>
+      <value>classpath:/tizzit.properties</value>
     </property>
     <property name="beanNameSeparator"><value>/</value></property>  
   </bean> -->
 
   <bean id="overrideConfigurer" class="org.springframework.beans.factory.config.PropertyOverrideConfigurer">
     <property name="location">
-      <value>classpath:/conquest.properties</value>
+      <value>classpath:/tizzit.properties</value>
     </property>
   </bean>
     
@@ -26,7 +26,7 @@
     <property name="placeholderSuffix" value="%%%"/>
     <property name="locations">
       <list>
-        <value>classpath:/conquest.properties</value>
+        <value>classpath:/tizzit.properties</value>
       </list>
     </property>
     <property name="systemPropertiesModeName">

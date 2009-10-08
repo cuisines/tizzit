@@ -39,15 +39,15 @@ import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.vo.SiteValue;
 
 /**
- * @Deprecated TODO After switching to Cocoon 2.2 this should be implemented by resolving CqPropertiesBeanSpring
- * Provides the conquest.properties functionality for ConQuest 2.2 systems
+ * @Deprecated TODO After switching to Cocoon 2.2 this should be implemented by resolving tizzitPropertiesBeanSpring
+ * Provides the tizzit.properties functionality for ConQuest 2.2 systems
  * with a synthetic Cocoon deployment.
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
 public class ConquestPropertyModule extends AbstractJXPathModule implements InputModule, ThreadSafe {
-	private Logger log = Logger.getLogger(ConquestPropertyModule.class);
-	private static final String PROPERTIES_FILENAME = "conquest.properties";
+	private final Logger log = Logger.getLogger(ConquestPropertyModule.class);
+	private static final String PROPERTIES_FILENAME = "tizzit.properties";
 	private Properties prop;
 	private WebServiceSpring webSpringBean = null;
 	private long lastLoadTime = -1L;
@@ -107,7 +107,7 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 			loadConquestProperties();
 			loadSiteProperties();
 		} else {
-			// load variables from conquest.properties
+			// load variables from tizzit.properties
 			URL url = this.getClass().getResource("/" + PROPERTIES_FILENAME);
 			File f;
 			try {
@@ -132,7 +132,7 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 				String defaultLaguage = this.webSpringBean.getDefaultLanguage(site.getSiteId());
 				prop.put("mandator-id-" + site.getShortName(), site.getSiteId());
 				prop.put("default-language-" + site.getShortName(), defaultLaguage);
-				if (!Boolean.parseBoolean(prop.get("cqPropertiesBeanSpring.liveserver").toString())) {
+				if (!Boolean.parseBoolean(prop.get("tizzitPropertiesBeanSpring.liveserver").toString())) {
 					prop.put("expires-" + site.getShortName(), "0");
 				} else {
 					prop.put("expires-" + site.getShortName(), site.getCacheExpire());
@@ -149,8 +149,8 @@ public class ConquestPropertyModule extends AbstractJXPathModule implements Inpu
 		InputStream is = this.getClass().getResourceAsStream("/" + PROPERTIES_FILENAME);
 		try {
 			prop.load(is);
-			System.setProperty("cqCmsTemplatesPath", prop.get("cqPropertiesBeanSpring.cmsTemplatesPath").toString());
-			System.setProperty("cqLiveserver", prop.get("cqPropertiesBeanSpring.liveserver").toString());
+			System.setProperty("tizzitCmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
+			System.setProperty("tizzitLiveserver", prop.get("tizzitPropertiesBeanSpring.liveserver").toString());
 		} catch (Exception exe) {
 			log.warn("Unable to load props from \"" + PROPERTIES_FILENAME + "\"!");
 		}

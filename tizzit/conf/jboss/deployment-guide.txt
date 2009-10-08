@@ -12,7 +12,7 @@ does not use the run.bat/run.sh for sure.
 - put juwimm-cms-loginmodules-2.X.X.jar in server/conquest/lib
 - put JDBC-lib in server/conquest/lib
 
-- check valid conquest.properties! note the jms config part for cluster true/false
+- check valid tizzit.properties! note the jms config part for cluster true/false
 ******************************************************* COCOON *********************************************************
 If you want use Cocoon 2.2, just deploy the latest 'tizzit-web-cocoon22-xxx.war' and set the following parameter to 
 false in your Cocoon-Sitemap (e.g.: /tizzit-site-tizzit/web/sitemap.xmap)

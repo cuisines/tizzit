@@ -24,10 +24,10 @@ import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.components.store.impl.CocoonStoreJanitor;
 
 /**
- * Special CocoonStoreJanitor loading values from conquest.properties-file.<br/>
+ * Special CocoonStoreJanitor loading values from tizzit.properties-file.<br/>
  * The file &quot;cocoon.xconf&quot; for configuring the behavior of the StoreJanitor contains fixed absolute values.<br/>
  * To adjust these values for every server the <code>ConquestCocoonStoreJanitor</code> takes absolute or - for memory-settings - relative values<br/>
- * from the &quot;conquest.properties&quot;.<br/>
+ * from the &quot;tizzit.properties&quot;.<br/>
  * On error we use all the values of &quot;cocoon.xconf&quot; untouched.<br/>
  * Possible values:
  * <ul>
@@ -47,7 +47,7 @@ public class ConquestCocoonStoreJanitor extends CocoonStoreJanitor implements Pa
 
 	/**
 	 * Normally this method is called with the values from the file &quot;cocoon.xconf&quot;.<br/>
-	 * Here we try to load the settings from the &quot;conquest.properties&quot; and replace these of the &quot;cocoon.xconf&quot;.<br/>
+	 * Here we try to load the settings from the &quot;tizzit.properties&quot; and replace these of the &quot;cocoon.xconf&quot;.<br/>
 	 * Values for the memory-setting are calculated in relation of Xmx.<br/>
 	 * On error we use all the values of &quot;cocoon.xconf&quot; untouched.
 	 * @see org.apache.cocoon.components.store.impl.CocoonStoreJanitor#parameterize(org.apache.avalon.framework.parameters.Parameters)

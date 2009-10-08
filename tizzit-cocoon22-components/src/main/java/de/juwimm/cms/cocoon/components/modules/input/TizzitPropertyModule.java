@@ -40,7 +40,7 @@ import de.juwimm.cms.vo.SiteValue;
 
 /**
  * @Deprecated TODO After switching to Cocoon 2.2 this should be implemented by resolving tizzitPropertiesBeanSpring
- * Provides the conquest.properties functionality for ConQuest 2.2 systems
+ * Provides the tizzit.properties functionality for ConQuest 2.2 systems
  * with a synthetic Cocoon deployment.
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id: ConquestPropertyModule.java 304 2009-09-29 13:58:15Z eduard.siebert@online.de $
@@ -107,7 +107,7 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 			loadConquestProperties();
 			loadSiteProperties();
 		} else {
-			// load variables from conquest.properties
+			// load variables from tizzit.properties
 			URL url = this.getClass().getResource("/" + PROPERTIES_FILENAME);
 			File f;
 			try {
@@ -117,7 +117,7 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 					loadConquestProperties();
 				}
 			} catch (URISyntaxException e) {
-				log.error("URI Syntax for conquest.properties file is wrong", e);
+				log.error("URI Syntax for tizzit.properties file is wrong", e);
 			}
 		}
 		if (log.isDebugEnabled()) log.debug("end load");

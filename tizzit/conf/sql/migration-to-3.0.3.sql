@@ -42,6 +42,6 @@ ALTER TABLE edition ADD COLUMN view_component_id INTEGER NULL;
 ALTER TABLE host ADD COLUMN LIVESERVER SMALLINT DEFAULT '0' NULL;
 DROP TABLE COMP_PERSONTOUNITLINK;
 ALTER TABLE contentversion DROP COLUMN version_comment;
-Add to conquest.properties
+Add to tizzit.properties
 # EDITION MANAGEMENT ##########################################################
 tizzitPropertiesBeanSpring.editionCronExpression=0 * * * * ?
