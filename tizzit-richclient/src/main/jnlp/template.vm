@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp codebase="$$fake80codebase">
    <information>
-      <title>Tizzit 3.0 Open Source</title>
-      <vendor>Juwi MacMillan Group GmbH</vendor>
-      <homepage href="http://www.tizzit.org"> </homepage>
+      <title>Tizzit</title>
+      <vendor>tizzit.org Community</vendor>
+      <homepage href="http://www.tizzit.org"/>
       <icon width="64" height="64" href="/64_tizzit.png"> </icon>
       <icon width="32" height="32" href="/32_tizzit.png"> </icon>
       <icon width="16" height="16" href="/16_tizzit.png"> </icon>
