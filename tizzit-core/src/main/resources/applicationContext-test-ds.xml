@@ -5,25 +5,25 @@
 
 	<bean id="propertyConfigurator" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
-			<value>classpath:testConquest.properties</value>
+			<value>classpath:testTizzit.properties</value>
 		</property>
 	</bean>
-	
-	
-	<!-- 
+
+
+	<!--
 		Import EJBs into spring context
 	 -->
 	<bean id="sequenceSession" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="de.juwimm.sequence.SequenceSession"/>
-		  <property name="businessInterface" value="de.juwimm.sequence.remote.SequenceSession"/>		  
+		  <property name="businessInterface" value="de.juwimm.sequence.remote.SequenceSession"/>
 		  <property name="jndiEnvironment">
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="viewServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.ViewService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.ViewService"/>
@@ -31,10 +31,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="adminServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.AdministrationService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.AdministrationService"/>
@@ -42,10 +42,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="contentServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.ContentService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.ContentService"/>
@@ -53,13 +53,13 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
-	<!-- 
-		Local Stateless Session Bean 
-		Class LocalHomeProxy must be in the classpath (jboss.jar)	
+
+	<!--
+		Local Stateless Session Bean
+		Class LocalHomeProxy must be in the classpath (jboss.jar)
 	-->
 	<bean id="editionServiceEJB" class="org.springframework.ejb.access.LocalStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.EditionService/Local"/>
@@ -68,10 +68,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="masterRootServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.MasterRootService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.MasterRootService"/>
@@ -79,10 +79,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="unitServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.UnitService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.UnitService"/>
@@ -90,10 +90,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="userServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.UserService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.UserService"/>
@@ -101,10 +101,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="webServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.remote.WebService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.remote.WebService"/>
@@ -112,10 +112,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="safeguardServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.safeguard.remote.SafeguardService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.safeguard.remote.SafeguardService"/>
@@ -123,10 +123,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="componentsServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.components.remote.ComponentsService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.components.remote.ComponentsService"/>
@@ -134,10 +134,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="authorizationServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.authorization.remote.AuthorizationService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.authorization.remote.AuthorizationService"/>
@@ -145,10 +145,10 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="searchengineServiceEJB" class="org.springframework.ejb.access.SimpleRemoteStatelessSessionProxyFactoryBean">
 		  <property name="jndiName" value="ejb/de.juwimm.cms.search.remote.SearchengineService/Remote"/>
 		  <property name="businessInterface" value="de.juwimm.cms.search.remote.SearchengineService"/>
@@ -156,7 +156,7 @@
  			<props>
 				<prop key="java.naming.factory.initial">${java.naming.factory.initial}</prop>
 				<prop key="java.naming.provider.url">${java.naming.provider.url}</prop>
-			</props> 
+			</props>
 		</property>
 	</bean>
 
@@ -172,6 +172,6 @@
 		</property>
 		<property name="password">
 			<value>${testPassword}</value>
-		</property>		
+		</property>
 	</bean>
 </beans>
