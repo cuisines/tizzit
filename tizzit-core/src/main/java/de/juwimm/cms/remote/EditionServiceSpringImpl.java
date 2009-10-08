@@ -1570,8 +1570,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				HttpClient client = hcw.getNewHttpClient();
 				hcw.setHostConfiguration(client, new URL(soapURL));
 
-				System.setProperty("tizzit-liveserver.remoteServer", client.getHostConfiguration().getHost() + "");
-				System.setProperty("tizzit-liveserver.remotePort", client.getHostConfiguration().getPort() + ""); 
+				System.setProperty("tizzit-liveserver.remoteServer", liveServerIP); 
 
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
