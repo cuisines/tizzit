@@ -341,8 +341,12 @@
 		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover,
 		.firstlevel2 .firstlink .clicked a:hover, .firstlevel2 .last-of-firstlink .clicked a:hover,
 		.firstlevel2 .secondlink .actualClicked a, .firstlevel2 .secondlink .clicked a,
-		.firstlevel2 .last-of-secondlink .actualClicked a, .firstlevel2 .last-of-secondlink .clicked a{
+		.firstlevel2 .last-of-secondlink .actualClicked a, .firstlevel2 .last-of-secondlink .clicked a {
 			color:#96CF48;
+		}
+		.firstlevel2 .secondlink .actualClicked a, .firstlevel2 .secondlink .clicked a,
+		.firstlevel2 .last-of-secondlink .actualClicked a, .firstlevel2 .last-of-secondlink .clicked a {
+			background-image:none;
 		}
 		.leftmenue .firstlink a {
 			font-size:13px;
