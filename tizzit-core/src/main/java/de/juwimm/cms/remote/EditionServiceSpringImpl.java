@@ -1561,15 +1561,6 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				int unitId = edition.getUnitId();
 				int viewDocumentId = edition.getViewDocumentId();
 
-				// Step one is to login on the deployserver. This is because of setting the activeSite Attribute
-				//				DynamicDeployServiceServiceLocator ddssl = new DynamicDeployServiceServiceLocator();
-				//				DynamicDeployServiceSoapBindingStub ddssStub = (DynamicDeployServiceSoapBindingStub) ddssl.getDynamicDeployService(new URL(soapURL + ddssl.getDynamicDeployServiceWSDDServiceName()));
-				//				ddssStub.setUsername(liveUserName);
-				//				ddssStub.setPassword(livePassword);
-				HttpClientWrapper hcw = HttpClientWrapper.getInstance();
-				HttpClient client = hcw.getNewHttpClient();
-				hcw.setHostConfiguration(client, new URL(soapURL));
-
 				System.setProperty("tizzit-liveserver.remoteServer", liveServerIP); 
 
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
