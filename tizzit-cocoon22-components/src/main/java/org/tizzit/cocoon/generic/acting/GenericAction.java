@@ -16,8 +16,8 @@ import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.log4j.Logger;
-import org.tizzit.cocoon.generic.ClassLoadingHelper;
 import org.tizzit.cocoon.generic.util.ConfigurationHelper;
+import org.tizzit.core.classloading.ClassloadingHelper;
 
 /**
  * An <code>Action</code> for dynamically loading of site-specific Actions.
@@ -72,7 +72,6 @@ public class GenericAction extends AbstractCacheableAction implements Configurab
 	private AbstractAction action = null;
 	private Composable composable = null; // deprecated (which version?), now you should use Serviceable
 	private Configurable configurable = null;
-	private ClassLoadingHelper classHelper = null;
 
 	public void compose(ComponentManager arg0) throws ComponentException {
 		if (log.isDebugEnabled()) log.debug("compose() -> begin");
@@ -84,10 +83,9 @@ public class GenericAction extends AbstractCacheableAction implements Configurab
 	public void configure(Configuration config) throws ConfigurationException {
 		if (log.isDebugEnabled()) log.debug("configure() -> begin");
 		//if (this.action == null) {
-		this.classHelper = new ClassLoadingHelper(ConfigurationHelper.getSiteShort(config), ConfigurationHelper.getJarNames(config));
 		String clzName = ConfigurationHelper.getClassName(config);
 		try {
-			this.action = (AbstractAction) this.classHelper.instanciateClass(clzName);
+			this.action = (AbstractAction) ClassloadingHelper.getInstance(clzName);
 			if (this.action instanceof Configurable) this.configurable = (Configurable) this.action;
 			if (this.action instanceof Composable) {
 				if (this.composable == null) {
@@ -98,6 +96,8 @@ public class GenericAction extends AbstractCacheableAction implements Configurab
 		} catch (ComponentException e) {
 			log.error(e);
 			throw new ConfigurationException("could not call compose(...) on " + clzName); //$NON-NLS-1$
+		} catch (Exception exe) {
+			throw new ConfigurationException("Could not instantiate " + clzName); //$NON-NLS-1$
 		}
 		if (this.configurable != null) this.configurable.configure(config);
 		if (log.isDebugEnabled()) log.debug("configure() -> end");

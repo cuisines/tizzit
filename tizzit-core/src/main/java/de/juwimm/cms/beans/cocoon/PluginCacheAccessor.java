@@ -21,23 +21,21 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.core.classloading.ClassloadingHelper;
 
-import de.juwimm.cms.beans.SpringPluginServerClassloadingHelper;
 import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.model.SiteHbmDao;
 import de.juwimm.cms.plugins.server.ConquestPlugin;
 import de.juwimm.cms.vo.ContentPluginValue;
 
 /**
- * 
+ *
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
 public class PluginCacheAccessor {
 	private static Logger log = Logger.getLogger(PluginCacheAccessor.class);
 	private final HashMap<PluginIdentifier, ConquestPlugin> plugins = new HashMap<PluginIdentifier, ConquestPlugin>();
-	@Autowired
-	private final SpringPluginServerClassloadingHelper springPluginServerClassloadingHelper = null;
 	@Autowired
 	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 	@Autowired
@@ -66,7 +64,7 @@ public class PluginCacheAccessor {
 						log.debug("Thread " + Thread.currentThread().getId() + " \"" + Thread.currentThread().getName() + "\": ");
 					}
 					url[j] = new URL(myurl);
-					ConquestPlugin cp = (ConquestPlugin) springPluginServerClassloadingHelper.loadMandatorClass(pluginValue.getGeneratorClassname(), url);
+					ConquestPlugin cp = (ConquestPlugin) ClassloadingHelper.getInstance(pluginValue.getGeneratorClassname());
 					plugins.put(pluginIdent, cp);
 					return cp;
 				}

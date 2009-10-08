@@ -28,7 +28,7 @@ import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 /**
- * 
+ *
  * @author toerberj
  *
  * read the configuration of the Action from the sitemap
@@ -36,7 +36,6 @@ import org.apache.log4j.Logger;
  */
 public class ConfigurationHelper {
 	private static Logger log = Logger.getLogger(ConfigurationHelper.class);
-	public static final String TIZZIT_COCOON_COMPONENT_LIBRARIES_PARENT = "tizzitCocoonComponentLibrariesParent";
 	private static Properties props = null;
 
 	public static String getDCFUrl(String siteShort) {

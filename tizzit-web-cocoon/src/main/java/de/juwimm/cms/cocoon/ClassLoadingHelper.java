@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 /**
- * 
+ *
  */
 package de.juwimm.cms.cocoon;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.log4j.Logger;
-
-import de.juwimm.cms.classloading.PluginServerClassloadingHelper;
-import de.juwimm.cms.cocoon.helper.ConfigurationHelper;
+import org.tizzit.core.classloading.ClassloadingHelper;
 
 /**
  * Helper for loading new classes dynamically
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
  * , Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
+ * @deprecated Use {@link org.tizzit.core.classloading.ClassloadingHelper#getInstance(String)} instead!
  */
+@Deprecated
 public class ClassLoadingHelper {
 	private static Logger log = Logger.getLogger(ClassLoadingHelper.class);
-	private URL[] urls = null;
-	private PluginServerClassloadingHelper psc = new PluginServerClassloadingHelper();
 
 	/**
 	 * Create an new helper
@@ -43,9 +38,7 @@ public class ClassLoadingHelper {
 	 * @param jarNames
 	 */
 	public ClassLoadingHelper(String mandatorShort, String[] jarNames) {
-		if (log.isDebugEnabled()) log.debug("Instanciating new ClassloadingHelper for Mandantor \"" + mandatorShort + "\" with jars: " + this.getStringFromArray(jarNames));
-		String dcfUrl = ConfigurationHelper.getDCFUrl(mandatorShort);
-		this.urls = this.getURLArrayFromJarsURL(jarNames, dcfUrl);
+		log.warn("This class is deprecated! Use the provided alternatives instead!");
 	}
 
 	/**
@@ -54,37 +47,15 @@ public class ClassLoadingHelper {
 	 * @return an instance of the desired class
 	 */
 	public Object instanciateClass(String classname) {
-		return psc.loadMandatorClass(classname, this.urls);
-	}
-
-	private String getStringFromArray(String[] source) {
-		StringBuilder sb = new StringBuilder();
-		if (source != null && source.length > 0) {
-			for (int i = 0; i < source.length; i++) {
-				if (sb.length() > 0) sb.append(", ");
-				sb.append(source[i]);
-			}
+		try {
+			return ClassloadingHelper.getInstance(classname);
+		} catch (Exception exe) {
+			log.error("Could not instantiate '" + classname + "' - " + exe.getMessage(), exe);
+			return null;
 		}
-		return sb.toString();
 	}
-
-	private URL[] getURLArrayFromJarsURL(String[] jarNames, String url) {
-		URL[] urla = null;
-		if (jarNames != null) {
-			urla = new URL[jarNames.length];
-			try {
-				for (int i = 0; i < jarNames.length; i++) {
-					urla[i] = new URL(url + jarNames[i]);
-				}
-			} catch (MalformedURLException ex) {
-				log.error(ex);
-			}
-		}
-		return urla;
-	}
-	
 
 	public void restoreContextClassLoader() {
-		psc.restoreContextClassLoader();
+		//do nothing
 	}
 }

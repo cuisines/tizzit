@@ -1,15 +1,15 @@
 package org.tizzit.cocoon.generic.util;
 
 /**
- * 
+ *
  * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
  */
 public class ParameterHelper {
 
 	/**
-	 * 
+	 *
 	 * @param paramValue
-	 * @return 
+	 * @return
 	 */
 	public static boolean booleanValue(String paramValue) {
 		boolean retVal;

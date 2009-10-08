@@ -17,8 +17,8 @@ import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.reading.AbstractReader;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.log4j.Logger;
-import org.tizzit.cocoon.generic.ClassLoadingHelper;
 import org.tizzit.cocoon.generic.util.ConfigurationHelper;
+import org.tizzit.core.classloading.ClassloadingHelper;
 import org.xml.sax.SAXException;
 
 /**
@@ -37,7 +37,6 @@ public class GenericReader extends AbstractCacheableReader implements Configurab
 	private AbstractReader reader = null;
 	private Configurable configurable = null;
 	private Configuration config = null;
-	private ClassLoadingHelper classHelper = null;
 
 	/*
 	 * (non-Javadoc)
@@ -59,13 +58,9 @@ public class GenericReader extends AbstractCacheableReader implements Configurab
 		if (log.isDebugEnabled()) log.debug("setup() -> begin");
 		//if (this.reader == null) {
 		try {
-			String clientCode = parameters.getParameter("clientCode", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			String siteShort = clientCode.length() > 0 ? clientCode : ConfigurationHelper.getSiteShort(this.config);
-
-			classHelper = new ClassLoadingHelper(siteShort, ConfigurationHelper.getJarNames(config));
 			String clzName = ConfigurationHelper.getClassName(config);
 
-			this.reader = (AbstractReader) classHelper.instanciateClass(clzName);
+			this.reader = (AbstractReader) ClassloadingHelper.getInstance(clzName);
 			if (this.reader instanceof Configurable) {
 				this.configurable = (Configurable) this.reader;
 				// during the first call of configure (see below) there was no instance of generator/configurable so we have to call this now

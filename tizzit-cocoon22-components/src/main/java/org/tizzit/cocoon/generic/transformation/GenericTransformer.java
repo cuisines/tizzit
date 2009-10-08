@@ -16,8 +16,8 @@ import org.apache.cocoon.transformation.AbstractTransformer;
 import org.apache.cocoon.xml.XMLConsumer;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.log4j.Logger;
-import org.tizzit.cocoon.generic.ClassLoadingHelper;
 import org.tizzit.cocoon.generic.util.ConfigurationHelper;
+import org.tizzit.core.classloading.ClassloadingHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -46,7 +46,6 @@ public class GenericTransformer extends AbstractCacheableTransformer implements 
 	private Configurable configurable = null;
 	/** store Configuration gotten by config(...) and pass to external transformer if it implements Configurable */
 	private Configuration config = null;
-	private ClassLoadingHelper classHelper = null;
 
 	public void configure(Configuration config) throws ConfigurationException {
 		this.config = config;
@@ -58,14 +57,9 @@ public class GenericTransformer extends AbstractCacheableTransformer implements 
 
 		//if (this.transformer == null) {
 		try {
-			// during declaration in the sitemap you can't use global variables, but at usage time, so optionally allow this parameter
-			String clientCode = params.getParameter("clientCode", ""); //$NON-NLS-1$ //$NON-NLS-2$
-			String siteShort = clientCode.length() > 0 ? clientCode : ConfigurationHelper.getSiteShort(this.config);
-
-			classHelper = new ClassLoadingHelper(siteShort, ConfigurationHelper.getJarNames(config));
 			String clzName = ConfigurationHelper.getClassName(config);
 
-			this.transformer = (AbstractTransformer) classHelper.instanciateClass(clzName);
+			this.transformer = (AbstractTransformer) ClassloadingHelper.getInstance(clzName);
 			if (this.transformer instanceof Configurable) {
 				this.configurable = (Configurable) this.transformer;
 				// during the first call of configure (see below) there was no instance of transformer/configurable so we have to call this now

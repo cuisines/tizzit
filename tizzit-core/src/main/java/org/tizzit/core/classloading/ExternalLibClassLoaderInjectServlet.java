@@ -8,7 +8,7 @@
  * Confidential Information and shall use it only in accordance with the
  * terms of the license agreement you entered into with JuwiMM.
  */
-package org.tizzit.classloading;
+package org.tizzit.core.classloading;
 
 import java.io.IOException;
 
@@ -19,11 +19,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
-
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 
 // TODO: Class description
 /**
@@ -42,7 +37,7 @@ import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
  * @version $Id$
  * @since tizzit-core 07.10.2009
  */
-public class ReloadingServlet extends HttpServlet {
+public class ExternalLibClassLoaderInjectServlet extends HttpServlet {
 	/**
 	 *
 	 */
@@ -50,8 +45,6 @@ public class ReloadingServlet extends HttpServlet {
 
 	protected Servlet servlet;
 	protected ServletContext context;
-
-	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
 	/**
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
@@ -61,17 +54,12 @@ public class ReloadingServlet extends HttpServlet {
 		super.init(config);
 		this.context = config.getServletContext();
 
-		if (tizzitPropertiesBeanSpring == null) {
-			WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(this.context);
-			tizzitPropertiesBeanSpring = (TizzitPropertiesBeanSpring) webApplicationContext.getBean("tizzitPropertiesBeanSpring");
-		}
-
 		String servletName = config.getInitParameter("servlet-class");
 		if (servletName == null) { throw new ServletException("ReloadingServlet: Init-Parameter 'servlet-class' is missing."); }
 
 		// Create the servlet
 		try {
-			ClassLoader cl = ReloadingClassloaderManager.getClassLoader(tizzitPropertiesBeanSpring);
+			ClassLoader cl = ExternalLibClassLoaderManager.getClassLoader();
 			Class< ? > servletClass = cl.loadClass(servletName);
 			this.servlet = (Servlet) servletClass.newInstance();
 		} catch (Exception e) {
@@ -83,7 +71,7 @@ public class ReloadingServlet extends HttpServlet {
 		// and thus fails if it's not set to the webapp classloader.
 		final ClassLoader old = Thread.currentThread().getContextClassLoader();
 		try {
-			Thread.currentThread().setContextClassLoader(ReloadingClassloaderManager.getClassLoader(tizzitPropertiesBeanSpring));
+			Thread.currentThread().setContextClassLoader(ExternalLibClassLoaderManager.getClassLoader());
 
 			// Inlitialize the actual servlet
 			this.servlet.init(this.getServletConfig());
@@ -100,7 +88,7 @@ public class ReloadingServlet extends HttpServlet {
 	public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
 		final ClassLoader old = Thread.currentThread().getContextClassLoader();
 		try {
-			Thread.currentThread().setContextClassLoader(ReloadingClassloaderManager.getClassLoader(tizzitPropertiesBeanSpring));
+			Thread.currentThread().setContextClassLoader(ExternalLibClassLoaderManager.getClassLoader());
 
 			this.servlet.service(request, response);
 		} catch (Throwable t) {
@@ -118,7 +106,7 @@ public class ReloadingServlet extends HttpServlet {
 		if (this.servlet != null) {
 			final ClassLoader old = Thread.currentThread().getContextClassLoader();
 			try {
-				Thread.currentThread().setContextClassLoader(ReloadingClassloaderManager.getClassLoader(tizzitPropertiesBeanSpring));
+				Thread.currentThread().setContextClassLoader(ExternalLibClassLoaderManager.getClassLoader());
 				this.servlet.destroy();
 			} finally {
 				Thread.currentThread().setContextClassLoader(old);

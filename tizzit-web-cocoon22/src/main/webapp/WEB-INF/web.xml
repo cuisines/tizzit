@@ -95,6 +95,9 @@
   </filter-mapping>
 
   <!-- Servlet Context Listener ======================================= -->
+  <listener>
+    <listener-class>org.tizzit.core.classloading.ExternalLibClassLoaderInitializeListener</listener-class>
+  </listener>
 
   <!--
     - Declare Spring context listener which sets up the Spring Application Context
@@ -132,7 +135,8 @@
     <display-name>DispatcherServlet</display-name>
     <description>Cocoon blocks dispatcher</description>
     <!--<servlet-class>org.apache.cocoon.tools.rcl.wrapper.servlet.ReloadingServlet</servlet-class>-->
-    <servlet-class>org.tizzit.classloading.ReloadingServlet</servlet-class>
+    <!--<servlet-class>org.tizzit.classloading.ReloadingServlet</servlet-class>-->
+    <servlet-class>org.tizzit.core.classloading.ExternalLibClassLoaderInjectServlet</servlet-class>
     <init-param>
       <param-name>servlet-class</param-name>
       <param-value>org.apache.cocoon.servletservice.DispatcherServlet</param-value>

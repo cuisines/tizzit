@@ -98,7 +98,6 @@
 	<bean class="de.juwimm.cms.beans.EditionCronService" id="editionCronService" p:contentServiceSpring-ref="contentServiceSpring" p:editionHbmDao-ref="editionHbmDao" p:editionServiceSpring-ref="editionServiceSpring" />
 	<bean class="de.juwimm.cms.beans.SearchCronService" id="searchCronService" p:contentHbmDao-ref="contentHbmDao" p:tizzitPropertiesBeanSpring-ref="tizzitPropertiesBeanSpring" p:documentHbmDao-ref="documentHbmDao" p:searchengineService-ref="searchengineService" />
 	<bean class="de.juwimm.cms.beans.WebServiceSpring" id="webServiceSpring" />
-	<bean class="org.tizzit.classloading.ClassloadingHelper" id="classloadingHelper" />
 
 	<!-- **************************************************** -->
 	<!-- ******************* JMX BEANS ********************** -->
@@ -136,7 +135,7 @@
 		</property>
 		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
 	</bean>
-	
+
 	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="editionCronImportTrigger">
 		<property name="jobDetail">
 			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
@@ -187,8 +186,6 @@
 	<!-- **************************************************** -->
 	<!-- ****************** COCOON BEANS ******************** -->
 	<!-- **************************************************** -->
-	<bean class="de.juwimm.cms.beans.SpringPluginServerClassloadingHelper" id="springPluginServerClassloadingHelper" />
-
 	<bean class="de.juwimm.cms.beans.cocoon.PluginCache" id="pluginCache" init-method="renewCacheFromDcf" lazy-init="false" scope="singleton">
 		<property name="webServiceSpringBean" ref="webServiceSpring" />
 	</bean>

@@ -8,7 +8,7 @@
  * Confidential Information and shall use it only in accordance with the
  * terms of the license agreement you entered into with JuwiMM.
  */
-package org.tizzit.classloading;
+package org.tizzit.core.classloading;
 
 import java.net.URL;
 import java.net.URLClassLoader;

@@ -16,19 +16,16 @@
 package de.juwimm.cms.beans.foreign;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.tizzit.core.classloading.ExternalLibClassLoaderManager;
 
-/** 
+/**
  * @author <a href="mailto:sascha-matthias.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id: TizzitPropertiesBeanSpring.java 6 2009-07-30 14:05:05Z skulawik@gmail.com $
- * @since tizzitcms-core 18.02.2009 
+ * @since tizzitcms-core 18.02.2009
  */
 public class TizzitPropertiesBeanSpring {
 	private static final int tizzitPropertiesUCSversionNeeded = 30000;
@@ -170,7 +167,6 @@ public class TizzitPropertiesBeanSpring {
 		}
 	}
 
-	// TODO: Class description
 	/**
 	 *
 	 * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
@@ -210,46 +206,18 @@ public class TizzitPropertiesBeanSpring {
 			this.reloadingEnabled = reloadingEnabled;
 		}
 
+		/**
+		 * @see {@link ExternalLibClassLoaderManager#getFileList(String)}
+		 */
 		public List<File> getFileList() throws Exception {
-			File startFileOrDir = new File(new URI(this.path));
-			validateDirectory(startFileOrDir);
-			List<File> result = getFileList(startFileOrDir);
-			return result;
+			return ExternalLibClassLoaderManager.getFileList(this.path);
 		}
 
-		private List<File> getFileList(File startDir) throws Exception {
-			List<File> result = new ArrayList<File>();
-			File[] filesAndDirs = startDir.listFiles();
-			List<File> filesDirs = Arrays.asList(filesAndDirs);
-			for (File file : filesDirs) {
-				if (file.isDirectory()) {
-					//recursive call!
-					result.addAll(getFileList(file));
-				} else {
-					result.add(file);
-				}
-			}
-			return result;
-		}
-
+		/**
+		 * @see {@link ExternalLibClassLoaderManager#getURLList(String)}
+		 */
 		public List<URL> getURLList() throws Exception {
-			List<URL> retVal = null;
-
-			List<File> files = this.getFileList();
-			if (files != null && files.size() > 0) {
-				retVal = new ArrayList<URL>(files.size());
-				for (File file : files) {
-					retVal.add(file.toURL());
-				}
-			}
-			return retVal;
-		}
-
-		private void validateDirectory(File directory) throws FileNotFoundException {
-			if (directory == null) { throw new IllegalArgumentException("Directory should not be null."); }
-			if (!directory.exists()) { throw new FileNotFoundException("Directory does not exist: " + directory); }
-			if (!directory.isDirectory()) { throw new IllegalArgumentException("Is not a directory: " + directory); }
-			if (!directory.canRead()) { throw new IllegalArgumentException("Directory cannot be read: " + directory); }
+			return ExternalLibClassLoaderManager.getURLList(this.path);
 		}
 	}
 

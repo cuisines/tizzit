@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.tizzit.classloading.ClassloadingHelper;
+import org.tizzit.core.classloading.ClassloadingHelper;
 
 import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.search.vo.XmlSearchValue;
@@ -56,7 +56,8 @@ public class XmlDbFactory {
 			} else {
 				//instance = (XmlDb) springPluginServerClassloadi	ngHelper.loadServerClass(clazz);
 				try {
-					instance = (XmlDb) ClassloadingHelper.getInstance(clazz, tizzitPropertiesBeanSpring);
+					//instance = (XmlDb) ClassloadingHelper.getInstance(clazz, tizzitPropertiesBeanSpring);
+					instance = (XmlDb) ClassloadingHelper.getInstance(clazz);
 				} catch (Exception exe) {
 					log.warn("Could not resolve XmlDb Search with classname " + clazz + " " + exe.getMessage());
 					instance = new NullXmlDb();

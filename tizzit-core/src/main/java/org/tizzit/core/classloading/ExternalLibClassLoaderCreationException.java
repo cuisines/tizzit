@@ -8,9 +8,8 @@
  * Confidential Information and shall use it only in accordance with the
  * terms of the license agreement you entered into with JuwiMM.
  */
-package org.tizzit.classloading;
+package org.tizzit.core.classloading;
 
-// TODO: Class description
 /**
  *
  * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
@@ -18,18 +17,15 @@ package org.tizzit.classloading;
  * @version $Id$
  * @since tizzit-core 07.10.2009
  */
-public class ReloadingClassloaderCreationException extends RuntimeException {
+public class ExternalLibClassLoaderCreationException extends RuntimeException {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -8257550273235512619L;
+	private static final long serialVersionUID = -4202110658964651954L;
 
-	public ReloadingClassloaderCreationException(String msg) {
+	public ExternalLibClassLoaderCreationException(String msg) {
 		super(msg);
 	}
 
-	public ReloadingClassloaderCreationException(String msg, Exception e) {
+	public ExternalLibClassLoaderCreationException(String msg, Exception e) {
 		super(msg, e);
 	}
 
