@@ -156,6 +156,11 @@ public final class UIConstants {
 	public static ImageIcon ACTION_TREE_NODE_BEFORE;
 	public static ImageIcon ACTION_TREE_NODE_AFTER;
 
+	public static ImageIcon ACTION_TREE_NODE_EXPAND_ALL;
+	public static ImageIcon ACTION_TREE_NODE_APPROVE;
+	public static ImageIcon ACTION_TREE_NODE_EXPORT;
+	public static ImageIcon ACTION_TREE_NODE_IMPORT;
+
 	public static ImageIcon MOVE_UP;
 	public static ImageIcon MOVE_DOWN;
 	public static ImageIcon MOVE_LEFT;
@@ -404,6 +409,11 @@ public final class UIConstants {
 		ACTION_TREE_NODE_APPEND = load("16x16/tra_c_darunter_einfuegen.png");
 		ACTION_TREE_NODE_BEFORE = load("16x16/tra_c_davor_einfuegen.png");
 		ACTION_TREE_NODE_AFTER = load("16x16/tra_c_danach_einfuegen.png");
+
+		ACTION_TREE_NODE_EXPAND_ALL = load("16x16/tra_expand_all.png");
+		ACTION_TREE_NODE_APPROVE = load("16x16/tra_node_approve.png");
+		ACTION_TREE_NODE_EXPORT = load("16x16/tra_node_export.png");
+		ACTION_TREE_NODE_IMPORT = load("16x16/tra_node_import.png");
 
 		ACTION_TREE_LINK_BEFORE = load("16x16/tra_l_davor_einfuegen.png");
 		ACTION_TREE_LINK_AFTER = load("16x16/tra_l_danach_einfuegen.png");

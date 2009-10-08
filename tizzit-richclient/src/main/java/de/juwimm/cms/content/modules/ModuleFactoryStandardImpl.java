@@ -48,8 +48,7 @@ import org.w3c.dom.Node;
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.content.panel.ContentBorder;
-import de.juwimm.cms.content.panel.ContentBorderModulePanel;
+import de.juwimm.cms.gui.controls.ColapsePanel;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.vo.SiteValue;
 
@@ -331,10 +330,13 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 	}
 
 	public JPanel getPanelForModule(Module module) {
-		ContentBorder cb = new ContentBorderModulePanel();
-		cb.setContentModulePanel(module.viewPanelUI());
-		cb.setLabel(module.getLabel());
-		return (JPanel) cb;
+		//ContentBorder cb = new ContentBorderModulePanel();
+		//cb.setContentModulePanel(module.viewPanelUI());
+		//cb.setLabel(module.getLabel());
+		ColapsePanel cbb = new ColapsePanel();
+		cbb.setText(module.getLabel());
+		cbb.add(module.viewPanelUI());
+		return (JPanel) cbb;
 	}
 
 	public String isModuleValid() {

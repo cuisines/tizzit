@@ -15,14 +15,25 @@
  */
 package de.juwimm.cms.content.frame;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import de.juwimm.cms.util.UIConstants;
 
@@ -89,8 +100,7 @@ public final class FrmStickyPad {
 		Dimension frameSize = stickyPadFrame.getPreferredSize();
 		int frameWidth = frameSize.width;
 		int frameHeight = frameSize.height;
-		stickyPadFrame.setBounds((screenSize.width / 2) - (frameWidth / 2),
-				(screenSize.height / 2) - (frameHeight / 2), 240, 175);
+		stickyPadFrame.setBounds((screenSize.width / 2) - (frameWidth / 2), (screenSize.height / 2) - (frameHeight / 2), 240, 175);
 	}
 
 	/**

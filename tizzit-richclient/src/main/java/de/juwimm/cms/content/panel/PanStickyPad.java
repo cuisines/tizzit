@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;

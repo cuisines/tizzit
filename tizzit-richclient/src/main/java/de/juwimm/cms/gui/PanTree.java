@@ -531,20 +531,20 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			miRootDeploysUnit.setIcon(UIConstants.ACTION_DEPLOY);
 			miRootDeploysUnit.setActionCommand(strACTIONROOTDEPLOYSUNIT);
 			popup.add(miRootDeploysUnit);
-			miRootExportUnit.setIcon(UIConstants.ACTION_DEPLOY);
+			miRootExportUnit.setIcon(UIConstants.ACTION_TREE_NODE_EXPORT);
 			miRootExportUnit.setActionCommand(strACTIONROOTEXPORTUNIT);
 			popup.add(miRootExportUnit);
-			miRootImportUnit.setIcon(UIConstants.ACTION_DEPLOY);
+			miRootImportUnit.setIcon(UIConstants.ACTION_TREE_NODE_IMPORT);
 			miRootImportUnit.setActionCommand(strACTIONROOTIMPORTUNIT);
 			miRootImportUnit.setText(rb.getString("actions.ACTION_ROOT_IMPORT_UNIT"));
 			popup.add(miRootImportUnit);
 			popup.addSeparator();
 		}
-		miTreeExpandAll.setIcon(UIConstants.MNU_EMPTY);
+		miTreeExpandAll.setIcon(UIConstants.ACTION_TREE_NODE_EXPAND_ALL);
 		miTreeExpandAll.setActionCommand(strACTIONTREEEXPANDALL);
 		popup.add(miTreeExpandAll);
 		if (comm.isUserInRole(UserRights.APPROVE)) { //rb.getString("ribbon.publish.release")
-			miContentApprove.setIcon(UIConstants.MNU_EMPTY);
+			miContentApprove.setIcon(UIConstants.ACTION_TREE_NODE_APPROVE);
 			miContentApprove.setActionCommand(Constants.ACTION_CONTENT_APPROVE);
 			popup.add(miContentApprove);
 		}
