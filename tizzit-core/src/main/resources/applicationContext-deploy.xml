@@ -23,7 +23,7 @@
     <bean id="authorizationServiceDeploySpring" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target">
             <bean class="de.juwimm.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
-                <property name="serviceUrl"><value>http://${tizzit-liveserver.}:${tizzit-liveserver.remotePort}/remote/authorizationServiceDeploySpring</value></property>
+                <property name="serviceUrl"><value>http://${tizzit-liveserver.remoteServer}:${tizzit-liveserver.remotePort}/remote/authorizationServiceDeploySpring</value></property>
                 <property name="serviceInterface"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
                 <property name="httpInvokerRequestExecutor">
                     <ref local="httpInvokerRequestExecutor"/>
