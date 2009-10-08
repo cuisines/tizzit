@@ -22,8 +22,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.juwimm.cms.beans.PluginManagement;
 import de.juwimm.cms.beans.WebServiceSpring;
-import de.juwimm.cms.plugins.server.ConquestPlugin;
+import de.juwimm.cms.plugins.server.TizzitPlugin;
 
 /**
  * Specialized ContentHandler for calculating the lastModifiedDate of a content-page.</br>
@@ -40,22 +41,29 @@ public final class ModifiedDateContentHandler extends DefaultHandler {
 	private Date modifiedDate = null;
 	private Date startTime = null;
 	private Integer viewComponentId = null;
-	private WebServiceSpring webSpringBean = null;
+	private WebServiceSpring webServiceSpring = null;
 	private Integer siteId = null;
 	private boolean isLiveserver = false;
-	private PluginCacheAccessor pluginCache = null;
+	private PluginManagement pluginManagement;
 
 	public void destroy() {
 		if (log.isDebugEnabled()) log.debug("calling destructor on ModifiedDateContentHandler");
-		releasePoolObject(this.pluginCache);
+	}
+	
+	public PluginManagement getPluginManagement() {
+		return pluginManagement;
 	}
 
-	public void releasePoolObject(Object obj) {
-		try {
-			//	getPluginCacheAccessorPool().releaseTarget(obj);
-		} catch (Exception exe) {
-			log.error("an unknown error occured", exe);
-		}
+	public void setPluginManagement(PluginManagement pluginManagement) {
+		this.pluginManagement = pluginManagement;
+	}
+
+	public WebServiceSpring getWebServiceSpring() {
+		return webServiceSpring;
+	}
+
+	public void setWebServiceSpring(WebServiceSpring webServiceSpring) {
+		this.webServiceSpring = webServiceSpring;
 	}
 
 	@Override
@@ -81,8 +89,8 @@ public final class ModifiedDateContentHandler extends DefaultHandler {
 				}
 
 				try {
-					if (ifDistanceToNavigationRoot == -1 || this.webSpringBean.getNavigationRootDistance4VCId(this.viewComponentId) >= ifDistanceToNavigationRoot) {
-						Date navDate = this.webSpringBean.getNavigationAge(this.viewComponentId, since, depth, this.isLiveserver);
+					if (ifDistanceToNavigationRoot == -1 || this.webServiceSpring.getNavigationRootDistance4VCId(this.viewComponentId) >= ifDistanceToNavigationRoot) {
+						Date navDate = this.webServiceSpring.getNavigationAge(this.viewComponentId, since, depth, this.isLiveserver);
 						if (this.modifiedDate.compareTo(navDate) <= 0) {
 							this.modifiedDate = navDate;
 						}
@@ -95,7 +103,7 @@ public final class ModifiedDateContentHandler extends DefaultHandler {
 				this.modifiedDate = this.startTime;
 			}
 			if (uri != null && uri.startsWith(de.juwimm.cms.plugins.Constants.PLUGIN_NAMESPACE)) {
-				ConquestPlugin plugin = this.pluginCache.getPlugin(new PluginIdentifier(this.siteId, uri));
+				TizzitPlugin plugin = getPluginManagement().getPlugin(uri);
 				if (plugin != null && plugin.isCacheable()) {
 					Date pluginDate = plugin.getLastModifiedDate();
 					if (this.modifiedDate.compareTo(pluginDate) <= 0) {
@@ -126,10 +134,6 @@ public final class ModifiedDateContentHandler extends DefaultHandler {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public void setPluginCache(PluginCacheAccessor pluginCache) {
-		this.pluginCache = pluginCache;
-	}
-
 	/**
 	 * Set the liveServer-property</br>
 	 * The calculated value for the lastModifiedDate may sometimes depend on this flag
@@ -156,15 +160,7 @@ public final class ModifiedDateContentHandler extends DefaultHandler {
 	public void setViewComponentId(Integer viewComponentId) {
 		this.viewComponentId = viewComponentId;
 	}
-
-	public WebServiceSpring getWebSpringBean() {
-		return this.webSpringBean;
-	}
-
-	public void setWebSpringBean(WebServiceSpring webSpringBean) {
-		this.webSpringBean = webSpringBean;
-	}
-
+ 
 	@Override
 	public void startDocument() throws SAXException {
 		// this.modifiedDate = new Date(System.currentTimeMillis());

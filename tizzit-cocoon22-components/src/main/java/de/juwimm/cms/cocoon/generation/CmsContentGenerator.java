@@ -19,15 +19,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.ParserConfigurationException;
@@ -59,19 +51,14 @@ import org.apache.log4j.Logger;
 import org.springframework.aop.target.CommonsPoolTargetSource;
 import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import de.juwimm.cms.beans.PluginManagement;
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler;
-import de.juwimm.cms.beans.cocoon.PluginCacheAccessor;
 import de.juwimm.cms.cocoon.generation.helper.PluginContentHandler;
 import de.juwimm.cms.cocoon.generation.helper.RequestImpl;
 import de.juwimm.cms.cocoon.generation.helper.ResponseImpl;
@@ -209,7 +196,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private String webSearchquery = null;
 	private long chgDate = 0;
 	private SAXParser parser = null;
-	private PluginCacheAccessor pluginCache = null;
+	private PluginManagement pluginManagement = null;
 	private String requestUrl = null;
 	private Map<String, String> safeguardMap = null;
 	private Map<Integer, String> path4ViewComponentCacheMap = new HashMap<Integer, String>();
@@ -220,7 +207,11 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		this.requestUrl = src;
 		this.par = parameters;
 
-		pluginCache = (PluginCacheAccessor) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.PLUGIN_CACHE_ACCESSOR);
+		try {
+			pluginManagement = (PluginManagement) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.PLUGIN_MANAGEMENT);
+		} catch (Exception exf) {
+			log.error("could not load pluginManagement ", exf);
+		}
 		try {
 			webSpringBean = (WebServiceSpring) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.WEB_SERVICE_SPRING);
 		} catch (Exception exf) {
@@ -465,16 +456,11 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		if (doc != null && contentHandler != null) {
 			if (log.isDebugEnabled()) log.debug("start streaming to sax");
 			try {
-				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginCache, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
+				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginManagement, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
 				contentHandlerWrapper.startDocument();
 				DOMStreamer ds = new DOMStreamer(contentHandlerWrapper);
 				ds.stream(doc.getDocumentElement());
 				contentHandlerWrapper.endDocument();
-				try {
-					((CommonsPoolTargetSource) CocoonSpringHelper.getBean(objectModel, "pluginCacheAccessorPool")).releaseTarget(pluginCache);
-				} catch (Exception exe) {
-					log.error("an unknown error occured", exe);
-				}
 			} catch (Exception exe) {
 				log.error("An error occured", exe);
 			}

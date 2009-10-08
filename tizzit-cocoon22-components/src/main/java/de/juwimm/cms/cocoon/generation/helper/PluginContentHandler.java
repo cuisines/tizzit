@@ -16,11 +16,15 @@
 package de.juwimm.cms.cocoon.generation.helper;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 
-import de.juwimm.cms.beans.cocoon.PluginCacheAccessor;
-import de.juwimm.cms.beans.cocoon.PluginIdentifier;
-import de.juwimm.cms.plugins.server.*;
+import de.juwimm.cms.beans.PluginManagement;
+import de.juwimm.cms.plugins.server.TizzitPlugin;
+import de.juwimm.cms.plugins.server.Request;
+import de.juwimm.cms.plugins.server.Response;
 
 /**
  * 
@@ -32,18 +36,18 @@ public final class PluginContentHandler implements ContentHandler {
 	private static Logger log = Logger.getLogger(PluginContentHandler.class);
 	private ContentHandler parent = null;
 	private boolean delegate = false;
-	private ConquestPlugin plugin;
+	private TizzitPlugin plugin;
 	private Request request = null;
 	private Integer viewComponentId = null;
 	private Integer siteId = null;
-	private PluginCacheAccessor pluginCache = null;
 	private Response response = null;
+	private PluginManagement pluginManagement;
 
-	public PluginContentHandler(PluginCacheAccessor pluginCache, ContentHandler parent, Request request, Response response, Integer viewComponentId, Integer siteId) {
-		this.pluginCache = pluginCache;
+	public PluginContentHandler(PluginManagement pluginManagement, ContentHandler parent, Request request, Response response, Integer viewComponentId, Integer siteId) {
 		this.parent = parent;
 		this.request = request;
 		this.viewComponentId = viewComponentId;
+		this.pluginManagement = pluginManagement;
 		this.siteId = siteId;
 		this.response = response;
 	}
@@ -53,7 +57,6 @@ public final class PluginContentHandler implements ContentHandler {
 
 	public void startDocument() throws SAXException {
 		parent.startDocument();
-		if (log.isDebugEnabled()) log.debug("PLUGIN CACHE " + pluginCache);
 	}
 
 	public void endDocument() throws SAXException {
@@ -70,7 +73,7 @@ public final class PluginContentHandler implements ContentHandler {
 
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		if (!delegate && uri != null && uri.startsWith(de.juwimm.cms.plugins.Constants.PLUGIN_NAMESPACE)) {
-			plugin = pluginCache.getPlugin(new PluginIdentifier(siteId, uri));
+			plugin = pluginManagement.getPlugin(uri);
 			if (plugin == null) {
 				if (log.isDebugEnabled()) log.debug("NO PLUGIN, WILL DELEGATE TO THE PARENT");
 				delegate = false;

@@ -21,19 +21,13 @@
 package de.juwimm.cms.beans;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringReader;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.Authentication;
@@ -46,21 +40,18 @@ import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.annotation.HourCache;
-import de.juwimm.cms.common.http.HttpClientWrapper;
 import de.juwimm.cms.components.model.*;
-import de.juwimm.cms.components.vo.*;
+import de.juwimm.cms.components.vo.AddressValue;
+import de.juwimm.cms.components.vo.DepartmentValue;
+import de.juwimm.cms.components.vo.PersonValue;
+import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.exceptions.ResourceNotFoundException;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.*;
 import de.juwimm.cms.remote.ViewServiceSpring;
-import de.juwimm.cms.remote.helper.GetAllPluginsFromDcfDcfXmlContentHandler;
-import de.juwimm.cms.remote.helper.GetAllPluginsFromDcfPluginSearchContentHandler;
 import de.juwimm.cms.safeguard.realmlogin.SafeguardLoginManager;
 import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
 import de.juwimm.cms.search.beans.SearchengineService;
@@ -800,50 +791,9 @@ public class WebServiceSpring {
 	}
 
 	/**
-	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllPluginsFromDcf()
-	 */
-
-	public ContentPluginValue[] getAllPluginsFromDcf() throws Exception {
-		HttpClientWrapper httpClient = HttpClientWrapper.getInstance();
-		HashMap<String, ContentPluginValue> plugins = new HashMap<String, ContentPluginValue>();
-		try {
-			SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-			parserFactory.setNamespaceAware(true);
-			SAXParser parser = parserFactory.newSAXParser();
-
-			Collection<SiteHbm> sites = siteHbmDao.findAll();
-			for (SiteHbm site : sites) {
-				SiteValue siteValue = site.getSiteValue();
-				String dcfUrl = siteValue.getDcfUrl();
-				if (dcfUrl != null) {
-					try {
-						String dcfXml = httpClient.getString(dcfUrl + "dcf.xml");
-						InputSource is = new InputSource(new StringReader(dcfXml));
-						GetAllPluginsFromDcfDcfXmlContentHandler ch = new GetAllPluginsFromDcfDcfXmlContentHandler(dcfUrl);
-						parser.parse(is, ch);
-						List<String> dcfs = ch.getAlDcfs();
-						for (String dcf : dcfs) {
-							is = new InputSource(new StringReader(dcf));
-							DefaultHandler ps = new GetAllPluginsFromDcfPluginSearchContentHandler(plugins, siteValue.getSiteId());
-							parser.parse(is, ps);
-						}
-					} catch (IOException exe) {
-						log.error("an unknown error occured fetching dcf.xml for site " + siteValue.getName() + " with dcfurl " + dcfUrl + "dcf.xml");
-					}
-				}
-			}
-		} catch (SAXException exe) {
-			log.error("an unknown error occured getting all plugins from dcf: ", exe);
-		}
-		Collection<ContentPluginValue> result = plugins.values();
-		return result.toArray(new ContentPluginValue[result.size()]);
-	}
-
-	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpringBase#getSitemapParameters(java.util.Map,
 	 *      java.util.Map)
 	 */
-
 	public Map getSitemapParameters(Map parameterMap, Map safeguardMap) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getSitemapParameters start");
 		Integer viewComponentId = null;

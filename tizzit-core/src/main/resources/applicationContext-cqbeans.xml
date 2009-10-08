@@ -186,22 +186,9 @@
 	<!-- **************************************************** -->
 	<!-- ****************** COCOON BEANS ******************** -->
 	<!-- **************************************************** -->
-	<bean class="de.juwimm.cms.beans.cocoon.PluginCache" id="pluginCache" init-method="renewCacheFromDcf" lazy-init="false" scope="singleton">
-		<property name="webServiceSpringBean" ref="webServiceSpring" />
-	</bean>
-	<bean class="de.juwimm.cms.beans.cocoon.PluginCacheAccessor" id="pluginCacheAccessorBean" scope="prototype" />
-	<bean class="org.springframework.aop.target.CommonsPoolTargetSource" id="pluginCacheAccessorPool">
-		<property name="targetBeanName">
-			<value>pluginCacheAccessorBean</value>
-		</property>
-	</bean>
-	<bean class="org.springframework.aop.framework.ProxyFactoryBean" id="pluginCacheAccessor">
-		<property name="targetSource" ref="pluginCacheAccessorPool" />
-	</bean>
-	<bean class="de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler" destroy-method="destroy" id="modifiedDateContentHandler">
-		<property name="pluginCache" ref="pluginCacheAccessor" />
-		<property name="webSpringBean" ref="webServiceSpring" />
-	</bean>
+	<bean class="de.juwimm.cms.beans.PluginManagement" id="pluginManagement" lazy-init="true"/>
+	<bean class="de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler" destroy-method="destroy" id="modifiedDateContentHandler" p:pluginManagement-ref="pluginManagement" p:webServiceSpring-ref="webServiceSpring"/>
+
 	<bean class="de.juwimm.cms.cocoon.support.FlowscriptUtils" id="flowscriptUtils">
 		<property name="webSpringBean" ref="webServiceSpring" />
 	</bean>

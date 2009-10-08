@@ -36,7 +36,7 @@ public class CocoonSpringHelper {
 	public static final String WEB_SERVICE_SPRING = "webServiceSpring";
 	public static final String SAFEGUARD_SERVICE_SPRING = "safeguardServiceSpring";
 	public static final String SEARCHENGINE_SERVICE_SPRING = "searchengineService";
-	public static final String PLUGIN_CACHE_ACCESSOR = "pluginCacheAccessor";
+	public static final String PLUGIN_MANAGEMENT = "pluginManagement";
 	public static final String MODIFIED_DATE_CONTENT_HANDLER = "modifiedDateContentHandler";
 
 	public static Object getBean(Map objectModel, String beanName) {

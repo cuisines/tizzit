@@ -19,15 +19,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -41,11 +33,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.ResourceNotFoundException;
 import org.apache.cocoon.caching.CacheableProcessingComponent;
 import org.apache.cocoon.components.source.SourceUtil;
-import org.apache.cocoon.environment.ObjectModelHelper;
-import org.apache.cocoon.environment.Request;
-import org.apache.cocoon.environment.Response;
-import org.apache.cocoon.environment.Session;
-import org.apache.cocoon.environment.SourceResolver;
+import org.apache.cocoon.environment.*;
 import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.cocoon.webapps.session.ContextManager;
 import org.apache.cocoon.webapps.session.context.SessionContext;
@@ -55,22 +43,16 @@ import org.apache.excalibur.source.SourceException;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
-import org.springframework.aop.target.CommonsPoolTargetSource;
 import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
-import org.w3c.dom.CDATASection;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import de.juwimm.cms.beans.PluginManagement;
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler;
-import de.juwimm.cms.beans.cocoon.PluginCacheAccessor;
 import de.juwimm.cms.cocoon.generation.helper.PluginContentHandler;
 import de.juwimm.cms.cocoon.generation.helper.RequestImpl;
 import de.juwimm.cms.cocoon.generation.helper.ResponseImpl;
@@ -198,7 +180,6 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private boolean disableNavigationAxis = false;
 	private boolean disableNavigationBackward = false;
 	private boolean disableLanguageVersions = true; // we need only in menu.xsl, UKD
-	private boolean disableUsedDocumentsSearch = true;
 	private boolean disableContentInclude = true;
 	private boolean disableHtmlSearch = false;
 	private boolean disableLastModifiedPages = true;
@@ -208,10 +189,10 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private String webSearchquery = null;
 	private long chgDate = 0;
 	private SAXParser parser = null;
-	private PluginCacheAccessor pluginCache = null;
 	private String requestUrl = null;
 	private Map<String, String> safeguardMap = null;
 	private Map<Integer, String> path4ViewComponentCacheMap = new HashMap<Integer, String>();
+	private PluginManagement pluginManagement;
 
 	public void compose(ComponentManager componentManager) {
 		if (log.isDebugEnabled()) log.debug("begin compose");
@@ -235,8 +216,6 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		if (log.isDebugEnabled()) log.debug("begin setup with src: " + src);
 		this.requestUrl = src;
 		this.par = parameters;
-
-		pluginCache = (PluginCacheAccessor) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.PLUGIN_CACHE_ACCESSOR);
 		try {
 			webSpringBean = (WebServiceSpring) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.WEB_SERVICE_SPRING);
 		} catch (Exception exf) {
@@ -249,6 +228,11 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		}
 		try {
 			mdch = (ModifiedDateContentHandler) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.MODIFIED_DATE_CONTENT_HANDLER);
+		} catch (Exception exf) {
+			log.error("could not load ModifiedDateContentHandler ", exf);
+		}
+		try {
+			pluginManagement = (PluginManagement) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.PLUGIN_MANAGEMENT);
 		} catch (Exception exf) {
 			log.error("could not load ModifiedDateContentHandler ", exf);
 		}
@@ -360,10 +344,6 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		} catch (Exception exe) {
 		}
 		try {
-			disableUsedDocumentsSearch = new Boolean(parameters.getParameter("disableUsedDocumentsSearch")).booleanValue();
-		} catch (Exception exe) {
-		}
-		try {
 			disableContentInclude = new Boolean(parameters.getParameter("disableContentInclude")).booleanValue();
 		} catch (Exception exe) {
 		}
@@ -403,7 +383,6 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		disableNavigationBackward = false;
 		disableLanguageVersions = true;
 		disableAuthentication = false;
-		disableUsedDocumentsSearch = true;
 		disableContentInclude = true;
 		disableHtmlSearch = false;
 		disableLastModifiedPages = true;
@@ -481,16 +460,11 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		if (doc != null && contentHandler != null) {
 			if (log.isDebugEnabled()) log.debug("start streaming to sax");
 			try {
-				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginCache, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
+				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginManagement, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
 				contentHandlerWrapper.startDocument();
 				DOMStreamer ds = new DOMStreamer(contentHandlerWrapper);
 				ds.stream(doc.getDocumentElement());
 				contentHandlerWrapper.endDocument();
-				try {
-					((CommonsPoolTargetSource) CocoonSpringHelper.getBean(objectModel, "pluginCacheAccessorPool")).releaseTarget(pluginCache);
-				} catch (Exception exe) {
-					log.error("an unknown error occured", exe);
-				}
 			} catch (Exception exe) {
 				log.error("An error occured", exe);
 			}

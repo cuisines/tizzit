@@ -23,7 +23,7 @@ import org.xml.sax.ContentHandler;
  * @author <a href="mailto:michael.meyer@juwimm.com">Michael Meyer</a><br/>
  *
  */
-public interface ConquestPlugin extends ContentHandler {
+public interface TizzitPlugin extends ContentHandler {
 	
 	/**
 	 * This method will be called if the plugin has got all its configurational

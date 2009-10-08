@@ -24,8 +24,8 @@ public final class Constants {
 	/**
 	 * Alle Plugins sollen diesen Namespace verwenden. Bsp.:<br/>
 	 * 
-	 * <http://plugins.conquest-cms.net/package+klassenname:myplugin > ....
+	 * <http://plugins.tizzit.org/package+klassenname:myplugin > ....
 	 */
-	public static final String PLUGIN_NAMESPACE = "http://plugins.conquest-cms.net/";
+	public static final String PLUGIN_NAMESPACE = "http://plugins.tizzit.org/";
 
 }
