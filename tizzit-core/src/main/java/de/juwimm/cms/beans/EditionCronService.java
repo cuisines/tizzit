@@ -46,7 +46,7 @@ public class EditionCronService {
 				} else {
 					UserHbm creator = edition.getCreator();
 					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
-					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), edition.getViewComponentId());
+					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
 				}
 				getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}

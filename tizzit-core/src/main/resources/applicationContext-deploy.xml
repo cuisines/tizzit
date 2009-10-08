@@ -33,6 +33,5 @@
         <property name="proxyInterfaces"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
     </bean>
     
-    
     <bean id="httpInvokerRequestExecutor" class="de.juwimm.cms.common.http.Server2ServerAuthenticationStreamSupportingHttpInvokerRequestExecutor"/>
 </beans>

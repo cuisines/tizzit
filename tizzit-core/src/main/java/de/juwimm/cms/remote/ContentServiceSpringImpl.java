@@ -992,7 +992,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#importEdition(java.lang.Integer, java.io.InputStream)
 	 */
 	@Override
-	protected void handleImportEdition(Integer viewComponentId, InputStream in) throws Exception {
+	protected void handleImportEdition(Integer viewComponentId, InputStream in, boolean useNewIds) throws Exception {
 		try {
 			log.info("importEdition " + AuthenticationHelper.getUserName());
 			String tmpFileName = "";
@@ -1011,6 +1011,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
 			edition.setEditionFileName(tmpFileName);
 			edition.setSiteId(user.getActiveSite().getSiteId());
+			edition.setUseNewIds(useNewIds);
 
 			getEditionHbmDao().create(edition);
 			log.info("end importEdition - please wait for cronjob to pick up!");
@@ -1493,8 +1494,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleRemoveResources(java.lang.Integer[], java.lang.Integer[])
 	 */
 	@Override
-	protected void handleRemoveResources(Integer[] pictureIds,
-			Integer[] documentsIds) throws Exception {
+	protected void handleRemoveResources(Integer[] pictureIds, Integer[] documentsIds) throws Exception {
 		getDocumentHbmDao().deleteDocuments(documentsIds);
 		getPictureHbmDao().deletePictures(pictureIds);
 	}

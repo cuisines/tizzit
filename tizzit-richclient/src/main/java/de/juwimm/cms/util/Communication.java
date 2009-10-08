@@ -2421,11 +2421,11 @@ public class Communication implements ExitListener, ActionListener {
 		System.gc();
 	}
 
-	public void importEditionFromImport(File file, Integer viewComponentId) {
+	public void importEditionFromImport(File file, Integer viewComponentId, boolean useNewIds) {
 		InputStream fis = null;
 		try {
 			fis = new BufferedInputStream(new FileInputStream(file));
-			getClientService().importEditionFromImport(fis, viewComponentId);
+			getClientService().importEditionFromImport(fis, viewComponentId, useNewIds);
 		} catch (Exception re) {
 			log.error("Error importing edition from import", re);
 		} finally {
@@ -2476,19 +2476,19 @@ public class Communication implements ExitListener, ActionListener {
 	public void updateHost(HostValue hostValue) {
 		getClientService().updateHost(hostValue);
 	}
-	
-	public List getUnsusedResources4Unit(Integer unitId){
+
+	public List getUnsusedResources4Unit(Integer unitId) {
 		return getClientService().getUnusedResources4Unit(unitId);
 	}
 
 	public Integer getViewComponentChildrenNumber(Integer[] viewComponentsIds) {
 		return getClientService().getViewComponentChildrenNumber(viewComponentsIds);
 	}
-	
-	public void removeResources(Integer[] pictureIds,Integer[] documentIds){
+
+	public void removeResources(Integer[] pictureIds, Integer[] documentIds) {
 		getClientService().removeResources(pictureIds, documentIds);
 	}
-	
+
 	public ViewComponentValue[] copyViewComponentToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) {
 		return getClientService().copyViewComponentsToParent(parentId, viewComponentsIds, position);
 	}

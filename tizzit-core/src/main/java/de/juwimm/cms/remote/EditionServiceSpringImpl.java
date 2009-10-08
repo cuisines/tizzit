@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.StringReader;
-import java.net.URL;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,8 +44,6 @@ import java.util.zip.GZIPInputStream;
 
 import javax.ejb.CreateException;
 
-import org.andromda.spring.RemoteServiceLocator;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
@@ -64,7 +61,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.common.http.HttpClientWrapper;
 import de.juwimm.cms.components.model.AddressHbm;
 import de.juwimm.cms.components.model.AddressHbmImpl;
 import de.juwimm.cms.components.model.DepartmentHbm;
@@ -162,7 +158,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	}
 
 	@Override
-	public void handleImportEdition(Integer siteId, String editionFileName, Integer rootVcId) throws Exception {
+	public void handleImportEdition(Integer siteId, String editionFileName, Integer rootVcId, boolean useNewIds) throws Exception {
 		mappingUnits = new Hashtable<Integer, Integer>();
 		mappingUnitsReverse = new Hashtable<Integer, Integer>();
 		mappingVDs = new Hashtable<Integer, Integer>();
@@ -289,10 +285,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 */
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 2/6");
 			if (rootVcId == null) {
-				importUnitsAndViewDocumentsAndRealms(doc, siteId, true);
+				importUnitsAndViewDocumentsAndRealms(doc, siteId, useNewIds);
 			} else {
 				// perhaps protected pages should stay protected after an import?
-				importRealms(doc, siteId, true);
+				importRealms(doc, siteId, useNewIds);
 			}
 			/*
 			 * #################################################################################### 
@@ -300,7 +296,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * ####################################################################################
 			 */
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 3/6");
-			importDocumentsAndPictures(doc, rootUnit, true, preparsedXMLfile);
+			importDocumentsAndPictures(doc, rootUnit, useNewIds, preparsedXMLfile);
 			if (rootVcId == null) {
 				Collection units = super.getUnitHbmDao().findAll(siteId);
 				Iterator unitsIt = units.iterator();
@@ -332,7 +328,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				Integer newUnitId = mappingUnits.get(new Integer(unitNode.getAttribute("id")));
 				log.debug("Import Database Components for UnitId: " + newUnitId + " (old was:" + unitNode.getAttribute("id") + ")");
 				UnitHbm unit = super.getUnitHbmDao().load(newUnitId);
-				importDatabaseComponents(unitNode, unit, true);
+				importDatabaseComponents(unitNode, unit, useNewIds);
 			}
 			/*
 			 * #################################################################################### 
@@ -1546,10 +1542,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				doc = null;
 			}
 			if (liveServerIP == null || liveServerIP.equals("") || "".equalsIgnoreCase(liveUserName)) {
-				//AxisFault af = new AxisFault();
 				log.error("LiveServerIP is not correct: " + liveServerIP);
-				//af.setFaultDetailString("LiveServerIP, Username or Password is not correct or not given: " + liveServerIP + " user: " + liveUserName);
-				//throw af;
 				//TODO: throw error
 			}
 			String soapURL = "http://" + liveServerIP + "/webservice/services/";
@@ -1561,32 +1554,25 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				int unitId = edition.getUnitId();
 				int viewDocumentId = edition.getViewDocumentId();
 
-				System.setProperty("tizzit-liveserver.remoteServer", liveServerIP); 
+				System.setProperty("tizzit-liveserver.remoteServer", "http://" + liveServerIP);
 
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
-				//AuthorizationServiceSpring autoSpring = RemoteServiceLocator.instance().getAuthorizationServiceSpring();
 				log.info("Logging in on Liveserver...");
 				autoSpring.login(liveUserName, livePassword, site.getSiteId().intValue());
 				log.info("Successfully logged in!");
 
-				// Step two is sending the stuff
-				//				ddssStub.setUsername(liveUserName);
-				//				ddssStub.setPassword(livePassword);
-				//				ddssStub.setTimeout(1000 * 60 * 60 * 6);
-
 				if (log.isDebugEnabled()) log.debug("Adding Attachment to Message Call");
-				if(true) return;
-				
-				
+
+				//if (true) return;
+
 				//TODO: create a inputstream from edition data to send to server
 				InputStream fis = new BufferedInputStream(new FileInputStream(edition.getEditionFileName()));
 
-		 
 				log.info("Starting transfer to Liveserver - " + info);
-				//				ddssStub.liveDeployment(unitId, viewDocumentId);
-				//ClientServiceSpring clientServiceSpring = RemoteServiceLocator.instance().getClientServiceSpring();
-				//clientServiceSpring.importEditionFromImport(fis, viewDocument.getViewComponent().getViewComponentId());
+				//		ddssStub.liveDeployment(unitId, viewDocumentId);
+				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceSpringLiveServer");
+				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false);
 
 				log.info("Liveserver has finished deploy - " + info);
 				try {
@@ -2664,5 +2650,4 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		}
 		return shortLink;
 	}
-
 }

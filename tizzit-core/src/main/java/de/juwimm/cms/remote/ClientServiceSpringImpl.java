@@ -1388,9 +1388,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleImportEditionFromImport(InputStream fis, Integer unitId) throws Exception {
+	protected void handleImportEditionFromImport(InputStream fis, Integer unitId, boolean useNewIds) throws Exception {
 		try {
-			getContentServiceSpring().importEdition(unitId, fis);
+			getContentServiceSpring().importEdition(unitId, fis, useNewIds);
 		} catch (Exception re) {
 			log.error("Error importing edition from import", re);
 		}
@@ -1856,9 +1856,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleRemoveResources(Integer[] picturesIds,
-			Integer[] documentsIds) throws Exception {
-		getContentServiceSpring().removeResources(picturesIds,documentsIds);
-		
+	protected void handleRemoveResources(Integer[] picturesIds, Integer[] documentsIds) throws Exception {
+		getContentServiceSpring().removeResources(picturesIds, documentsIds);
+
 	}
 }
