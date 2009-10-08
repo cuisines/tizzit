@@ -684,6 +684,6 @@ public class SearchengineService {
 		} finally {
 			if (session != null) session.close();
 		}
-		if (log.isDebugEnabled()) log.debug("finished indexDocument");
+		log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
 	}
 }
