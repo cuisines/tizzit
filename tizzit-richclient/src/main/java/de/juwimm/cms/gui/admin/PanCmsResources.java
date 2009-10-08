@@ -4,6 +4,7 @@ import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -47,6 +49,7 @@ import de.juwimm.cms.vo.DocumentSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.swing.NoResizeScrollPane;
 
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
@@ -223,8 +226,10 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	private void initLayout(){
 		this.setLayout(new BorderLayout());
 		this.setSize(636, 271);
-		treeResources.setAutoscrolls(true);
+		treeResources.setAutoscrolls(true);		
 		detailsPane.setLayout(new BorderLayout());
+		detailsPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 3, 3));
+		treeResources.setBorder(BorderFactory.createEmptyBorder(5, 5, 3, 3));
 		deleteResource.setIcon(UIConstants.ACTION_TREE_NODE_DELETE);
 		deleteResource.setToolTipText(rb.getString("panCmsResources.delete"));
 		treeControlPanel.add(deleteResource);		
@@ -251,17 +256,25 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		sizeLabel.setText(rb.getString("panCmsResources.details.size"));
 		createdLabel.setText(rb.getString("panCmsResources.details.created"));
 		
+		NoResizeScrollPane treeScrolable = new NoResizeScrollPane(treeResources);
+		Dimension treeSize = new Dimension(300, 600);
+		treeScrolable.setPreferredSize(treeSize);
+		treeScrolable.setSize(treeSize);
+		treeScrolable.setMaximumSize(treeSize);
+		treeScrolable.setMinimumSize(new Dimension(150, 600));
+		treeScrolable.setVerifyInputWhenFocusTarget(true);
+		
+		
 		JPanel treeContainer = new JPanel(new BorderLayout());
-		treeContainer.add(treeResources,BorderLayout.CENTER);
+		treeContainer.add(treeScrolable,BorderLayout.CENTER);
 		treeContainer.add(treeControlPanel,BorderLayout.SOUTH);
 		splitPane.setLeftComponent(treeContainer);
 		splitPane.setRightComponent(detailsPane);
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setDividerSize(3);
-		splitPane.setDividerLocation(230);		
-		GridBagConstraints splitPaneConstraints = new GridBagConstraints();
-		splitPaneConstraints.insets = new Insets(20,10,10,10);
-		this.add(splitPane);				
+		splitPane.setDividerLocation(230);
+		
+		this.add(splitPane);//,new GridBagConstraints(0, 0, 1, 1, 1., 1.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));				
 		
 	}
 	
