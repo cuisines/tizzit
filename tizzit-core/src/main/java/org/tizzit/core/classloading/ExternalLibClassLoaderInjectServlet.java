@@ -20,6 +20,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 
+import org.apache.log4j.Logger;
+
 // TODO: Class description
 /**
  * This servlet builds a classloading sandbox and runs another servlet inside
@@ -38,9 +40,7 @@ import javax.servlet.http.HttpServlet;
  * @since tizzit-core 07.10.2009
  */
 public class ExternalLibClassLoaderInjectServlet extends HttpServlet {
-	/**
-	 *
-	 */
+	private static Logger log = Logger.getLogger(ExternalLibClassLoaderInjectServlet.class);
 	private static final long serialVersionUID = 8543646073528093241L;
 
 	protected Servlet servlet;
@@ -92,7 +92,7 @@ public class ExternalLibClassLoaderInjectServlet extends HttpServlet {
 
 			this.servlet.service(request, response);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			if(log.isDebugEnabled()) log.error("Error in servlet", t);
 		} finally {
 			Thread.currentThread().setContextClassLoader(old);
 		}

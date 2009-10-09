@@ -33,8 +33,8 @@ public class EditionCronService {
 		if (cronEditionImportIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
 			return;
-		}
-		if (log.isInfoEnabled()) log.info("start handleCronEditionImport");
+		} 
+		if (log.isInfoEnabled()) log.info("start cronEditionImport");
 		cronEditionImportIsRunning = true;
 		try {
 			Collection<EditionHbm> editionsToImport = getEditionHbmDao().findByNeedsImport(true);
@@ -67,11 +67,11 @@ public class EditionCronService {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
 			return;
 		}
-		if (log.isInfoEnabled()) log.info("start handleCronEditionDeploy");
+		if (log.isInfoEnabled()) log.info("start cronEditionDeploy");
 		cronEditionDeployIsRunning = true;
 		try {
 			Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
-			if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Editions to import");
+			if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
 			for (EditionHbm edition : editionsToDeploy) {
 				String fileName = edition.getEditionFileName();
 				File edFile = null;

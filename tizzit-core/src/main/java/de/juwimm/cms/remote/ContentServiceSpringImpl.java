@@ -1411,12 +1411,15 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		if (contentVersions == null || contentVersions.size() == 0) { return; }
 		for (ContentVersionHbm contentVersion : contentVersions) {
 			String content = contentVersion.getText();
-			try {
-				Document document = XercesHelper.string2Dom(content);
-				getResourcesFromContentVersion(document, documents, "document", "src");
-				getResourcesFromContentVersion(document, pictures, "picture", "description");
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (content != null) {
+				try {
+					Document document = XercesHelper.string2Dom(content);
+					getResourcesFromContentVersion(document, documents, "document", "src");
+					getResourcesFromContentVersion(document, pictures, "picture", "description");
+				} catch (Exception e) {
+					log.info("could not parse used ressources: " + e.getMessage());
+					if (log.isDebugEnabled()) log.debug("Parsing Error", e);
+				}
 			}
 		}
 	}
