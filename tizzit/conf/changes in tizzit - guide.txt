@@ -1,0 +1,89 @@
+------------------------server changes
+- install new war files (tizzit-web-cocoon22...war, tizzit-web-admin....war)
+- install new tizzit.properties -> view tizzit.properties (tizzit/conf/jboss/conf)
+
+------------------------database changes
+- add colim "liveserver" into table host -> view migration-to-3.0.3.sql (tizzit/conf/sql)
+- add table "XML_SEARCH_DB" for xml search -> view xml_db_search_oracle_mysql_mssql.sql (tizzit/conf/sql)
+
+------------------------Changes in sitemap.xmap
+
+for cocoon 2.2
+- delete line "<map:pipelines default="caching"/>"
+- change "<map:parameter name="parallel" value="true"/>" to "<map:parameter name="parallel" value="false"/>"
+
+
+for new tizzit variables
+- change "<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>" into "<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>"
+- change "system-property:cqCmsTemplatesPath" into "tizzit-property:cmsTemplatesPath"
+- change "global:parentMandator" into "tizzit-property:cmsTemplatesPath"
+
+maybe:
+<map:transform src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
+	<map:parameter name="layout" value="{../layout}"/>
+	<map:parameter name="content-template" value="{../template}"/>
+</map:transform>
+into
+<map:transform src="templates/layouts/aggregationGenerator.xsl">
+	<map:parameter name="layout" value="{../layout}"/>
+	<map:parameter name="content-template" value="{../template}"/>
+</map:transform>
+
+-----------------------Changes in dcfsheet-master.xsl
+
+add the line into dcfsheet-master.xsl:
+- <classname>de.juwimm.cms.content.modules.Textfield</classname> 
+
+snippet:
+<xsl:template match="textfield" name="textfield">
+		<xsl:variable name="elementname">
+			<xsl:choose>
+				<xsl:when test="@name">
+					<xsl:value-of select="@name"/>
+				</xsl:when>
+				<xsl:otherwise>content</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:element name="{$elementname}">
+			<xsl:attribute name="label">
+				<xsl:choose>
+					<xsl:when test="@label">
+						<xsl:value-of select="@label"/>
+					</xsl:when>
+					<xsl:otherwise>Textfeld</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<xsl:attribute name="dcfname">
+				<xsl:choose>
+					<xsl:when test="@dcfname">
+						<xsl:value-of select="@dcfname"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$elementname"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+			<dcfConfig>
+				<classname>de.juwimm.cms.content.modules.Textfield</classname>
+				<classpath>
+					<jar><xsl:value-of select="$cqcms-juwimm-plugin-wysiwyg"/></jar>
+				</classpath> 
+				<xsl:choose>
+					<xsl:when test="not(child::*)">
+						<xsl:apply-templates select="." mode="allowall"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:apply-templates mode="allow"/>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:apply-templates select="@height"/>
+			</dcfConfig>
+			<dcfInitial>
+			    <xsl:apply-templates select="." mode="initial"/>
+			</dcfInitial>
+		</xsl:element>
+	</xsl:template>
+	
+	
+-----------------------Changes in helper.js for cforms
+- change "importClass(Packages.de.juwimm.util.XercesHelper)" into "importClass(org.tizzit.util.XercesHelper)"
