@@ -900,14 +900,14 @@
 	</distributionManagement>
 	<repositories>
 		<repository>
-			<id>tizzit</id>
+			<id>tizzit-central</id>
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/groups/public/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>tizzit</id>
+			<id>tizzit-central</id>
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/groups/public/</url>
 		</pluginRepository>
