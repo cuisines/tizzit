@@ -963,7 +963,14 @@
                 <artifactId>taglist-maven-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <tags>TODO,@todo,FIXME,HACK,XXX,@deprecated</tags>
+                    <tags>
+                       <tag>TODO</tag>
+                       <tag>@todo</tag>
+                       <tag>FIXME</tag>
+                       <tag>HACK</tag>
+                       <tag>XXX</tag>
+                       <tag>@deprecated</tag>
+                    </tags>
                 </configuration>
             </plugin>
             <plugin>
