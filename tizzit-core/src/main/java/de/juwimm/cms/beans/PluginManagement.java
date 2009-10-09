@@ -44,7 +44,7 @@ import de.juwimm.cms.plugins.server.TizzitPlugin;
  * @since tizzit-core 08.10.2009
  */
 public class PluginManagement {
-	private Logger log = Logger.getLogger(PluginManagement.class);
+	private final Logger log = Logger.getLogger(PluginManagement.class);
 	private PluginConfig<String, String> pluginConfig = null;
 
 	public PluginManagement() {
@@ -183,7 +183,7 @@ public class PluginManagement {
 								if (namespace != null && clazzName != null) {
 									if (!this.containsKey(namespace)) {
 										this.put(namespace, clazzName);
-										log.info(appendLineNumber("Mapped plugin namespace '" + namespace + "' to class '" + clazzName + "'.", lineNumber));
+										if (log.isInfoEnabled()) log.info(appendLineNumber("Mapped plugin namespace '" + namespace + "' to class '" + clazzName + "'.", lineNumber));
 									} else {
 										log.warn(appendLineNumber("Ignoring plugin namespace '" + namespace + "' because it has already been added.", lineNumber));
 									}

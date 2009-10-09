@@ -15,12 +15,21 @@
  */
 package de.juwimm.cms.management.remote;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.*;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +54,7 @@ import de.juwimm.cms.vo.SiteValue;
  */
 public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 	private static Logger log = Logger.getLogger(AdminServiceSpringImpl.class);
-	
+
 	@Autowired
 	private SearchengineService searchengineService;
 
@@ -55,13 +64,11 @@ public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 		try {
 			Collection<SiteHbm> sites = super.getSiteHbmDao().findAll();
 			for (SiteHbm site : sites) {
-				sb.append("<tr><td>(" + site.getSiteId() + ")</td><td><b>" + site.getName()
-						+ "</b></td><td>&#160;</td></tr>");
+				sb.append("<tr><td>(" + site.getSiteId() + ")</td><td><b>" + site.getName() + "</b></td><td>&#160;</td></tr>");
 				Collection<HostHbm> hosts = super.getHostHbmDao().findAll(site.getSiteId());
 				for (HostHbm host : hosts) {
 					String hostName = "http://" + host.getHostName();
-					sb.append("<tr><td>&#160;</td><td>&#160;</td><td><a href=\"" + hostName + "\">" + hostName
-							+ "</a></td></tr>");
+					sb.append("<tr><td>&#160;</td><td>&#160;</td><td><a href=\"" + hostName + "\">" + hostName + "</a></td></tr>");
 				}
 			}
 			sb.append("</table>");
@@ -126,7 +133,7 @@ public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 		new Thread() {
 			@Override
 			public void run() {
-//				getSearchengineServiceSpring().startIndexer();
+				//				getSearchengineServiceSpring().startIndexer();
 			}
 		}.start();
 	}
@@ -137,7 +144,7 @@ public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 	}
 
 	private class StartSearchIndexer implements Runnable {
-		private Integer siteId;
+		private final Integer siteId;
 
 		public StartSearchIndexer(Integer siteId) {
 			this.siteId = siteId;
@@ -201,7 +208,7 @@ public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 				log.error("Error parsing unitId " + importUnitId + ": " + e.getMessage() + "\nImport is CANCELED!");
 				return;
 			}
-			String filter = "(&(objectclass=person))"; 
+			String filter = "(&(objectclass=person))";
 			String[] attrNames = {"cn", "mail", "title", "objectclass", "whenChanged", "objectGUID"};
 
 			SearchControls ctls = new SearchControls();
@@ -255,7 +262,7 @@ public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 				}
 			}
 			ctx.close();
-			log.info(sb.toString());
+			if (log.isInfoEnabled()) log.info(sb.toString());
 			// TODO check for updates and import fetched data
 		} catch (NamingException e) {
 			log.error("Problem getting attribute: " + e.getMessage());

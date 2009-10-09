@@ -12,19 +12,21 @@ import org.apache.commons.logging.LogFactory;
  * @see de.juwimm.cms.model.SequenceHbm
  */
 public class SequenceHbmDaoImpl extends de.juwimm.cms.model.SequenceHbmDaoBase {
-	private Log log = LogFactory.getLog(SequenceHbmDaoImpl.class);
+	private final Log log = LogFactory.getLog(SequenceHbmDaoImpl.class);
+
 	/**
 	 * @see de.juwimm.cms.model.SequenceHbmDao#getNextSequenceNumber(java.lang.String)
 	 */
+	@Override
 	protected java.lang.Integer handleGetNextSequenceNumber(java.lang.String name) {
 		SequenceHbm sequenceHbm = load(name);
-		if(sequenceHbm == null) {
-			log.info("Creating new sequence for " + name);
+		if (sequenceHbm == null) {
+			if (log.isInfoEnabled()) log.info("Creating new sequence for " + name);
 			sequenceHbm = SequenceHbm.Factory.newInstance();
 			sequenceHbm.setIdx(1);
 			sequenceHbm.setName(name);
 			create(sequenceHbm);
-		} 
+		}
 		synchronized (sequenceHbm) {
 			sequenceHbm.setIdx(sequenceHbm.getIdx() + 1);
 			update(sequenceHbm);

@@ -282,7 +282,7 @@ public class AdministrationServiceSpringImpl extends AdministrationServiceSpring
 	@Override
 	protected InputStream handleExportXlsPersonData() throws Exception {
 		try {
-			log.info("exportXlsPersonData " + AuthenticationHelper.getUserName());
+			if (log.isInfoEnabled()) log.info("exportXlsPersonData " + AuthenticationHelper.getUserName());
 			File fle = File.createTempFile("XlsPersonData", ".xml.gz");
 			FileOutputStream fout = new FileOutputStream(fle);
 			PrintStream out = new PrintStream(fout, true, "UTF-8");

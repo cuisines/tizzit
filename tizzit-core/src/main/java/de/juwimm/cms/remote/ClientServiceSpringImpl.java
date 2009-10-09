@@ -951,7 +951,7 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected InputStream handleExportXlsPersonData() throws Exception {
 		try {
-			log.info("exportXlsPersonData");
+			if (log.isInfoEnabled()) log.info("exportXlsPersonData");
 			return getAdministrationServiceSpring().exportXlsPersonData();
 		} catch (Exception exe) {
 			log.error("Error exporting PersonData", exe);

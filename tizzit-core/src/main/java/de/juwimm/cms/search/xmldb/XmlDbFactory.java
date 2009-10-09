@@ -49,7 +49,7 @@ public class XmlDbFactory {
 	public XmlDb getInstance() {
 		if (instance == null) {
 			String clazz = getTizzitPropertiesBeanSpring().getSearch().getXmlDb();
-			log.info("Resolving XmlDb Instance for class " + clazz);
+			if (log.isInfoEnabled()) log.info("Resolving XmlDb Instance for class " + clazz);
 			if (clazz == null || "".equals(clazz)) {
 				log.warn("No useful classname found for XmlDb Search - XmlSearch disabled!");
 				instance = new NullXmlDb();

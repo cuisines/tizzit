@@ -31,14 +31,14 @@ public class EditionCronService {
 	@SuppressWarnings("unchecked")
 	public void cronEditionImport() throws Exception {
 		if (cronEditionImportIsRunning) {
-			log.info("Cron already running, ignoring crontask");
+			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
 			return;
 		}
-		log.info("start handleCronEditionImport");
+		if (log.isInfoEnabled()) log.info("start handleCronEditionImport");
 		cronEditionImportIsRunning = true;
 		try {
 			Collection<EditionHbm> editionsToImport = getEditionHbmDao().findByNeedsImport(true);
-			log.info("Found " + editionsToImport.size() + " Editions to import");
+			if (log.isInfoEnabled()) log.info("Found " + editionsToImport.size() + " Editions to import");
 			for (EditionHbm edition : editionsToImport) {
 				File edFile = new File(edition.getEditionFileName());
 				if (!edFile.exists()) {
@@ -64,14 +64,14 @@ public class EditionCronService {
 	@SuppressWarnings("unchecked")
 	public void cronEditionDeploy() throws Exception {
 		if (cronEditionDeployIsRunning) {
-			log.info("Cron already running, ignoring crontask");
+			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
 			return;
 		}
-		log.info("start handleCronEditionDeploy");
+		if (log.isInfoEnabled()) log.info("start handleCronEditionDeploy");
 		cronEditionDeployIsRunning = true;
 		try {
 			Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
-			log.info("Found " + editionsToDeploy.size() + " Editions to import");
+			if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Editions to import");
 			for (EditionHbm edition : editionsToDeploy) {
 				String fileName = edition.getEditionFileName();
 				File edFile = null;

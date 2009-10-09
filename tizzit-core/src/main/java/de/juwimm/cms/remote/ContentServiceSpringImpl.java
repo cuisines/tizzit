@@ -342,7 +342,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected void handleCreateEdition(String commentText, Integer rootViewComponentId, boolean deploy, boolean succMessage) throws Exception {
-		log.info("Enqueue createEdition-Event " + AuthenticationHelper.getUserName() + " rootVCID " + rootViewComponentId);
+		if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event " + AuthenticationHelper.getUserName() + " rootVCID " + rootViewComponentId);
 		SiteHbm site = null;
 		ViewComponentHbm rootVc = null;
 		try {
@@ -353,7 +353,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 		if (rootVc != null && site != null && rootVc.getViewDocument().getSite().equals(site)) {
 			try {
-				log.info("Enqueue createEdition-Event for " + rootViewComponentId + ": " + rootVc.getAssignedUnit().getName().trim());
+				if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for " + rootViewComponentId + ": " + rootVc.getAssignedUnit().getName().trim());
 			} catch (Exception e) {
 				// logging should not endanger the normal process
 			}
@@ -396,7 +396,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected InputStream handleExportEditionFull() throws Exception {
 		try {
-			log.info("createEditionForExport " + AuthenticationHelper.getUserName());
+			if (log.isInfoEnabled()) log.info("createEditionForExport " + AuthenticationHelper.getUserName());
 			File fle = File.createTempFile("edition_full_export", ".xml.gz");
 			FileOutputStream fout = new FileOutputStream(fle);
 			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
@@ -828,7 +828,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected UnitValue[] handleGetNotReferencedUnits(ViewDocumentValue viewDocument) throws Exception {
-		log.info("starting getNotReferencedUnits for Site " + viewDocument.getSiteId() + " and Language " + viewDocument.getLanguage());
+		if (log.isInfoEnabled()) log.info("starting getNotReferencedUnits for Site " + viewDocument.getSiteId() + " and Language " + viewDocument.getLanguage());
 		try {
 			Collection coll = super.getViewComponentHbmDao().findAllWithUnit(viewDocument.getViewDocumentId());
 			Collection u = super.getUnitHbmDao().findAll(viewDocument.getSiteId());
@@ -994,7 +994,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleImportEdition(Integer viewComponentId, InputStream in, boolean useNewIds) throws Exception {
 		try {
-			log.info("importEdition " + AuthenticationHelper.getUserName());
+			if (log.isInfoEnabled()) log.info("importEdition " + AuthenticationHelper.getUserName());
 			String tmpFileName = "";
 			try {
 				tmpFileName = this.storeEditionFile(in);
@@ -1014,7 +1014,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			edition.setUseNewIds(useNewIds);
 
 			getEditionHbmDao().create(edition);
-			log.info("end importEdition - please wait for cronjob to pick up!");
+			if (log.isInfoEnabled()) log.info("end importEdition - please wait for cronjob to pick up!");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -1439,7 +1439,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleDeployEdition(Integer editionId) throws Exception {
 		try {
-			//log.info("createDeployFile " + AuthenticationHelper.getUserName());
+			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			//create dir for deploys

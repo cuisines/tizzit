@@ -18,7 +18,6 @@ package de.juwimm.cms.search.res;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -28,7 +27,6 @@ import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.DocumentHbmDao;
 import de.juwimm.cms.search.res.pdf.LucenePDFDocument;
 
@@ -45,13 +43,12 @@ public class PDFResourceLocator {
 
 	public Document getDocument(de.juwimm.cms.model.DocumentHbm document) {
 		Document doc = null;
-		
+
 		InputStream bis = new ByteArrayInputStream(documentHbmDao.getDocumentContent(document.getDocumentId()));
 		try {
 			doc = LucenePDFDocument.getDocument(bis);
 		} catch (IOException e) {
-			log.info("Error indexing document " + document.getDocumentId() + " (" + document.getDocumentName() + ")"
-					+ " document may be password-protected: " + e.getMessage());
+			if (log.isInfoEnabled()) log.info("Error indexing document " + document.getDocumentId() + " (" + document.getDocumentName() + ")" + " document may be password-protected: " + e.getMessage());
 			if (log.isDebugEnabled()) log.debug(e.getMessage(), e);
 			return null;
 		}
@@ -65,7 +62,7 @@ public class PDFResourceLocator {
 		doc.add(new Field("unitName", document.getUnit().getName(), Field.Store.YES, Field.Index.TOKENIZED));
 		doc.add(new Field("mimeType", document.getMimeType(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		doc.add(new Field("timeStamp", document.getTimeStamp().toString(), Field.Store.YES, Field.Index.NO));
-		
+
 		return doc;
 	}
 
@@ -82,8 +79,7 @@ public class PDFResourceLocator {
 			String summary = content.substring(0, summarySize);
 			resource.addProperty("summary", summary);
 		} catch (IOException e) {
-			log.info("Error indexing document " + document.getDocumentId() + " (" + document.getDocumentName() + ")"
-					+ " document may be password-protected: " + e.getMessage());
+			if (log.isInfoEnabled()) log.info("Error indexing document " + document.getDocumentId() + " (" + document.getDocumentName() + ")" + " document may be password-protected: " + e.getMessage());
 			if (log.isDebugEnabled()) log.debug(e.getMessage(), e);
 			return null;
 		}

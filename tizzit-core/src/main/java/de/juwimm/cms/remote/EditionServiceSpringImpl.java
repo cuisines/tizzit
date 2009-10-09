@@ -149,7 +149,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	public void handleRemoveEdition(Integer editionId) {
 		EditionHbm edition = getEditionHbmDao().load(editionId);
-		log.info("Deleting edition and attachments: " + edition.getEditionId());
+		if (log.isInfoEnabled()) log.info("Deleting edition and attachments: " + edition.getEditionId());
 		if (edition.getEditionFileName() != null) {
 			File f = new File(edition.getEditionFileName());
 			f.delete();
@@ -200,11 +200,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						throw new RuntimeException("You can't import an Unit-Deploy as Root-Unit at this moment");
 					}
 				} catch (Exception e) {
-					log.info("The given rootVcId " + rootVcId + " does not belong to any viewcomponent");
+					if (log.isInfoEnabled()) log.info("The given rootVcId " + rootVcId + " does not belong to any viewcomponent");
 				}
 			}
 
-			log.info("Finished writing Edition to File, starting to import it as GZIP-InputStream...");
+			if (log.isInfoEnabled()) log.info("Finished writing Edition to File, starting to import it as GZIP-InputStream...");
 			XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
 			preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
 			log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
@@ -225,7 +225,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			xmlWriter = null;
 			filter = null;
 			System.gc();
-			log.info("Finished cutting BLOBs, starting to open XML Document...");
+			if (log.isInfoEnabled()) log.info("Finished cutting BLOBs, starting to open XML Document...");
 			// BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
 			// InputSource in = new InputSource(br);
 			InputSource domIn = new InputSource(new FileInputStream(preparsedXMLfile));
@@ -472,7 +472,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				}
 			}
 			this.restoreSafeguardLoginPages(true);
-			log.info("Finishing processFileImport successfully!");
+			if (log.isInfoEnabled()) log.info("Finishing processFileImport successfully!");
 		} catch (Exception exe) {
 			// context.setRollbackOnly();
 			log.error("Error occured processFileImport", exe);
@@ -493,7 +493,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 			System.gc();
 		}
-		log.info("End processFileImport");
+		if (log.isInfoEnabled()) log.info("End processFileImport");
 		// this.createUserTask(context.getCallerPrincipal().getName(), "Import of edition finished successfully!", rootVcId, Constants.TASK_SYSTEMMESSAGE_INFORMATION, true);
 		// } catch (Exception e) {
 		// //this.createUserTask(context.getCallerPrincipal().getName(), "Error importing edition: " + e.getMessage(), rootVcId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
@@ -668,7 +668,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#importDatabaseComponents(org.w3c.dom.Element, de.juwimm.cms.model.UnitHbm, boolean)
 	 */
 	protected void importDatabaseComponents(org.w3c.dom.Element unitElm, de.juwimm.cms.model.UnitHbm unit, boolean useNewIds) throws Exception {
-		log.info("begin importDatabaseComponents for unit: " + unit.getName());
+		if (log.isInfoEnabled()) log.info("begin importDatabaseComponents for unit: " + unit.getName());
 		// if (!context.getRollbackOnly()) {
 		try {
 			if (unitElm != null) {
@@ -745,7 +745,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			log.error("Error occured importDatabaseComponents", exe);
 		}
 		// }
-		log.info("end importDatabaseComponents for unit: " + unit.getName());
+		if (log.isInfoEnabled()) log.info("end importDatabaseComponents for unit: " + unit.getName());
 
 	}
 
@@ -858,7 +858,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#importDocumentsAndPictures(org.w3c.dom.Document, de.juwimm.cms.model.UnitHbm, boolean, java.io.File)
 	 */
 	protected void importDocumentsAndPictures(org.w3c.dom.Document doc, UnitHbm ul, boolean useNewIds, File directory) throws Exception {
-		log.info("begin importDocumentsAndPictures");
+		if (log.isInfoEnabled()) log.info("begin importDocumentsAndPictures");
 		// if (!context.getRollbackOnly()) {
 		try {
 			SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
@@ -968,7 +968,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			log.error("Error occured importDocumentsAndPictures", exe);
 		}
 		// }
-		log.info("end importDocumentsAndPictures");
+		if (log.isInfoEnabled()) log.info("end importDocumentsAndPictures");
 	}
 
 	private PictureHbm createPictureHbm(byte[] thumbnail, byte[] file, byte[] preview, String strMimeType, String strAltText, String strPictureName, Integer id, UnitHbm unit) {
@@ -1044,7 +1044,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			ArrayList<ViewComponentHbm> savedUnits = new ArrayList<ViewComponentHbm>();
 			boolean wasFirstChild = false;
 			try {
-				log.info("Starting import of ViewComponent File: VDid:" + viewDocumentId + " Unit:" + ul.getUnitId() + " (" + ul.getName().trim() + ")");
+				if (log.isInfoEnabled()) log.info("Starting import of ViewComponent File: VDid:" + viewDocumentId + " Unit:" + ul.getUnitId() + " (" + ul.getName().trim() + ")");
 				ViewComponentHbm view = super.getViewComponentHbmDao().find4Unit(ul.getUnitId(), new Integer(viewDocumentId));
 				if (log.isDebugEnabled()) log.debug("Found the VC by UnitId and ViewDocumentId");
 				boolean isRoot = false;
@@ -1054,7 +1054,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				}
 				if (isRoot) {
 					try {
-						log.info("Started ROOT-Deploy");
+						if (log.isInfoEnabled()) log.info("Started ROOT-Deploy");
 						savedUnits = moveContainedUnitsAway(view);
 						super.getViewComponentHbmDao().remove(view);
 						ViewComponentHbm rootview = createViewComponent(ul.getUnitId(), vdl, savedUnits, nde, null, null, liveDeploy, 0);
@@ -1425,7 +1425,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleImportHosts(org.w3c.dom.Document doc, Integer siteId) throws Exception {
 		try {
-			log.info("begin importHosts");
+			if (log.isInfoEnabled()) log.info("begin importHosts");
 			Iterator itHosts = XercesHelper.findNodes(doc, "/edition/hosts/host");
 			if (itHosts.hasNext()) {
 				HashMap<String, String> redirectHostsMap = new HashMap<String, String>();
@@ -1442,7 +1442,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					String redirectHostName = XercesHelper.getNodeValue(elHost, "./redirectHostName");
 
 					if (getHostHbmDao().load(hostName) != null) {
-						log.info("wont import host " + hostName + " - it is already assigned to another site");
+						if (log.isInfoEnabled()) log.info("wont import host " + hostName + " - it is already assigned to another site");
 					} else {
 						if (log.isDebugEnabled()) log.debug("Importing Host-Entry: " + hostName + " startPageId " + startPageId + " for site " + siteId + " and unitId " + unitId);
 
@@ -1506,7 +1506,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					}
 				}
 			}
-			log.info("end importHosts");
+			if (log.isInfoEnabled()) log.info("end importHosts");
 		} catch (Exception exe) {
 			// context.setRollbackOnly();
 			throw new UserException("Error recreating the Hosts " + exe.getMessage());
@@ -1548,7 +1548,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			String soapURL = "http://" + liveServerIP + "/webservice/services/";
 
 			try {
-				log.info("publishEditionToLiveserver - using URL: " + soapURL);
+				if (log.isInfoEnabled()) log.info("publishEditionToLiveserver - using URL: " + soapURL);
 				EditionHbm edition = super.getEditionHbmDao().load(editionId);
 
 				int unitId = edition.getUnitId();
@@ -1558,23 +1558,20 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
-				log.info("Logging in on Liveserver...");
+				if (log.isInfoEnabled()) log.info("Logging in on Liveserver...");
 				autoSpring.login(liveUserName, livePassword, site.getSiteId().intValue());
-				log.info("Successfully logged in!");
+				if (log.isInfoEnabled()) log.info("Successfully logged in!");
 
 				if (log.isDebugEnabled()) log.debug("Adding Attachment to Message Call");
 
-				//if (true) return;
-
-				//TODO: create a inputstream from edition data to send to server
 				InputStream fis = new BufferedInputStream(new FileInputStream(edition.getEditionFileName()));
 
-				log.info("Starting transfer to Liveserver - " + info);
+				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
 				//		ddssStub.liveDeployment(unitId, viewDocumentId);
 				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceSpringLiveServer");
 				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false);
 
-				log.info("Liveserver has finished deploy - " + info);
+				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
 				try {
 					if (log.isDebugEnabled()) {
 						//						log.debug("DH " + ap.getDataHandler().getName());
@@ -1591,7 +1588,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				//				ddssStub = null;
 				// log.info("Rotating Liveserver-Password..."); // TODO Rotate of Liveserver Password
 
-				log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
+				if (log.isInfoEnabled()) log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
 				ViewComponentHbm vcl = super.getViewComponentHbmDao().find4Unit(new Integer(unitId), new Integer(viewDocumentId));
 				vcl.setUnitOnline();
 			}
@@ -1615,7 +1612,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				//				af.setFaultDetailString(exe.getMessage());
 				//				throw af;
 			}
-			log.info("Finished Live-Deployment successfully - " + info);
+			if (log.isInfoEnabled()) log.info("Finished Live-Deployment successfully - " + info);
 
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -1642,10 +1639,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				log.warn("Unit not found for ViewComponent " + rootViewComponentId + ": " + e.getMessage(), e);
 			}
 			try {
-				log.info("Start creating Edition for ViewComponent " + rootViewComponentId + " " + unitName);
+				if (log.isInfoEnabled()) log.info("Start creating Edition for ViewComponent " + rootViewComponentId + " " + unitName);
 				EditionHbm editionTemp = this.createEditionHbm(comment, rootViewComponentId, null, !deploy);
 				edition = super.getEditionHbmDao().create(editionTemp);
-				log.info("Finished creating Edition for ViewComponent " + rootViewComponentId + " " + unitName);
+				if (log.isInfoEnabled()) log.info("Finished creating Edition for ViewComponent " + rootViewComponentId + " " + unitName);
 				Collection coll = super.getEditionHbmDao().findByUnitAndOnline(new Integer(edition.getUnitId()));
 				if (log.isDebugEnabled()) log.debug("Finished findByUnitAndOnline");
 				Iterator it = coll.iterator();
@@ -1760,7 +1757,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleRestoreSafeguardLoginPages(boolean useNewIds) throws Exception {
 		if (log.isDebugEnabled()) log.debug("start restoreSafeguard with useNewIDs=" + useNewIds);
-		log.info("begin restoreSafeguardLoginPages");
+		if (log.isInfoEnabled()) log.info("begin restoreSafeguardLoginPages");
 		try {
 			if (this.loginPagesRealmsSimplePw != null) {
 				Iterator it = this.loginPagesRealmsSimplePw.keySet().iterator();
@@ -1965,7 +1962,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		} catch (Exception e) {
 			log.warn("Error occured restoring LoginPages: " + e.getMessage(), e);
 		}
-		log.info("end restoreSafeguardLoginPages");
+		if (log.isInfoEnabled()) log.info("end restoreSafeguardLoginPages");
 	}
 
 	/**
@@ -2577,7 +2574,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleImportShortLinks(org.w3c.dom.Document doc, Integer siteId, boolean useNewIds) throws Exception {
 		try {
-			log.info("begin importShortLinks");
+			if (log.isInfoEnabled()) log.info("begin importShortLinks");
 			Iterator itShortLinks = XercesHelper.findNodes(doc, "/edition/shortLinks/shortLink");
 			if (itShortLinks.hasNext()) {
 				if (log.isDebugEnabled()) log.debug("Trying to delete ShortLinks");
@@ -2625,7 +2622,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					}
 				}
 			}
-			log.info("end importShortLinks");
+			if (log.isInfoEnabled()) log.info("end importShortLinks");
 		} catch (Exception exe) {
 			// context.setRollbackOnly();
 			throw new UserException("Error recreating the ShortLinks " + exe.getMessage());

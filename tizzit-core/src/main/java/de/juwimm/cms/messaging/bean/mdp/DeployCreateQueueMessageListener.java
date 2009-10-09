@@ -117,11 +117,11 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 		if (rootViewComponentId != null) {
 			EditionHbm edition = null;
 			try {
-				log.info("Start creating Edition for ViewComponent " + rootViewComponentId);
+				if (log.isInfoEnabled())log.info("Start creating Edition for ViewComponent " + rootViewComponentId);
 				edition = EditionHbm.Factory.newInstance();
 				edition.create(comment, rootViewComponentId, null, !deploy);
 				this.editionHbmDao.create(edition);
-				log.info("Finished creating Edition for ViewComponent " + rootViewComponentId);
+				if (log.isInfoEnabled())log.info("Finished creating Edition for ViewComponent " + rootViewComponentId);
 				Collection coll = this.editionHbmDao.findByUnitAndOnline(new Integer(edition.getUnitId()));
 				log.debug("Finished findByUnitAndOnline");
 				Iterator it = coll.iterator();

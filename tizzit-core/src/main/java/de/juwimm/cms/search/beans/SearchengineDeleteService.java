@@ -20,12 +20,12 @@ import de.juwimm.cms.search.xmldb.XmlDb;
  * @since cqcms-core 06.07.2009
  */
 public class SearchengineDeleteService {
-	private static Logger log = Logger.getLogger(SearchengineDeleteService.class);	
+	private static Logger log = Logger.getLogger(SearchengineDeleteService.class);
 	@Autowired
 	private Compass compass;
 	@Autowired
 	private XmlDb xmlDb;
-	
+
 	public void deletePage(ViewComponentHbm viewComponent) {
 		deletePage4Xml(viewComponent);
 		deletePage4Lucene(viewComponent);
@@ -43,7 +43,7 @@ public class SearchengineDeleteService {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index delete for VC " + viewComponent.getViewComponentId());
 		CompassSession session = null;
 		CompassTransaction tx = null;
-		try { 
+		try {
 			String currentUrl = getUrl(viewComponent);
 			String cleanUrl = viewComponent.getViewDocument().getSite().getPageNameSearch();
 			cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
@@ -64,14 +64,14 @@ public class SearchengineDeleteService {
 
 		if (log.isDebugEnabled()) log.debug("finished deletePage4Lucene");
 	}
-	
+
 	public String getUrl(ViewComponentHbm vc) {
 		SiteHbm site = vc.getViewDocument().getSite();
 		String url = site.getPreviewUrl() + vc.getViewDocument().getLanguage() + "/" + vc.getPath() + "/" + site.getPageNameSearch();
-		log.info("created url " + url + " for site " + site.getName());
+		if (log.isInfoEnabled()) log.info("created url " + url + " for site " + site.getName());
 		return url;
 	}
- 
+
 	public void deleteDocument(Integer documentId, Integer siteId) {
 		if (log.isDebugEnabled()) log.debug("Index delete for Document: " + documentId);
 		CompassSession session = null;

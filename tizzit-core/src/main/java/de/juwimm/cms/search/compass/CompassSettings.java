@@ -43,20 +43,20 @@ public class CompassSettings extends Properties {
 			if (!filePath.startsWith("file://")) {
 				filePath = "file://" + filePath;
 			}
-			log.info("using filesystem to store searchindex: " + filePath);
+			if (log.isInfoEnabled()) log.info("using filesystem to store searchindex: " + filePath);
 			super.put("compass.engine.connection", filePath);
 			super.put("compass.engine.store.lockFactory.type", "nativefs");
 		} else {
 			String dataSource = getTizzitPropertiesBeanSpring().getSearch().getSearchDataSource();
 			if (dataSource == null) dataSource = getTizzitPropertiesBeanSpring().getSearch().getXmlDatasource();
-			log.info("using database to store searchindex: " + dataSource);
+			if (log.isInfoEnabled()) log.info("using database to store searchindex: " + dataSource);
 			super.put("compass.engine.store.jdbc.connection.provider.class", "org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider");
 			// FIXME why does this not work properly?
 			// super.put("compass.engine.store.jdbc.managed", "true");
 			// super.put("compass.transaction.commitBeforeCompletion", "true");
 			super.put("compass.engine.connection", "jdbc://" + dataSource);
 			String dialect = this.getJdbcDialect();
-			log.info("Setting compass.engine.store.jdbc.dialect to: " + dialect);
+			if (log.isInfoEnabled()) log.info("Setting compass.engine.store.jdbc.dialect to: " + dialect);
 			if (dialect != null) super.put("compass.engine.store.jdbc.dialect", dialect);
 		}
 		super.put("compass.transaction.factory", "org.compass.spring.transaction.SpringSyncTransactionFactory");

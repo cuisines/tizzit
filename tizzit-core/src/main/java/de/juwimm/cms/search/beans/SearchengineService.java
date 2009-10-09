@@ -170,7 +170,7 @@ public class SearchengineService {
 				reindexSite(site.getSiteId());
 			}
 			Date end = new Date();
-			log.info(end.getTime() - start.getTime() + " total milliseconds");
+			if (log.isInfoEnabled()) log.info(end.getTime() - start.getTime() + " total milliseconds");
 		} catch (Exception e) {
 			log.error("Caught a " + e.getClass() + "\n with message: " + e.getMessage());
 		}
@@ -213,7 +213,7 @@ public class SearchengineService {
 			log.error("Caught a " + e.getClass() + "\n with message: " + e.getMessage());
 		}
 		Date end = new Date();
-		log.info(end.getTime() - start.getTime() + " total milliseconds for site " + siteId);
+		if (log.isInfoEnabled()) log.info(end.getTime() - start.getTime() + " total milliseconds for site " + siteId);
 		if (log.isDebugEnabled()) log.debug("finished index for site " + siteId);
 	}
 
@@ -427,7 +427,7 @@ public class SearchengineService {
 			String analyzerClass = session.getSettings().getSetting("compass.engine.analyzer.search.type");
 			Constructor<Analyzer> analyzerConstructor = (Constructor<Analyzer>) (Class.forName(analyzerClass)).getConstructor();
 			analyzer = analyzerConstructor.newInstance();
-			log.info("Created search analyzer from compass settings - class is: " + analyzer.getClass().getName());
+			if (log.isInfoEnabled()) log.info("Created search analyzer from compass settings - class is: " + analyzer.getClass().getName());
 		} catch (Exception e) {
 			log.error("Error while instantiating search analyzer from compass settings - going on with StandardAnalyzer");
 			analyzer = new StandardAnalyzer();

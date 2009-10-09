@@ -27,19 +27,19 @@ public class SearchCronService {
 	@SuppressWarnings("unchecked")
 	public void cronRunSearchIndexer() throws Exception {
 		if (!tizzitPropertiesBeanSpring.getSearch().isIndexerEnabled()) {
-			log.info("Cron SearchIndex has been invoked but indexer is disabled");
+			if (log.isInfoEnabled()) log.info("Cron SearchIndex has been invoked but indexer is disabled");
 			return;
 		}
 		if (cronIsRunning) {
-			log.info("Cron already running, ignoring crontask");
+			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
 			return;
 		}
-		log.info("Cronjob SearchIndex has been started");
+		if (log.isInfoEnabled()) log.info("Cronjob SearchIndex has been started");
 		cronIsRunning = true;
 
 		try {
 			Collection<ContentHbm> contentsToUpdate = contentHbmDao.findByUpdateSearchIndex(true);
-			log.info("Found " + contentsToUpdate.size() + " Contents to update");
+			if (log.isInfoEnabled()) log.info("Found " + contentsToUpdate.size() + " Contents to update");
 			for (ContentHbm content : contentsToUpdate) {
 				try {
 					searchengineService.indexPage(content.getContentId());
@@ -49,7 +49,7 @@ public class SearchCronService {
 			}
 
 			Collection<DocumentHbm> documentsToUpdate = documentHbmDao.findByUpdateSearchIndex(true);
-			log.info("Found " + documentsToUpdate.size() + " Documents to update");
+			if (log.isInfoEnabled()) log.info("Found " + documentsToUpdate.size() + " Documents to update");
 			for (DocumentHbm doc : documentsToUpdate) {
 				try {
 					searchengineService.indexDocument(doc.getDocumentId());

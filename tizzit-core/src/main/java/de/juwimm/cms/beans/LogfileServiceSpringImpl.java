@@ -69,10 +69,12 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 	@Autowired
 	private WebServiceSpring webServiceSpring;
 
+	@Override
 	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
 		return tizzitPropertiesBeanSpring;
 	}
 
+	@Override
 	public void setTizzitPropertiesBeanSpring(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring) {
 		this.tizzitPropertiesBeanSpring = tizzitPropertiesBeanSpring;
 		de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring.Logfile lfv = getTizzitPropertiesBeanSpring().getLogfile();
@@ -120,9 +122,9 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 	@Override
 	protected void handleStartParsing() throws Exception {
 		if (this.logfileValue.isEnabled()) {
-			log.info("Starting Logfile Cronjob");
+			if (log.isInfoEnabled()) log.info("Starting Logfile Cronjob");
 			if (this.processRunning) {
-				log.info("Another process for parsing is already running, I quit");
+				if (log.isInfoEnabled()) log.info("Another process for parsing is already running, I quit");
 				return;
 			}
 			// check script
@@ -136,7 +138,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 			}
 			this.processRunning = true;
 			if ((this.logfileValue.getPrepareScriptName() == null) || ("".equalsIgnoreCase(this.logfileValue.getPrepareScriptName())) || NO_RUNNER.equalsIgnoreCase(this.logfileValue.getPrepareScriptName())) {
-				log.info("No script is executed before parsing logfile");
+				if (log.isInfoEnabled()) log.info("No script is executed before parsing logfile");
 			} else {
 				File prepareScript = new File(this.logfileValue.getPrepareScriptName());
 				if (prepareScript.exists()) {
@@ -158,7 +160,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 							} catch (Exception e2) {
 							}
 						}
-						log.info("Script " + this.logfileValue.getPrepareScriptName() + " returned with code " + returnCode);
+						if (log.isInfoEnabled()) log.info("Script " + this.logfileValue.getPrepareScriptName() + " returned with code " + returnCode);
 					} else {
 						log.error("Could not run the script " + this.logfileValue.getPrepareScriptName());
 					}
@@ -190,7 +192,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 				} else {
 					br = new BufferedReader(new FileReader(this.logfileValue.getLogfileSource()));
 				}
-				log.info("Preparing Units...");
+				if (log.isInfoEnabled()) log.info("Preparing Units...");
 				units = super.getViewServiceSpring().getAllUnits();
 				Iterator it = units.iterator();
 				unitFileMap = new HashMap<Integer, UnitFile>(units.size() + 1);
@@ -213,7 +215,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 						log.error("unit " + unit.getUnitId() + " does not belong to any site! " + nsee.getMessage());
 					}
 				}
-				log.info("Preparing Sites...");
+				if (log.isInfoEnabled()) log.info("Preparing Sites...");
 				sites = webServiceSpring.getAllSites();
 				it = sites.iterator();
 				siteFileMap = new HashMap<Integer, SiteFile>(sites.size());
@@ -225,7 +227,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 					}
 					siteFileMap.put(site.getSiteId(), new SiteFile(site, hostsCache.get(site.getSiteId())));
 				}
-				log.info("Preparing Destination-Directories...");
+				if (log.isInfoEnabled()) log.info("Preparing Destination-Directories...");
 				File destDir = new File(this.logfileValue.getLogfileDestDir());
 				if (!destDir.exists()) destDir.mkdirs();
 
@@ -240,7 +242,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 				String viewLanguage = "";
 				String path = "";
 				start = new Date();
-				log.info("Start Parsing...");
+				if (log.isInfoEnabled()) log.info("Start Parsing...");
 				while ((line = br.readLine()) != null) {
 					unitId = null;
 					siteId = null;
@@ -296,7 +298,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 			} finally {
 				System.gc();
 				Date end = new Date();
-				log.info("Processed " + this.logfileValue.getLines() + " Lines of Logfiles in " + this.calcHMS(end.getTime() - start.getTime()));
+				if (log.isInfoEnabled()) log.info("Processed " + this.logfileValue.getLines() + " Lines of Logfiles in " + this.calcHMS(end.getTime() - start.getTime()));
 				try {
 					br.close();
 				} catch (Exception exi) {
@@ -345,10 +347,12 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 					log.warn("Could not clean Logfile Dir because of: " + exe.getMessage());
 				}
 			}
-			log.info("Finished Logfile Cronjob");
-			log.info("CacheHits: " + this.logfileValue.getCacheHit() + "\t\tCacheMiss: " + this.logfileValue.getCacheMiss());
-			log.info("SiteCacheHits: " + this.logfileValue.getSiteCacheHit() + "\tSiteCacheMiss: " + this.logfileValue.getSiteCacheMiss());
-			log.info("Number of Units: " + units.size() + "\tNumber of Sites: " + sites.size());
+			if (log.isInfoEnabled()) {
+				log.info("Finished Logfile Cronjob");
+				log.info("CacheHits: " + this.logfileValue.getCacheHit() + "\t\tCacheMiss: " + this.logfileValue.getCacheMiss());
+				log.info("SiteCacheHits: " + this.logfileValue.getSiteCacheHit() + "\tSiteCacheMiss: " + this.logfileValue.getSiteCacheMiss());
+				log.info("Number of Units: " + units.size() + "\tNumber of Sites: " + sites.size());
+			}
 			this.processRunning = false;
 		}
 	}
@@ -471,7 +475,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 						log.warn("Execution of \"" + stringArray2String(cmdArr) + "\" terminated with returncode " + runResult);
 					}
 				} else {
-					log.info("No processing after parsing");
+					if (log.isInfoEnabled()) log.info("No processing after parsing");
 				}
 			}
 		}
@@ -591,7 +595,7 @@ public class LogfileServiceSpringImpl extends LogfileServiceSpringBase {
 						log.warn("Execution of \"" + stringArray2String(cmdArr) + "\" terminated with returncode " + runResult);
 					}
 				} else {
-					log.info("No processing after parsing");
+					if (log.isInfoEnabled()) log.info("No processing after parsing");
 				}
 			}
 		}
