@@ -922,6 +922,13 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
+			<id>tizzit</id>
+			<name>Tizzit Repository</name>
+			<url>http://maven.tizzit.org/content/groups/public/</url>
+		</pluginRepository>
+
+		<!--
+		<pluginRepository>
 			<id>andromda</id>
 			<name>AndroMDA Repository</name>
 			<url>http://team.andromda.org/maven2</url>
@@ -942,6 +949,7 @@
 				<enabled>true</enabled>
 			</releases>
 		</pluginRepository>
+		-->
 	</pluginRepositories>
 	<prerequisites>
 		<maven>2.0.8</maven>
