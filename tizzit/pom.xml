@@ -650,6 +650,7 @@
 
 		<module>../tizzit-plugin-api</module>
 		<module>../tizzit-core</module>
+		<module>../tizzit-web-xindice</module>
 		<module>../tizzit-webstart</module>
 		<!--
 		<module>../tizzit-web-cocoon</module>
@@ -659,7 +660,6 @@
 		<module>../tizzit-richclient</module>
 		<module>../tizzit-web-admin</module>
 		<module>../tizzit-loginmodules</module>
-		<module>../tizzit-web-xindice</module>
 		<module>../tizzit-plugin-testcontainer</module>
 		<module>../tizzit-xmlsearch-xindice</module>
 
