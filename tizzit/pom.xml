@@ -6,10 +6,10 @@
 	<packaging>pom</packaging>
 	<version>1.0</version>
 	<name>tizzit</name>
-	<description>The tizzit Project.</description>
+	<description>The Tizzit Project.</description>
 	<scm>
-		<connection>scm:svn:https://tizzit.svn.sourceforge.net/svnroot/tizzit/trunk/tizzit/</connection>
-		<url>http://tizzit.svn.sourceforge.net/viewvc/tizzit/trunk/</url>
+		<connection>scm:svn:https://tizzit.svn.sourceforge.net/svnroot/tizzit/trunk/tizzit</connection>
+		<url>http://tizzit.svn.sourceforge.net/viewvc/tizzit/trunk</url>
 	</scm>
 	<organization>
 		<name>Juwi MacMillan Group GmbH</name>
@@ -17,8 +17,8 @@
 	</organization>
 	<inceptionYear>2009</inceptionYear>
 	<issueManagement>
-		<system>mantis</system>
-		<url>http://tizzit.jira.com</url>
+		<system>jira</system>
+		<url>http://jira.tizzit.org</url>
 	</issueManagement>
 	<ciManagement>
 		<system>continuum</system>
