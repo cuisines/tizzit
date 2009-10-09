@@ -315,39 +315,24 @@
    -->
 
     <!-- COCOON -->
-    <category name="access" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
-    <category name="core.xslt-processor" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
-    <category name="core" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
-    <category name="forms" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
-    <category name="flow" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
-    <category name="portal" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
-    <category name="sitemap.handled-errors" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON_HANDLEDERRORS"/>
-    </category>
-    <category name="sitemap" additivity="false">
-	<priority value="WARN"/>
-	<appender-ref ref="COCOON"/>
-    </category>
+	<!-- COCOON -->
+	<category name="org.apache.cocoon" additivity="false">
+		<priority value="WARN"/>
+		<appender-ref ref="COCOON"/>
+   </category>
+	<category name="cocoon.handled" additivity="false">
+		<priority value="FATAL"/><!-- ResourceNotFoundException still throws Exceptions-->
+		<appender-ref ref="COCOON_HANDLEDERRORS"/>
+   </category>
 
+	<category name="sitemap.handled-errors" additivity="false">
+		<priority value="WARN"/>
+		<appender-ref ref="COCOON_HANDLEDERRORS"/>
+   </category>
+	<category name="cocoon.sitemap" additivity="false">
+		<priority value="ERROR"/>
+		<appender-ref ref="COCOON"/>
+   </category>
    <!-- ======================= -->
    <!-- Setup the Root category -->
    <!-- ======================= -->

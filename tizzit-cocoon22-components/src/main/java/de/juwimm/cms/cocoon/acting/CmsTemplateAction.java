@@ -25,6 +25,7 @@ import org.apache.avalon.framework.component.ComponentManager;
 import org.apache.avalon.framework.component.Composable;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.avalon.framework.thread.SingleThreaded;
+import org.apache.cocoon.ResourceNotFoundException;
 import org.apache.cocoon.acting.AbstractAction;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
@@ -153,7 +154,7 @@ public class CmsTemplateAction extends AbstractAction implements SingleThreaded,
 			sitemapParams.putAll(this.webSpringBean.getSitemapParameters(sitemapInputParams, safeguardMap));
 			sitemapParams.put("safeguardlogedin", String.valueOf(safeguardMap.size() > 0));
 		} catch (UserException exe) {
-			throw new UserException("Unknown error occued during resolving of sitemap parameters", exe);
+			throw new ResourceNotFoundException("Unknown error occued during resolving of sitemap parameters", exe);
 		}
 		if (log.isDebugEnabled()) log.debug("finished act");
 		return sitemapParams;

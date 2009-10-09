@@ -867,7 +867,11 @@ public class WebServiceSpring {
 				// Fall: /deutsch/joekel/
 				viewComponentId = viewServiceSpring.getViewComponentId4PathWithViewTypeAndLanguage(path, viewType, language, siteId);
 			}
-			if (viewComponentId == null) { throw new ResourceNotFoundException("Could not read resource: " + path); }
+			if (viewComponentId == null ) {
+				if("favicon.ico".equals(path)) {
+					return null;
+				}
+				throw new ResourceNotFoundException("Could not read resource: " + path); }
 			try {
 				if (log.isDebugEnabled()) log.debug("found viewComponentId " + viewComponentId + " for path");
 				sitemapParams.put("currentDate", DateConverter.getSql2String(new Date(System.currentTimeMillis())));

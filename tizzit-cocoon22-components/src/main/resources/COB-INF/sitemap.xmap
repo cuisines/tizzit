@@ -529,7 +529,7 @@
       <map:handle-errors>
         <map:select type="exception">
           <map:when test="not-found">
-            <map:generate type="notifying" />
+            <map:generate type="exception" />
             <map:transform src="system/error2html.xslt">
               <map:parameter name="contextPath" value="{request:contextPath}" />
               <map:parameter name="statusCode" value="404" />
@@ -548,7 +548,7 @@
             <map:serialize status-code="404" />
           </map:when>
           <map:otherwise>
-            <map:generate type="notifying" />
+            <map:generate type="exception" />
             <map:transform src="system/error2html.xslt">
               <map:parameter name="contextPath" value="{request:contextPath}" />
               <map:parameter name="statusCode" value="500" />
