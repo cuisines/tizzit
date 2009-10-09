@@ -883,12 +883,20 @@
 		</profile>
 	</profiles>
 	<distributionManagement>
-		<!--
-			<repository> <id>m2</id> <url>file:///home/maven/m2</url>
-			</repository>s<snapshotRepository> <id>m2</id>
-			<url>file:///home/maven/m2</url> </snapshotRepository> <site>
-			<id>m2</id> <url>file:///home/maven/m2site</url> </site>
-		-->
+		<repository>
+			<id>tizzit-releases</id>
+			<name>Internal Releases</name>
+			<url>http://maven.tizzit.org/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>tizzit-snapshots</id>
+			<name>Internal Snapshots</name>
+			<url>http://maven.tizzit.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<site>
+			<id>tizzit-sites</id>
+			<url>dav:http://maven.tizzit.org/sites-deploy/tizzit</url>
+		</site>
 	</distributionManagement>
 	<repositories>
 		<repository>
@@ -896,29 +904,6 @@
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/groups/public/</url>
 		</repository>
-
-		<!--
-		<repository>
-			<id>andromda</id>
-			<name>AndroMDA Repository</name>
-			<url>http://team.andromda.org/maven2</url>
-		</repository>
-		<repository>
-			<id>jboss</id>
-			<name>Jboss own repo</name>
-			<url>http://repository.jboss.org/maven2/</url>
-		</repository>
-		<repository>
-			<id>compass-project.org</id>
-			<name>Compass</name>
-			<url>http://repo.compass-project.org</url>
-		</repository>
-		<repository>
-			<id>keyintegrity</id>
-			<name>Repo for XMLDB / Xindice</name>
-			<url>http://repo.keyintegrity.com/maven2/</url>
-		</repository>
-		-->
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -926,30 +911,6 @@
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/groups/public/</url>
 		</pluginRepository>
-
-		<!--
-		<pluginRepository>
-			<id>andromda</id>
-			<name>AndroMDA Repository</name>
-			<url>http://team.andromda.org/maven2</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>codehaus</id>
-			<name>Codehaus Repository</name>
-			<url>http://repository.codehaus.org/</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>mc-release</id>
-			<name>Local Maven repository of releases</name>
-			<url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
-		-->
 	</pluginRepositories>
 	<prerequisites>
 		<maven>2.0.8</maven>
