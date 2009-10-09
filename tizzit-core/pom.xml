@@ -109,7 +109,7 @@
 		<dependency>
 		    <groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>0.8.0-SNAPSHOT</version>
+			<version>0.8.0-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
@@ -205,34 +205,18 @@
 			<artifactId>easymock</artifactId>
 			<version>2.5.2</version>
 			<scope>test</scope>
-		</dependency> 
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.1.119</version>
+			<scope>test</scope>
+		</dependency>		 
 	</dependencies>
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-install-plugin</artifactId>
-			<version>2.3</version>
-			<executions>
-				<execution>
-					<id>pdfbox</id>
-					<phase>validate</phase>
-					<goals>
-					  <goal>install-file</goal>
-					</goals>
-					<configuration>
-					    <file>${pom.basedir}/src/main/resources/pdfbox.jar</file>
-						<pomFile>${pom.basedir}/src/main/resources/pdfbox.pom</pomFile>
-					    <groupId>org.apache.pdfbox</groupId>
-					    <artifactId>pdfbox</artifactId>
-						<packaging>jar</packaging>
-						<version>0.8.0-SNAPSHOT</version>
-					</configuration>
-				</execution>
-				</executions>
-		  </plugin>
 			<plugin>
 				<groupId>org.andromda.maven.plugins</groupId>
 				<artifactId>andromda-multi-source-plugin</artifactId>
