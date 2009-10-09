@@ -15,8 +15,16 @@
  */
 package de.juwimm.cms.search.res;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.DateTools;
@@ -26,7 +34,12 @@ import org.compass.core.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.XercesHelper;
 
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentHbmDao;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.UnitHbmDao;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.search.res.html.HTMLParser;
 
 /**
@@ -72,7 +85,7 @@ public class HtmlResourceLocator {
 		org.apache.commons.io.IOUtils.copy(reader, sw);
 		String sresult = sw.toString();
 
-		log.debug("Saving tokenized HTML value into searchengine: " + sresult);
+		if (log.isDebugEnabled()) log.debug("Saving tokenized HTML value into searchengine: " + sresult);
 		resource.addProperty("contents", stripNonValidXMLCharacters(sresult));
 
 		Properties prop = parser.getMetaTags();
@@ -101,7 +114,7 @@ public class HtmlResourceLocator {
 	}
 
 	public String stripNonValidXMLCharacters(String in) {
-		if(in == null) return "";
+		if (in == null) return "";
 		String stripped = in.replaceAll("[^\\u0009\\u000a\\u000d\\u0020-\\ud7ff\\e0000-\\ufffd]", "").replaceAll("[&<>]", "");
 		return stripped;
 	}

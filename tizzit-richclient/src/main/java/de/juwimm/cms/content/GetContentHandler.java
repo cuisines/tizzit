@@ -24,7 +24,11 @@ import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.juwimm.cms.content.modules.AbstractModule;
@@ -73,6 +77,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 		this.title = AbstractModule.getURLEncoded(strTitle);
 	}
 
+	@Override
 	public void startDocument() {
 		if (log.isDebugEnabled()) log.debug("Start document");
 		content = new StringBuffer();
@@ -80,6 +85,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 		gcontent = "";
 	}
 
+	@Override
 	public void startElement(String uri, String na2me, String qName, Attributes atts) {
 		if (imInsideThisDCFElement.equals("") || imInsideDCFInitial) {
 			if (qName.equals("title")) {
@@ -95,23 +101,24 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 			}
 			lastStartElement = qName;
 			if (startOrEnd) content.append(">");
-//			 --- URI ---
+			//			 --- URI ---
 			content.append("<");
-			if(!uri.equalsIgnoreCase("")) {
+			if (!uri.equalsIgnoreCase("")) {
 				content.append(uri).append(':');
 			}
 			content.append(qName).append(attributes);
-//			 --- URI ---
+			//			 --- URI ---
 			startOrEnd = true;
 		} else if (doNotCallModule && !imInsideDCFInitial && !imInsideIterationElements && qName.equals("dcfInitial")) {
 			startOrEnd = true;
 			imInsideDCFInitial = true;
 		} else if (!imInsideIterationElements && qName.equals("iterationElements")) {
 			imInsideIterationElements = true;
-			log.debug("SET ITERATION ELEMENTS");
+			if (log.isDebugEnabled()) log.debug("SET ITERATION ELEMENTS");
 		}
 	}
 
+	@Override
 	public void characters(char[] ch, int start, int length) {
 		if (imInsideThisDCFElement.equals("") || imInsideDCFInitial) {
 			if (imInsideTitle && !titleAlreadyWritten) {
@@ -134,6 +141,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 		}
 	}
 
+	@Override
 	public void endElement(String uri, String na2me, String qName) throws SAXException {
 		if (imInsideThisDCFElement.equals("") || (imInsideDCFInitial && !qName.equals("dcfInitial"))) {
 			if (lastStartElement.equals(qName)) {
@@ -141,7 +149,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 			} else {
 				// --- URI ---
 				content.append("</");
-				if(!uri.equalsIgnoreCase("")) {
+				if (!uri.equalsIgnoreCase("")) {
 					content.append(uri).append(':');
 				}
 				content.append(qName).append(">\n");
@@ -156,10 +164,10 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 				if (!validationError.equalsIgnoreCase("")) { throw new SAXException(validationError); }
 				String nde = "";
 				if (node != null) nde = XercesHelper.nodeList2string(node.getChildNodes());
-				log.debug("Added in endElement: " + nde);
+				if (log.isDebugEnabled()) log.debug("Added in endElement: " + nde);
 				// --- URI ---
 				content.append(">").append(nde).append("</");
-				if(!uri.equalsIgnoreCase("")) {
+				if (!uri.equalsIgnoreCase("")) {
 					content.append(uri).append(':');
 				}
 				content.append(qName).append(">\n");
@@ -168,7 +176,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 				if (lastStartElement.equals(qName)) content.append(">");
 				// --- URI ---
 				content.append("</");
-				if(!uri.equalsIgnoreCase("")) {
+				if (!uri.equalsIgnoreCase("")) {
 					content.append(uri).append(':');
 				}
 				content.append(qName).append(">\n");
@@ -179,13 +187,14 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 			imInsideDCFInitial = false;
 		} else if (imInsideIterationElements && qName.equals("iterationElements")) {
 			imInsideIterationElements = false;
-			log.debug("GOT OUT OF ITERATION ELEMENTS");
+			if (log.isDebugEnabled()) log.debug("GOT OUT OF ITERATION ELEMENTS");
 		}
 
 		if (qName.equals("title")) imInsideTitle = false;
 		startOrEnd = false;
 	}
 
+	@Override
 	public void endDocument() {
 		if (log.isDebugEnabled()) log.debug("End document ");
 		gcontent = content.toString();
@@ -210,9 +219,9 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 		Document doc = docBuilder.parse(in);
 		if (log.isDebugEnabled()) {
 			if (doc == null) {
-				log.debug("DOC IS NULL");
+				if (log.isDebugEnabled()) log.debug("DOC IS NULL");
 			} else {
-				log.debug("ALLES QL");
+				if (log.isDebugEnabled()) log.debug("ALLES QL");
 			}
 		}
 	}
@@ -231,7 +240,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 		}
 
 		public void fatalError(SAXParseException exception) throws SAXException {
-			log.debug("ValidationErrorHandler fatalError ", exception);
+			if (log.isDebugEnabled()) log.debug("ValidationErrorHandler fatalError ", exception);
 		}
 	}
 }

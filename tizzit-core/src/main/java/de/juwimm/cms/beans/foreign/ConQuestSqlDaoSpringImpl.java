@@ -26,7 +26,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import de.juwimm.cms.beans.foreign.support.MiniViewComponent;
 
 public class ConQuestSqlDaoSpringImpl extends JdbcDaoSupport implements ConQuestSqlDaoSpring {
-	private Logger log = Logger.getLogger(ConQuestSqlDaoSpringImpl.class);
+	private final Logger log = Logger.getLogger(ConQuestSqlDaoSpringImpl.class);
 
 	public List<MiniViewComponent> getViewComponentByParentId(Integer parentId) {
 		log.info("TreeRepair: getViewComponentByParentId " + parentId);
@@ -47,7 +47,7 @@ public class ConQuestSqlDaoSpringImpl extends JdbcDaoSupport implements ConQuest
 	}
 
 	public void updateMvc(MiniViewComponent prev, MiniViewComponent next) {
-		log.debug("TreeRepair: update prev " + prev.getVcId() + " next " + next.getVcId());
+		if (log.isDebugEnabled()) log.debug("TreeRepair: update prev " + prev.getVcId() + " next " + next.getVcId());
 		String updateNextQuery = "UPDATE VIEWCOMPONENT SET PREV_NODE_ID_FK = ? WHERE VIEW_COMPONENT_ID = ?";
 		getJdbcTemplate().update(updateNextQuery, new Object[] {prev.getVcId(), next.getVcId()});
 
@@ -56,19 +56,19 @@ public class ConQuestSqlDaoSpringImpl extends JdbcDaoSupport implements ConQuest
 	}
 
 	public void updateFirstMvc(MiniViewComponent first) {
-		log.debug("TreeRepair: update first " + first.getText());
+		if (log.isDebugEnabled()) log.debug("TreeRepair: update first " + first.getText());
 		String updateQuery = "UPDATE VIEWCOMPONENT SET PREV_NODE_ID_FK = NULL WHERE VIEW_COMPONENT_ID = ?";
 		getJdbcTemplate().update(updateQuery, new Object[] {first.getVcId()});
 	}
 
 	public void updateLastMvc(MiniViewComponent last) {
-		log.debug("TreeRepair: update last " + last.getText());
+		if (log.isDebugEnabled()) log.debug("TreeRepair: update last " + last.getText());
 		String updateQuery = "UPDATE VIEWCOMPONENT SET NEXT_NODE_ID_FK = NULL WHERE VIEW_COMPONENT_ID = ?";
 		getJdbcTemplate().update(updateQuery, new Object[] {last.getVcId()});
 	}
 
 	public void updateParentMvc(int parentId, MiniViewComponent first) {
-		log.debug("TreeRepair: update parent " + parentId);
+		if (log.isDebugEnabled()) log.debug("TreeRepair: update parent " + parentId);
 		String updateQuery = "UPDATE VIEWCOMPONENT SET FIRST_CHILD_ID_FK = ? WHERE VIEW_COMPONENT_ID = ?";
 		getJdbcTemplate().update(updateQuery, new Object[] {first.getVcId(), parentId});
 	}

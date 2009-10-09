@@ -19,7 +19,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
 import java.security.acl.Group;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -42,7 +46,11 @@ import org.springframework.security.context.HttpSessionContextIntegrationFilter;
 import org.springframework.security.context.SecurityContext;
 import org.springframework.security.providers.AuthenticationProvider;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.jaas.*;
+import org.springframework.security.providers.jaas.DefaultLoginExceptionResolver;
+import org.springframework.security.providers.jaas.JaasAuthenticationCallbackHandler;
+import org.springframework.security.providers.jaas.JaasAuthenticationToken;
+import org.springframework.security.providers.jaas.JaasGrantedAuthority;
+import org.springframework.security.providers.jaas.LoginExceptionResolver;
 import org.springframework.security.providers.jaas.event.JaasAuthenticationFailedEvent;
 import org.springframework.security.providers.jaas.event.JaasAuthenticationSuccessEvent;
 import org.springframework.security.ui.session.HttpSessionDestroyedEvent;
@@ -55,7 +63,7 @@ import org.springframework.util.Assert;
  */
 public class ConQuestDaoAuthenticationProvider implements AuthenticationProvider, ApplicationEventPublisherAware, InitializingBean, ApplicationListener, Serializable {
 	private static final long serialVersionUID = -4744822348338254363L;
-	private transient Log log = LogFactory.getLog(ConQuestDaoAuthenticationProvider.class);
+	private transient final Log log = LogFactory.getLog(ConQuestDaoAuthenticationProvider.class);
 	private transient LoginExceptionResolver loginExceptionResolver = new DefaultLoginExceptionResolver();
 	private transient String loginContextName = "juwimm-cms-security-domain"; // TODO 09 Lateron this should be configurable
 	private transient JaasAuthenticationCallbackHandler[] callbackHandlers = new JaasAuthenticationCallbackHandler[] {new org.springframework.security.providers.jaas.JaasNameCallbackHandler(), new org.springframework.security.providers.jaas.JaasPasswordCallbackHandler()};
@@ -172,7 +180,7 @@ public class ConQuestDaoAuthenticationProvider implements AuthenticationProvider
 		SecurityContext context = (SecurityContext) event.getSession().getAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY);
 
 		if (context == null) {
-			log.debug("The destroyed session has no SecurityContext");
+			if (log.isDebugEnabled()) log.debug("The destroyed session has no SecurityContext");
 
 			return;
 		}
@@ -186,13 +194,13 @@ public class ConQuestDaoAuthenticationProvider implements AuthenticationProvider
 				LoginContext loginContext = token.getLoginContext();
 
 				if (loginContext != null) {
-					log.debug("Logging principal: [" + token.getPrincipal() + "] out of LoginContext");
+					if (log.isDebugEnabled()) log.debug("Logging principal: [" + token.getPrincipal() + "] out of LoginContext");
 					loginContext.logout();
 				} else {
-					log.debug("Cannot logout principal: [" + token.getPrincipal() + "] from LoginContext. " + "The LoginContext is unavailable");
+					if (log.isDebugEnabled()) log.debug("Cannot logout principal: [" + token.getPrincipal() + "] from LoginContext. " + "The LoginContext is unavailable");
 				}
 			} catch (LoginException e) {
-				log.warn("Error error logging out of LoginContext", e);
+				if (log.isWarnEnabled()) log.warn("Error error logging out of LoginContext", e);
 			}
 		}
 	}
@@ -261,7 +269,7 @@ public class ConQuestDaoAuthenticationProvider implements AuthenticationProvider
 	 */
 	private class InternalCallbackHandler implements CallbackHandler, Serializable {
 		private static final long serialVersionUID = -366939099927300938L;
-		private transient Authentication authentication;
+		private transient final Authentication authentication;
 
 		public InternalCallbackHandler(Authentication authentication) {
 			this.authentication = authentication;

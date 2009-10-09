@@ -79,7 +79,7 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 	 * <li><i>liveServerIP</i> - The IP Address of the Liveserver</li></ul>
 	 */
 	public void onMessage(Message message) {
-		log.debug("Started queue with Job: " + (++id));
+		if (log.isDebugEnabled()) log.debug("Started queue with Job: " + (++id));
 		String messageType = "";
 		try {
 			messageType = message.getJMSType();
@@ -92,7 +92,7 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 		} catch (Exception exe) {
 			log.error("Error occured in onMessage doing " + messageType + ": ", exe);
 		}
-		log.debug("Finished queue with Job: " + id);
+		if (log.isDebugEnabled()) log.debug("Finished queue with Job: " + id);
 	}
 
 	private void createLiveEdition(Message message) {

@@ -20,18 +20,47 @@
  */
 package de.juwimm.cms.safeguard.remote;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
-import org.w3c.dom.*;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
-import de.juwimm.cms.safeguard.model.*;
-import de.juwimm.cms.safeguard.realmlogin.*;
-import de.juwimm.cms.safeguard.vo.*;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmJaasHbm;
+import de.juwimm.cms.safeguard.model.RealmJaasHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
+import de.juwimm.cms.safeguard.model.RealmJdbcHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmLdapHbm;
+import de.juwimm.cms.safeguard.model.RealmLdapHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDao;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmImpl;
+import de.juwimm.cms.safeguard.realmlogin.JAASRealmLoginManager;
+import de.juwimm.cms.safeguard.realmlogin.LDAPRealmLoginManager;
+import de.juwimm.cms.safeguard.realmlogin.SafeguardLoginManager;
+import de.juwimm.cms.safeguard.realmlogin.SimplePwRealmLoginManager;
+import de.juwimm.cms.safeguard.realmlogin.SqlDbRealmLoginManager;
+import de.juwimm.cms.safeguard.vo.ActiveRealmValue;
+import de.juwimm.cms.safeguard.vo.RealmJaasValue;
+import de.juwimm.cms.safeguard.vo.RealmJdbcValue;
+import de.juwimm.cms.safeguard.vo.RealmLdapValue;
+import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
+import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 
 /**
  * @see de.juwimm.cms.safeguard.remote.SafeguardServiceSpring
@@ -44,7 +73,7 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 
 	@Override
 	protected byte handleLogin(String userName, String password, Integer viewComponentId) {
-		if(log.isDebugEnabled()) log.debug("trying login safeguard user " + userName);
+		if (log.isDebugEnabled()) log.debug("trying login safeguard user " + userName);
 		byte login = SafeguardLoginManager.LOGIN_UNAUTHENTICATED;
 		try {
 			SafeguardLoginManager loginManager = this.getSafeguardLoginManager(userName, password, viewComponentId);
@@ -178,7 +207,7 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		try {
 			realm.setLoginPage(super.getViewComponentHbmDao().load(Integer.valueOf(value.getLoginPageId())));
 		} catch (NumberFormatException e) {
-			log.debug("Could not set the login viewComponent", e);
+			if (log.isDebugEnabled()) log.debug("Could not set the login viewComponent", e);
 		}
 		realm.setRoleNeeded(roleNeeded);
 		realm.setViewComponent(super.getViewComponentHbmDao().load(viewComponentId));
@@ -231,7 +260,7 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		try {
 			realm.setLoginPage(super.getViewComponentHbmDao().load(Integer.valueOf(value.getLoginPageId())));
 		} catch (Exception e) {
-			log.debug("Could not set the loginPage", e);
+			if (log.isDebugEnabled()) log.debug("Could not set the loginPage", e);
 		}
 		realm.setViewComponent(super.getViewComponentHbmDao().load(viewComponentId));
 		return null;

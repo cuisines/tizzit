@@ -16,7 +16,11 @@
 package de.juwimm.cms.safeguard.realmlogin;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
@@ -39,12 +43,12 @@ import de.juwimm.cms.safeguard.model.RealmJaasHbmDao;
  */
 public class JAASRealmLoginManager implements SafeguardLoginManager {
 	private static Logger log = Logger.getLogger(JAASRealmLoginManager.class);
-	private String userName;
-	private String password;
-	private String roleNeeded;
-	private Integer realmId;
-	private RealmJaasHbmDao realmJaasHbmDao;
-	
+	private final String userName;
+	private final String password;
+	private final String roleNeeded;
+	private final Integer realmId;
+	private final RealmJaasHbmDao realmJaasHbmDao;
+
 	public JAASRealmLoginManager(RealmJaasHbmDao realmJaasHbmDao, Integer realmId, String userName, String password, String roleNeeded) {
 		this.password = password;
 		this.realmId = realmId;
@@ -80,7 +84,7 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 							Enumeration members = group.members();
 							while (members.hasMoreElements()) {
 								Principal member = (Principal) members.nextElement();
-								log.debug(member.getClass().getName() + ": " + member.getName() + ": " + member);
+								if (log.isDebugEnabled()) log.debug(member.getClass().getName() + ": " + member.getName() + ": " + member);
 							}
 						}
 					}

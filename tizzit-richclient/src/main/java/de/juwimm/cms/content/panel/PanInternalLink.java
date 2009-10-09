@@ -15,14 +15,32 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.TreePath;
@@ -60,15 +78,15 @@ import de.juwimm.swing.DropDownHolder;
  */
 public class PanInternalLink extends JPanel {
 	private static Logger log = Logger.getLogger(PanInternalLink.class);
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private int rootViewId = ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final int rootViewId = ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId();
 	private InternallinkTreeModel currentTreeModel = null;
-	private JScrollPane jScrollPane1 = new JScrollPane();
-	private JTree tree = new JTree();
-	private JLabel lblLinkName = new JLabel();
-	private JTextField txtLinkname = new JTextField();
-	private JButton btnSearchAnker = new JButton();
-	private JComboBox cboAnker = new JComboBox();
+	private final JScrollPane jScrollPane1 = new JScrollPane();
+	private final JTree tree = new JTree();
+	private final JLabel lblLinkName = new JLabel();
+	private final JTextField txtLinkname = new JTextField();
+	private final JButton btnSearchAnker = new JButton();
+	private final JComboBox cboAnker = new JComboBox();
 	private Module module;
 	private String errMsg = "";
 	private boolean treeLink = false;
@@ -76,12 +94,12 @@ public class PanInternalLink extends JPanel {
 	private String targetViewLevel = null;
 	private String anchor = null;
 	private boolean loading = false;
-	private JComboBox cbxViewDocuments = new JComboBox();
+	private final JComboBox cbxViewDocuments = new JComboBox();
 	private static InternalLinkCache linkCache = new InternalLinkCache();
-	private JComboBox cbxRelatedSites = new JComboBox();
+	private final JComboBox cbxRelatedSites = new JComboBox();
 	private boolean isSymlink = false;
-	private JCheckBox cbxDisplayTypeInline = new JCheckBox();
-	private JCheckBox cbxPopup = new JCheckBox();
+	private final JCheckBox cbxDisplayTypeInline = new JCheckBox();
+	private final JCheckBox cbxPopup = new JCheckBox();
 	private PanPopupDetails panPopupDetails = null;
 
 	public PanInternalLink(Module module, boolean treeLink, boolean isSymlink) {
@@ -123,6 +141,7 @@ public class PanInternalLink extends JPanel {
 			};
 
 			MouseListener ml = new MouseAdapter() {
+				@Override
 				public void mousePressed(MouseEvent e) {
 					try {
 						int selRow = tree.getRowForLocation(e.getX(), e.getY());
@@ -141,17 +160,17 @@ public class PanInternalLink extends JPanel {
 			tree.addMouseListener(ml);
 			tree.addTreeWillExpandListener(tl);
 
-/*			if (currentTreeModel == null || rootViewId != ((PageNode) currentTreeModel.getRoot()).getViewId()) {
-				log.info("Loading TreeModel for Internal Link... Please wait :)");
-				currentTreeModel = new InternallinkTreeModel(new PageNode(comm.getViewComponent4Unit(rootViewId, -1)));
-			}
-			tree.setModel(currentTreeModel);
-			tree.setCellRenderer(new CmsTreeRenderer());
-			tree.validate();
-			tree.repaint();
-			validate();
-			repaint();
-*/
+			/*			if (currentTreeModel == null || rootViewId != ((PageNode) currentTreeModel.getRoot()).getViewId()) {
+							log.info("Loading TreeModel for Internal Link... Please wait :)");
+							currentTreeModel = new InternallinkTreeModel(new PageNode(comm.getViewComponent4Unit(rootViewId, -1)));
+						}
+						tree.setModel(currentTreeModel);
+						tree.setCellRenderer(new CmsTreeRenderer());
+						tree.validate();
+						tree.repaint();
+						validate();
+						repaint();
+			*/
 		} catch (Exception exe) {
 			log.error("Initialization problem", exe);
 		}
@@ -180,27 +199,18 @@ public class PanInternalLink extends JPanel {
 		});
 
 		jScrollPane1.getViewport().setBackground(Color.white);
-		this.add(lblLinkName, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.VERTICAL, new Insets(5, 5, 0, 5), 6, 0));
-		this.add(txtLinkname, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 296, 0));
-		this.add(cbxRelatedSites, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 2));
-		this.add(cbxViewDocuments, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 2));
-		this.add(jScrollPane1, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 418, 336));
-		this.add(btnSearchAnker, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 33, 0));
-		this.add(cboAnker, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 5), 178, 2));
-		this.add(cbxDisplayTypeInline, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 33, 0));
+		this.add(lblLinkName, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(5, 5, 0, 5), 6, 0));
+		this.add(txtLinkname, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 5), 296, 0));
+		this.add(cbxRelatedSites, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 2));
+		this.add(cbxViewDocuments, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 0, 2));
+		this.add(jScrollPane1, new GridBagConstraints(0, 3, 3, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 0, 5), 418, 336));
+		this.add(btnSearchAnker, new GridBagConstraints(0, 4, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 33, 0));
+		this.add(cboAnker, new GridBagConstraints(2, 4, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 5, 5), 178, 2));
+		this.add(cbxDisplayTypeInline, new GridBagConstraints(0, 5, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 0, 5), 33, 0));
 		jScrollPane1.getViewport().add(tree, null);
 		this.cbxRelatedSites.setVisible(this.isSymlink);
-		this.add(cbxPopup, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-		
+		this.add(cbxPopup, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+
 		this.cbxPopup.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				cbxPopupStateChanged(e);
@@ -211,18 +221,17 @@ public class PanInternalLink extends JPanel {
 	private void cbxPopupStateChanged(ItemEvent e) {
 		this.showPopupPanel(e.getStateChange() == ItemEvent.SELECTED);
 	}
-	
+
 	private void showPopupPanel(boolean show) {
 		if (show) {
-			this.add(this.getPanPopupDetails(), new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-					GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+			this.add(this.getPanPopupDetails(), new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 		} else {
 			this.remove(this.getPanPopupDetails());
 		}
 		this.revalidate();
 		this.repaint();
 	}
-	
+
 	private PanPopupDetails getPanPopupDetails() {
 		if (this.panPopupDetails == null) {
 			this.panPopupDetails = new PanPopupDetails();
@@ -264,7 +273,7 @@ public class PanInternalLink extends JPanel {
 		btnSearchAnker.setVisible(vis);
 		cboAnker.setVisible(vis);
 	}
-	
+
 	public void setDisplayTypeEditable(boolean editable) {
 		this.cbxDisplayTypeInline.setVisible(editable);
 	}
@@ -299,8 +308,7 @@ public class PanInternalLink extends JPanel {
 		}
 		if (pageNode == null) {
 			errMsg = rb.getString("exception.LinkRequired");
-		} else if (pageNode.getViewComponent().getViewType() == Constants.VIEW_TYPE_INTERNAL_LINK
-				|| pageNode.getViewComponent().getViewType() == Constants.VIEW_TYPE_EXTERNAL_LINK) {
+		} else if (pageNode.getViewComponent().getViewType() == Constants.VIEW_TYPE_INTERNAL_LINK || pageNode.getViewComponent().getViewType() == Constants.VIEW_TYPE_EXTERNAL_LINK) {
 			errMsg = rb.getString("exception.ValidLinkRequired");
 		}
 		if (!treeLink) {
@@ -312,9 +320,7 @@ public class PanInternalLink extends JPanel {
 				}
 			}
 		}
-		if (this.cbxPopup.isVisible()) {
-			return (errMsg.equals("")) && this.panPopupDetails.isModuleValid();
-		}
+		if (this.cbxPopup.isVisible()) { return (errMsg.equals("")) && this.panPopupDetails.isModuleValid(); }
 		return (errMsg.equals(""));
 	}
 
@@ -347,10 +353,10 @@ public class PanInternalLink extends JPanel {
 				HashSet<String> avAnchors = new HashSet<String>(avAnchorsList);
 				if (avAnchors.contains(anchor)) {
 				*/
-					elm.setAttribute("anchor", AbstractModule.getURLEncoded(anchor));
-					/*
+				elm.setAttribute("anchor", AbstractModule.getURLEncoded(anchor));
+				/*
 				} else {
-					if (log.isDebugEnabled()) log.debug("Anchor " + anchor + " does not exist and is NOT saved");
+				if (log.isDebugEnabled()) log.debug("Anchor " + anchor + " does not exist and is NOT saved");
 				}
 				*/
 			}
@@ -366,17 +372,17 @@ public class PanInternalLink extends JPanel {
 		}
 		return root;
 	}
-	
+
 	public void clear() {
 		targetViewId = -1;
 		this.txtLinkname.setText("");
 		this.module.setDescription("");
 		if (this.panPopupDetails != null) {
-			this.remove(this.panPopupDetails);	
+			this.remove(this.panPopupDetails);
 		}
 		this.panPopupDetails = null;
 	}
-	
+
 	public void setProperties(Node prop) {
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		try {
@@ -411,7 +417,7 @@ public class PanInternalLink extends JPanel {
 				this.cbxPopup.setSelected(true);
 			} else {
 				if (this.panPopupDetails != null) {
-					this.remove(this.panPopupDetails);	
+					this.remove(this.panPopupDetails);
 				}
 				this.panPopupDetails = null;
 				this.cbxPopup.setSelected(false);
@@ -454,7 +460,7 @@ public class PanInternalLink extends JPanel {
 			try {
 				if (Integer.parseInt(strId) > 0) {
 					targetViewId = new Integer(strId).intValue();
-					log.debug("loading targetViewId " + targetViewId);
+					if (log.isDebugEnabled()) log.debug("loading targetViewId " + targetViewId);
 				}
 			} catch (Exception exe) {
 			}
@@ -523,10 +529,8 @@ public class PanInternalLink extends JPanel {
 						if (site != null && viewDocument != null) {
 							this.switchTree(site, viewDocument);
 						} else {
-							log.warn("The current user \"" + this.comm.getUser().getUserName() + "\" must not access site " + vdValue.getSiteId()
-									 + " where the target of this link is located!");
-							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("content.modules.internalLink.target.unavailable.warning"), 
-									rb.getString("content.modules.internalLink.target.unavailable.title"), JOptionPane.WARNING_MESSAGE);
+							log.warn("The current user \"" + this.comm.getUser().getUserName() + "\" must not access site " + vdValue.getSiteId() + " where the target of this link is located!");
+							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("content.modules.internalLink.target.unavailable.warning"), rb.getString("content.modules.internalLink.target.unavailable.title"), JOptionPane.WARNING_MESSAGE);
 						}
 					}
 				} else if (!pageNode.isInit()) {
@@ -570,8 +574,7 @@ public class PanInternalLink extends JPanel {
 		while (it.hasNext()) {
 			DropDownHolder ddh = it.next();
 			cbxViewDocuments.addItem(ddh);
-			if (((ViewDocumentValue) ddh.getObject()).isIsVdDefault())
-				defaultViewDocument = ddh;
+			if (((ViewDocumentValue) ddh.getObject()).isIsVdDefault()) defaultViewDocument = ddh;
 		}
 		cbxViewDocuments.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -582,14 +585,13 @@ public class PanInternalLink extends JPanel {
 				}
 			}
 		});
-		if (selectedSite != null && defaultViewDocument != null)
-			switchTree(selectedSite, defaultViewDocument);
+		if (selectedSite != null && defaultViewDocument != null) switchTree(selectedSite, defaultViewDocument);
 	}
 
 	public int getLinkTarget() {
 		return this.targetViewId;
 	}
-	
+
 	public String getLinkName() {
 		return this.txtLinkname.getText();
 	}

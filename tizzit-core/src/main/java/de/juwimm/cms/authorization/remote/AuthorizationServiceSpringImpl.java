@@ -121,7 +121,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 	protected UnitValue[] handleGetUnits() throws Exception {
 		Vector<UnitValue> vec = new Vector<UnitValue>();
 		try {
-			log.debug("begin getUnits");
+			if (log.isDebugEnabled()) log.debug("begin getUnits");
 			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			Iterator iterator = null;
 			if (getUserHbmDao().isInRole(user, UserRights.SITE_ROOT, user.getActiveSite())) {
@@ -135,7 +135,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 				UnitValue dao = getUnitHbmDao().getDao(unit);
 				vec.addElement(dao);
 			}
-			log.debug("end getUnits");
+			if (log.isDebugEnabled()) log.debug("end getUnits");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -149,7 +149,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 	protected SiteValue[] handleGetSites() throws Exception {
 		SiteValue[] retArr = null;
 		try {
-			log.debug("begin getSites for principal " + AuthenticationHelper.getUserName());
+			if (log.isDebugEnabled()) log.debug("begin getSites for principal " + AuthenticationHelper.getUserName());
 			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			Collection coll = null;
 			if (user.isMasterRoot()) {
@@ -164,7 +164,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 				site = (SiteHbm) it.next();
 				retArr[i++] = site.getSiteValue();
 			}
-			log.debug("end getSites");
+			if (log.isDebugEnabled()) log.debug("end getSites");
 		} catch (Exception exe) {
 			log.error("Unknown Error occured inside getSites: " + exe.getMessage());
 		}
@@ -213,7 +213,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 		 * else { //log.warn("Found one Principal other then a group - is is: " +
 		 * prip[i].getName()); } } }
 		 */
-		log.info("Login User " + user.getUserId() + " at site " + site.getSiteId() + " (" + site.getShortName().trim() + ")");
+		if (log.isInfoEnabled()) log.info("Login User " + user.getUserId() + " at site " + site.getSiteId() + " (" + site.getShortName().trim() + ")");
 		// UserLoginValue ulv = user.getUserLoginValue();
 		UserLoginValue ulv = super.getUserHbmDao().getUserLoginValue(user);
 		ulv.setSiteName(site.getName());
@@ -232,7 +232,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 		UserHbm user = null;
 		try {
 			user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
-			log.info("Logout User " + user.getUserId());
+			if (log.isInfoEnabled()) log.info("Logout User " + user.getUserId());
 			user.setLoginDate(0L);
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());

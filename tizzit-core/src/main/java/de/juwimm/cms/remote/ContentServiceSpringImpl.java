@@ -714,19 +714,22 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected byte[] handleGetDocument(Integer documentId) throws Exception {
 		byte[] retArr = null;
 		try {
-			log.debug("LOOKING FOR DOCUMENT");
+			if (log.isDebugEnabled()) log.debug("LOOKING FOR DOCUMENT");
 			//TODO: @TODO: Just a hack for the moment
 			retArr = getDocumentHbmDao().getDocumentContent(documentId);
 			if (log.isDebugEnabled()) {
 				try {
-					log.debug("GOT THE DOCUMENT");
-					log.debug("DOCUMENT SIZE " + retArr.length);
+					if (log.isDebugEnabled()) {
+						log.debug("GOT THE DOCUMENT");
+
+						log.debug("DOCUMENT SIZE " + retArr.length);
+					}
 				} catch (Exception inew) {
-					log.debug(inew.getMessage());
+					if (log.isDebugEnabled()) log.debug(inew.getMessage());
 				}
 			}
 		} catch (Exception e) {
-			log.debug("CANNOT GET DOCUMENT " + e.getMessage());
+			if (log.isDebugEnabled()) log.debug("CANNOT GET DOCUMENT " + e.getMessage());
 			throw new UserException(e.getMessage());
 		}
 		return retArr;

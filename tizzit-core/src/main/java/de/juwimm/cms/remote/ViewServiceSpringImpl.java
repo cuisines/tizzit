@@ -204,9 +204,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected Integer handleGetRootIdFromViewDocument(Integer viewDocumentId) throws Exception {
 		ViewDocumentHbm doc;
 		try {
-			log.debug("begin removeViewDocument");
+			if (log.isDebugEnabled()) log.debug("begin removeViewDocument");
 			doc = super.getViewDocumentHbmDao().load(viewDocumentId);
-			log.debug("end   removeViewDocument");
+			if (log.isDebugEnabled()) log.debug("end   removeViewDocument");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -221,12 +221,12 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected ViewComponentValue handleInsertViewComponent(Integer childId, Integer viewDocumentId, String strReference, String strDisplayLinkName, String strInfo, int intPos) throws Exception {
 		try {
-			log.debug("begin insertViewComponent");
+			if (log.isDebugEnabled()) log.debug("begin insertViewComponent");
 			ViewComponentHbm tmpNode;
 			ViewComponentHbm node = super.getViewComponentHbmDao().load(childId);
 			ViewDocumentHbm vd = super.getViewDocumentHbmDao().load(viewDocumentId);
 			ViewComponentHbm newNode = getViewComponentHbmDao().create(vd, strReference, strDisplayLinkName, strInfo, null);
- 			
+
 			node.getParent().addChild(newNode);
 			newNode.setParentViewComponent(node.getParent());
 			newNode = super.getViewComponentHbmDao().create(newNode);
@@ -253,7 +253,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					break;
 			}
 
-			log.debug("end insertViewComponent");
+			if (log.isDebugEnabled()) log.debug("end insertViewComponent");
 			return newNode.getDao(-1);
 		} catch (Exception e) {
 			log.error("Could not insert viewComponent: " + e.getMessage(), e);
@@ -267,7 +267,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected ViewComponentValue handleAddFirstViewComponent(Integer parentId, Integer viewDocumentId, String strReference, String strText, String strInfo) throws Exception {
 		try {
-			log.debug("begin addFirstViewComponent");
+			if (log.isDebugEnabled()) log.debug("begin addFirstViewComponent");
 			ViewComponentHbm node = super.getViewComponentHbmDao().load(parentId);
 			if (!node.isLeaf()) { throw new UserException("node is not a leaf."); }
 			ViewDocumentHbm vd = super.getViewDocumentHbmDao().load(viewDocumentId);
@@ -275,7 +275,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			newNode.setParentViewComponent(node);
 			node.addChild(newNode);
 			node.setFirstChild(newNode);
-			log.debug("end addFirstViewComponent");
+			if (log.isDebugEnabled()) log.debug("end addFirstViewComponent");
 			return newNode.getDao(-1);
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -288,14 +288,14 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected ViewComponentValue[] handleGetViewComponentChildren(Integer parentId) throws Exception {
 		try {
-			log.debug("begin getViewComponentChildren");
+			if (log.isDebugEnabled()) log.debug("begin getViewComponentChildren");
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(parentId);
 			if (view.isLeaf()) { throw new UserException("node is a leaf."); }
 			Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
 			for (Iterator i = view.getChildren().iterator(); i.hasNext();) {
 				vec.addElement(((ViewComponentHbm) i.next()).getDao(-1));
 			}
-			log.debug("end getViewComponentChildren");
+			if (log.isDebugEnabled()) log.debug("end getViewComponentChildren");
 			return vec.toArray(new ViewComponentValue[0]);
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -365,7 +365,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected String handleGetPathForViewComponentId(Integer id) throws Exception {
-		log.debug("GET PATH FOR VIEW COMPONENT ID");
+		if (log.isDebugEnabled()) log.debug("GET PATH FOR VIEW COMPONENT ID");
 		try {
 			ViewComponentHbm vcl = super.getViewComponentHbmDao().load(id);
 			return vcl.getPath();
@@ -380,8 +380,11 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleGetViewComponentId4PathWithViewTypeAndLanguage(String path, String viewType, String language, Integer siteId) throws Exception {
-		log.debug("GET VIEW COMPONENT ID 4 PATH WITH VIEW TYPE AND LANGUAGE");
-		log.debug("Path: " + path + ", ViewType: " + viewType + ", Language: " + language + ", SiteId: " + siteId);
+		if (log.isDebugEnabled()) {
+
+			log.debug("GET VIEW COMPONENT ID 4 PATH WITH VIEW TYPE AND LANGUAGE");
+			log.debug("Path: " + path + ", ViewType: " + viewType + ", Language: " + language + ", SiteId: " + siteId);
+		}
 		try {
 			ViewDocumentHbm vdl = super.getViewDocumentHbmDao().findByViewTypeAndLanguage(viewType, language, siteId);
 
@@ -442,9 +445,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				ViewComponentHbm vcl = this.getViewComponentId4PathResolver(path, vd.getViewComponent().getViewComponentId(), true);
 				if (log.isDebugEnabled()) {
 					if (vcl != null) {
-						log.debug("Found ViewComponent: " + vcl.getDisplayLinkName() + " for path " + path);
+						if (log.isDebugEnabled()) log.debug("Found ViewComponent: " + vcl.getDisplayLinkName() + " for path " + path);
 					} else {
-						log.debug("Found no ViewComponent for path " + path);
+						if (log.isDebugEnabled()) log.debug("Found no ViewComponent for path " + path);
 					}
 				}
 				if (vcl != null) {
@@ -462,7 +465,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleGetViewComponentId4Path(String path, Integer rootViewComponentId) throws Exception {
-		log.debug("GET VIEW COMPONENT ID 4 PATH");
+		if (log.isDebugEnabled()) log.debug("GET VIEW COMPONENT ID 4 PATH");
 		try {
 			ViewComponentHbm vcl = this.getViewComponentId4PathResolver(path, rootViewComponentId, false);
 			// createPathCache(vcl.getViewComponentId(), rootViewComponentId, path);
@@ -662,7 +665,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected ViewDocumentValue handleGetDefaultViewDocument4Site(Integer siteId) throws Exception {
-		log.debug("GET DEFAULT VIEW DOCUMENT 4 SITE");
+		if (log.isDebugEnabled()) log.debug("GET DEFAULT VIEW DOCUMENT 4 SITE");
 		ViewDocumentValue val = new ViewDocumentValue();
 		try {
 			SiteHbm site = super.getSiteHbmDao().load(siteId);
@@ -692,9 +695,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected void handleRemoveViewDocument(Integer viewDocumentId) throws Exception {
 		try {
-			log.debug("begin removeViewDocument");
+			if (log.isDebugEnabled()) log.debug("begin removeViewDocument");
 			super.getViewDocumentHbmDao().remove(viewDocumentId);
-			log.debug("end removeViewDocument");
+			if (log.isDebugEnabled()) log.debug("end removeViewDocument");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -706,12 +709,12 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected void handleSetDefaultViewDocument(Integer viewDocumentId) throws Exception {
 		try {
-			log.debug("begin setDefaultViewDocument");
+			if (log.isDebugEnabled()) log.debug("begin setDefaultViewDocument");
 			ViewDocumentHbm doc = super.getViewDocumentHbmDao().load(viewDocumentId);
 			SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 			site.setDefaultViewDocument(doc);
 			site.setLastModifiedDate(new Date().getTime());
-			log.debug("end setDefaultViewDocument");
+			if (log.isDebugEnabled()) log.debug("end setDefaultViewDocument");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}

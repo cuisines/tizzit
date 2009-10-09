@@ -207,7 +207,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			if (log.isInfoEnabled()) log.info("Finished writing Edition to File, starting to import it as GZIP-InputStream...");
 			XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
 			preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
-			log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
+			if (log.isDebugEnabled()) log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
 			XMLWriter xmlWriter = new XMLWriter(new OutputStreamWriter(new FileOutputStream(preparsedXMLfile)));
 			filter.setContentHandler(new EditionBlobContentHandler(xmlWriter, preparsedXMLfile));
 			InputSource saxIn = null;
@@ -239,7 +239,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				Integer newUnitId = rootUnit.getUnitId();
 				Element unitNode = (Element) XercesHelper.findNode(doc, "/edition/units/unit");
 				Integer oldUnitId = new Integer(unitNode.getAttribute("id"));
-				log.debug("mapping for unit-import: OLD:" + oldUnitId + " NEW:" + newUnitId);
+				if (log.isDebugEnabled()) log.debug("mapping for unit-import: OLD:" + oldUnitId + " NEW:" + newUnitId);
 				mappingUnits.put(oldUnitId, newUnitId);
 				mappingUnitsReverse.put(newUnitId, oldUnitId);
 			}
@@ -326,7 +326,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			while (it.hasNext()) {
 				Element unitNode = (Element) it.next();
 				Integer newUnitId = mappingUnits.get(new Integer(unitNode.getAttribute("id")));
-				log.debug("Import Database Components for UnitId: " + newUnitId + " (old was:" + unitNode.getAttribute("id") + ")");
+				if (log.isDebugEnabled()) log.debug("Import Database Components for UnitId: " + newUnitId + " (old was:" + unitNode.getAttribute("id") + ")");
 				UnitHbm unit = super.getUnitHbmDao().load(newUnitId);
 				importDatabaseComponents(unitNode, unit, useNewIds);
 			}
@@ -401,7 +401,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					if (log.isDebugEnabled()) log.debug("SUCC remove!");
 					Integer myOldUnitId = new Integer(vcNode.getAttribute("unitId"));
 					ViewComponentHbm rootview = createViewComponent(myOldUnitId, viewDocument, null, vcNode, parent, prev, false, 2);
-					log.debug("rootview " + rootview + " next " + next);
+					if (log.isDebugEnabled()) log.debug("rootview " + rootview + " next " + next);
 					// Linkname check begin
 					try {
 						String linkname = rootview.getUrlLinkName();
@@ -681,12 +681,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					try {
 						unit.setImageId(new Integer(unitElm.getAttribute("imageId")));
 					} catch (Exception exe) {
-						log.debug("Unit " + unit.getName() + " has no Image: " + exe.getMessage());
+						if (log.isDebugEnabled()) log.debug("Unit " + unit.getName() + " has no Image: " + exe.getMessage());
 					}
 					try {
 						unit.setLogoId(new Integer(unitElm.getAttribute("logoId")));
 					} catch (Exception exe) {
-						log.debug("Unit " + unit.getName() + " has no Logo: " + exe.getMessage());
+						if (log.isDebugEnabled()) log.debug("Unit " + unit.getName() + " has no Logo: " + exe.getMessage());
 					}
 
 					if (log.isDebugEnabled()) log.debug("DELETING CURRENT ADDRESSES");
@@ -1567,50 +1567,18 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				InputStream fis = new BufferedInputStream(new FileInputStream(edition.getEditionFileName()));
 
 				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
-				//		ddssStub.liveDeployment(unitId, viewDocumentId);
+
 				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceSpringLiveServer");
 				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false);
 
 				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
-				try {
-					if (log.isDebugEnabled()) {
-						//						log.debug("DH " + ap.getDataHandler().getName());
-						//						log.debug("DHDS " + ap.getDataHandler().getDataSource().getName());
-					}
-					//					new File(ap.getDataHandler().getDataSource().getName()).delete();
-				} catch (Exception exe) {
-					log.warn("Error occured deleting attachmentFile: " + exe.getMessage());
-				}
-				//				ap.clearContent();
-				//				// ap.dispose();
-				//				ap = null;
-				//				ddssStub.clearAttachments();
-				//				ddssStub = null;
-				// log.info("Rotating Liveserver-Password..."); // TODO Rotate of Liveserver Password
 
 				if (log.isInfoEnabled()) log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
 				ViewComponentHbm vcl = super.getViewComponentHbmDao().find4Unit(new Integer(unitId), new Integer(viewDocumentId));
 				vcl.setUnitOnline();
-			}
-			//				catch (java.rmi.RemoteException ri) {
-			//				log.debug("Rolling back because of error on Liveserver");
-			//				//				// context.setRollbackOnly();
-			//				//				if (ri instanceof AxisFault) {
-			//				//					log.error("Rolling back because of error on Liveserver - FAULT ACTOR: " + ((AxisFault) ri).getFaultActor());
-			//				//					throw (AxisFault) ri;
-			//				//				}
-			//				//				log.error("Error occured in publishEditionToLiveserver: ", ri);
-			//				//				AxisFault af = new AxisFault();
-			//				//				af.setFaultDetailString(ri.getMessage());
-			//				//				throw af;
-			//			} 
-			catch (Exception exe) {
-				log.debug("Rolling back because of error on Liveserver");
-				//				// context.setRollbackOnly();
-				//				log.error("Rolling back because of error on Liveserver - Error occured in publishEditionToLiveserver: ", exe);
-				//				AxisFault af = new AxisFault();
-				//				af.setFaultDetailString(exe.getMessage());
-				//				throw af;
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
+				//TODO: throw error
 			}
 			if (log.isInfoEnabled()) log.info("Finished Live-Deployment successfully - " + info);
 
@@ -2175,7 +2143,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					if (fulldeploy == 1) {
 						Integer newUnitId = mappingUnits.get(myUnitId);
 						if (unitId == null || !newUnitId.equals(unitId)) {
-							log.debug("newUnitId " + newUnitId + " myUnitId " + myUnitId);
+							if (log.isDebugEnabled()) log.debug("newUnitId " + newUnitId + " myUnitId " + myUnitId);
 							UnitHbm unit = super.getUnitHbmDao().load(newUnitId);
 							viewComponent.setAssignedUnit(unit);
 							unitId = unit.getUnitId();

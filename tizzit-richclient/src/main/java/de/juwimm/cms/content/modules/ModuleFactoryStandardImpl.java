@@ -65,7 +65,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 	/** Contains all the Modules used in one Template key DcfName value Module */
 	private Hashtable<String, Module> htModules = new Hashtable<String, Module>();
 	/** Contains the initial content from the DCF for every dcfName */
-	private Hashtable<String, Node> htInitialContent = new Hashtable<String, Node>();
+	private final Hashtable<String, Node> htInitialContent = new Hashtable<String, Node>();
 
 	public ModuleFactoryStandardImpl() {
 		htModules = new Hashtable<String, Module>();
@@ -131,7 +131,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		if (httpLoad.size() > 0) {
 			File dir = new File(pluginPath);
 			if (!dir.exists()) {
-				log.debug("Going to create plugin directory...");
+				if (log.isDebugEnabled()) log.debug("Going to create plugin directory...");
 				boolean ret = dir.mkdirs();
 				if (!ret) {
 					log.warn("Could not create plugin directory");
@@ -142,14 +142,14 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 			HttpClient httpclient = new HttpClient();
 			for (int i = 0; i < httpLoad.size(); i++) {
 				String url = urlPath + httpLoad.get(i);
-				log.debug("Plugin URL " + url);
+				if (log.isDebugEnabled()) log.debug("Plugin URL " + url);
 				HttpMethod method = new GetMethod(url);
 				try {
 					int status = httpclient.executeMethod(method);
 					if (status == HttpStatus.SC_OK) {
 						File file = new File(pluginPath + httpLoad.get(i));
 						byte[] data = method.getResponseBody();
-						log.debug("Received " + data.length + " bytes of data");
+						if (log.isDebugEnabled()) log.debug("Received " + data.length + " bytes of data");
 						FileOutputStream output = new FileOutputStream(file);
 						output.write(data);
 						output.close();
@@ -166,13 +166,13 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		}
 
 		try {
-			log.debug("Creating URL");
+			if (log.isDebugEnabled()) log.debug("Creating URL");
 
 			URL[] url = new URL[addSize];
 			for (int i = 0; i < addSize; i++) {
 				String jarModule = additionalJarFiles.get(i);
 				String jarPath = "file:///" + pluginPath + jarModule;
-				log.debug("Jar path " + jarPath);
+				if (log.isDebugEnabled()) log.debug("Jar path " + jarPath);
 				url[i] = new URL(jarPath);
 			}
 			URLClassLoader cl = this.getURLClassLoader(url);
@@ -320,11 +320,11 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		}
 
 		public void run() {
-			Node content = (Node) htModuleDcfNameDcfElement.get(module.getName());
+			Node content = htModuleDcfNameDcfElement.get(module.getName());
 			if (content != null && content.hasChildNodes()) {
 				module.setProperties(content);
 			} else {
-				module.setProperties((Node) htInitialContent.get(module.getName()));
+				module.setProperties(htInitialContent.get(module.getName()));
 			}
 		}
 	}
@@ -336,7 +336,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		ColapsePanel cbb = new ColapsePanel();
 		cbb.setText(module.getLabel());
 		cbb.add(module.viewPanelUI());
-		return (JPanel) cbb;
+		return cbb;
 	}
 
 	public String isModuleValid() {
@@ -368,8 +368,8 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 	 * 
 	 */
 	private class SetEnabled implements Runnable {
-		private Module mod;
-		private boolean enable;
+		private final Module mod;
+		private final boolean enable;
 
 		public SetEnabled(Module mod, boolean enable) {
 			this.mod = mod;
@@ -405,6 +405,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 			super(url, parent);
 		}
 
+		@Override
 		protected PermissionCollection getPermissions(CodeSource codesource) {
 			PermissionCollection perms = super.getPermissions(codesource);
 			perms.add(new AllPermission());

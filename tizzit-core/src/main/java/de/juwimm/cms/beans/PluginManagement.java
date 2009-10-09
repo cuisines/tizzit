@@ -220,7 +220,7 @@ public class PluginManagement {
 					resultMsg.append("\t\tClass    : " + this.get(key) + "\n");
 				}
 				resultMsg.append("}");
-				log.debug(resultMsg.toString());
+				if (log.isDebugEnabled()) log.debug(resultMsg.toString());
 			}
 
 			if (log.isDebugEnabled()) log.debug("parsePluginConfig() -> end");

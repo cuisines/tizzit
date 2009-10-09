@@ -15,21 +15,22 @@
  */
 package de.juwimm.cms.authorization.jaas.ldap;
 
-import java.security.acl.Group;
 import java.security.Principal;
+import java.security.acl.Group;
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Map.Entry;
+
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchResult;
 import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.security.auth.login.LoginException;
-import javax.management.ObjectName;
 
 import org.jboss.security.SimpleGroup;
 
@@ -172,7 +173,7 @@ public class LdapLoginModule extends UsernamePasswordLoginModule {
 	public LdapLoginModule() {
 	}
 
-	private transient SimpleGroup userRoles = new SimpleGroup("Roles");
+	private transient final SimpleGroup userRoles = new SimpleGroup("Roles");
 
 	/** Overriden to return an empty password string as typically one cannot
 	 obtain a user's password. We also override the validatePassword so
@@ -302,10 +303,10 @@ public class LdapLoginModule extends UsernamePasswordLoginModule {
 				Attributes result = ctx.getAttributes(userDN, returnAttribute);
 				if (result.get(userRolesCtxDNAttributeName) != null) {
 					rolesCtxDN = result.get(userRolesCtxDNAttributeName).get().toString();
-					super.log.trace("Found user roles context DN: " + rolesCtxDN);
+					log.trace("Found user roles context DN: " + rolesCtxDN);
 				}
 			} catch (NamingException e) {
-				super.log.debug("Failed to query userRolesCtxDNAttributeName", e);
+				if (log.isDebugEnabled()) log.debug("Failed to query userRolesCtxDNAttributeName", e);
 			}
 		}
 
@@ -407,7 +408,7 @@ public class LdapLoginModule extends UsernamePasswordLoginModule {
 				log.trace("Assign user to role " + roleName);
 				userRoles.addMember(p);
 			} catch (Exception e) {
-				log.debug("Failed to create principal: " + roleName, e);
+				if (log.isDebugEnabled()) log.debug("Failed to create principal: " + roleName, e);
 			}
 		}
 	}

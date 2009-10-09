@@ -95,7 +95,7 @@ public class ExternalLibClassLoaderManager {
 				//recursive call!
 				result.addAll(getFileList(file));
 			} else {
-				log.debug("Adding URL '" + file.getAbsolutePath() + "'.");
+				if (log.isDebugEnabled()) log.debug("Adding URL '" + file.getAbsolutePath() + "'.");
 				result.add(file);
 			}
 		}

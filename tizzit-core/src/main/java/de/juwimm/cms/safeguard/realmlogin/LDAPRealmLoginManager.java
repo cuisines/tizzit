@@ -36,11 +36,11 @@ import de.juwimm.cms.safeguard.model.RealmLdapHbmDao;
  */
 public final class LDAPRealmLoginManager implements SafeguardLoginManager {
 	private static Logger log = Logger.getLogger(LDAPRealmLoginManager.class);
-	private String username;
-	private String password;
-	private String roleNeeded;
-	private Integer realmId;
-	private RealmLdapHbmDao realmLdapHbmDao;
+	private final String username;
+	private final String password;
+	private final String roleNeeded;
+	private final Integer realmId;
+	private final RealmLdapHbmDao realmLdapHbmDao;
 
 	public LDAPRealmLoginManager(RealmLdapHbmDao realmLdapHbmDao, Integer realmId, String userName, String password, String roleNeeded) {
 		this.username = userName;
@@ -73,7 +73,7 @@ public final class LDAPRealmLoginManager implements SafeguardLoginManager {
 			login = SafeguardLoginManager.LOGIN_SUCCESSFULLY;
 			dc.close();
 		} catch (NamingException nex) {
-			log.debug("Naming Exception: " + nex.getMessage(), nex);
+			if (log.isDebugEnabled()) log.debug("Naming Exception: " + nex.getMessage(), nex);
 		} catch (Exception ex) {
 			log.error("Error loging in user " + this.username + " on LdapRealm " + this.realmId + ": " + ex.getMessage(), ex);
 		}

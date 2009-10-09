@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.content.modules;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.util.Properties;
 
@@ -51,6 +51,7 @@ public class DatabaseComponent extends AbstractModule implements EditpaneFiredLi
 	private boolean setPropertiesCalled = false;
 	private boolean imEnabled = true;
 
+	@Override
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
 	}
@@ -148,8 +149,9 @@ public class DatabaseComponent extends AbstractModule implements EditpaneFiredLi
 		if (panBtn != null) panBtn.setEnabled(enabling);
 		imEnabled = enabling;
 	}
-	
-	public void recycle() {	}
+
+	public void recycle() {
+	}
 
 	/** @see de.juwimm.cms.content.event.EditpaneFiredListener#editpaneCancelPerformed(de.juwimm.cms.content.event.EditpaneFiredEvent) */
 	public void editpaneCancelPerformed(EditpaneFiredEvent ae) {
@@ -160,7 +162,7 @@ public class DatabaseComponent extends AbstractModule implements EditpaneFiredLi
 	public void editpaneFiredPerformed(EditpaneFiredEvent ae) {
 		if (this.pan != null) {
 			Node nodeCurrentState = this.pan.getAggregationXml();
-			log.debug("Current XML for PersonDB: \n" + XercesHelper.node2string(nodeCurrentState));
+			if (log.isDebugEnabled()) log.debug("Current XML for PersonDB: \n" + XercesHelper.node2string(nodeCurrentState));
 			setProperties(nodeCurrentState);
 		}
 	}

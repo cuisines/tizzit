@@ -160,7 +160,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public ViewComponentValue getDao(int depth) throws UserException {
-		log.debug("begin getDao() id=" + this.getViewComponentId().toString() + " depth=" + depth);
+		if (log.isDebugEnabled()) log.debug("begin getDao() id=" + this.getViewComponentId().toString() + " depth=" + depth);
 		ViewComponentHbm temp;
 		UnitHbm unit;
 
@@ -237,7 +237,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 		}
 		data.setRoot(getParent() == null);
 		data.setUnit(getAssignedUnit() != null);
-		log.debug("end getDao");
+		if (log.isDebugEnabled()) log.debug("end getDao");
 		return data;
 	}
 
@@ -247,7 +247,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	@Override
 	public Collection getAllChildrenOrderedAsDao(int depth) throws UserException {
 		int currentDepth = depth - 1;
-		log.debug("begin getViewComponentChildrenOrdered() depth " + depth);
+		if (log.isDebugEnabled()) log.debug("begin getViewComponentChildrenOrdered() depth " + depth);
 		if (isLeaf()) { throw new UserException("node is a leaf."); }
 		Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
 		ViewComponentHbm temp = getFirstChild();
@@ -268,7 +268,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 				}
 			}
 		}
-		log.debug("end getViewComponentChildrenOrdered()");
+		if (log.isDebugEnabled()) log.debug("end getViewComponentChildrenOrdered()");
 		return vec;
 	}
 
@@ -361,7 +361,7 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 				if (parent == null) { return null; }
 			}
 		}
-		log.debug("getNavigationRoot end");
+		if (log.isDebugEnabled()) log.debug("getNavigationRoot end");
 		return parent;
 	}
 

@@ -21,8 +21,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Principal;
 import java.security.acl.Group;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -164,7 +171,7 @@ public class Util {
 					if (trace) log.trace("Assign user to role " + name);
 					group.addMember(p);
 				} catch (Exception e) {
-					log.debug("Failed to create principal: " + name, e);
+					if (log.isDebugEnabled()) log.debug("Failed to create principal: " + name, e);
 				}
 			} while (rs.next());
 		} catch (NamingException ex) {
@@ -248,9 +255,9 @@ public class Util {
 				InputStream is = defaultUrl.openStream();
 				defaults.load(is);
 				is.close();
-				log.debug("Loaded defaults, users=" + defaults.keySet());
+				if (log.isDebugEnabled()) log.debug("Loaded defaults, users=" + defaults.keySet());
 			} catch (Throwable e) {
-				log.debug("Failed to load defaults", e);
+				if (log.isDebugEnabled()) log.debug("Failed to load defaults", e);
 			}
 		}
 
@@ -263,7 +270,7 @@ public class Util {
 			} else {
 				throw new IOException("Properties file " + propertiesName + " not avilable");
 			}
-			log.debug("Loaded properties, users=" + bundle.keySet());
+			if (log.isDebugEnabled()) log.debug("Loaded properties, users=" + bundle.keySet());
 		}
 
 		return bundle;
@@ -307,7 +314,7 @@ public class Util {
 			} else {
 				throw new IOException("Properties file " + propertiesName + " not avilable");
 			}
-			log.debug("Loaded properties, users=" + bundle.keySet());
+			if (log.isDebugEnabled()) log.debug("Loaded properties, users=" + bundle.keySet());
 		}
 
 		return bundle;

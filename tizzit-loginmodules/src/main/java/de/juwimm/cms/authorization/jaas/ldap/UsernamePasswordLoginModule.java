@@ -23,7 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.Subject;
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
@@ -134,7 +138,7 @@ public abstract class UsernamePasswordLoginModule extends AbstractServerLoginMod
 				try {
 					identity = createIdentity(name);
 				} catch (Exception e) {
-					log.debug("Failed to create principal", e);
+					if (log.isDebugEnabled()) log.debug("Failed to create principal", e);
 					throw new LoginException("Failed to create principal: " + e.getMessage());
 				}
 			}
@@ -154,7 +158,7 @@ public abstract class UsernamePasswordLoginModule extends AbstractServerLoginMod
 		String password = info[1];
 		if (username == null && password == null) {
 			identity = unauthenticatedIdentity;
-			super.log.trace("Authenticating as unauthenticatedIdentity=" + identity);
+			log.trace("Authenticating as unauthenticatedIdentity=" + identity);
 		}
 
 		if (identity == null) {
@@ -175,10 +179,10 @@ public abstract class UsernamePasswordLoginModule extends AbstractServerLoginMod
 				Throwable ex = getValidateError();
 				FailedLoginException fle = new FailedLoginException("Password Incorrect/Password Required");
 				if (ex != null) {
-					log.debug("Bad password for username=" + username, ex);
+					if (log.isDebugEnabled()) log.debug("Bad password for username=" + username, ex);
 					fle.initCause(ex);
 				} else {
-					log.debug("Bad password for username=" + username);
+					if (log.isDebugEnabled()) log.debug("Bad password for username=" + username);
 				}
 				throw fle;
 			}
@@ -189,7 +193,7 @@ public abstract class UsernamePasswordLoginModule extends AbstractServerLoginMod
 			sharedState.put("javax.security.auth.login.password", credential);
 		}
 		super.loginOk = true;
-		super.log.trace("User '" + identity + "' authenticated, loginOk=" + loginOk);
+		log.trace("User '" + identity + "' authenticated, loginOk=" + loginOk);
 		return true;
 	}
 
@@ -286,7 +290,7 @@ public abstract class UsernamePasswordLoginModule extends AbstractServerLoginMod
 		if (legacyCreatePasswordHash) {
 			try {
 				// Try to invoke the subclass createPasswordHash(String, String)
-				Class<?>[] sig = {String.class, String.class};
+				Class< ? >[] sig = {String.class, String.class};
 				Method createPasswordHash = getClass().getMethod("createPasswordHash", sig);
 				Object[] args = {username, password};
 				String passwordHash = (String) createPasswordHash.invoke(this, args);

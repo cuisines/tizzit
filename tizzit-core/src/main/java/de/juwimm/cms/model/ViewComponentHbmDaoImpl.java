@@ -163,7 +163,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				out.print("<modifiedDate>" + DateConverter.getSql2String(new Date(current.getLastModifiedDate())) + "</modifiedDate>\n");
 				out.print("<createDate>" + DateConverter.getSql2String(new Date(current.getCreateDate())) + "</createDate>\n");
 				if (current.getViewType() == Constants.VIEW_TYPE_CONTENT || current.getViewType() == Constants.VIEW_TYPE_UNIT) {
-					log.debug("GETTING CONTENT");
+					if (log.isDebugEnabled()) log.debug("GETTING CONTENT");
 					ContentHbm cl = getContentHbmDao().load(new Integer(current.getReference()));
 					out.print(getContentHbmDao().toXml(cl));
 				}
@@ -275,7 +275,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 
 	@Override
 	protected long handleGetPageModifiedDate(ViewComponentHbm me) {
-		log.debug("getPageModifiedDate start");
+		if (log.isDebugEnabled()) log.debug("getPageModifiedDate start");
 		long result = new Date().getTime();
 
 		try {
@@ -327,7 +327,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		} catch (Exception e) {
 			log.warn("Error getting pageModifiedDate, setting to \"now\"", e);
 		}
-		log.debug("LEAVING GET PAGE MODIFIED DATE");
+		if (log.isDebugEnabled()) log.debug("LEAVING GET PAGE MODIFIED DATE");
 		return result;
 	}
 

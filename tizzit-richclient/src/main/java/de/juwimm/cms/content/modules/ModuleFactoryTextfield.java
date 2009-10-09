@@ -22,8 +22,6 @@ import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 
-
-
 /**
  * A {@link ModuleFactory} implementation for {@code Textfield}s and its subcomponents.
  * 
@@ -31,15 +29,15 @@ import org.w3c.dom.Document;
  * @version $Id$
  */
 public class ModuleFactoryTextfield extends ModuleFactoryStandardImpl implements ModuleFactory {
-	
+
 	private static Logger log = Logger.getLogger(ModuleFactoryTextfield.class);
-	
+
 	/** Preserves all custom properties that were read from the dcf */
-	private Hashtable<String, String> hshModuleCustomProperties = new Hashtable<String, String>();
-	
+	private final Hashtable<String, String> hshModuleCustomProperties = new Hashtable<String, String>();
+
 	public ModuleFactoryTextfield() {
 		super();
-		log.debug("Created ModuleFactoryTextfield!");
+		if (log.isDebugEnabled()) log.debug("Created ModuleFactoryTextfield!");
 	}
 
 	/**
@@ -51,7 +49,7 @@ public class ModuleFactoryTextfield extends ModuleFactoryStandardImpl implements
 	public void saveCustomProperties(String rootNodeAndClassName, String properties) {
 		this.hshModuleCustomProperties.put(rootNodeAndClassName, properties);
 	}
-	
+
 	/**
 	 * Tries to find a configuration for the specified rootnode name and class name. 
 	 * If a configuration was found, the specified {@code module} is configured appropriately. 
@@ -71,22 +69,22 @@ public class ModuleFactoryTextfield extends ModuleFactoryStandardImpl implements
 			}
 		}
 	}
-    
-    /*
-    public Module getModuleInstance(Element dcfelement, Node contentdata) {
 
-    }
+	/*
+	public Module getModuleInstance(Element dcfelement, Node contentdata) {
 
-    public JPanel getPanelForModule(Module module) {
+	}
 
-    }
+	public JPanel getPanelForModule(Module module) {
 
-    public Module getModuleByDCFName(String dcfname) {
+	}
 
-    }
+	public Module getModuleByDCFName(String dcfname) {
 
-    public void reconfigureModules(Hashtable contentdata) {
+	}
 
-    }
-    */
+	public void reconfigureModules(Hashtable contentdata) {
+
+	}
+	*/
 }
