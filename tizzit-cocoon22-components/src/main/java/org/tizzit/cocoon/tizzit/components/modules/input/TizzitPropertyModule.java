@@ -86,7 +86,12 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 			}
 			result = webSpringBean.getLiveserver(host).toString();
 		} else {
-			result = super.getAttribute(name, modeConf, objectModel);
+			result = null;
+			try {
+				result = super.getAttribute(name, modeConf, objectModel);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			if (result == null) {
 				if (log.isDebugEnabled()) log.debug("Attribute \"" + name + "\" not found, reloading...");
 				this.instantiateWebServiceSpringBean(objectModel);
@@ -172,7 +177,10 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 		InputStream is = this.getClass().getResourceAsStream("/" + PROPERTIES_FILENAME);
 		try {
 			prop.load(is);
+			prop.setProperty("cmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
 			System.setProperty("tizzitCmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
+			System.setProperty("cqCmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
+			System.setProperty("cqLiveserver", prop.get("tizzitPropertiesBeanSpring.liveserver").toString());
 			System.setProperty("tizzitLiveserver", prop.get("tizzitPropertiesBeanSpring.liveserver").toString());
 		} catch (Exception exe) {
 			log.warn("Unable to load props from \"" + PROPERTIES_FILENAME + "\"!");

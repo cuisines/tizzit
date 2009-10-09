@@ -42,6 +42,7 @@ import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -116,6 +117,7 @@ import org.apache.pdfbox.util.PDFTextStripper;
  * @version $Revision: 1.22 $
  */
 public final class LucenePDFDocument {
+	private Logger log = Logger.getLogger(LucenePDFDocument.class);
 	private static final char FILE_SEPARATOR = System.getProperty("file.separator").charAt(0);
 
 	// given caveat of increased search times when using
@@ -428,26 +430,6 @@ public final class LucenePDFDocument {
 	}
 
 	/**
-	 * This will test creating a document.
-	 * 
-	 * usage: java pdfparser.searchengine.lucene.LucenePDFDocument &lt;pdf-document&gt;
-	 * 
-	 * @param args
-	 *            command line arguments.
-	 * 
-	 * @throws IOException
-	 *             If there is an error.
-	 */
-	public static void main(String[] args) throws IOException {
-		if (args.length != 1) {
-			String us = LucenePDFDocument.class.getName();
-			System.err.println("usage: java " + us + " <pdf-document>");
-			System.exit(1);
-		}
-		System.out.println("Document=" + getDocument(new File(args[0])));
-	}
-
-	/**
 	 * Extract the PDF's content as text
 	 * @param is
 	 * @return the document's content as text
@@ -458,7 +440,7 @@ public final class LucenePDFDocument {
 		return converter.getContent(is);
 	}
 
-	private String getContent(InputStream is) throws IOException {
+	private String getContent(InputStream is) {
 		String content = null;
 		PDDocument pdfDocument = null;
 		try {
@@ -483,14 +465,20 @@ public final class LucenePDFDocument {
 			// is shared as long as the buffer content is not modified, which will
 			// not occur here.
 			content = writer.getBuffer().toString();
+
 		} catch (CryptographyException e) {
-			throw new IOException("Error decrypting document: " + e);
+			log.error("Error decrypting document: " + e.getMessage());
 		} catch (InvalidPasswordException e) {
 			// they didn't suppply a password and the default of "" was wrong.
-			throw new IOException("Error: The document is encrypted and will not be indexed.");
+			log.error("Error: The document is encrypted and will not be indexed.");
+		} catch (IOException i) {
+			log.error("Error indexing document " + i.getMessage());
 		} finally {
 			if (pdfDocument != null) {
-				pdfDocument.close();
+				try {
+					pdfDocument.close();
+				} catch (Exception e) {
+				}
 			}
 		}
 		return content;
