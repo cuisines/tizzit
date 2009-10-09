@@ -892,6 +892,13 @@
 	</distributionManagement>
 	<repositories>
 		<repository>
+			<id>tizzit</id>
+			<name>Tizzit Repository</name>
+			<url>http://maven.tizzit.org/content/groups/public/</url>
+		</repository>
+
+		<!--
+		<repository>
 			<id>andromda</id>
 			<name>AndroMDA Repository</name>
 			<url>http://team.andromda.org/maven2</url>
@@ -911,6 +918,7 @@
 			<name>Repo for XMLDB / Xindice</name>
 			<url>http://repo.keyintegrity.com/maven2/</url>
 		</repository>
+		-->
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
