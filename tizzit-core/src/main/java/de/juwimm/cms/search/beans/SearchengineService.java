@@ -663,7 +663,7 @@ public class SearchengineService {
 			log.debug("Document " + document.getDocumentId() + " \"" + document.getDocumentName() + "\" \"" + document.getMimeType());
 		}
 		if (!documentResourceLocatorFactory.isSupportedFileFormat(document.getMimeType())) {
-			log.info("Document " + document.getDocumentId() + " \"" + document.getDocumentName() + "\" \"" + document.getMimeType() + "\" is not supported, skipping...");
+			if (log.isInfoEnabled()) log.info("Document " + document.getDocumentId() + " \"" + document.getDocumentName() + "\" \"" + document.getMimeType() + "\" is not supported, skipping...");
 			document.setUpdateSearchIndex(false);
 			return;
 		}
@@ -684,6 +684,6 @@ public class SearchengineService {
 		} finally {
 			if (session != null) session.close();
 		}
-		log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
+		if (log.isInfoEnabled()) log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
 	}
 }
