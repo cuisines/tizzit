@@ -529,31 +529,18 @@
       <map:handle-errors>
         <map:select type="exception">
           <map:when test="not-found">
-            <map:generate type="exception" />
-            <map:transform src="system/error2html.xslt">
-              <map:parameter name="contextPath" value="{request:contextPath}" />
-              <map:parameter name="statusCode" value="404" />
-              <map:parameter name="liveserver" value="{global:liveserver}" />
-              <map:parameter name="requestURI" value="{request:requestURI}" />
-            </map:transform>
+            <map:generate src="system/host-not-found.xml" />
+        	<map:transform src="system/host-not-found.xsl"/>
             <map:serialize status-code="404" />
           </map:when>
           <map:when test="invalid-continuation">
-            <map:generate src="system/not-found.xml" />
-            <map:transform src="system/welcome.xslt">
-              <map:parameter name="contextPath" value="{request:contextPath}" />
-              <map:parameter name="statusCode" value="404" />
-              <map:parameter name="liveserver" value="{global:liveserver}" />
-            </map:transform>
+           	<map:generate src="system/host-not-found.xml" />
+        	<map:transform src="system/host-not-found.xsl"/>
             <map:serialize status-code="404" />
           </map:when>
-          <map:otherwise>
-            <map:generate type="exception" />
-            <map:transform src="system/error2html.xslt">
-              <map:parameter name="contextPath" value="{request:contextPath}" />
-              <map:parameter name="statusCode" value="500" />
-              <map:parameter name="liveserver" value="{global:liveserver}" />
-            </map:transform>
+          <map:otherwise> 
+            <map:generate src="system/host-not-found.xml" />
+        	<map:transform src="system/host-not-found.xsl"/>
             <map:serialize status-code="500" />
           </map:otherwise>
         </map:select>

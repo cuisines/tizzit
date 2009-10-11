@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<!-- CVS $Id: error2html.xslt,v 1.9 2003/09/03 10:50:48 bruno Exp $ -->
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:error="http://apache.org/cocoon/error/2.1">
-	<!--<xsl:param name="contextPath" select="string('/cocoon')"/>-->
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:error="http://apache.org/cocoon/error/2.1">
 	<xsl:param name="contextPath" />
 	<xsl:param name="pageTitle" select="//error:notify/error:title"/>
 	<xsl:param name="statusCode"/>

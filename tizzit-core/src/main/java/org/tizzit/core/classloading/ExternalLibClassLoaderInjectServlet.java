@@ -92,7 +92,7 @@ public class ExternalLibClassLoaderInjectServlet extends HttpServlet {
 
 			this.servlet.service(request, response);
 		} catch (Throwable t) {
-			if(log.isDebugEnabled()) log.error("Error in servlet", t);
+			//log.error("Error in servlet", t); will be already logged by "cocoon.access" logger
 		} finally {
 			Thread.currentThread().setContextClassLoader(old);
 		}
