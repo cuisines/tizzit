@@ -1,22 +1,18 @@
 ------------------------server changes
+- execute migration-to-3.0.3.sql (not the complete script but just the part related to the underlaying db)
 - install new war files (tizzit-web-cocoon22...war, tizzit-web-admin....war)
 - install new tizzit.properties -> view tizzit.properties (tizzit/conf/jboss/conf)
 - install new cqcms-juwimm-plugin-wysiwyg-5.1-all.jar in /lib/client/
 
-------------------------database changes
-- add colim "liveserver" into table host -> view migration-to-3.0.3.sql (tizzit/conf/sql)
-- add table "XML_SEARCH_DB" for xml search -> view xml_db_search_oracle_mysql_mssql.sql (tizzit/conf/sql)
-
-------------------------Changes in sitemap.xmap
-
+------------------------Changes in sitemap.xmap of every mandator
 for cocoon 2.2
 - delete line "<map:pipelines default="caching"/>"
 - change "<map:parameter name="parallel" value="true"/>" to "<map:parameter name="parallel" value="false"/>"
 
-
 for new tizzit variables
 - change "<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>" into "<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>"
 - change "system-property:cqCmsTemplatesPath" into "tizzit-property:cmsTemplatesPath"
+- change system-property:cqMandatorParent into tizzit-property:cmsTemplatesPath (but check the aggregationGenerator as mentioned below previously)
 - change "global:parentMandator" into "tizzit-property:cmsTemplatesPath"
 
 maybe:
@@ -29,6 +25,11 @@ into
 	<map:parameter name="layout" value="{../layout}"/>
 	<map:parameter name="content-template" value="{../template}"/>
 </map:transform>
+
+
+- change <map:transform src="css/templates/{1}.xsl"> into <map:transform src="css/templates/{1}.xsl" type="saxon">
+- maybe change <map:transformers default="xalan"/> into <map:transformers default="saxon"/>
+
 
 -----------------------Changes in dcfsheet-master.xsl
 
