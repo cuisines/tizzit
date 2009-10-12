@@ -22,12 +22,12 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 import de.juwimm.cms.beans.PluginManagement;
-import de.juwimm.cms.plugins.server.TizzitPlugin;
 import de.juwimm.cms.plugins.server.Request;
 import de.juwimm.cms.plugins.server.Response;
+import de.juwimm.cms.plugins.server.TizzitPlugin;
 
 /**
- * 
+ *
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
  * company Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
