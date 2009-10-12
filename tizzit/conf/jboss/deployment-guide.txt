@@ -1,18 +1,40 @@
 **************************************************** Prerequisits ******************************************************
-JBOSS 4.2.3.GA with JDK 6
-see: http://dev.juwimm.net/wiki/space/dev/java/JVM/Java+6
-Add this to the run.conf: -Dsun.lang.ClassLoader.allowArraySyntax=true
 
 ATTENTION: If you are starting JBoss from eclipse add the runtime parameter to your eclipse-jboss configuration! Eclipse
 does not use the run.bat/run.sh for sure.
 
-************************************************** Files in server/lib *************************************************
-- put ehcache-1.3.0.jar into server/conquest/lib (new version!)
-- put hibernate-3.2.5.ga.jar into server/conquest/lib
-- put juwimm-cms-loginmodules-2.X.X.jar in server/conquest/lib
+h2. JBoss Configuration
+
+h3. Startup configuration
+ - Add this to the run.conf: -Dsun.lang.ClassLoader.allowArraySyntax=true
+Explanation: JBOSS 4.2.3.GA with JDK 6 see: http://dev.juwimm.net/wiki/space/dev/java/JVM/Java+6
+
+h3. Jboss Settings
+Open /jboss-4.2.3.GA/server/tizzit-local/deploy/jboss-web.deployer/META-INF/jboss-service.xml
+set <attribute name="UseJBossWebLoader">false</attribute> to false -> this is always a good idea because
+the Tomcat classloader is better then the Jboss web classloader
+set <attribute name="Java2ClassLoadingCompliance">false</attribute> to false -> even the same issue
+
+h3. Put / move files
+- put ehcache-1.3.0.jar into server/tizzit-local/lib 
+  Copy out of the WAR archive / build directory of tizzit-cocoon
+- put hibernate-3.2.5.ga.jar into server/conquest/lib 
+  Copy out of the WAR archive / build directory of tizzit-cocoon and delete hibernate3.jar
+
+Why do we need to change this: 
+Currently the Jboss does load the server/lib files before loading the WEB archives - even if you
+are setting the Jboss settings "UseJBossWebLoader" and "Java2ClassLoadingCompliance" as explained. This causes
+different errors because the same library is 2 times in the classloader in different versions. Ehcache is needed
+in server/lib because the Hibernate will be loaded from there. Not deploying both within the WAR archive also 
+yields in some other errors. 
+
+- put tizzit-loginmodules-2.X.X.jar in server/tizzit-local/lib
 - put JDBC-lib in server/conquest/lib
 
-- check valid tizzit.properties! note the jms config part for cluster true/false
+- check valid tizzit.properties in server/tizzit-local/conf, in case of an update ALWAYS double check with the one
+provided in the SVN repository of tizzit
+
+
 ******************************************************* COCOON *********************************************************
 If you want use Cocoon 2.2, just deploy the latest 'tizzit-web-cocoon22-xxx.war' and set the following parameter to 
 false in your Cocoon-Sitemap (e.g.: /tizzit-site-tizzit/web/sitemap.xmap)
