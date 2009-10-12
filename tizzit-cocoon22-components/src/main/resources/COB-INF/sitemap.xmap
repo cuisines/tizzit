@@ -534,13 +534,11 @@
             <map:serialize status-code="404" />
           </map:when>
           <map:when test="invalid-continuation">
-           	<map:generate src="system/host-not-found.xml" />
-        	<map:transform src="system/host-not-found.xsl"/>
+			<map:generate type="exception"/>
             <map:serialize status-code="404" />
           </map:when>
           <map:otherwise> 
-            <map:generate src="system/host-not-found.xml" />
-        	<map:transform src="system/host-not-found.xsl"/>
+            <map:generate type="exception"/>
             <map:serialize status-code="500" />
           </map:otherwise>
         </map:select>
