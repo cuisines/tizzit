@@ -1,6 +1,7 @@
 ------------------------server changes
 - install new war files (tizzit-web-cocoon22...war, tizzit-web-admin....war)
 - install new tizzit.properties -> view tizzit.properties (tizzit/conf/jboss/conf)
+- install new cqcms-juwimm-plugin-wysiwyg-5.1-all.jar in /lib/client/
 
 ------------------------database changes
 - add colim "liveserver" into table host -> view migration-to-3.0.3.sql (tizzit/conf/sql)
