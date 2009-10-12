@@ -8,8 +8,8 @@
 	<name>tizzit</name>
 	<description>The Tizzit Project.</description>
 	<scm>
-		<connection>scm:svn:https://tizzit.svn.sourceforge.net/svnroot/tizzit/trunk/tizzit</connection>
-		<url>http://tizzit.svn.sourceforge.net/viewvc/tizzit/trunk</url>
+		<connection>scm:svn:http://tizzit.googlecode.com/svn/trunk/tizzit</connection>
+		<url>http://tizzit.googlecode.com/svn/trunk/tizzit</url>
 	</scm>
 	<organization>
 		<name>Juwi MacMillan Group GmbH</name>
