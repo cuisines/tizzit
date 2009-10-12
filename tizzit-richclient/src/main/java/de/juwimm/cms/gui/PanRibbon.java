@@ -65,7 +65,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	JCommandButton newContentButton;
 	JCommandButton refreshTreeButton;
 	private JCommandButton moveButton = null;
-	private Communication comm;
+	private final Communication comm;
 
 	private JCommandButton deleteNodeButton;
 	private JCommandButton releaseSiteButton;
@@ -744,6 +744,9 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 					} else {
 						releaseSiteButton.setEnabled(true);
 					}
+					break;
+				case Constants.DEPLOY_STATUS_APPROVED:
+					reviseSiteButton.setEnabled(true);
 					break;
 				default:
 					//					mnuPublishLetRelease.setEnabled(false);
