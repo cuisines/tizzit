@@ -20,6 +20,10 @@ import junit.framework.TestCase;
 import org.acegisecurity.context.SecurityContext;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

@@ -17,7 +17,8 @@ package de.juwimm.cms.test.hibernate;
 
 import java.security.Principal;
 
-public interface HbmTest {
+
+public interface HbmTest{
 	
 	
 	/**

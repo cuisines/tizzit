@@ -17,9 +17,10 @@ package de.juwimm.cms.authorization.test;
 
 import java.security.MessageDigest;
 
+import org.tizzit.util.Base64;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import de.juwimm.util.Base64;
 
 /**
  * <p>Title: ConQuest</p>

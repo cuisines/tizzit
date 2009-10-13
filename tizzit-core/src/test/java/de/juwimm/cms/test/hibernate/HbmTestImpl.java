@@ -21,7 +21,6 @@ import java.util.Iterator;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.swing.JOptionPane;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,7 +34,6 @@ import de.juwimm.cms.authorization.model.UserHbmDao;
 import de.juwimm.cms.components.model.AddressHbmDao;
 import de.juwimm.cms.components.model.DepartmentHbmDao;
 import de.juwimm.cms.components.model.PersonHbmDao;
-import de.juwimm.cms.components.model.PersonToUnitLinkHbmDao;
 import de.juwimm.cms.components.model.TalktimeHbmDao;
 import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.ContentVersionHbmDao;
@@ -49,13 +47,12 @@ import de.juwimm.cms.model.TaskHbmDao;
 import de.juwimm.cms.model.UnitHbmDao;
 import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewDocumentHbmDao;
+import de.juwimm.cms.model.SequenceHbmDao;
 import de.juwimm.cms.safeguard.model.RealmJaasHbmDao;
 import de.juwimm.cms.safeguard.model.RealmJdbcHbmDao;
 import de.juwimm.cms.safeguard.model.RealmLdapHbmDao;
 import de.juwimm.cms.safeguard.model.RealmSimplePwHbmDao;
 import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDao;
-import de.juwimm.cms.util.ServerDesEncrypter;
-import de.juwimm.sequence.remote.SequenceSession;
 
 /**
  * Abstract test class inherited from
@@ -70,9 +67,10 @@ import de.juwimm.sequence.remote.SequenceSession;
 public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringContextTests implements HbmTest {
 
 	private static Log log = LogFactory.getLog( HbmTestImpl.class );
-	private static final String DATA_SOURCE = "classpath:de/juwimm/cms/beans/beans-test-ds.xml";
+	private static final String DATA_SOURCE = "classpath:beans-test.xml";
 	private static final String APPLICATION_CONTEXT = "applicationContext.xml";
-	private static final String BEANS = "classpath:de/juwimm/cms/beans/beans.xml";
+	private static final String TIZZIT_BEANS = "classpath:applicationContext-tizzitBeans-test.xml";
+	private static final String TIZZIT_COMPASS = "classpath:applicationContext-compass-test.xml";
 	private LoginContext loginContext = null;
 	public static final String SYSTEM_USER = "system";
 	private UserHbmDao userDao = null;
@@ -91,7 +89,6 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 	private PersonHbmDao personDao = null;
 	private AddressHbmDao addressDao = null;
 	private DepartmentHbmDao departmentDao = null;
-	private PersonToUnitLinkHbmDao personToUnitLinkDao = null;
 	private TalktimeHbmDao talktimeDao = null;
 	private RealmSimplePwHbmDao realmSimplePwDao = null;
 	private RealmSimplePwUserHbmDao realmSimplePwUserDao = null;
@@ -121,14 +118,12 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 	private static String PERSON_DAO = "personHbmDao";
 	private static String ADDRESS_DAO = "addressHbmDao";
 	private static String DEPARTMENT_DAO = "departmentHbmDao";
-	private static String PERSON_TO_UNIT_LINK_DAO = "personToUnitLinkHbmDao";
 	private static String TALKTIME_DAO = "talktimeHbmDao";
-	
-
+	private static String SEQUENCE_DAO = "sequenceDao";	
 	
 	public HbmTestImpl() {
-		super();
-		setAutowireMode( AUTOWIRE_BY_NAME );
+		super();		
+		setAutowireMode( AUTOWIRE_BY_NAME );		
 	}
 	
 	
@@ -138,7 +133,7 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 	@Override
 	protected String[] getConfigLocations() {
 		//String[] springConfig = { TEST_APPLICATION_CONTEXT, TEST_DATA_SOURCE };
-		String[] springConfig = { DATA_SOURCE, APPLICATION_CONTEXT, BEANS };
+		String[] springConfig = {DATA_SOURCE, APPLICATION_CONTEXT,TIZZIT_COMPASS,TIZZIT_BEANS};
 		return springConfig;
 	}
 	
@@ -336,8 +331,8 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 		return editionDao;
 	}
 	
-	protected SequenceSession getSequenceGenerator() {
-		SequenceSession sequenceSession = (SequenceSession) getApplicationContext().getBean( "sequenceSession" );
+	protected SequenceHbmDao getSequenceGenerator() {
+		SequenceHbmDao sequenceSession = (SequenceHbmDao) getApplicationContext().getBean( SEQUENCE_DAO );
 		return sequenceSession;
 	}
 	
@@ -360,14 +355,7 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 			departmentDao = (DepartmentHbmDao) getApplicationContext().getBean( DEPARTMENT_DAO );
 		}
 		return departmentDao;
-	}
-	
-	protected PersonToUnitLinkHbmDao getPersonToUnitLinkDao() {
-		if( personToUnitLinkDao == null ) {
-			personToUnitLinkDao = (PersonToUnitLinkHbmDao) getApplicationContext().getBean( PERSON_TO_UNIT_LINK_DAO );
-		}
-		return personToUnitLinkDao;
-	}
+	}		
 	
 	protected TalktimeHbmDao getTalktimeDao() {
 		if( talktimeDao == null ) {
