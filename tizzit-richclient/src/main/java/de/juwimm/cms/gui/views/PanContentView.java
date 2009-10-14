@@ -370,14 +370,14 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			}
 			panMenuentry.load(value);
 			if (panMenuentry.shouldBeEdtiable()) {
-				panMenuentry.setEnabled(true);
+				panMenuentry.setMenuentryEnabled(true);
 				panTab.setEnabledAt(1, true); //Content
 				if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
 					panTab.setEnabledAt(2, true); //metadata
 				}
 			} else {
 				panTab.setSelectedIndex(0);
-				panMenuentry.setEnabled(false);
+				panMenuentry.setMenuentryEnabled(false);
 				// the button for changing the template is invisible if user doesn't have the right to change
 				panMenuentry.setTemplateButtonEnabled(true);
 				this.btnSave.setEnabled(false);
