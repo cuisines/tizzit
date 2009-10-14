@@ -2,11 +2,11 @@ package de.juwimm.cms.test.hibernate;
 
 import java.util.Collection;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import junit.framework.Assert;
 import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.DocumentHbmDao;
 import de.juwimm.cms.model.DocumentHbmImpl;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.SiteHbmImpl;
@@ -19,10 +19,15 @@ import de.juwimm.cms.model.UnitHbmImpl;
  */
 public class DocumentDaoTest extends HbmTestImpl{
 	
+	@Autowired
+	DocumentHbmDao documentDao;
+	
 	public void initializeServiceBeans() {
 		// I don't use it
 		
 	}
+	
+	
 	
 	public void insertDocument(DocumentHbm document){		
 		getJdbcTemplate().update(String.format(
@@ -46,6 +51,7 @@ public class DocumentDaoTest extends HbmTestImpl{
 				site.getSiteId(),site.getName(),site.getName()));
 	}
 	
+	
 	public void init(){
 		DocumentHbm documentInserted = new DocumentHbmImpl();
 		UnitHbm unit = new UnitHbmImpl();		
@@ -66,17 +72,18 @@ public class DocumentDaoTest extends HbmTestImpl{
 		documentInserted.setUnit(unit);
 		insertDocument(documentInserted);
 	}
-		
+	
+	
 	public void testLoad(){
 		init();
-		DocumentHbm document = getDocumentDao().load(1);	
+		DocumentHbm document = documentDao.load(1);	
 		Assert.assertNotNull(document);
 		Assert.assertEquals("testDocument",document.getDocumentName());
 	}
 	
 	public void testFindAll(){
 		init();
-		Collection documents = getDocumentDao().findAll(1);	
+		Collection documents = documentDao.findAll(1);	
 		Assert.assertNotNull(documents);
 		Assert.assertEquals(1,documents.size());
 	}
