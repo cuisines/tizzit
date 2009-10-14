@@ -676,12 +676,12 @@ public class SearchengineService {
 			session.save(resource);
 			tx.commit();
 			session.close();
-			session = null;
-			document.setUpdateSearchIndex(false);
+			session = null;			
 		} catch (Exception e) {
 			log.warn("Error indexDocument " + document.getDocumentId().toString() + ": " + e.getMessage());
 			if (tx != null) tx.rollback();
 		} finally {
+			document.setUpdateSearchIndex(false);
 			if (session != null) session.close();
 		}
 		if (log.isInfoEnabled()) log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
