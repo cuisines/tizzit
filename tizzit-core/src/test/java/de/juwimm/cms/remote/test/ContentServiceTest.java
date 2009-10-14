@@ -15,6 +15,8 @@ import de.juwimm.cms.model.DocumentHbmImpl;
 import de.juwimm.cms.model.PictureHbm;
 import de.juwimm.cms.model.PictureHbmDao;
 import de.juwimm.cms.model.PictureHbmImpl;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.UnitHbmImpl;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewComponentHbmImpl;
@@ -34,6 +36,7 @@ public class ContentServiceTest extends TestCase{
 	List<ContentVersionHbm> mockContentVersions;
 	List<PictureHbm> mockPictures;
 	List<DocumentHbm> mockDocuments;
+	DocumentHbm documentToDelete;
 	
 	
 	String contentWithDocumentTemplate = 
@@ -93,6 +96,10 @@ public class ContentServiceTest extends TestCase{
 		mockDocuments.add(createDocumentHbm(1));
 		mockDocuments.add(createDocumentHbm(2));
 		mockDocuments.add(createDocumentHbm(3));
+		documentToDelete = createDocumentHbm(1);
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+		documentToDelete.setUnit(unit);
 		
 		contentService = new ContentServiceSpringImpl();
 		
@@ -181,4 +188,30 @@ public class ContentServiceTest extends TestCase{
 		
 		Assert.assertEquals(2, result.size());
 	}
+	
+// TODO TIZZIT-220	
+//	public void testRemoveDocument(){
+//		EasyMock.expect(documentDaoMock.load(EasyMock.anyInt())).andReturn(documentToDelete);
+//		EasyMock.expect(viewComponentMock.findRootViewComponents4Unit(EasyMock.anyInt())).andReturn(roots);
+//		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions);
+//		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(new ArrayList<ContentVersionHbm>()).times(4);
+//		
+//		EasyMock.replay(documentDaoMock);
+//		EasyMock.replay(contentVersionDaoMock);
+//		EasyMock.replay(viewComponentMock);
+//		
+//		boolean usedDocumentException = false;
+//		try {
+//			contentService.removeDocument(1);
+//		} catch (UserException e) {
+//			usedDocumentException = true;
+//		}
+//		
+//		EasyMock.verify(documentDaoMock);
+//		EasyMock.verify(contentVersionDaoMock);
+//		EasyMock.verify(viewComponentMock);
+//		
+//		Assert.assertTrue(usedDocumentException);
+//		
+//	}
 }

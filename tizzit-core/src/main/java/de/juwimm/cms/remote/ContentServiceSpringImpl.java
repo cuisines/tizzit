@@ -1059,6 +1059,14 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemoveDocument(Integer documentId) throws Exception {
+//TODO TIZZIT-220 		
+//		DocumentHbm document = super.getDocumentHbmDao().load(documentId);
+//		List<ContentVersionHbm> contentVersions = getAllContentVersions4Unit(document.getUnit().getUnitId());
+//		List<ContentVersionHbm> usedContentVersion = new ArrayList<ContentVersionHbm>();
+//		usedContentVersion = getContentVersionUsingResource(contentVersions,documentId,"document","src");
+//		if(usedContentVersion.size() > 0){
+//			throw new UserException("can not remove");
+//		}
 		super.getDocumentHbmDao().remove(documentId);
 	}
 
@@ -1407,6 +1415,12 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 	}
 
+	/**
+	 * Gets used documents and pictures
+	 * @param contentVersions - content versions where to find
+	 * @param documents - list of used documents
+	 * @param pictures - list of used pictures
+	 */
 	private void getUsedResourcesFromContentVersions(List<ContentVersionHbm> contentVersions, List<Integer> documents, List<Integer> pictures) {
 		if (contentVersions == null || contentVersions.size() == 0) { return; }
 		for (ContentVersionHbm contentVersion : contentVersions) {
@@ -1423,6 +1437,26 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			}
 		}
 	}
+	
+	private List<ContentVersionHbm> getContentVersionUsingResource(List<ContentVersionHbm> contentVersions, Integer resourceId,String type,String attributeNameId){
+		List<ContentVersionHbm> usedContentVersion = new ArrayList<ContentVersionHbm>();
+		if (contentVersions == null || contentVersions.size() == 0) { return usedContentVersion; }
+		for (ContentVersionHbm contentVersion : contentVersions) {
+			String content = contentVersion.getText();
+			if (content != null) {
+				try {
+					Document document = XercesHelper.string2Dom(content);
+					if(isResourceInContentVersion(document, resourceId, type, attributeNameId)){
+						usedContentVersion.add(contentVersion);
+					}
+				} catch (Exception e) {
+					log.info("could not parse used ressources: " + e.getMessage());
+					if (log.isDebugEnabled()) log.debug("Parsing Error", e);
+				}
+			}
+		}
+		return usedContentVersion;
+	}
 
 	/**
 	 * 
@@ -1437,6 +1471,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			Node node = (Node) it.next();
 			resources.add(Integer.parseInt(node.getAttributes().getNamedItem(attributeName).getNodeValue()));
 		}
+	}
+	
+	private boolean isResourceInContentVersion(Node contentVersionNode,Integer resourceId, String type, String attributeName){
+		Iterator it = XercesHelper.findNodes(contentVersionNode, "//" + type+"[@"+attributeName+"="+resourceId.toString()+"]");
+		return it.hasNext();
 	}
 
 	/* (non-Javadoc)
