@@ -229,7 +229,6 @@ public class TizzitPropertiesBeanSpring {
 		private String cleanupThreadIntervalSecs;
 		private String percentToFree;
 		private boolean invokeGC;
-		private String componentLibrariesParent;
 
 		public String getJanitorFreeMemoryRatio() {
 			return janitorFreeMemoryRatio;
@@ -270,15 +269,7 @@ public class TizzitPropertiesBeanSpring {
 		public void setInvokeGC(boolean invokeGC) {
 			this.invokeGC = invokeGC;
 		}
-
-		public String getComponentLibrariesParent() {
-			return componentLibrariesParent;
-		}
-
-		public void setComponentLibrariesParent(String componentLibrariesParent) {
-			this.componentLibrariesParent = componentLibrariesParent;
-		}
-
+		
 		public String getJanitorFreeMemory() {
 			return janitorFreeMemory;
 		}
