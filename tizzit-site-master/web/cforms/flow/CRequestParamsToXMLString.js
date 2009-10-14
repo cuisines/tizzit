@@ -5,7 +5,7 @@
 function CRequestParamsToXMLString(logname) {
 
 	this.log = Packages.org.apache.log4j.Logger.getLogger(logname);
-	this.helper = Packages.de.juwimm.util.XercesHelper;	
+	this.helper = Packages.org.tizzit.util.XercesHelper;	
 	this.rootNodeName = "root";
 	//der firstChildNode ist ein optionales, kapselndes Element unter dem root und kann zur Differenzierung gesetzt werden 	
 	this.firstChildNode = "";

@@ -66,7 +66,7 @@
 				</dt>
 				<dd>
 					<div>
-						<xsl:if test="$format = 'long'"><xsl:value-of select="summary/text()"/><b><tt> ...</tt></b><br/></xsl:if>
+						<xsl:if test="$format = 'long'"><xsl:apply-templates select="summary"/><b><tt> ...</tt></b><br/></xsl:if>
 						<!--<i><a target="_blank"><xsl:attribute name="href"><xsl:value-of select="$new"/></xsl:attribute><xsl:value-of select="translate($new,'%20','&#32;')"/></a></i>-->
 					</div>
 				</dd>

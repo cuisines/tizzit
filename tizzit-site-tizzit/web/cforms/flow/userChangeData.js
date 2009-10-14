@@ -1,5 +1,5 @@
 importClass(java.lang.String);
-importClass(Packages.de.juwimm.util.XercesHelper);
+importClass(Packages.org.tizzit.util.XercesHelper);
 
 cocoon.load("flow/include.js");
 

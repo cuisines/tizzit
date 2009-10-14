@@ -49,10 +49,10 @@ function conQuestMail(logname) {
 	
 //DEBUG Paramvalues fuer Aufruf per /cforms/mail_simple.flow	
     /*
-	var	to ="hans-thomas.nordeck@juwimm.com";	
-	var	bcc ="hans-thomas.nordeck@juwimm.com";	
-	var	cc ="hans-thomas.nordeck@juwimm.com";
-	var	from ="hans-thomas.nordeck@juwimm.com";
+	var	to ="@juwimm.com";	
+	var	bcc ="@juwimm.com";	
+	var	cc ="@juwimm.com";
+	var	from ="@juwimm.com";
 	var	subject ="Testformular";
 	var	formUri ="Formulardefinitionen/CallBack";
 	var	successUri ="mail-success-pipeline.jx";
@@ -70,7 +70,7 @@ function conQuestMail(logname) {
 	//START - CAPTCHA Protection
 	try{
 		var formUri 			= params.get('formUri');
-		var xercesHelper 		= Packages.de.juwimm.util.XercesHelper;
+		var xercesHelper 		= Packages.org.tizzit.util.XercesHelper;
 		var flowsriptUtils 		= new FlowscriptSpringHelper.getFlowscriptUtils(cocoon.context.getContext("/"));
 		var domDocUrl 			= "http://"+cocoon.parameters['serverName']+"/"+params.get('language')+"/"+formUri+"/content.xml"; 
 		var domDocUrlToString 	= domDocUrl.toString();  

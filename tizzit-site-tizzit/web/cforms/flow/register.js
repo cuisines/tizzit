@@ -12,7 +12,7 @@ function register() {
 	var log 					= Packages.org.apache.log4j.Logger.getLogger(logname);
 	var myCRegister 			= null;
     var requestParams 			= (new CRequestParamsBuilder(logprefix+".CRequestParamsBuilder")).getRequestParams(cocoon);
-    var xercesHelper 			= Packages.de.juwimm.util.XercesHelper;
+    var xercesHelper 			= Packages.org.tizzit.util.XercesHelper;
     var errorMsg 				= '';
     var value 					= '';
     var mandant 				= 'standard';

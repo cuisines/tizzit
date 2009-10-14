@@ -1,7 +1,7 @@
 /* CXMLHelper */
 function CXMLHelper(logname) {
 	this.log = Packages.org.apache.log4j.Logger.getLogger(logname);
-	this.helper = Packages.de.juwimm.util.XercesHelper;
+	this.helper = Packages.org.tizzit.util.XercesHelper;
 	
 	this.loadDocumentFromUri = function(uri) {
 		if (this.log.isDebugEnabled()) {
