@@ -639,4 +639,10 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return create(viewComponentHbm);
 	}
 
+	@Override
+	protected void handleToXmlComplete(Integer viewComponentId, Boolean onlyLastContentVersion, PrintStream out) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
 }

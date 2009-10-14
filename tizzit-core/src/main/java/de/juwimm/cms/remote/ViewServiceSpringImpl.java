@@ -1512,4 +1512,38 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	}
 
+	//	@Override
+	//	protected String handleGetViewComponentXmlForCopy(Integer viewComponentId) throws Exception {
+	//		if (log.isDebugEnabled()) log.debug("getNavigationXML start");
+	//		String retVal = "";
+	//		try {
+	//			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+	//			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
+	//			ViewComponentHbm vcl = getViewComponentHbmDao().load(viewComponentId);
+	//			getViewComponentHbmDao().toXml(vcl, null, true, true, 1, true, true, out);
+	//			retVal = byteOut.toString("UTF-8");
+	//			int contentId=Integer.parseInt(vcl.getReference());
+	//			ContentHbm conthbm=getContentHbmDao().load(contentId);
+	//			ContentVersionHbm hbm=conthbm.getLastContentVersion();
+	//			hbm.getText();
+	//			
+	//		} catch (Exception e) {
+	//			if (log.isDebugEnabled()) log.error("Error at getting XML for copy " + e.getMessage());
+	//			throw new UserException();
+	//		}
+	//		return retVal;
+	//	}
+
+	@Override
+	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString) throws Exception {
+
+		return null;
+	}
+
+	@Override
+	protected String handleGetViewComponentXmlForCopy(Integer viewComponentId, String hostUrl) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

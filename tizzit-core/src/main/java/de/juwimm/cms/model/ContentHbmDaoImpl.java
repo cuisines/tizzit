@@ -296,4 +296,10 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		contentHbm.getContentVersions().add(contentVersion);
 		return contentHbm;
 	}
+
+	@Override
+	protected String handleToXmlWithLastContentVersion(ContentHbm content) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
