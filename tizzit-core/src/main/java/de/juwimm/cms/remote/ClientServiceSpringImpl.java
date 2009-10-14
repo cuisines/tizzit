@@ -1867,8 +1867,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected String handleGetViewComponentXmlForCopy(Integer viewComponentId, String hostURL) throws Exception {
-		return getViewServiceSpring().getViewComponentXmlForCopy(viewComponentId, hostURL);
+	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostURL, boolean withMedia) throws Exception {
+		return getViewServiceSpring().getViewComponentXmlComplete(viewComponentId, hostURL, withMedia);
 	}
 
 }

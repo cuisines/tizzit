@@ -20,6 +20,8 @@
  */
 package de.juwimm.cms.remote;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -30,12 +32,16 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.XercesHelper;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.DocumentHbm;
 import de.juwimm.cms.model.PictureHbm;
 import de.juwimm.cms.model.SequenceHbmDao;
@@ -1512,28 +1518,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	}
 
-	//	@Override
-	//	protected String handleGetViewComponentXmlForCopy(Integer viewComponentId) throws Exception {
-	//		if (log.isDebugEnabled()) log.debug("getNavigationXML start");
-	//		String retVal = "";
-	//		try {
-	//			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-	//			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
-	//			ViewComponentHbm vcl = getViewComponentHbmDao().load(viewComponentId);
-	//			getViewComponentHbmDao().toXml(vcl, null, true, true, 1, true, true, out);
-	//			retVal = byteOut.toString("UTF-8");
-	//			int contentId=Integer.parseInt(vcl.getReference());
-	//			ContentHbm conthbm=getContentHbmDao().load(contentId);
-	//			ContentVersionHbm hbm=conthbm.getLastContentVersion();
-	//			hbm.getText();
-	//			
-	//		} catch (Exception e) {
-	//			if (log.isDebugEnabled()) log.error("Error at getting XML for copy " + e.getMessage());
-	//			throw new UserException();
-	//		}
-	//		return retVal;
-	//	}
-
 	@Override
 	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString) throws Exception {
 
@@ -1541,8 +1525,30 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	@Override
-	protected String handleGetViewComponentXmlForCopy(Integer viewComponentId, String hostUrl) throws Exception {
-		// TODO Auto-generated method stub
+	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostUrl, boolean withMedia) throws Exception {
+		String retVal = "";
+		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(byteOut, true, "UTF-8");
+		out.print("<hostUrl>" + hostUrl + "</hostUrl>\n");
+		getViewComponentHbmDao().toXmlComplete(viewComponentId, true, null, true, 1, true, false, out);
+		if (withMedia) {
+			ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
+			ContentHbm content = getContentHbmDao().load(Integer.parseInt(viewComponent.getReference()));
+			ContentVersionHbm contentVersion = content.getLastContentVersion();
+			String contentVersionText = contentVersion.getText();
+			org.w3c.dom.Document doc = XercesHelper.string2Dom(contentVersionText);
+			try {
+				NodeList picNodes = doc.getElementsByTagName("image");
+				for (int i = 0; i < picNodes.getLength(); i++) {
+					Node node = picNodes.item(i);
+					String value = node.getNodeValue();
+				}
+
+			} catch (Exception e) {
+
+			}
+		}
+		retVal = byteOut.toString("UTF-8");
 		return null;
 	}
 

@@ -299,7 +299,19 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 
 	@Override
 	protected String handleToXmlWithLastContentVersion(ContentHbm content) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuilder sb = new StringBuilder();
+		sb.append("<content id=\"");
+		sb.append(content.getContentId());
+		sb.append("\">\n");
+		sb.append("\t<template>").append(content.getTemplate()).append("</template>\n");
+		sb.append("\t<status>").append(content.getStatus()).append("</status>\n");
+
+		ContentVersionHbm lastContentVersion = content.getLastContentVersion();
+
+		sb.append(getContentVersionHbmDao().toXml(lastContentVersion));
+		sb.append("</content>\n");
+
+		return sb.toString();
+
 	}
 }
