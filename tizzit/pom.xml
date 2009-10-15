@@ -9,6 +9,7 @@
 	<description>The Tizzit Project.</description>
 	<scm>
 		<connection>scm:svn:http://tizzit.googlecode.com/svn/trunk/tizzit</connection>
+		<developerConnection>scm:svn:https://tizzit.googlecode.com/svn/trunk/tizzit</developerConnection>
 		<url>http://tizzit.googlecode.com/svn/trunk/tizzit</url>
 	</scm>
 	<organization>
@@ -602,7 +603,7 @@
         <configuration>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
-          <connectionUrl>scm:svn:http://tizzit.googlecode.com/svn/trunk/tizzit</connectionUrl>
+          <connectionUrl>scm:svn:https://tizzit.googlecode.com/svn/trunk/tizzit</connectionUrl>
 
 					<!--
 						override default "clean, verify" preparationGoals with just "install":
