@@ -325,7 +325,7 @@
 			</map:transform>
 			<map:transform type="web20">
 				<map:parameter name="siteId"
-					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 				<!-\-cqUserName cannot be null-\->
 				<map:parameter name="cqUserName" value="{random:x}"/>
@@ -443,7 +443,7 @@
 
 		<!--<map:resource name="page">
 			<map:act type="cms.actions.template">
-				<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+				<map:parameter name="siteId" value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="language" value="{language}"/>
 				<map:parameter name="path" value="{url}"/>
@@ -451,7 +451,7 @@
 				<map:act type="web20action">
 					<map:parameter name="use-request-parameters" value="true"/>
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 					<!-\-cqUserName cannot be null-\->
 					<map:parameter name="cqUserName" value="{random:x}"/>
@@ -533,7 +533,7 @@
 		<map:resource name="page">
 			<map:act type="cms.actions.template">
 				<map:parameter name="siteId"
-					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="language" value="{language}"/>
 				<map:parameter name="path" value="{url}"/>
@@ -625,7 +625,7 @@
 		<map:resource name="page-debugger">
 			<map:act type="cms.actions.template">
 				<map:parameter name="siteId"
-					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="language" value="{language}"/>
 				<map:parameter name="path" value="{url}"/>
@@ -671,7 +671,7 @@
 		<map:resource name="form">
 			<map:act type="cms.actions.template">
 				<map:parameter name="siteId"
-					value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="language" value="{language}"/>
 				<map:parameter name="path" value="{url}"/>
@@ -810,7 +810,7 @@
 			<map:match pattern="">
 				<map:call resource="page">
 					<map:parameter name="language"
-						value="{conquest-properties:default-language-{global:clientCode}}"/>
+						value="{tizzit-property:default-language-{global:clientCode}}"/>
 					<map:parameter name="url" value=""/>
 					<map:parameter name="filetype" value="html"/>
 					<map:parameter name="layout" value="default"/>
@@ -843,7 +843,7 @@
 			<map:match pattern="print.*">
 				<map:call resource="page">
 					<map:parameter name="language"
-						value="{conquest-properties:default-language-{global:clientCode}}"/>
+						value="{tizzit-property:default-language-{global:clientCode}}"/>
 					<map:parameter name="url" value=""/>
 					<map:parameter name="filetype" value="{1}"/>
 					<map:parameter name="layout" value="print"/>
@@ -868,7 +868,7 @@
 			<map:match pattern="popup.*">
 				<map:call resource="page">
 					<map:parameter name="language"
-						value="{conquest-properties:default-language-{global:clientCode}}"/>
+						value="{tizzit-property:default-language-{global:clientCode}}"/>
 					<map:parameter name="url" value=""/>
 					<map:parameter name="filetype" value="{1}"/>
 					<map:parameter name="layout" value="popup"/>
@@ -915,7 +915,7 @@
 			<map:match pattern="*/**/content.*">
 				<map:act type="cms.actions.template">
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -934,7 +934,7 @@
 			<map:match pattern="*/content.*">
 				<map:act type="cms.actions.template">
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value=""/>
@@ -973,7 +973,7 @@
 			<map:match pattern="navmodules/*/*.*">
 				<map:act type="cms.actions.template">
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value=""/>
@@ -991,7 +991,7 @@
 			<map:match pattern="navmodules/*/**/*.*">
 				<map:act type="cms.actions.template">
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -1051,7 +1051,7 @@
 			<map:match pattern="navmodulestemplate/*/*.*">
 				<map:act type="cms.actions.template">
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -1069,7 +1069,7 @@
 			<map:match pattern="navmodulestemplate/*/**/*.*">
 				<map:act type="cms.actions.template">
 					<map:parameter name="siteId"
-						value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+						value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 					<map:parameter name="parameters" value="true"/>
 					<map:parameter name="language" value="{1}"/>
 					<map:parameter name="path" value="{2}"/>
@@ -1115,8 +1115,8 @@
 			<map:match pattern="jscript/*.js">
 				<map:generate type="file" src="{global:parentMandator}jscript/{1}.xml"/>
 				<map:transform src="{global:parentMandator}jscript/jssheet.xsl">
-					<map:parameter name="language" value="{conquest-properties:default-language-{global:clientCode}}"/>
-					<map:parameter name="siteId" value="{conquest-properties:mandator-id-{global:clientCode}}"/>
+					<map:parameter name="language" value="{tizzit-property:default-language-{global:clientCode}}"/>
+					<map:parameter name="siteId" value="{tizzit-property:mandator-id-{global:clientCode}}"/>
 				</map:transform>
 				<map:serialize type="js"/>
 			</map:match>
@@ -1148,7 +1148,7 @@
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="requestHost" value="{request:serverName}"/>
 							<map:parameter name="language"
-								value="{conquest-properties:default-language-{global:clientCode}}"/>
+								value="{tizzit-property:default-language-{global:clientCode}}"/>
 						</map:transform>
 						<map:transform src="templates/layouts/master.xsl"/>
 						<map:serialize type="html" status-code="404"/>
@@ -1160,7 +1160,7 @@
 							<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="language"
-								value="{conquest-properties:default-language-{global:clientCode}}"/>
+								value="{tizzit-property:default-language-{global:clientCode}}"/>
 						</map:transform>
 						<map:transform src="templates/layouts/master.xsl"/>
 						<map:serialize type="html" status-code="404"/>
@@ -1172,7 +1172,7 @@
 							<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="language"
-								value="{conquest-properties:default-language-{global:clientCode}}"/>
+								value="{tizzit-property:default-language-{global:clientCode}}"/>
 						</map:transform>
 
 						<map:transform src="templates/layouts/master.xsl"/>
