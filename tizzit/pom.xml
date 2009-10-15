@@ -611,7 +611,7 @@
 						- install: ensures modules artifacts are installed when build so later modules can have dependencies on them
 					-->
 					<preparationGoals>install</preparationGoals>
-					<arguments>-DgwtHome17=/opt/gwt-linux-1.7.0/</arguments>
+					<arguments>-Dmaven.test.skip=true</arguments>
 
 
         </configuration>
