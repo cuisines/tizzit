@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+    <head>
+        <title>Test Case</title>
+        <meta content="" name="description" />
+        <meta content="" name="keywords" />
+        <meta content="10/13/09 2:19 PM" name="LastUpdated" />
+    </head>
+    <all>
+        <!-- Confluence plugin -->
+        <testPlugin xmlns="http://plugins.tizzit.org/Test-1">
+            <TestKey1>TestValue1</TestKey1>
+            <TestKey2>TestValue2</TestKey2>
+            <TestKey3>TestValue3</TestKey3>
+            <TestKey4>
+                <TestKey5>TestValue5</TestKey5>
+            </TestKey4>
+            <TestKey6>
+
+                TestValue6
+
+                <TestKey7>TestValue7</TestKey7>
+            </TestKey6>
+            <TestKey8>
+                <TestKey9>TestValue9</TestKey9>
+
+                TestValue8
+
+            </TestKey8>
+        </testPlugin>
+
+        <testPlugin2 xmlns="http://plugins.tizzit.org/Test-2">
+            <Test2Key1>Test2Value1</Test2Key1>
+            <Test2Key2>Test2Value2</Test2Key2>
+            <Test2Key3>Test2Value3</Test2Key3>
+            <Test2Key4>
+                <Test2Key5>Test2Value5</Test2Key5>
+            </Test2Key4>
+            <Test2Key6>
+
+                Test2Value6
+
+                <Test2Key7>Test2Value7</Test2Key7>
+            </Test2Key6>
+            <Test2Key8>
+                <Test2Key9>Test2Value9</Test2Key9>
+
+                Test2Value8
+
+            </Test2Key8>
+        </testPlugin2>
+    </all>
+</source>
