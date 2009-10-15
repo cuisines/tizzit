@@ -157,29 +157,6 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<!-- needed in tizzit-cocoon22-components but the damn jnlp plugin below, is strangely trying to resolve it-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<!-- patched -->
-					<execution>
-						<id>patched-cocoon-sitemap-impl</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${pom.basedir}/src/patched/resources/cocoon-sitemap-impl-1.0.0-pl2.jar</file>
-							<groupId>org.apache.cocoon</groupId>
-							<artifactId>cocoon-sitemap-impl</artifactId>
-							<version>1.0.0-pl2</version>
-							<packaging>jar</packaging>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
