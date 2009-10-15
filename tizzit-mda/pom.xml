@@ -2,12 +2,12 @@
    <modelVersion>4.0.0</modelVersion>
    <artifactId>tizzit-mda</artifactId>
    <packaging>pom</packaging>
-   <version>3.0.3-M1</version>
+   <version>3.0.3-SNAPSHOT</version>
    <name>tizzit MDA</name>
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
-      <version>3.0.3-M1</version>
+      <version>3.0.3-SNAPSHOT</version>
       <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
    <dependencies>
@@ -59,7 +59,7 @@
    </build>
    <properties>
       <model.uri>jar:file:${pom.basedir}/src/uml/cqcms.xml.zip!/cqcms.xml</model.uri>
-      <filter />
+      <filter/>
       <validation>true</validation>
       <conf.dir>${pom.basedir}/src/main/config</conf.dir>
       <!-- cartridge output locations -->
