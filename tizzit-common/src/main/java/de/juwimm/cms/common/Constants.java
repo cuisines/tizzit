@@ -46,6 +46,7 @@ public final class Constants {
 
 	public static final String DB_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".conquestCache" + System.getProperty("file.separator");
 	public static String SVG_CACHE = null;
+	public static String URL_HOST = null;
 
 	public static int SERVER_PORT = 80;
 	public static boolean SERVER_SSL = false;

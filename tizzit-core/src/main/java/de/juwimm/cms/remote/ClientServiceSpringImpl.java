@@ -1862,13 +1862,13 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString) throws Exception {
-		return getViewServiceSpring().copyViewComponentToParentFromXml(parentId, xmlString);
+	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostURL, boolean withMedia) throws Exception {
+		return getViewServiceSpring().getViewComponentXmlComplete(viewComponentId, hostURL, withMedia);
 	}
 
 	@Override
-	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostURL, boolean withMedia) throws Exception {
-		return getViewServiceSpring().getViewComponentXmlComplete(viewComponentId, hostURL, withMedia);
+	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString, boolean withMedia, boolean withChildren, Integer unitId) throws Exception {
+		return getViewServiceSpring().copyViewComponentToParentFromXml(parentId, xmlString, withMedia, withChildren, unitId);
 	}
 
 }

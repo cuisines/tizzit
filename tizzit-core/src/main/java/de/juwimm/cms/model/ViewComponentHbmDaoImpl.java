@@ -651,9 +651,6 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			out.print("\" hasChild=\"");
 			out.print(hasVisibleChild(current, liveServer));
 		}
-		// This is only needed for the FIRST VC in the Edition.
-		// If there is no existent VC like this (initial deploy), we will take
-		// this settings.
 		if (current.getPrevNode() != null) {
 			out.print("\" prev=\"");
 			out.print(current.getPrevNode().getViewComponentId());
@@ -805,6 +802,12 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		out.println("</viewcomponent>");
 		if (log.isDebugEnabled()) log.debug("toXml end");
 
+	}
+
+	@Override
+	protected ViewComponentHbm handleCreateFromXml(String xmlString, boolean withChildren) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

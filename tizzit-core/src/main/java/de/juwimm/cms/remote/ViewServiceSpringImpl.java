@@ -33,8 +33,8 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.XercesHelper;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
@@ -1519,12 +1519,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	@Override
-	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString) throws Exception {
-
-		return null;
-	}
-
-	@Override
 	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostUrl, boolean withMedia) throws Exception {
 		String retVal = "";
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -1536,19 +1530,49 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			ContentHbm content = getContentHbmDao().load(Integer.parseInt(viewComponent.getReference()));
 			ContentVersionHbm contentVersion = content.getLastContentVersion();
 			String contentVersionText = contentVersion.getText();
-			org.w3c.dom.Document doc = XercesHelper.string2Dom(contentVersionText);
-			try {
-				NodeList picNodes = doc.getElementsByTagName("image");
-				for (int i = 0; i < picNodes.getLength(); i++) {
-					Node node = picNodes.item(i);
-					String value = node.getNodeValue();
-				}
-
-			} catch (Exception e) {
-
+			if (contentVersionText != null) {
+				Document doc = XercesHelper.string2Dom(contentVersionText);
+				getMediaXML(doc, out, "picture", "description");
+				getMediaXML(doc, out, "document", "src");
 			}
 		}
 		retVal = byteOut.toString("UTF-8");
+		return retVal;
+	}
+
+	/**
+	 * 
+	 * @param doc
+	 * @param out
+	 * @param tagString can be picture or document
+	 * @param attribute description for picture or src for document
+	 * @throws Exception
+	 */
+	private void getMediaXML(Document doc, PrintStream out, String tagString, String attribute) throws Exception {
+		try {
+			Iterator it = XercesHelper.findNodes(doc, "//" + tagString);
+			while (it.hasNext()) {
+				Node node = (Node) it.next();
+				int itemId = Integer.parseInt(node.getAttributes().getNamedItem(attribute).getNodeValue());
+				if (itemId != 0) {
+					if (tagString.equals("picture")) {
+						PictureHbm picture = getPictureHbmDao().load(itemId);
+						out.print(picture.toXml(0));
+					} else if (tagString.equals("document")) {
+						out.print(getDocumentHbmDao().toXml(itemId, 0));
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Error at getting " + tagString + " xml");
+			throw new UserException(e.getMessage());
+		}
+	}
+
+	@Override
+	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString, boolean withMedia, boolean withChildren, Integer unitId) throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
