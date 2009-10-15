@@ -380,8 +380,17 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-
+    <dependency>
+      <groupId>org.apache.cocoon</groupId>
+      <artifactId>cocoon-authentication-fw-impl</artifactId>
+      <version>1.0.0-beta-1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-sitemap-impl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <!-- snapshots builded from source -->
     <dependency>
@@ -389,14 +398,6 @@
       <artifactId>cocoon-xsp-impl</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
-
-    <!-- deprecated blocks -->
-    <dependency>
-      <groupId>org.apache.cocoon</groupId>
-      <artifactId>cocoon-authentication-fw-impl</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-
 
     <!--
     <dependency>
@@ -438,22 +439,6 @@
               <artifactId>cocoon-xsp-impl</artifactId>
               <version>1.0.0-SNAPSHOT</version>
               <packaging>jar</packaging>
-            </configuration>
-          </execution>
-
-          <!-- deprecated blocks -->
-          <execution>
-            <id>deprecated-cocoon-authentication-fw-impl</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>${pom.basedir}/src/deprecated/resources/cocoon-authentication-fw-impl-1.0.0-SNAPSHOT.jar</file>
-              <groupId>org.apache.cocoon</groupId>
-              <artifactId>cocoon-authentication-fw-impl</artifactId>
-              <packaging>jar</packaging>
-              <version>1.0.0-SNAPSHOT</version>
             </configuration>
           </execution>
         </executions>
