@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+    <head>
+        <title>Wiki Content</title>
+        <meta content="" name="description" />
+        <meta content="" name="keywords" />
+        <meta content="10/13/09 2:19 PM" name="LastUpdated" />
+    </head>
+    <all>
+        <stickyPad dcfname="stickypad" label="Notiz" />
+        <content dcfname="content" label="Text über dem Wiki">
+            <p>text davor</p>
+        </content>
+
+        <!-- Confluence plugin -->
+        <getPage xmlns="http://plugins.tizzit.org/ConfluenceContentPlugin">
+            <pageId dcfname="pageId" label="Page ID">557129</pageId>
+            <confluenceURLs dcfname="confluenceURL" label="Confluence URLs">
+                <value> http://wiki.tizzit.org</value>
+            </confluenceURLs>
+            <useStyles dcfname="useStyles" label="Render content with styles?">
+                <value>false</value>
+            </useStyles>
+        </getPage>
+
+        <web20 dcfname="web20" label="WEB 2.0 Settings">
+            <tagging />
+        </web20>
+        <sn_footer>
+            <display dcfname="display" label="Social Network">
+                <display />
+            </display>
+            <delicious />
+            <facebook />
+            <twitter />
+            <digg />
+            <stumble />
+            <rrs />
+        </sn_footer>
+    </all>
+</source>

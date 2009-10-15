@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.tizzit</groupId>
+      <artifactId>tizzit</artifactId>
+      <version>1.0</version>
+      <relativePath>../tizzit/pom.xml</relativePath>
+   </parent>
+
+   <groupId>org.tizzit</groupId>
+   <artifactId>tizzit-plugin-confluence</artifactId>
+   <version>1.0</version>
+
+   <packaging>jar</packaging>
+   <name>tizzit Confluence plugin</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.tizzit</groupId>
+         <artifactId>tizzit-common</artifactId>
+         <version>${tizzit.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>org.tizzit</groupId>
+         <artifactId>tizzit-plugin-api</artifactId>
+         <version>${tizzit.version}</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.apache.ws.xmlrpc</groupId>
+         <artifactId>xmlrpc</artifactId>
+         <version>2.0.1</version>
+      </dependency>
+
+      <dependency>
+         <groupId>commons-lang</groupId>
+         <artifactId>commons-lang</artifactId>
+         <!--<version>2.4</version>-->
+      </dependency>
+      <dependency>
+         <groupId>commons-logging</groupId>
+         <artifactId>commons-logging</artifactId>
+         <!--<version>1.0.4</version>-->
+      </dependency>
+
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>servlet-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>log4j</groupId>
+         <artifactId>log4j</artifactId>
+      </dependency>
+
+   </dependencies>
+   <!--
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>1.5</source>
+               <target>1.5</target>
+            </configuration>
+         </plugin>
+      </plugins>
+      <sourceDirectory>src/main/java</sourceDirectory>
+   </build>
+-->
+</project>
