@@ -41,7 +41,7 @@
 	</dependencies>
    <build>
       <plugins>
-         <plugin>
+         <!-- <plugin>
             <artifactId>maven-clean-plugin</artifactId>
             <executions>
                <execution>
@@ -52,7 +52,7 @@
                   </goals>
                </execution>
             </executions>
-         </plugin>
+         </plugin> -->
          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>dependency-maven-plugin</artifactId>
