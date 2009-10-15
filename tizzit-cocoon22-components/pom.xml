@@ -391,12 +391,16 @@
         </exclusion>
       </exclusions>
     </dependency>
-
-    <!-- snapshots builded from source -->
     <dependency>
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-xsp-impl</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>1.0.0-beta-1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-sitemap-impl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!--
@@ -421,28 +425,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.3</version>
-        <executions>
-          <!-- compiled from source -->
-          <execution>
-            <id>compiledFromSrc-cocoon-xsp-impl</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>${pom.basedir}/src/compiledFromSrc/resources/cocoon-xsp-impl-1.0.0-SNAPSHOT.jar</file>
-              <groupId>org.apache.cocoon</groupId>
-              <artifactId>cocoon-xsp-impl</artifactId>
-              <version>1.0.0-SNAPSHOT</version>
-              <packaging>jar</packaging>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.cocoon</groupId>
         <artifactId>cocoon-maven-plugin</artifactId>
