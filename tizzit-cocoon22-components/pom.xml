@@ -358,16 +358,23 @@
       <version>0.9.25a</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.cocoon</groupId>
+      <artifactId>cocoon-profiler-impl</artifactId>
+      <version>cocoon-profiler-impl-1.0.0-beta-1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.cocoon</groupId>
+          <artifactId>cocoon-sitemap-impl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
 
     <!-- snapshots builded from source -->
     <dependency>
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-xsp-impl</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cocoon</groupId>
-      <artifactId>cocoon-profiler-impl</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
 
@@ -412,20 +419,6 @@
         <version>2.3</version>
         <executions>
           <!-- compiled from source -->
-          <execution>
-            <id>compiledFromSrc-cocoon-profiler-impl</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>${pom.basedir}/src/compiledFromSrc/resources/cocoon-profiler-impl-1.0.0-SNAPSHOT.jar</file>
-              <groupId>org.apache.cocoon</groupId>
-              <artifactId>cocoon-profiler-impl</artifactId>
-              <version>1.0.0-SNAPSHOT</version>
-              <packaging>jar</packaging>
-            </configuration>
-          </execution>
           <execution>
             <id>compiledFromSrc-cocoon-xsp-impl</id>
             <phase>validate</phase>
