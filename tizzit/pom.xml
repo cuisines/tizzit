@@ -648,18 +648,19 @@
 		<module>../tizzit-common</module>
 
 		<module>../tizzit-plugin-api</module>
+		<module>../tizzit-plugin-confluence</module>
 		<module>../tizzit-core</module>
 		<module>../tizzit-xmlsearch-xindice</module>
 		<module>../tizzit-webstart</module>
 
 		<module>../tizzit-cocoon22-components</module>
-		<module>../tizzit-web-cocoon22</module> 
-		
+		<module>../tizzit-web-cocoon22</module>
+
 		<module>../tizzit-richclient</module>
 		<module>../tizzit-web-admin</module>
 		<module>../tizzit-loginmodules</module>
 		<module>../tizzit-web-xindice</module>
-		<module>../tizzit-plugin-testcontainer</module> 
+		<module>../tizzit-plugin-testcontainer</module>
 	</modules>
 	<properties>
 		<tizzit.version>3.0.3-SNAPSHOT</tizzit.version><!-- -SNAPSHOT -->
@@ -912,7 +913,7 @@
 			<url>http://maven.tizzit.org/content/groups/public/</url>
 		</pluginRepository>
 	</pluginRepositories>
-	
+
     <reporting>
         <outputDirectory>target/site</outputDirectory>
         <plugins>
@@ -950,7 +951,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <targetJdk>1.5</targetJdk>
-                </configuration>                
+                </configuration>
             </plugin>
             <!--
             <plugin>
@@ -979,7 +980,7 @@
             </plugin>
         </plugins>
     </reporting>
-	
+
 	<prerequisites>
 		<maven>2.0.8</maven>
 	</prerequisites>
