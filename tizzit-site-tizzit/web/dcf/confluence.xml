@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<source>
+    <head/>
+    <all>
+        <stickyPad/>
+        <textfield name="content" label="Text über dem Wiki"/>
+        <wiki:getPage xmlns:wiki="http://plugins.tizzit.org/org.tizzit.plugins.server.confluence.ConfluenceTransformer:ConfluenceTransformer">
+            <simpletextfield name="pageId" label="Page Id"/>
+            <wikiURLs/>
+            <checkBox name="useStyles" label="Wikicontent inkl. Styles einbinden?">
+                <box label="Yes" elementname="useStyles" selected="false">true</box>
+            </checkBox>
+        </wiki:getPage>
+        <web20/>
+        <sn_footer>
+            <delicious/>
+            <facebook/>
+            <twitter/>
+            <digg/>
+            <stumble/>
+            <rrs/>
+        </sn_footer>
+    </all>
+</source>

@@ -85,10 +85,10 @@
 	<map:resources>
 		<map:resource name="navresource">
 			<map:generate type="CmsContent"
-				src="{system-property:cqCmsTemplatesPath}navmodules/config/{module}.xml">
+				src="{tizzit-property:cmsTemplatesPath}navmodules/config/{module}.xml">
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 				<map:parameter name="disableNavigation" value="false"/>
 				<map:parameter name="disableNavigationBackward" value="false"/>
 				<map:parameter name="disableNavigationAxis" value="false"/>
@@ -105,7 +105,7 @@
 				<map:parameter name="parameter-selector-test" value="{filetype}"/>
 				<map:when test="xhtml">
 					<map:transform type="xalan"
-						src="{system-property:cqCmsTemplatesPath}navmodules/templates/{module}.xsl">
+						src="{tizzit-property:cmsTemplatesPath}navmodules/templates/{module}.xsl">
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
@@ -118,7 +118,7 @@
 				</map:when>
 				<map:when test="html">
 					<map:transform
-						src="{system-property:cqCmsTemplatesPath}navmodules/templates/{module}.xsl">
+						src="{tizzit-property:cmsTemplatesPath}navmodules/templates/{module}.xsl">
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
@@ -134,10 +134,10 @@
 
 		<map:resource name="navresourcetemplate">
 			<map:generate type="CmsContent"
-				src="{system-property:cqCmsTemplatesPath}navmodules/config/{module}.xml">
+				src="{tizzit-property:cmsTemplatesPath}navmodules/config/{module}.xml">
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 				<map:parameter name="disableNavigation" value="false"/>
 				<map:parameter name="disableNavigationBackward" value="false"/>
 				<map:parameter name="disableNavigationAxis" value="false"/>
@@ -154,7 +154,7 @@
 				<map:parameter name="parameter-selector-test" value="{filetype}"/>
 				<map:when test="xhtml">
 					<map:transform type="saxon"
-						src="{system-property:cqCmsTemplatesPath}navmodules/templates/{module}.xsl">
+						src="{tizzit-property:cmsTemplatesPath}navmodules/templates/{module}.xsl">
 						<map:parameter name="language" value="{language}"/>
 						<map:parameter name="url" value="{url}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
@@ -175,7 +175,7 @@
 			<map:generate type="CmsContent" src="navmodules/config/{module}.xml">
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 				<map:parameter name="disableNavigation" value="false"/>
 				<map:parameter name="disableNavigationBackward" value="false"/>
 				<map:parameter name="disableNavigationAxis" value="false"/>
@@ -218,7 +218,7 @@
 			<map:generate type="CmsContent" src="navmodules/config/{module}.xml">
 				<map:parameter name="parameters" value="true"/>
 				<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 				<map:parameter name="disableNavigation" value="false"/>
 				<map:parameter name="disableNavigationBackward" value="false"/>
 				<map:parameter name="disableAggregations" value="true"/>
@@ -272,7 +272,7 @@
 					<map:generate type="CmsContent">
 						<map:parameter name="parameters" value="true"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="disableAggregations" value="false"/>
 						<map:parameter name="disableInternalLinks" value="false"/>
 						<map:parameter name="disableUnitInformation" value="false"/>
@@ -297,7 +297,7 @@
 					<map:generate type="CmsContent">
 						<map:parameter name="parameters" value="true"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="disableAggregations" value="false"/>
 						<map:parameter name="disableInternalLinks" value="false"/>
 						<map:parameter name="disableUnitInformation" value="true"/>
@@ -343,7 +343,7 @@
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="randomValue" value="{random:x}"/>
@@ -367,7 +367,7 @@
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="randomValue" value="{random:x}"/>
@@ -393,7 +393,7 @@
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="contextRoot" value="{realpath:}/"/>
@@ -409,7 +409,7 @@
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="contextRoot" value="{realpath:}/"/>
@@ -425,7 +425,7 @@
 						<map:parameter name="currentDate" value="{currentDate}"/>
 						<map:parameter name="viewComponentId" value="{viewComponentId}"/>
 						<map:parameter name="use-request-parameters" value="true"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="template" value="{template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="randomValue" value="{random:x}"/>
@@ -460,12 +460,12 @@
 						<map:parameter name="layout" value="{../../layout}"/>
 						<map:parameter name="content-template" value="{../template}"/>
 					</map:transform>
-					<map:transform src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl" label="content">
+					<map:transform src="{tizzit-property:cmsTemplatesPath}templates/layouts/aggregation4css.xsl" label="content">
 						<map:parameter name="currentDate" value="{../currentDate}"/>
 						<map:parameter name="language" value="{../../language}"/>
 						<map:parameter name="url" value="{../../url}"/>
 						<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
-						<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+						<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 						<map:parameter name="template" value="{../template}"/>
 						<map:parameter name="clientCode" value="{global:clientCode}"/>
 						<map:parameter name="disableLanguageVersions" value="false"/>
@@ -489,7 +489,7 @@
 										<map:parameter name="currentDate" value="{../currentDate}"/>
 										<map:parameter name="viewComponentId" value="{../viewComponentId}"/>
 										<map:parameter name="use-request-parameters" value="true"/>
-										<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+										<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 										<map:parameter name="template" value="{../template}"/>
 										<map:parameter name="content-template" value="{../template}"/>
 										<map:parameter name="clientCode" value="{global:clientCode}"/>
@@ -500,7 +500,7 @@
 										<map:parameter name="safeguardUsername" value="{../safeguardUsername}"/>
 									</map:transform>
 									<map:transform
-										src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
+										src="{tizzit-property:cmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
 									<map:serialize type="xhtml"/>
 								</map:when>
 								<map:otherwise>
@@ -540,18 +540,18 @@
 				<map:parameter name="viewType" value="browser"/>
 				<map:generate src="{global:parentMandator}httpd/xml/dummy.xml"/>
 				<map:transform
-					src="{global:parentMandator}templates/layouts/aggregationGenerator.xsl">
+					src="templates/layouts/aggregationGenerator.xsl">
 					<map:parameter name="layout" value="{../layout}"/>
 					<map:parameter name="content-template" value="{../template}"/>
 				</map:transform>
 				<map:transform
-					src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation4css.xsl"
+					src="{tizzit-property:cmsTemplatesPath}templates/layouts/aggregation4css.xsl"
 					label="content">
 					<map:parameter name="currentDate" value="{currentDate}"/>
 					<map:parameter name="language" value="{language}"/>
 					<map:parameter name="url" value="{../url}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 					<map:parameter name="template" value="{template}"/>
 					<map:parameter name="clientCode" value="{global:clientCode}"/>
 					<map:parameter name="disableLanguageVersions" value="false"/>
@@ -578,7 +578,7 @@
 										value="{viewComponentId}"/>
 									<map:parameter name="use-request-parameters" value="true"/>
 									<map:parameter name="liveserver"
-										value="{system-property:cqLiveserver}"/>
+										value="{tizzit-property:liveserver}"/>
 									<map:parameter name="template" value="{template}"/>
 									<map:parameter name="content-template" value="{template}"/>
 									<map:parameter name="clientCode" value="{global:clientCode}"/>
@@ -590,7 +590,7 @@
 										value="{safeguardUsername}"/>
 								</map:transform>
 								<map:transform
-									src="{system-property:cqCmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
+									src="{tizzit-property:cmsTemplatesPath}templates/includes/removeNamespaces.xsl"/>
 								<map:serialize type="xhtml"/>
 							</map:when>
 							<map:otherwise>
@@ -636,12 +636,12 @@
 					<map:parameter name="content-template" value="{template}"/>
 				</map:transform>
 				<map:transform
-					src="{system-property:cqCmsTemplatesPath}templates/layouts/aggregation.xsl"
+					src="{tizzit-property:cmsTemplatesPath}templates/layouts/aggregation.xsl"
 					label="content">
 					<map:parameter name="currentDate" value="{currentDate}"/>
 					<map:parameter name="url" value="{../url}"/>
 					<map:parameter name="viewComponentId" value="{viewComponentId}"/>
-					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 					<map:parameter name="template" value="{template}"/>
 					<map:parameter name="clientCode" value="{global:clientCode}"/>
 					<map:parameter name="language" value="{language}"/>
@@ -650,7 +650,7 @@
 					<map:parameter name="parameter-selector-test" value="{../filetype}"/>
 					<map:when test="html">
 						<map:transform type="saxon"
-							src="{system-property:cqCmsTemplatesPath}/templates/aggregation-debugger.xsl"/>
+							src="{tizzit-property:cmsTemplatesPath}/templates/aggregation-debugger.xsl"/>
 						<map:serialize type="xhtml"/>
 					</map:when>
 					<map:otherwise>
@@ -686,7 +686,7 @@
 					<map:parameter name="disableFulltext" value="false"/>
 					<map:parameter name="disableNavigation" value="false"/>
 					<map:parameter name="disableMeta" value="false"/>
-					<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+					<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 					<map:parameter name="disableHeadLine" value="true"/>
 					<map:parameter name="disableNavigationBackward" value="true"/>
 				</map:generate>
@@ -707,7 +707,7 @@
 				<map:parameter name="disableFulltext" value="false"/>
 				<map:parameter name="disableNavigation" value="false"/>
 				<map:parameter name="disableMeta" value="false"/>
-				<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+				<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 				<map:parameter name="disableHeadLine" value="true"/>
 				<map:parameter name="disableNavigationBackward" value="false"/>
 			</map:generate>
@@ -770,9 +770,6 @@
 			<map:match pattern="httpd/html/**/*.html">
 				<map:read src="{global:parentMandator}httpd/html/{1}/{2}.html" mime-type="text/html"
 				/>
-			</map:match>
-			<map:match pattern="erbitux/**.css">
-				<map:read src="../../merckserono-erbitux-prototype/html/{1}.css" mime-type="css"/>
 			</map:match>
 			<map:match pattern="erbitux/**">
 				<map:read src="../../merckserono-erbitux-prototype/html/{1}"/>
@@ -1147,7 +1144,7 @@
 						<map:generate type="notifying"/>
 						<map:transform src="templates/html/errorpages/common.xsl">
 							<map:parameter name="statusCode" value="404"/>
-							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+							<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="requestHost" value="{request:serverName}"/>
 							<map:parameter name="language"
@@ -1160,7 +1157,7 @@
 						<map:generate type="notifying"/>
 						<map:transform src="templates/html/errorpages/common.xsl">
 							<map:parameter name="statusCode" value="404"/>
-							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+							<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="language"
 								value="{conquest-properties:default-language-{global:clientCode}}"/>
@@ -1172,7 +1169,7 @@
 						<map:generate type="notifying"/>
 						<map:transform src="templates/html/errorpages/common.xsl">
 							<map:parameter name="statusCode" value="500"/>
-							<map:parameter name="liveserver" value="{system-property:cqLiveserver}"/>
+							<map:parameter name="liveserver" value="{tizzit-property:liveserver}"/>
 							<map:parameter name="requestURI" value="{request:requestURI}"/>
 							<map:parameter name="language"
 								value="{conquest-properties:default-language-{global:clientCode}}"/>

@@ -55,6 +55,21 @@
 		</form-element-list>
 	</xsl:template>
 	
+	<xsl:template match="wikiURLs">
+		<wikiURLs dcfname="wikiURL" label="Wiki Urls">
+			<dcfConfig>
+				<classname>de.juwimm.cms.content.modules.SimpleDropDown</classname>
+				<mandatory>false</mandatory>
+				<property name="dropdownValues">
+					<name>http://wiki.tizzit.org</name>
+					<value>http://wiki.tizzit.org</value>
+				</property>
+				<xsl:apply-templates select="." mode="include"/>
+			</dcfConfig>
+			<dcfInitial/>
+		</wikiURLs>
+	</xsl:template>
+	
 	<xsl:template match="web20">
 		<web20 label="WEB 2.0 Settings" dcfname="web20">
 			<dcfConfig>
