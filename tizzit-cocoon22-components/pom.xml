@@ -411,21 +411,6 @@
         <artifactId>maven-install-plugin</artifactId>
         <version>2.3</version>
         <executions>
-          <!-- patched -->
-          <execution>
-            <id>patched-cocoon-sitemap-impl</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>${pom.basedir}/src/patched/resources/cocoon-sitemap-impl-1.0.0-pl2.jar</file>
-              <groupId>org.apache.cocoon</groupId>
-              <artifactId>cocoon-sitemap-impl</artifactId>
-              <version>1.0.0-pl2</version>
-              <packaging>jar</packaging>
-            </configuration>
-          </execution>
           <!-- compiled from source -->
           <execution>
             <id>compiledFromSrc-cocoon-profiler-impl</id>
