@@ -25,8 +25,8 @@ import de.juwimm.cms.plugins.Constants;
  * @version $Id$
  * @since tizzit-plugin-sample 08.10.2009
  */
-public class TizzitPluginImplTest extends TestCase {
-	private static final Log log = LogFactory.getLog(TizzitPluginImplTest.class);
+public class AbstractKeyValuePluginTest extends TestCase {
+	private static final Log log = LogFactory.getLog(AbstractKeyValuePluginTest.class);
 
 	public void testPlugin() throws Exception {
 		if (log.isDebugEnabled()) log.debug("testPlugin() -> begin");
