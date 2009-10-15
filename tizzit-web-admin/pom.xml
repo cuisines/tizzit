@@ -73,7 +73,7 @@
                      <type>zip</type>                            
                   </artifactItem>
                </artifactItems>
-               <outputDirectory>${project.build.directory}/${project.build.finalName}/</outputDirectory>
+               <outputDirectory>target/${project.build.finalName}/</outputDirectory>
             </configuration>
          </plugin>
          <plugin>
