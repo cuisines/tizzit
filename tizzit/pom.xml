@@ -603,7 +603,7 @@
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
           <connectionUrl>scm:svn:http://tizzit.googlecode.com/svn/trunk/tizzit</connectionUrl>
-          
+
 					<!--
 						override default "clean, verify" preparationGoals with just "install":
 						- clean: causes problems with bootstrapping usage of jetspeed-maven-plugins which would first need to be build
@@ -613,10 +613,10 @@
 					<preparationGoals>install</preparationGoals>
 					<arguments>-DgwtHome17=/opt/gwt-linux-1.7.0/</arguments>
 
-          
+
         </configuration>
       </plugin>
-			 
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -669,6 +669,7 @@
 		<module>../tizzit-common</module>
 
 		<module>../tizzit-plugin-api</module>
+		<module>../tizzit-plugin-impl</module>
 		<module>../tizzit-plugin-confluence</module>
 		<module>../tizzit-core</module>
 		<module>../tizzit-xmlsearch-xindice</module>
