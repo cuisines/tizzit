@@ -12,7 +12,7 @@
 		<version>1.0</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
-	<version>${tizzit.version}</version>
+	<version>3.0.3-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>

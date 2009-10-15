@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.tizzit</groupId>
    <artifactId>tizzit-web-admin</artifactId>
-	<version>${tizzit.version}</version>
+	<version>3.0.3-SNAPSHOT</version>
 	<packaging>war</packaging>
    <name>tizzit Web Admin</name>
 	<parent>
@@ -15,9 +15,9 @@
 	</parent>
 	<dependencies>
 	   <dependency>
-	      <groupId>${pom.groupId}</groupId>
+	      <groupId>org.tizzit</groupId>
 	      <artifactId>tizzit-webstart</artifactId>
-	      <version>${tizzit.version}</version>
+	      <version>3.0.3-SNAPSHOT</version>
 	   </dependency>
 	   <dependency>
 	      <groupId>javax.servlet</groupId>
@@ -69,9 +69,9 @@
             <configuration>
                <artifactItems>
                   <artifactItem>
-                     <groupId>${pom.groupId}</groupId>
+                     <groupId>org.tizzit</groupId>
                      <artifactId>tizzit-richclient</artifactId>
-                     <version>${tizzit.version}</version>
+                     <version>3.0.3-SNAPSHOT</version>
                      <type>zip</type>                            
                   </artifactItem>
                </artifactItems>

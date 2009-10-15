@@ -19,12 +19,12 @@
       <dependency>
          <groupId>org.tizzit</groupId>
          <artifactId>tizzit-common</artifactId>
-         <version>${tizzit.version}</version>
+         <version>3.0.3-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.tizzit</groupId>
          <artifactId>tizzit-plugin-api</artifactId>
-         <version>${tizzit.version}</version>
+         <version>3.0.3-SNAPSHOT</version>
       </dependency>
 
       <dependency>

@@ -12,7 +12,7 @@
   <name>tizzit Cocoon 2.2 Web Application</name>
   <groupId>org.tizzit</groupId>
   <artifactId>tizzit-web-cocoon22</artifactId>
-  <version>${tizzit.version}</version>
+  <version>3.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <build>
@@ -45,9 +45,9 @@
   <dependencies>
       <!-- TizziT - Cocoon components / block-->
       <dependency>
-        <groupId>${pom.groupId}</groupId>
+        <groupId>org.tizzit</groupId>
         <artifactId>tizzit-cocoon22-components</artifactId>
-        <version>${tizzit.version}</version>
+        <version>3.0.3-SNAPSHOT</version>
       </dependency>
     <dependency>
       <groupId>commons-collections</groupId>
@@ -55,9 +55,9 @@
       <version>3.2</version>
     </dependency>
       <dependency>
-        <groupId>${pom.groupId}</groupId>
+        <groupId>org.tizzit</groupId>
         <artifactId>tizzit-core</artifactId>
-        <version>${tizzit.version}</version>
+        <version>3.0.3-SNAPSHOT</version>
         <exclusions>
           <exclusion>
             <groupId>commons-collections</groupId>
@@ -66,19 +66,19 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>${pom.groupId}</groupId>
+        <groupId>org.tizzit</groupId>
         <artifactId>tizzit-common</artifactId>
-        <version>${tizzit.version}</version>
+        <version>3.0.3-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>${pom.groupId}</groupId>
+        <groupId>org.tizzit</groupId>
         <artifactId>tizzit-plugin-api</artifactId>
-        <version>${tizzit.version}</version>
+        <version>3.0.3-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>${pom.groupId}</groupId>
+        <groupId>org.tizzit</groupId>
         <artifactId>tizzit-xmlsearch-xindice</artifactId>
-        <version>${tizzit.version}</version>
+        <version>3.0.3-SNAPSHOT</version>
       </dependency>
   </dependencies>
 

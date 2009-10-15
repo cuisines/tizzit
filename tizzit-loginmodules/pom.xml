@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-loginmodules</artifactId>
-	<version>${tizzit.version}</version>
+	<version>3.0.3-SNAPSHOT</version>
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>

@@ -2,7 +2,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.tizzit</groupId>
    <artifactId>tizzit-xmlsearch-xindice</artifactId>
-   <version>${tizzit.version}</version>
+   <version>3.0.3-SNAPSHOT</version>
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
@@ -13,9 +13,9 @@
    <name>tizzit XMLSearch Xindice Component</name>
    <dependencies>
       <dependency>
-         <groupId>${pom.groupId}</groupId>
+         <groupId>org.tizzit</groupId>
          <artifactId>tizzit-core</artifactId>
-         <version>${tizzit.version}</version>
+         <version>3.0.3-SNAPSHOT</version>
       </dependency> 
       <dependency>
          <groupId>xindice</groupId>

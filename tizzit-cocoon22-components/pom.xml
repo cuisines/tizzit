@@ -10,28 +10,28 @@
   <groupId>org.tizzit</groupId>
   <artifactId>tizzit-cocoon22-components</artifactId>
   <name>tizzit Cocoon 2.2 Components / Block</name>
-  <version>${tizzit.version}</version>
+  <version>3.0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
-      <groupId>${pom.groupId}</groupId>
+      <groupId>org.tizzit</groupId>
       <artifactId>tizzit-core</artifactId>
-      <version>${tizzit.version}</version>
+      <version>3.0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>${pom.groupId}</groupId>
+      <groupId>org.tizzit</groupId>
       <artifactId>tizzit-common</artifactId>
-      <version>${tizzit.version}</version>
+      <version>3.0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>${pom.groupId}</groupId>
+      <groupId>org.tizzit</groupId>
       <artifactId>tizzit-plugin-api</artifactId>
-      <version>${tizzit.version}</version>
+      <version>3.0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>${pom.groupId}</groupId>
+      <groupId>org.tizzit</groupId>
       <artifactId>tizzit-xmlsearch-xindice</artifactId>
-      <version>${tizzit.version}</version>
+      <version>3.0.3-SNAPSHOT</version>
     </dependency>
 
     <!-- Cocoon core and blocks -->
