@@ -179,6 +179,9 @@
       </map:serializer>
       <map:serializer logger="sitemap.serializer.fo2ps" mime-type="application/postscript" name="fo2ps" src="org.apache.cocoon.serialization.FOPSerializer" />
       <map:serializer logger="sitemap.serializer.fo2pcl" mime-type="vnd.hp-PCL" name="fo2pcl" src="org.apache.cocoon.serialization.FOPSerializer" />
+
+      <!-- JIRA: TIZZIT-247 -->
+      <map:serializer name="xls" logger="sitemap.serializer.xls" src="org.apache.cocoon.serialization.HSSFSerializer"/>
     </map:serializers>
     <!--+
       | Readers circumvent the XML oriented SAX pipeline model, think of a reader
@@ -537,7 +540,7 @@
 			<map:generate type="exception"/>
             <map:serialize status-code="404" />
           </map:when>
-          <map:otherwise> 
+          <map:otherwise>
             <map:generate type="exception"/>
             <map:serialize status-code="500" />
           </map:otherwise>
