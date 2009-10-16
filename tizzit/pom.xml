@@ -936,54 +936,20 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<reporting>
-		<plugins>
-			<!-- javadoc -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<aggregate>false</aggregate>
-				</configuration>
-			</plugin>
-			<!-- Source Xref
-				<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jxr-maven-plugin</artifactId>
-				</plugin>
-			-->
-			<!-- Unit test report -->
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-			</plugin>
-			<!-- Clover -->
-			<!-- plugin>
-				<artifactId>maven-clover-plugin</artifactId>
-			</plugin -->
-			<!-- ToDo list (using @todo in the code) -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>taglist-maven-plugin</artifactId>
-			</plugin>
-			<!-- Check the code style -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-			</plugin>
-			<!-- Changelog
-				<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changelog-plugin</artifactId>
-				</plugin>
-			-->
-			<!-- PMD report
-				<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				</plugin>
-			-->
-		</plugins>
-	</reporting>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.6</version>
+        				<configuration>
+						<aggregate>false</aggregate>
+					</configuration>
+
+      </plugin>
+    </plugins>
+    ...
+  </reporting>
 
 
 
