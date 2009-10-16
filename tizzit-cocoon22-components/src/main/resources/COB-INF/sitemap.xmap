@@ -181,7 +181,8 @@
       <map:serializer logger="sitemap.serializer.fo2pcl" mime-type="vnd.hp-PCL" name="fo2pcl" src="org.apache.cocoon.serialization.FOPSerializer" />
 
       <!-- JIRA: TIZZIT-247 -->
-      <map:serializer name="xls" logger="sitemap.serializer.xls" src="org.apache.cocoon.serialization.HSSFSerializer"/>
+      <!-- application/vnd.ms-excel -->
+      <map:serializer name="xls" logger="sitemap.serializer.xls" mime-type="application/msexcel" src="org.apache.cocoon.serialization.HSSFSerializer"/>
     </map:serializers>
     <!--+
       | Readers circumvent the XML oriented SAX pipeline model, think of a reader
