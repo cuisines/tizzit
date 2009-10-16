@@ -3,13 +3,13 @@
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.3</version>
+	<version>3.0.4-SNAPSHOT</version>
 	<name>tizzit</name>
 	<description>The Tizzit Project.</description>
 	<scm>
-		<connection>scm:svn:http://tizzit.googlecode.com/svn/tags/tizzit-3.0.3/tizzit</connection>
-		<developerConnection>scm:svn:https://tizzit.googlecode.com/svn/tags/tizzit-3.0.3/tizzit</developerConnection>
-		<url>http://tizzit.googlecode.com/svn/tags/tizzit-3.0.3/tizzit</url>
+		<connection>scm:svn:http://tizzit.googlecode.com/svn/trunk/tizzit</connection>
+		<developerConnection>scm:svn:https://tizzit.googlecode.com/svn/trunk/tizzit</developerConnection>
+		<url>http://tizzit.googlecode.com/svn/trunk/tizzit</url>
 	</scm>
 	<organization>
 		<name>Juwi MacMillan Group GmbH</name>
