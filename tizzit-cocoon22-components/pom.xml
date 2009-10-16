@@ -44,7 +44,7 @@
         <exclusion>
           <groupId>org.apache.cocoon</groupId>
           <artifactId>cocoon-sitemap-impl</artifactId>
-        </exclusion> 
+        </exclusion>
 				        <exclusion>
 				          <groupId>org.springframework</groupId>
 				          <artifactId>spring-beans</artifactId>
@@ -56,7 +56,7 @@
 			        <exclusion>
 			          <groupId>org.springframework</groupId>
 			          <artifactId>spring-web</artifactId>
-			        </exclusion> 
+			        </exclusion>
 							        <exclusion>
 							          <groupId>org.springframework</groupId>
 							          <artifactId>spring-context</artifactId>
@@ -77,7 +77,7 @@
         <exclusion>
           <groupId>org.apache.cocoon</groupId>
           <artifactId>cocoon-sitemap-impl</artifactId>
-        </exclusion>	
+        </exclusion>
 	        <exclusion>
 	          <groupId>org.springframework</groupId>
 	          <artifactId>spring-aop</artifactId>
@@ -89,7 +89,7 @@
 		        <exclusion>
 		          <groupId>org.springframework</groupId>
 		          <artifactId>spring-web</artifactId>
-		        </exclusion>	
+		        </exclusion>
 						        <exclusion>
 						          <groupId>org.springframework</groupId>
 						          <artifactId>spring-context</artifactId>
@@ -114,7 +114,7 @@
         <exclusion>
           <groupId>org.apache.cocoon</groupId>
           <artifactId>cocoon-sitemap-api</artifactId>
-        </exclusion>	
+        </exclusion>
 					        <exclusion>
 					          <groupId>org.springframework</groupId>
 					          <artifactId>spring-beans</artifactId>
@@ -134,7 +134,7 @@
 	        <exclusion>
 	          <groupId>org.springframework</groupId>
 	          <artifactId>spring-web</artifactId>
-	        </exclusion>	
+	        </exclusion>
 					        <exclusion>
 					          <groupId>org.springframework</groupId>
 					          <artifactId>spring-core</artifactId>
@@ -159,7 +159,7 @@
 	        <exclusion>
 	          <groupId>org.springframework</groupId>
 	          <artifactId>spring-web</artifactId>
-	        </exclusion>	
+	        </exclusion>
 					        <exclusion>
 					          <groupId>org.springframework</groupId>
 					          <artifactId>spring-core</artifactId>
@@ -283,12 +283,12 @@
 	        <exclusion>
 	          <groupId>org.springframework</groupId>
 	          <artifactId>spring-web</artifactId>
-	        </exclusion>	
+	        </exclusion>
 					        <exclusion>
 					          <groupId>org.springframework</groupId>
 					          <artifactId>spring-core</artifactId>
 					        </exclusion>
-					
+
 								        <exclusion>
 								          <groupId>org.springframework</groupId>
 								          <artifactId>spring-context-support</artifactId>
@@ -394,7 +394,7 @@
     <dependency>
       <groupId>org.apache.cocoon</groupId>
       <artifactId>cocoon-xsp-impl</artifactId>
-      <version>1.0.0-beta-1</version>
+      <version>1.0.0-beta-2</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.cocoon</groupId>
