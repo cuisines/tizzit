@@ -1523,6 +1523,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		String retVal = "";
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(byteOut, true, "UTF-8");
+		out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+		out.print("<site>\n");
 		out.print("<hostUrl>" + hostUrl + "</hostUrl>\n");
 		getViewComponentHbmDao().toXmlComplete(viewComponentId, true, null, true, 1, true, false, out);
 		if (withMedia) {
@@ -1536,6 +1538,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				getMediaXML(doc, out, "document", "src");
 			}
 		}
+		out.print("</site>");
 		retVal = byteOut.toString("UTF-8");
 		return retVal;
 	}
@@ -1572,8 +1575,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	@Override
 	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString, boolean withMedia, boolean withChildren, Integer unitId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+
+		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
+		ViewComponentHbm firstChild = parent.getFirstChild();
+		ViewComponentHbm viewComponent = getViewComponentHbmDao().createFromXml(parentId, xmlString, withChildren);
+		parent.addChild(viewComponent);
+		viewComponent.setParent(parent);
+
+		if (firstChild != null) {
+			viewComponent.setNextNode(firstChild);
+			firstChild.setPrevNode(viewComponent);
+			parent.setFirstChild(viewComponent);
+		} else {
+			parent.setFirstChild(viewComponent);
+		}
+
+		return viewComponent.getDao();
 	}
 
 }

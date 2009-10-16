@@ -27,6 +27,10 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
+import org.tizzit.util.XercesHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants;
@@ -87,7 +91,6 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	 */
 	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
-
 		out.print("<viewcomponent id=\"");
 		out.print(current.getViewComponentId());
 		out.print("\" unitId=\"");
@@ -805,9 +808,63 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	}
 
 	@Override
-	protected ViewComponentHbm handleCreateFromXml(String xmlString, boolean withChildren) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	protected ViewComponentHbm handleCreateFromXml(Integer parentId, String xmlString, boolean withChildren) throws Exception {
+		ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
+		ViewComponentHbm parent = load(parentId);
+		Document doc = XercesHelper.string2Dom(xmlString);
+		try {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("viewcomponent.view_component_id");
+			viewComponent.setViewComponentId(id);
+		} catch (Exception e) {
+			log.error("Error creating/setting primary key", e);
+		}
+		Iterator it = XercesHelper.findNodes(doc, "//viewcomponent");
+		while (it.hasNext()) {
+			Node nodeViewComponent = (Node) it.next();
+			//String reference = XercesHelper.getNodeValue(nodeViewComponent, "//reference");
+			String linkName = XercesHelper.getNodeValue(nodeViewComponent, "//linkName");
+			String approvedLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//approvedLinkName");
+			String statusInfo = XercesHelper.getNodeValue(nodeViewComponent, "//statusInfo");
+			String urlLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//urlLinkName");
+			viewComponent.setDisplayLinkName(linkName);
+			viewComponent.setApprovedLinkName(approvedLinkName);
+			viewComponent.setLinkDescription(statusInfo);
+			viewComponent.setUrlLinkName(urlLinkName);
+			byte viewType = new Byte(XercesHelper.getNodeValue(nodeViewComponent, "//viewType")).byteValue();
+			boolean visible = Boolean.valueOf(XercesHelper.getNodeValue(nodeViewComponent, "//visible")).booleanValue();
+			viewComponent.setMetaData(XercesHelper.getNodeValue(nodeViewComponent, "./metaKeywords"));
+			viewComponent.setMetaDescription(XercesHelper.getNodeValue(nodeViewComponent, "./metaDescription"));
+			String onlineStart = XercesHelper.getNodeValue(nodeViewComponent, "./onlineStart");
+			if (!onlineStart.equals("")) {
+				if (log.isDebugEnabled()) log.debug("OnlineStart: " + onlineStart);
+				viewComponent.setOnlineStart(Long.parseLong(onlineStart));
+			}
+			String onlineStop = XercesHelper.getNodeValue(nodeViewComponent, "./onlineStop");
+			if (!onlineStop.equals("")) {
+				if (log.isDebugEnabled()) log.debug("OnlineStop: " + onlineStop);
+				viewComponent.setOnlineStop(Long.parseLong(onlineStop));
+			}
+			viewComponent.setViewLevel(XercesHelper.getNodeValue(nodeViewComponent, "./viewLevel"));
+			viewComponent.setViewIndex(XercesHelper.getNodeValue(nodeViewComponent, "./viewIndex"));
+			viewComponent.setDisplaySettings(Byte.parseByte(XercesHelper.getNodeValue(nodeViewComponent, "./displaySettings")));
+			viewComponent.setShowType(Byte.parseByte(XercesHelper.getNodeValue(nodeViewComponent, "./showType")));
+			viewComponent.setViewType(viewType);
+			viewComponent.setVisible(visible);
+			viewComponent.setSearchIndexed(Boolean.valueOf(XercesHelper.getNodeValue(nodeViewComponent, "./searchIndexed")).booleanValue());
+			viewComponent.setXmlSearchIndexed(Boolean.valueOf(XercesHelper.getNodeValue(nodeViewComponent, "./xmlSearchIndexed")).booleanValue());
+			byte status = Constants.DEPLOY_STATUS_EDITED;
+			viewComponent.setStatus(status);
+			viewComponent.setOnline((byte) 0);
+			Element cnde = (Element) XercesHelper.findNode(nodeViewComponent, "//content");
+			if (cnde != null) {
+				ContentHbm content = getContentHbmDao().createFromXml(cnde, false, false);
+				viewComponent.setReference(content.getContentId().toString());
+			}
+
+		}
+		viewComponent.setChildren(null);
+		viewComponent.setViewDocument(parent.getViewDocument());
+		return create(viewComponent);
 	}
 
 }
