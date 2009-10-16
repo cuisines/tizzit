@@ -134,6 +134,25 @@ public class UserHbmImpl extends de.juwimm.cms.authorization.model.UserHbm {
 	 */
 
 	public de.juwimm.cms.authorization.vo.UserLoginValue getUserLoginValue() {
+		//		log.info(">>>>>>>>>>>>>>>>>>>> am in getUserLoginValue...");
+		//		UserLoginValue value = new UserLoginValue();
+		//		log.info(">>>>>>>>>>>>>>>>>>>> created Value...");
+		//		value.setUser(getUserValue());
+		//		log.info(">>>>>>>>>>>>>>>>>>>> set user...");
+		//		value.setSiteConfigXML(getConfigXML());
+		//		log.info(">>>>>>>>>>>>>>>>>>>> set xml config");
+		//		log.info(">>>>>>>>>>>>>>>>>>>> active site: " + getActiveSite());
+		//		value.setSiteName(getActiveSite().getName());
+		//		log.info(">>>>>>>>>>>>>>>>>>>> found and set active Site...");
+		//		Collection units = getUnits();
+		//		log.info(">>>>>>>>>>>>>>>>>>>> the units...: " + units);
+		//		UnitValue[] uv = new UnitValue[units.size()];
+		//		int i = 0;
+		//		for (Iterator it = units.iterator(); it.hasNext();) {
+		//			uv[i++] = ((UnitValue) it.next());
+		//		}
+		//		value.setUnits(uv);
+		//		return value;
 		return null;
 	}
 

@@ -49,6 +49,11 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.SpringSecurityException;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
 import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Element;
@@ -476,29 +481,20 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		} catch (Exception exe) {
 			// context.setRollbackOnly();
 			log.error("Error occured processFileImport", exe);
-			// AxisFault af = new AxisFault();
-			// af.setFaultDetailString(exe.getMessage());
-			// af.setFaultActor("processFileImport " + exe.getMessage());
-			// throw af;
 			throw exe;
 			// this.createUserTask(context.getCallerPrincipal().getName(), "Error importing edition: " + exe.getMessage(), rootVcId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
 		} finally {
-			try {
-				new File(editionFileName).delete();
-			} catch (Exception exe) {
-			}
-			try {
-				preparsedXMLfile.delete();
-			} catch (Exception exe) {
-			}
+			//			try {
+			//				new File(editionFileName).delete();
+			//			} catch (Exception exe) {
+			//			}
+			//			try {
+			//				preparsedXMLfile.delete();
+			//			} catch (Exception exe) {
+			//			}
 			System.gc();
 		}
 		if (log.isInfoEnabled()) log.info("End processFileImport");
-		// this.createUserTask(context.getCallerPrincipal().getName(), "Import of edition finished successfully!", rootVcId, Constants.TASK_SYSTEMMESSAGE_INFORMATION, true);
-		// } catch (Exception e) {
-		// //this.createUserTask(context.getCallerPrincipal().getName(), "Error importing edition: " + e.getMessage(), rootVcId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
-		// throw new UserException(e.getMessage());
-		// }
 	}
 
 	/**
@@ -1543,20 +1539,31 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 			if (liveServerIP == null || liveServerIP.equals("") || "".equalsIgnoreCase(liveUserName)) {
 				log.error("LiveServerIP is not correct: " + liveServerIP);
-				//TODO: throw error
+				throw new UserException("LiveServerIP is not correct: " + liveServerIP);
 			}
-			String soapURL = "http://" + liveServerIP + "/webservice/services/";
 
 			try {
-				if (log.isInfoEnabled()) log.info("publishEditionToLiveserver - using URL: " + soapURL);
+				if (log.isInfoEnabled()) log.info("publishEditionToLiveserver - using URL: " + "http://" + liveServerIP);
 				EditionHbm edition = super.getEditionHbmDao().load(editionId);
 
 				int unitId = edition.getUnitId();
 				int viewDocumentId = edition.getViewDocumentId();
 
 				System.setProperty("tizzit-liveserver.remoteServer", "http://" + liveServerIP);
-
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
+
+				try {
+					SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
+					RemoteAuthenticationManager remoteAuthenticationService = (RemoteAuthenticationManager) ctx.getBean("remoteRemoteAuthenticationManagerServiceDeploy");
+					//RemoteAuthenticationManager remoteAuthenticationService = RemoteServiceLocator.instance().getRemoteAuthenticationService();
+					GrantedAuthority[] authorities = remoteAuthenticationService.attemptAuthentication(liveUserName, String.valueOf(livePassword));
+					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(liveUserName, String.valueOf(livePassword), authorities));
+					log.debug(SecurityContextHolder.getContext().getAuthentication());
+				} catch (SpringSecurityException e) {
+					log.info("authentication failed: " + e.getMessage());
+					throw new UserException(e.getMessage());
+				}
+
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
 				if (log.isInfoEnabled()) log.info("Logging in on Liveserver...");
 				autoSpring.login(liveUserName, livePassword, site.getSiteId().intValue());
@@ -1568,17 +1575,18 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
 
-				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceSpringLiveServer");
+				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceDeploySpring");
 				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false);
 
 				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
 
 				if (log.isInfoEnabled()) log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
 				ViewComponentHbm vcl = super.getViewComponentHbmDao().find4Unit(new Integer(unitId), new Integer(viewDocumentId));
-				vcl.setUnitOnline();
+				//FIXME: uncomment and implement
+				//vcl.setUnitOnline();
 			} catch (Exception exe) {
 				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
-				//TODO: throw error
+				throw new UserException(exe.getMessage());
 			}
 			if (log.isInfoEnabled()) log.info("Finished Live-Deployment successfully - " + info);
 

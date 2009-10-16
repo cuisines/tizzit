@@ -32,6 +32,42 @@
         </property>
         <property name="proxyInterfaces"><value>de.juwimm.cms.authorization.remote.AuthorizationServiceSpring</value></property>
     </bean>
+       
+    <bean id="authenticationManagerDeploy" class="org.springframework.security.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref bean="RemoteAuthenticationProviderDeploy" />
+            </list>
+        </property>
+    </bean>
+   
+    <bean id="RemoteAuthenticationProviderDeploy" class="org.springframework.security.providers.rcp.RemoteAuthenticationProvider">
+        <property name="remoteAuthenticationManager" ref="remoteRemoteAuthenticationManagerServiceDeploy" />
+    </bean>
+    
+     <bean id="remoteRemoteAuthenticationManagerServiceDeploy"
+        class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
+        <property name="serviceUrl">
+            <value>${tizzit-liveserver.remoteServer}/remote/RemoteAuthenticationManagerService</value>
+        </property>
+        <property name="serviceInterface">
+            <value>org.springframework.security.providers.rcp.RemoteAuthenticationManager</value>
+        </property>
+    </bean>
+    
+    <!-- ClientServiceSpring Remote Service Local Proxy with inner ClientServiceSpring Remote Service invoker -->
+    <bean id="clientServiceDeploySpring" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target">
+            <bean class="org.tizzit.util.spring.httpinvoker.StreamSupportingHttpInvokerProxyFactoryBean">
+                <property name="serviceUrl"><value>${tizzit-liveserver.remoteServer}/remote/ClientServiceSpring</value></property>
+                <property name="serviceInterface"><value>de.juwimm.cms.remote.ClientServiceSpring</value></property>
+                <property name="httpInvokerRequestExecutor">
+                    <ref local="httpInvokerRequestExecutor"/>
+                </property>
+            </bean>
+        </property>
+        <property name="proxyInterfaces"><value>de.juwimm.cms.remote.ClientServiceSpring</value></property>
+    </bean>
     
     <bean id="httpInvokerRequestExecutor" class="de.juwimm.cms.common.http.Server2ServerAuthenticationStreamSupportingHttpInvokerRequestExecutor"/>
 </beans>

@@ -47,17 +47,18 @@ import de.juwimm.cms.vo.UnitValue;
  */
 public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDaoBase {
 	private static Log log = LogFactory.getLog(UserHbmDaoImpl.class);
-	
+
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	public UserHbm load(String userId) {
-		if(userId != null){
+		if (userId != null) {
 			userId = userId.toLowerCase();
 		}
 		return super.load(userId);
 	}
+
 	@Override
 	public UserHbm create(UserHbm userHbm) {
 		if (userHbm.getUserId() == null) {
@@ -67,10 +68,10 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 			} catch (Exception e) {
 				log.error("Error creating primary key", e);
 			}
-		}else{
+		} else {
 			userHbm.setUserId(userHbm.getUserId().toLowerCase());
 		}
-		return super.create(userHbm); 
+		return super.create(userHbm);
 	}
 
 	/**
@@ -120,6 +121,7 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 		return coll;
 	}
 
+	@Override
 	protected void handleAddGroup(GroupHbm group, String principal, String username) throws Exception {
 		try {
 			UserHbm userPrincipal = load(principal);
@@ -137,18 +139,27 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 
 	@Override
 	protected UserLoginValue handleGetUserLoginValue(UserHbm user) throws Exception {
+		log.info(">>>>>>>>>>>>>>>>>>>> am in getUserLoginValue...");
 		UserLoginValue value = new UserLoginValue();
+		log.info(">>>>>>>>>>>>>>>>>>>> created Value...");
 		try {
 			value.setUser(user.getUserValue());
+			log.info(">>>>>>>>>>>>>>>>>>>> set user...");
 			value.setSiteConfigXML(user.getConfigXML());
+			log.info(">>>>>>>>>>>>>>>>>>>> set xml config");
+			log.info(">>>>>>>>>>>>>>>>>>>> active site: " + user.getActiveSite());
 			value.setSiteName(user.getActiveSite().getName());
+			log.info(">>>>>>>>>>>>>>>>>>>> found and set active Site...");
 			Collection<UnitHbm> units = getUnits4ActiveSite(user);
-			UnitValue[] uv = new UnitValue[units.size()];
-			int i = 0;
-			for (UnitHbm unit : units) {
-				uv[i++] = getUnitHbmDao().getDao(unit);
+			log.info(">>>>>>>>>>>>>>>>>>>> the units...: " + units);
+			if (units != null) {
+				UnitValue[] uv = new UnitValue[units.size()];
+				int i = 0;
+				for (UnitHbm unit : units) {
+					uv[i++] = getUnitHbmDao().getDao(unit);
+				}
+				value.setUnits(uv);
 			}
-			value.setUnits(uv);
 		} catch (Exception e) {
 			throw new EJBException(e);
 		}
@@ -228,7 +239,7 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 		} else {
 			Iterator<UnitHbm> it = user.getUnits().iterator();
 			while (it.hasNext()) {
-				UnitHbm ul = (UnitHbm) it.next();
+				UnitHbm ul = it.next();
 				if (ul.getUnitId().equals(unitId)) {
 					retVal = true;
 					break;
@@ -238,63 +249,62 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 		return retVal;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform, final java.lang.Integer siteId) {
 		return this.findAll(transform, "select u from de.juwimm.cms.authorization.model.UserHbm u inner join u.sites s where s.siteId = ?", siteId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform) {
 		return this.findAll(transform, "from de.juwimm.cms.authorization.model.UserHbm as userHbm");
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll4Group(final int transform, final java.lang.Integer groupId) {
 		return this.findAll4Group(transform, "select u from de.juwimm.cms.authorization.model.UserHbm as u inner join u.groups g where g.groupId = ?", groupId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll4Unit(final int transform, final java.lang.Integer unitId) {
 		return this.findAll4Unit(transform, "select u from de.juwimm.cms.authorization.model.UserHbm as u inner join u.units n where n.unitId = ?", unitId);
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll4UnitAndGroup(final int transform, final java.lang.Integer unitId, final java.lang.Integer groupId) {
 		return this.findAll4UnitAndGroup(transform, "select u from de.juwimm.cms.authorization.model.UserHbm as u inner join u.units n inner join u.groups g where n.unitId = ? and g.groupId = ?", unitId, groupId);
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
-	public void remove(de.juwimm.cms.authorization.model.UserHbm userHbm)
-    {
-        if (userHbm == null)
-        {
-            throw new IllegalArgumentException(
-                "UserHbm.remove - 'userHbm' can not be null");
-        }
-        // TODO could that be made different?
-        Collection<de.juwimm.cms.authorization.model.GroupHbm> groups = userHbm.getGroups();
-        int[] groupIds = new int[groups.size()];
-        int i = 0;
-        for(GroupHbm group : groups)
-        {
-        	groupIds[i++] = group.getGroupId();
-        }
-        for(i=0; i<groupIds.length; i++)
-        {
-        	userHbm.dropGroup(getGroupHbmDao().load(groupIds[i]));
-        }  
-        
-//        Collection<de.juwimm.cms.model.SiteHbm> sites = userHbm.getSites();
-//        int[] siteIds = new int[sites.size()];
-//        i=0;
-//        for(SiteHbm site : sites)
-//        {
-//        	siteIds[i++] = site.getSiteId();
-//        }
-//        for(i=0; i<siteIds.length;i++)
-//        {
-//        	//userHbm.drop
-//        }
-        super.remove(userHbm);
-    }
+	public void remove(de.juwimm.cms.authorization.model.UserHbm userHbm) {
+		if (userHbm == null) { throw new IllegalArgumentException("UserHbm.remove - 'userHbm' can not be null"); }
+		// TODO could that be made different?
+		Collection<de.juwimm.cms.authorization.model.GroupHbm> groups = userHbm.getGroups();
+		int[] groupIds = new int[groups.size()];
+		int i = 0;
+		for (GroupHbm group : groups) {
+			groupIds[i++] = group.getGroupId();
+		}
+		for (i = 0; i < groupIds.length; i++) {
+			userHbm.dropGroup(getGroupHbmDao().load(groupIds[i]));
+		}
+
+		//        Collection<de.juwimm.cms.model.SiteHbm> sites = userHbm.getSites();
+		//        int[] siteIds = new int[sites.size()];
+		//        i=0;
+		//        for(SiteHbm site : sites)
+		//        {
+		//        	siteIds[i++] = site.getSiteId();
+		//        }
+		//        for(i=0; i<siteIds.length;i++)
+		//        {
+		//        	//userHbm.drop
+		//        }
+		super.remove(userHbm);
+	}
 }

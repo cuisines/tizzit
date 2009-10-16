@@ -33,7 +33,7 @@ public class EditionCronService {
 		if (cronEditionImportIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
 			return;
-		} 
+		}
 		if (log.isInfoEnabled()) log.info("start cronEditionImport");
 		cronEditionImportIsRunning = true;
 		try {
@@ -46,9 +46,10 @@ public class EditionCronService {
 				} else {
 					UserHbm creator = edition.getCreator();
 					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
-					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
+					//null for viewcomponentID for a complete Import?
+					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), null, false);
 				}
-				getEditionServiceSpring().removeEdition(edition.getEditionId());
+				//getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}
 		} catch (Exception e) {
 			log.error("Error importing Edition during crontask", e);
@@ -85,7 +86,10 @@ public class EditionCronService {
 				UserHbm creator = edition.getCreator();
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
-				getEditionServiceSpring().removeEdition(edition.getEditionId());
+				//getEditionServiceSpring().removeEdition(edition.getEditionId());
+				if (edFile != null) {
+					edFile.delete();
+				}
 			}
 		} catch (Exception e) {
 			log.error("Error deploying Edition during crontask", e);

@@ -1001,21 +1001,25 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			String tmpFileName = "";
 			try {
 				tmpFileName = this.storeEditionFile(in);
+				if (log.isInfoEnabled()) log.info("-------------->importFile saved.");
 			} catch (IOException e) {
 				log.warn("Unable to copy received inputstream: " + e.getMessage(), e);
 			}
 			EditionHbm edition = EditionHbm.Factory.newInstance();
+			if (log.isInfoEnabled()) log.info("-------------->got a new edition...");
 			edition.setComment("Edition to import on local server");
+			if (log.isInfoEnabled()) log.info("-------------->loading user");
 			UserHbm user = getUserHbmDao().load(AuthenticationHelper.getUserName());
 			edition.setViewComponentId(viewComponentId); // might be null if the import should be for the complete site
 			edition.setCreator(user);
 			edition.setNeedsImport(true);
 			edition.setCreationDate(new Date().getTime());
+			if (log.isInfoEnabled()) log.info("-------------->setting unit id");
 			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
 			edition.setEditionFileName(tmpFileName);
 			edition.setSiteId(user.getActiveSite().getSiteId());
 			edition.setUseNewIds(useNewIds);
-
+			if (log.isInfoEnabled()) log.info("-------------->saving edition");
 			getEditionHbmDao().create(edition);
 			if (log.isInfoEnabled()) log.info("end importEdition - please wait for cronjob to pick up!");
 		} catch (Exception e) {
@@ -1059,14 +1063,14 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemoveDocument(Integer documentId) throws Exception {
-//TODO TIZZIT-220 		
-//		DocumentHbm document = super.getDocumentHbmDao().load(documentId);
-//		List<ContentVersionHbm> contentVersions = getAllContentVersions4Unit(document.getUnit().getUnitId());
-//		List<ContentVersionHbm> usedContentVersion = new ArrayList<ContentVersionHbm>();
-//		usedContentVersion = getContentVersionUsingResource(contentVersions,documentId,"document","src");
-//		if(usedContentVersion.size() > 0){
-//			throw new UserException("can not remove");
-//		}
+		//TODO TIZZIT-220 		
+		//		DocumentHbm document = super.getDocumentHbmDao().load(documentId);
+		//		List<ContentVersionHbm> contentVersions = getAllContentVersions4Unit(document.getUnit().getUnitId());
+		//		List<ContentVersionHbm> usedContentVersion = new ArrayList<ContentVersionHbm>();
+		//		usedContentVersion = getContentVersionUsingResource(contentVersions,documentId,"document","src");
+		//		if(usedContentVersion.size() > 0){
+		//			throw new UserException("can not remove");
+		//		}
 		super.getDocumentHbmDao().remove(documentId);
 	}
 
@@ -1437,8 +1441,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			}
 		}
 	}
-	
-	private List<ContentVersionHbm> getContentVersionUsingResource(List<ContentVersionHbm> contentVersions, Integer resourceId,String type,String attributeNameId){
+
+	private List<ContentVersionHbm> getContentVersionUsingResource(List<ContentVersionHbm> contentVersions, Integer resourceId, String type, String attributeNameId) {
 		List<ContentVersionHbm> usedContentVersion = new ArrayList<ContentVersionHbm>();
 		if (contentVersions == null || contentVersions.size() == 0) { return usedContentVersion; }
 		for (ContentVersionHbm contentVersion : contentVersions) {
@@ -1446,7 +1450,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			if (content != null) {
 				try {
 					Document document = XercesHelper.string2Dom(content);
-					if(isResourceInContentVersion(document, resourceId, type, attributeNameId)){
+					if (isResourceInContentVersion(document, resourceId, type, attributeNameId)) {
 						usedContentVersion.add(contentVersion);
 					}
 				} catch (Exception e) {
@@ -1472,9 +1476,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			resources.add(Integer.parseInt(node.getAttributes().getNamedItem(attributeName).getNodeValue()));
 		}
 	}
-	
-	private boolean isResourceInContentVersion(Node contentVersionNode,Integer resourceId, String type, String attributeName){
-		Iterator it = XercesHelper.findNodes(contentVersionNode, "//" + type+"[@"+attributeName+"="+resourceId.toString()+"]");
+
+	private boolean isResourceInContentVersion(Node contentVersionNode, Integer resourceId, String type, String attributeName) {
+		Iterator it = XercesHelper.findNodes(contentVersionNode, "//" + type + "[@" + attributeName + "=" + resourceId.toString() + "]");
 		return it.hasNext();
 	}
 
