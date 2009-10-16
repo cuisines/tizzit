@@ -944,6 +944,8 @@
         <version>2.6</version>
         				<configuration>
 						<aggregate>false</aggregate>
+						<maxmemory>512m</maxmemory>
+						<minmemory>512m</minmemory>
 					</configuration>
 
       </plugin>
