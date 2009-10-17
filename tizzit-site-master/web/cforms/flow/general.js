@@ -9,7 +9,6 @@ importClass(org.w3c.dom.NodeList);
 importClass(java.lang.String);
 
 var log = Packages.org.apache.log4j.Logger.getLogger("general_flowscript");
-var	hostname = cocoon.parameters["hostname"];
 var msg = "";
 
 // Load a document from an URI, absolute or relative to the current sitemap
