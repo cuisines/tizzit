@@ -2,15 +2,12 @@
 <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd">
   <map:components>
     <map:generators default="file">
-      <map:generator label="content" logger="sitemap.generator.file" name="file" pool-grow="4" pool-max="32" pool-min="8" src="org.apache.cocoon.generation.FileGenerator" />
-      <map:generator label="content" logger="sitemap.generator.directory" name="directory" pool-grow="2" pool-max="16" pool-min="2" src="org.apache.cocoon.generation.DirectoryGenerator" />
-      <map:generator label="content" logger="sitemap.generator.xpathdirectory" name="xpathdirectory" src="org.apache.cocoon.generation.XPathDirectoryGenerator" />
       <map:generator label="content" logger="sitemap.generator.imagedirectory" name="imagedirectory" src="org.apache.cocoon.generation.ImageDirectoryGenerator" />
       <map:generator label="content" logger="sitemap.generator.mp3directory" name="mp3directory" src="org.apache.cocoon.generation.MP3DirectoryGenerator" />
-      <map:generator label="content" logger="sitemap.generator.request" name="request" pool-grow="2" pool-max="16" pool-min="2" src="org.apache.cocoon.generation.RequestGenerator" />
-      <map:generator label="content" logger="sitemap.generator.stream" name="stream" pool-grow="2" pool-max="16" pool-min="1" src="org.apache.cocoon.generation.StreamGenerator" />
-      <map:generator label="content" logger="sitemap.generator.status" name="status" pool-grow="2" pool-max="16" pool-min="2" src="org.apache.cocoon.generation.StatusGenerator" />
-      <map:generator label="content" logger="sitemap.generator.jx" name="jx" pool-grow="2" pool-max="16" pool-min="2" src="org.apache.cocoon.template.JXTemplateGenerator" />
+      <map:generator label="content" logger="sitemap.generator.request" name="request" pool-max="16" src="org.apache.cocoon.generation.RequestGenerator" />
+      <map:generator label="content" logger="sitemap.generator.stream" name="stream" pool-max="16" src="org.apache.cocoon.generation.StreamGenerator" />
+      <map:generator label="content" logger="sitemap.generator.status" name="status" pool-max="16" src="org.apache.cocoon.generation.StatusGenerator" />
+      <map:generator label="content" logger="sitemap.generator.jx" name="jx" pool-max="16" src="org.apache.cocoon.template.JXTemplateGenerator" />
       <map:generator name="notifying" src="org.apache.cocoon.sitemap.NotifyingGenerator" />
       <!-- The exception generator can only be used in a <handle-errors> section : it produces an XML
          representation of the exception that caused the error handler to be executed -->
@@ -19,7 +16,7 @@
       <map:generator label="content" logger="sitemap.generator.serverpages" name="serverpages" pool-max="32" src="org.apache.cocoon.generation.ServerPagesGenerator" />
       <map:generator label="content" name="auth-conf" src="org.apache.cocoon.webapps.authentication.generation.ConfigurationGenerator" />
       <map:generator label="content" logger="sitemap.generator.extractor" name="extractor" src="org.apache.cocoon.generation.FragmentExtractorGenerator" />
-      <map:generator name="CmsContent" pool-grow="2" pool-max="128" pool-min="4" src="de.juwimm.cms.cocoon.generation.CmsContentGenerator" />
+      <map:generator name="CmsContent" pool-max="128" src="de.juwimm.cms.cocoon.generation.CmsContentGenerator" />
       <map:generator name="PortalJaasSecurityGenerator" src="de.juwimm.cms.cocoon.generation.PortalJaasSecurityGenerator" />
       <map:generator name="CmsJaasGenerator" src="de.juwimm.cms.cocoon.generation.CmsJaasSecurityGenerator" />
       <map:generator name="SVGUnitLocationPlanGenerator" src="de.juwimm.cms.cocoon.generation.SVGUnitLocationPlanGenerator" />
@@ -117,7 +114,7 @@
         <doctype-public>-//W3C//DTD SVG 1.0//EN</doctype-public>
         <doctype-system>http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd</doctype-system>
       </map:serializer>
-      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtml" ppool-max="64" src="org.apache.cocoon.serialization.XMLSerializer">
+      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtml" src="org.apache.cocoon.serialization.XMLSerializer">
         <!--+
           | You can choose from Strict, Transitional, or Frameset XHTML.
           | For Strict XHTML set doctype to:
@@ -143,7 +140,7 @@
         <doctype-system>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</doctype-system>
         <encoding>UTF-8</encoding>
       </map:serializer>
-      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtmlt" ppool-max="64" src="org.apache.cocoon.serialization.XMLSerializer">
+      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtmlt" src="org.apache.cocoon.serialization.XMLSerializer">
         <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
         <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
         <omit-xml-declaration>yes</omit-xml-declaration>
@@ -316,7 +313,7 @@
 			      <default-locale language="en" country="US"/>
 				+-->
       </map:action>
-      <map:action logger="sitemap.action.serverpages" name="serverpages" pool-max="32" src="org.apache.cocoon.acting.ServerPagesAction" />
+      <map:action logger="sitemap.action.serverpages" name="serverpages" src="org.apache.cocoon.acting.ServerPagesAction" />
       <map:action name="session" src="org.apache.cocoon.webapps.session.acting.SessionAction" />
       <map:action name="session-form" src="org.apache.cocoon.webapps.session.acting.SessionFormAction" />
       <map:action name="session-form-manager" src="org.apache.cocoon.webapps.session.acting.FormManagerAction" />
@@ -327,7 +324,7 @@
       <map:action name="sendmail" src="org.apache.cocoon.acting.Sendmail" />
       <map:action name="cms.actions.template" src="de.juwimm.cms.cocoon.acting.CmsTemplateAction" />
       <map:action name="cms.actions.xpathvalue" src="de.juwimm.cms.cocoon.acting.XPathValueAction" />
-      <map:action name="cms.actions.hostselector" pool-max="128" src="de.juwimm.cms.cocoon.acting.HostSelectorAction" />
+      <map:action name="cms.actions.hostselector" src="de.juwimm.cms.cocoon.acting.HostSelectorAction" />
       <map:action name="cms.actions.hoststartpage" src="de.juwimm.cms.cocoon.acting.HostStartPageAction" />
     </map:actions>
     <map:pipes default="caching">
@@ -422,28 +419,19 @@
       <!--dcfliste als html, nur zur besseren Uebersicht fuer developer-->
       <map:match pattern="**/dcf/dcf.html">
         <map:generate src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" type="file" />
-        <map:transform src="{tizzit-property:cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
         <map:transform src="{tizzit-property:cmsTemplatesPath}dcf/dcf.xsl">
           <map:parameter name="clientCode" value="{1}" />
         </map:transform>
         <map:serialize type="html" />
       </map:match>
       <map:match pattern="**/dcf/**/*.jar">
-        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.externalLib.path}/client/{3}.jar" />
-      </map:match>
-      <map:match pattern="dcf/**/*.jar">
-        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.externalLib.path}/client/{2}.jar" />
+        <map:read src="{tizzit-property:externalLibPath}/client/{3}.jar" />
       </map:match>
       <map:match pattern="**/dcf/*.jar">
-        <!--
-				<map:read src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.jar" />
-				-->
-        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.externalLib.path}/client/{2}.jar" />
-
+        <map:read src="{tizzit-property:externalLibPath}/client/{2}.jar" />
       </map:match>
       <map:match pattern="**/dcf/*.xml">
         <map:generate src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" type="file" />
-        <map:transform src="{tizzit-property:cmsTemplatesPath}templates/includes/removeNamespaces.xsl" />
         <map:transform src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />
         <map:serialize type="xml-iso" />
       </map:match>
@@ -533,9 +521,8 @@
       <map:handle-errors>
         <map:select type="exception">
           <map:when test="not-found">
-            <map:generate src="system/host-not-found.xml" />
-        	<map:transform src="system/host-not-found.xsl"/>
-            <map:serialize status-code="404" />
+            <map:generate  type="file" src="system/404.html"/>
+            <map:serialize type="html" status-code="404" />
           </map:when>
           <map:when test="invalid-continuation">
 			<map:generate type="exception"/>
@@ -551,42 +538,9 @@
 
     <map:pipeline>
       <map:match pattern="">
-        <map:generate src="system/host-not-found.xml" />
-        <map:transform src="system/host-not-found.xsl">
-          <map:parameter name="serverName" value="{request:serverName}" />
-          <!--
-          <map:parameter name="contextPath" value="{request:contextPath}"/>
-          <map:parameter name="statusCode" value="404"/>
-        -->
-        </map:transform>
-        <map:serialize type="xhtml" />
+        <map:generate  type="file" src="system/404.html"/>
+        <map:serialize type="html" status-code="404" />
       </map:match>
     </map:pipeline>
-
-    <!-- === START - Cocoon generated stuff ============================================================================================ -->
-    <!--+
-      | Default pipelines
-      +-->
-    <map:pipeline id="internal-resource" internal-only="true">
-      <!-- Put matchers for internal (accessible only to Cocoon blocks) resources here
-        More details: http://cocoon.zones.apache.org/daisy/cdocs-site-main/g2/1345.html -->
-      <map:match pattern="resource/internal/**">
-        <map:read src="resource/internal/{1}" />
-      </map:match>
-    </map:pipeline>
-
-    <map:pipeline id="external-resource">
-      <!-- Put matchers for external (accessible to the outside world, e.g. browser) resources here.
-        More details: http://cocoon.zones.apache.org/daisy/cdocs-site-main/g2/1345.html -->
-      <map:match pattern="resource/external/**">
-        <map:read src="resource/external/{1}" />
-      </map:match>
-    </map:pipeline>
-
-    <map:pipeline id="service">
-      <!-- Put your servlet service matchers here.
-        More details: http://cocoon.zones.apache.org/daisy/cdocs-site-main/g2/1345.html -->
-    </map:pipeline>
-    <!-- === END - Cocoon generated stuff ============================================================================================== -->
   </map:pipelines>
 </map:sitemap>

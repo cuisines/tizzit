@@ -153,8 +153,8 @@ public class CmsTemplateAction extends AbstractAction implements SingleThreaded,
 		try {
 			sitemapParams.putAll(this.webSpringBean.getSitemapParameters(sitemapInputParams, safeguardMap));
 			sitemapParams.put("safeguardlogedin", String.valueOf(safeguardMap.size() > 0));
-		} catch (UserException exe) {
-			throw new ResourceNotFoundException("Unknown error occued during resolving of sitemap parameters", exe);
+		} catch (Exception exe) {
+			throw new ResourceNotFoundException("File " + path + " not found");
 		}
 		if (log.isDebugEnabled()) log.debug("finished act");
 		return sitemapParams;

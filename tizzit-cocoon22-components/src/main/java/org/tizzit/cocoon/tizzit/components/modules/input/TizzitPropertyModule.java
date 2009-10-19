@@ -178,10 +178,8 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 		try {
 			prop.load(is);
 			prop.setProperty("cmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
-			System.setProperty("tizzitCmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
-			System.setProperty("cqCmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
-			System.setProperty("cqLiveserver", prop.get("tizzitPropertiesBeanSpring.liveserver").toString());
-			System.setProperty("tizzitLiveserver", prop.get("tizzitPropertiesBeanSpring.liveserver").toString());
+			prop.setProperty("externalLibPath", prop.get("tizzitPropertiesBeanSpring.externalLib.path").toString());
+			
 		} catch (Exception exe) {
 			log.warn("Unable to load props from \"" + PROPERTIES_FILENAME + "\"!");
 		}

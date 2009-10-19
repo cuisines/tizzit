@@ -132,8 +132,6 @@
   -->
   <servlet>
     <servlet-name>DispatcherServlet</servlet-name>
-    <display-name>DispatcherServlet</display-name>
-    <description>Cocoon blocks dispatcher</description>
     <!--<servlet-class>org.apache.cocoon.tools.rcl.wrapper.servlet.ReloadingServlet</servlet-class>-->
     <!--<servlet-class>org.tizzit.classloading.ReloadingServlet</servlet-class>-->
     <servlet-class>org.tizzit.core.classloading.ExternalLibClassLoaderInjectServlet</servlet-class>

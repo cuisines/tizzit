@@ -96,11 +96,8 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 		SiteValue site = comm.getCurrentSite();
 		String urlPath = site.getDcfUrl();
-		String siteName = site.getShortName();
 		final String userHome = System.getProperty("user.home");
 		final String fileSeparator = System.getProperty("file.separator");
-
-		siteName = siteName.replaceAll(" ", "");
 
 		StringBuffer pluginCachePath = new StringBuffer(userHome);
 		pluginCachePath.append(fileSeparator);
@@ -109,8 +106,6 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 		pluginCachePath.append("plugins");
 		pluginCachePath.append(fileSeparator);
 		pluginCachePath.append(Constants.SERVER_HOST);
-		pluginCachePath.append(fileSeparator);
-		pluginCachePath.append(siteName);
 		pluginCachePath.append(fileSeparator);
 
 		final String pluginPath = pluginCachePath.toString();
