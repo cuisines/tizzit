@@ -429,16 +429,16 @@
         <map:serialize type="html" />
       </map:match>
       <map:match pattern="**/dcf/**/*.jar">
-        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{3}.jar" />
+        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.externalLib.path}/client/{3}.jar" />
       </map:match>
       <map:match pattern="dcf/**/*.jar">
-        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
+        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.externalLib.path}/client/{2}.jar" />
       </map:match>
       <map:match pattern="**/dcf/*.jar">
         <!--
 				<map:read src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.jar" />
 				-->
-        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.cocoon.componentLibrariesParent}/client/{2}.jar" />
+        <map:read src="{tizzit-property:tizzitPropertiesBeanSpring.externalLib.path}/client/{2}.jar" />
 
       </map:match>
       <map:match pattern="**/dcf/*.xml">
