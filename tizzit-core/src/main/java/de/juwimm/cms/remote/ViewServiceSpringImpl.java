@@ -21,6 +21,10 @@
 package de.juwimm.cms.remote;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1521,6 +1526,16 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostUrl, boolean withMedia) throws Exception {
 		String retVal = "";
+		//		File fle = File.createTempFile("edition_unit_export", ".xml.gz");
+		//		FileOutputStream fout = new FileOutputStream(fle);
+		//		GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
+		//		PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
+		//		EditionHbm edition = super.getEditionHbmDao().create("RETURNEDITION", rootViewComponentId, out, true);
+		//		super.getEditionHbmDao().remove(edition);
+		//		out.flush();
+		//		out.close();
+		//		out = null;
+		//		return new FileInputStream(fle);
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(byteOut, true, "UTF-8");
 		out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -1591,6 +1606,47 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 
 		return viewComponent.getDao();
+	}
+
+	@Override
+	protected InputStream handleExportViewComponent(Integer viewComponentId) throws Exception {
+		//		try {
+		//			File fle = File.createTempFile("edition_unit_export", ".xml.gz");
+		//			FileOutputStream fout = new FileOutputStream(fle);
+		//			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
+		//			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
+		//			EditionHbm edition = super.getEditionHbmDao().create("RETURNEDITION", rootViewComponentId, out, true);
+		//			super.getEditionHbmDao().remove(edition);
+		//			out.flush();
+		//			out.close();
+		//			out = null;
+		//			return new FileInputStream(fle);
+		//		} catch (Exception e) {
+		//			log.error("Could not export edition unit", e);
+		//			throw new UserException(e.getMessage());
+		//		}
+		File fle = File.createTempFile("view_component_export", ".xml.gz");
+		FileOutputStream fout = new FileOutputStream(fle);
+		GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
+		PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
+		out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+		out.print("<site>\n");
+		out.print("<hostUrl>" + Constants.URL_HOST + "</hostUrl>\n");
+		getViewComponentHbmDao().toXmlComplete(viewComponentId, true, null, true, 1, true, false, out);
+		ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
+		ContentHbm content = getContentHbmDao().load(Integer.parseInt(viewComponent.getReference()));
+		ContentVersionHbm contentVersion = content.getLastContentVersion();
+		String contentVersionText = contentVersion.getText();
+		if (contentVersionText != null) {
+			Document doc = XercesHelper.string2Dom(contentVersionText);
+			getMediaXML(doc, out, "picture", "description");
+			getMediaXML(doc, out, "document", "src");
+		}
+		out.print("</site>");
+		out.flush();
+		out.close();
+		out = null;
+		return new FileInputStream(fle);
 	}
 
 }

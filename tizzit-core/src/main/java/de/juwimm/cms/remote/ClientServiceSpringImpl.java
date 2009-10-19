@@ -1871,4 +1871,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		return getViewServiceSpring().copyViewComponentToParentFromXml(parentId, xmlString, withMedia, withChildren, unitId);
 	}
 
+	@Override
+	protected InputStream handleExportViewComponent(Integer viewComponentId) throws Exception {
+		return getViewServiceSpring().exportViewComponent(viewComponentId);
+	}
+
 }
