@@ -1,4 +1,3 @@
-
 importPackage(org.apache.commons.jxpath);
 importClass(org.apache.xpath.XPathAPI);
 importClass(javax.xml.parsers.DocumentBuilderFactory);
