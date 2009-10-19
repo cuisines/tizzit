@@ -15,17 +15,35 @@
  */
 package de.juwimm.cms.gui;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
@@ -38,13 +56,18 @@ import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
 import de.juwimm.cms.exceptions.NoSitesException;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
-import de.juwimm.cms.util.*;
+import de.juwimm.cms.util.ActionHub;
+import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.ConfigReader;
+import de.juwimm.cms.util.Parameters;
+import de.juwimm.cms.util.UIConstants;
+import de.juwimm.cms.util.UserConfig;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.swing.CustomComboBoxModel;
 import de.juwimm.swing.DropDownHolder;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -54,18 +77,18 @@ import de.juwimm.swing.DropDownHolder;
 public class PanLogin extends JPanel implements UnloadablePanel {
 	private static final long serialVersionUID = 2869508681065150395L;
 	private static Logger log = Logger.getLogger(PanLogin.class);
-	private Communication communication = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication communication = ((Communication) getBean(Beans.COMMUNICATION));
 	private JLabel lblLogo;
-	private JTextField txtUserName = new JTextField();
-	private JLabel lblHeadline = new JLabel();
-	private JPanel panel = new JPanel();
-	private JButton cmdLogin = new JButton(UIConstants.BTN_LOGIN);
-	private JLabel lblUsername = new JLabel();
-	private JPasswordField txtPassword = new JPasswordField();
-	private JLabel lblPassword = new JLabel();
-	private JLabel lblDomain = new JLabel();
-	private JProgressBar progressBar = new JProgressBar();
-	private JComboBox cboDomains = new JComboBox();
+	private final JTextField txtUserName = new JTextField();
+	private final JLabel lblHeadline = new JLabel();
+	private final JPanel panel = new JPanel();
+	private final JButton cmdLogin = new JButton(UIConstants.BTN_LOGIN);
+	private final JLabel lblUsername = new JLabel();
+	private final JPasswordField txtPassword = new JPasswordField();
+	private final JLabel lblPassword = new JLabel();
+	private final JLabel lblDomain = new JLabel();
+	private final JProgressBar progressBar = new JProgressBar();
+	private final JComboBox cboDomains = new JComboBox();
 	private int activeSiteId;
 
 	public PanLogin() {
@@ -133,9 +156,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 	void cmdLoginActionPerformed() {
 		char[] password = this.txtPassword.getPassword();
 		if (password == null || password.length == 0) {
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError")
-					+ " \n" + rb.getString("exception.PasswordRequired"), rb.getString("msgbox.title.loginFailed"),
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n" + rb.getString("exception.PasswordRequired"), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -146,9 +167,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 			if (!this.cboDomains.isVisible()) {
 				SiteValue[] sv = this.communication.getSites(txtUserName.getText(), String.copyValueOf(txtPassword.getPassword()));
 				if (sv == null || sv.length <= 0 || sv[0] == null) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError")
-							+ " \n" + rb.getString("exception.NoSites"), rb.getString("msgbox.title.loginFailed"),
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n" + rb.getString("exception.NoSites"), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 				} else if (sv.length > 1) {
 					Arrays.sort(sv, new SiteValueComparator());
 					this.progressBar.setIndeterminate(false);
@@ -174,21 +193,16 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 			}
 		} catch (InvalidUsernameException iu) {
 			this.progressBar.setIndeterminate(false);
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n"
-					+ rb.getString("exception.InvalidUsernameOrPassword"), rb.getString("msgbox.title.loginFailed"),
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n" + rb.getString("exception.InvalidUsernameOrPassword"), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 			this.txtPassword.setText("");
 			this.txtPassword.requestFocus();
 		} catch (NoSitesException se) {
 			this.progressBar.setIndeterminate(false);
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n"
-					+ rb.getString("exception.NoSites"), rb.getString("msgbox.title.loginFailed"),
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n" + rb.getString("exception.NoSites"), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception exe) {
 			log.error("Login Error", exe);
 			this.progressBar.setIndeterminate(false);
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n\""
-					+ exe.getMessage() + "\"\n", rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n\"" + exe.getMessage() + "\"\n", rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 		} finally {
 			this.setCursor(Cursor.getDefaultCursor());
 			this.progressBar.setIndeterminate(false);
@@ -329,8 +343,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 					log.error("Error getting configreader for dcf.xml with path " + Constants.CMS_PATH_DCF + " and language " + Constants.CMS_LOCALE.getLanguage(), exe);
 				}
 				if (nl == null || nl.getLength() < 1) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.TEMPLATE_NOT_FOUND"),
-							rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.TEMPLATE_NOT_FOUND"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				} else {
 					for (int i = 0; i < nl.getLength(); i++) {
 						Node elm = nl.item(i);

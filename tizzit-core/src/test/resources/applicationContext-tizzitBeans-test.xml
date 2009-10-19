@@ -83,7 +83,7 @@
 	<bean class="de.juwimm.cms.search.xmldb.XmlDbFactory" id="xmlDbFactory" lazy-init="true" />
 	<bean factory-bean="xmlDbFactory" factory-method="getInstance" id="xmlDb" lazy-init="true" />
 
-	<bean class="de.juwimm.cms.beans.foreign.ConQuestSqlDaoSpringImpl" id="conQuestSqlDaoSpring">
+	<bean class="de.juwimm.cms.beans.foreign.TizzitSqlDaoSpringImpl" id="tizzitSqlDaoSpring">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 

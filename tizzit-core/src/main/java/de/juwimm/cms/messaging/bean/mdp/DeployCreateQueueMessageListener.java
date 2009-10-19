@@ -30,7 +30,7 @@ import de.juwimm.cms.remote.EditionServiceSpring;
 /**
  * This is the DeployCreateQueueBean, a Message-driven Bean, which only processes a single Item out of the queue
  * at a time. This MDB sends the Data at the end to the liveserver for deploying purposes.
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: Juwi|MacMillan Group GmbH</p>

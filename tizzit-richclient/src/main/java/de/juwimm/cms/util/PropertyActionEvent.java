@@ -18,7 +18,7 @@ package de.juwimm.cms.util;
 import java.awt.event.ActionEvent;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -26,8 +26,8 @@ import java.awt.event.ActionEvent;
 public class PropertyActionEvent extends ActionEvent {
 	public static final int TYPE_GROUP = 1;
 	public static final int TYPE_ITEM = 2;
-	private int propertyType = 2;
-	private String uniqueId;
+	private final int propertyType = 2;
+	private final String uniqueId;
 	private String parentId;
 	private String descName;
 	private String descDetail;

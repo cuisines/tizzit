@@ -16,7 +16,11 @@
 package de.juwimm.cms.util;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.swing.JOptionPane;
 
@@ -26,7 +30,7 @@ import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.vo.ContentVersionValue;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -54,9 +58,7 @@ public final class DbHelper {
 			}
 		} catch (Exception exe) {
 			if (exe.getMessage().startsWith("The database is already in use by another process")) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), 
-						Constants.rb.getString("exception.programAlreadyStarted"), Constants.rb.getString("dialog.title"),
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Constants.rb.getString("exception.programAlreadyStarted"), Constants.rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			} else {
 				log.error("Local caching panic! Have to brute force delete all caching data", exe);
@@ -102,8 +104,7 @@ public final class DbHelper {
 			statement.execute("select picture_id from CACHEPICTURE");
 		} catch (Exception ex) {
 			try {
-				statement.execute("CREATE TABLE CACHEPICTURE (picture_id INT, thumbnail VARBINARY, picture VARBINARY, "
-								+ "mime_type VARCHAR (30), time_stamp DATE, unit_id_fk INT)");
+				statement.execute("CREATE TABLE CACHEPICTURE (picture_id INT, thumbnail VARBINARY, picture VARBINARY, " + "mime_type VARCHAR (30), time_stamp DATE, unit_id_fk INT)");
 				statement.execute("create table cachedocument (document_id int, document_name varchar, document varbinary, time_stamp date)");
 			} catch (Exception exe) {
 				log.error("Error create table CACHEPICTURE", exe);
@@ -389,9 +390,7 @@ public final class DbHelper {
 			ps = conn.prepareStatement("select count(*) from cachepicture where picture_id = ?");
 			ps.setInt(1, pictureId);
 			rs = ps.executeQuery();
-			if (rs.next()) {
-				return (rs.getInt(1) == 1) ? false : true;
-			}
+			if (rs.next()) { return (rs.getInt(1) == 1) ? false : true; }
 			throw new Exception("");
 		} catch (Exception exe) {
 			log.error("Error checkThumbnail " + pictureId, exe);
@@ -408,7 +407,7 @@ public final class DbHelper {
 			return true;
 		}
 	}
-	
+
 	/* Return true when need to download document name from server side */
 	public boolean checkDocumentName(int documentId) {
 		ResultSet rs = null;
@@ -416,9 +415,7 @@ public final class DbHelper {
 			ps = conn.prepareStatement("select count(*) from cachedocument where document_id = ?");
 			ps.setInt(1, documentId);
 			rs = ps.executeQuery();
-			if (rs.next()) {
-				return (rs.getInt(1) == 1) ? false : true;
-			}
+			if (rs.next()) { return (rs.getInt(1) == 1) ? false : true; }
 			throw new Exception("");
 		} catch (Exception exe) {
 			log.error("Error checkDocumentName " + documentId, exe);

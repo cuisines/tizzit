@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.deploy.panel.table;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -26,7 +26,7 @@ import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management<</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -34,8 +34,8 @@ import de.juwimm.cms.vo.ViewComponentValue;
  * @version $Id$
  */
 public class EditorTableModel extends AbstractTableModel {
-	private Vector<String> columnNames = new Vector<String>(5);
-	private Vector<Object> vRows = new Vector<Object>();
+	private final Vector<String> columnNames = new Vector<String>(5);
+	private final Vector<Object> vRows = new Vector<Object>();
 
 	public EditorTableModel() {
 		super();
@@ -59,21 +59,19 @@ public class EditorTableModel extends AbstractTableModel {
 		addRows(vec);
 	}
 
-	public void setNewData(ViewComponentValue[] vec){	
+	public void setNewData(ViewComponentValue[] vec) {
 		this.vRows.removeAllElements();
 		addRows(vec);
 		fireTableDataChanged();
 	}
-		
-	
+
 	public void addRows(ViewComponentValue[] vec) {
 		String s = "";
 		for (int i = 0; i < vec.length; i++) {
 			ViewComponentValue dao = vec[i];
 			Object[] obj = new Object[7];
 
-			if (dao.getDeployCommand() == Constants.DEPLOY_COMMAND_ADD
-					&& dao.getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+			if (dao.getDeployCommand() == Constants.DEPLOY_COMMAND_ADD && dao.getOnline() == Constants.ONLINE_STATUS_ONLINE) {
 				// for buggy Deploy Commands. In this case the Deploy-Command should be MODIFY
 				obj[0] = new Integer(Constants.DEPLOY_COMMAND_MODIFY);
 			} else {
@@ -101,10 +99,9 @@ public class EditorTableModel extends AbstractTableModel {
 		return vRows.size();
 	}
 
+	@Override
 	public String getColumnName(int col) {
-		if (columnNames.size() >= col) {
-			return (String) columnNames.elementAt(col);
-		}
+		if (columnNames.size() >= col) { return columnNames.elementAt(col); }
 		return null;
 	}
 
@@ -124,6 +121,7 @@ public class EditorTableModel extends AbstractTableModel {
 		}
 	}
 
+	@Override
 	public void setValueAt(Object value, int row, int col) {
 		Object[] array = (Object[]) vRows.elementAt(row);
 
@@ -144,6 +142,7 @@ public class EditorTableModel extends AbstractTableModel {
 	 * then the last column would contain text ("true"/"false"),
 	 * rather than a check box.
 	 */
+	@Override
 	@SuppressWarnings(value = "unchecked")
 	public Class getColumnClass(int c) {
 		try {
@@ -157,6 +156,7 @@ public class EditorTableModel extends AbstractTableModel {
 	 * Don't need to implement this method unless your table's
 	 * editable.
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		//Note that the data/cell address is constant,
 		//no matter where the cell appears onscreen.

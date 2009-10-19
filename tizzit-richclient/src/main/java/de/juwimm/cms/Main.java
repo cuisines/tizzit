@@ -73,7 +73,7 @@ import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * This is the Main-Class of the Swing-Client Software.
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -83,14 +83,14 @@ import de.juwimm.cms.util.UIConstants;
 public class Main extends JFrame implements ActionListener {
 	private static Logger log = null;
 
-	private Communication comm;
+	private Communication comm = null;
 	private PanRibbon panRibbon;
 	private PanStatusbar panStatusbar;
 	private PanLogin panLogin;
 	private PanAdministrationAdmin panAdmin;
 	private PanAdministrationRoot panRoot;
 	private PanTool panTool;
-	private ResourceBundle rb;
+	private ResourceBundle rb = null;
 	private UnloadablePanel activePanel = null;
 	private final static String LOG4J_PROPERTIES_ARGUMENT = "clientMailAppenderProperties";
 
@@ -279,7 +279,7 @@ public class Main extends JFrame implements ActionListener {
 		prop.setProperty("log4j.appender.STDOUT.layout.ConversionPattern", "%d %-5p [%-16t] %c{1} - %m%n");
 
 		prop.setProperty("log4j.appender.CMSLOG", "org.apache.log4j.RollingFileAppender");
-		prop.setProperty("log4j.appender.CMSLOG.File", System.getProperty("user.home") + "/conquest_cms.log");
+		prop.setProperty("log4j.appender.CMSLOG.File", System.getProperty("user.home") + "/tizzit_cms.log");
 		prop.setProperty("log4j.appender.CMSLOG.MaxFileSize", "1024KB");
 		prop.setProperty("log4j.appender.CMSLOG.MaxBackupIndex", "1");
 		prop.setProperty("log4j.appender.CMSLOG.layout", "org.apache.log4j.PatternLayout");

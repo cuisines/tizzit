@@ -27,7 +27,7 @@ import de.juwimm.cms.model.EditionSliceHbmDao;
 /**
  * This is the EditionSliceInputStream for reading the EditionSlices out of the Database.
  *
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: JuwiMacMillan Group</p>
@@ -39,13 +39,14 @@ public class EditionSliceInputStream extends InputStream {
 	private Integer editionId = null;
 	private ByteArrayInputStream bin = new ByteArrayInputStream(new byte[0]);
 	private int actualSliceNr = 0;
-	private EditionSliceHbmDao eshd;
+	private final EditionSliceHbmDao eshd;
 
 	public EditionSliceInputStream(Integer editionId, EditionSliceHbmDao eshd) {
 		this.editionId = editionId;
 		this.eshd = eshd;
 	}
 
+	@Override
 	public int read() throws IOException {
 		int retVal = this.bin.read();
 		if (retVal == -1) {
@@ -61,6 +62,7 @@ public class EditionSliceInputStream extends InputStream {
 		return retVal;
 	}
 
+	@Override
 	public void close() throws IOException {
 		this.bin.close();
 	}

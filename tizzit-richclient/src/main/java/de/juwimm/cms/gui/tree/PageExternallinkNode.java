@@ -23,7 +23,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -38,34 +38,28 @@ public class PageExternallinkNode extends PageNode {
 		this.getViewComponent().setDisplaySettings((byte) (this.getViewComponent().getDisplaySettings() | Constants.DISPLAY_SETTING_NEW_WINDOW));
 	}
 
+	@Override
 	public ImageIcon getIcon() {
 		switch (getViewComponent().getStatus()) {
 			case Constants.DEPLOY_STATUS_EDITED:
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-					return UIConstants.EXTERNALLINK_EDITED_LIVE;
-				}
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.EXTERNALLINK_EDITED_LIVE; }
 				return UIConstants.EXTERNALLINK_EDITED;
 			case Constants.DEPLOY_STATUS_FOR_APPROVAL:
 				if (getViewComponent().getDeployCommand() == Constants.DEPLOY_COMMAND_ADD) {
-					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-						return UIConstants.EXTERNALLINK_APPROVAL_LIVE;
-					}
+					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.EXTERNALLINK_APPROVAL_LIVE; }
 					return UIConstants.EXTERNALLINK_APPROVAL;
 				}
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-					return UIConstants.EXTERNALLINK_DELETE_LIVE;
-				}
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.EXTERNALLINK_DELETE_LIVE; }
 				return UIConstants.EXTERNALLINK_DELETE;
 			case Constants.DEPLOY_STATUS_APPROVED:
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-					return UIConstants.EXTERNALLINK_APPROVED_LIVE;
-				}
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.EXTERNALLINK_APPROVED_LIVE; }
 				return UIConstants.EXTERNALLINK_APPROVED;
 			default:
 				return UIConstants.EXTERNALLINK_DEPLOYED_LIVE;
 		}
 	}
 
+	@Override
 	public boolean isAppendingAllowed() {
 		return false;
 	}

@@ -104,7 +104,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 
 		StringBuffer pluginCachePath = new StringBuffer(userHome);
 		pluginCachePath.append(fileSeparator);
-		pluginCachePath.append(".conquestCache");
+		pluginCachePath.append(".tizzitCache");
 		pluginCachePath.append(fileSeparator);
 		pluginCachePath.append("plugins");
 		pluginCachePath.append(fileSeparator);
@@ -197,7 +197,7 @@ public class ModuleFactoryStandardImpl implements ModuleFactory {
 	 * Creates a {@link Module} and configures it with all information taken from the mandator's dcf.
 	 * 
 	 * @param dcfelement the randomly named element containing the {@code dcfconfig} element
-	 * @param contentdata XML content for the module (the way CONQUEST saves it)
+	 * @param contentdata XML content for the module (the way TIZZIT saves it)
 	 * 
 	 * @see de.juwimm.cms.content.modules.ModuleFactory#getModuleInstance(org.w3c.dom.Element, org.w3c.dom.Node) */
 	public Module getModuleInstance(Element dcfElement, Node contentdata) {

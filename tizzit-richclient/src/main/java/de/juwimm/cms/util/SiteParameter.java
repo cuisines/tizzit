@@ -18,16 +18,16 @@ package de.juwimm.cms.util;
 import javax.swing.ImageIcon;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
 public class SiteParameter implements Parameter {
-	private String id;
-	private String name;
-	private ParameterType[] parameterTypes;
+	private final String id;
+	private final String name;
+	private final ParameterType[] parameterTypes;
 	private ImageIcon imgi = null;
 
 	public SiteParameter(String id, String name, ParameterType[] parameterTypes) {
@@ -74,14 +74,14 @@ public class SiteParameter implements Parameter {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
 	 * @version $Id$
 	 */
 	public static class ParameterType {
-		private int paramType;
+		private final int paramType;
 		private Object value;
 
 		public ParameterType(int paramType, Object defaultValue) {

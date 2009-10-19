@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.util;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.util.Hashtable;
 
@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 import de.juwimm.cms.client.beans.Beans;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -57,18 +57,10 @@ public final class Parameters {
 
 	static {
 		// this are the only the currently supported parameterTypes for parameters.
-		SiteParameter.ParameterType[] onlyBoolean = new SiteParameter.ParameterType[] {
-				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.FALSE)
-				};
-		SiteParameter.ParameterType[] boolAndTextFalse = new SiteParameter.ParameterType[] {
-				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.FALSE),
-				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")
-				};
-		
-		SiteParameter.ParameterType[] boolAndTextTrue = new SiteParameter.ParameterType[] {
-				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.TRUE),
-				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")
-				};
+		SiteParameter.ParameterType[] onlyBoolean = new SiteParameter.ParameterType[] {new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.FALSE)};
+		SiteParameter.ParameterType[] boolAndTextFalse = new SiteParameter.ParameterType[] {new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.FALSE), new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")};
+
+		SiteParameter.ParameterType[] boolAndTextTrue = new SiteParameter.ParameterType[] {new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_BOOLEAN, Boolean.TRUE), new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")};
 		/*SiteParameter.ParameterType[] onlyText = new SiteParameter.ParameterType[] {
 				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")
 				};*/
@@ -115,14 +107,10 @@ public final class Parameters {
 	}
 
 	public static Object getParameter(String id, int paramType) {
-		if (actualSiteParameterValues.containsKey(id + "_" + paramType)) {
-			return actualSiteParameterValues.get(id + "_" + paramType);
-		}
+		if (actualSiteParameterValues.containsKey(id + "_" + paramType)) { return actualSiteParameterValues.get(id + "_" + paramType); }
 		// return default value
 		for (int i = 0; i < availableSiteParameter.length; i++) {
-			if (availableSiteParameter[i].getId().equalsIgnoreCase(id)) {
-				return availableSiteParameter[i].getDefaultValue(paramType);
-			}
+			if (availableSiteParameter[i].getId().equalsIgnoreCase(id)) { return availableSiteParameter[i].getDefaultValue(paramType); }
 		}
 		return null;
 	}

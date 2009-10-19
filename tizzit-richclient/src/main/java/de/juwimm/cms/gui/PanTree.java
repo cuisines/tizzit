@@ -103,7 +103,7 @@ import de.juwimm.swing.DropDownHolder;
 import de.juwimm.swing.NoResizeScrollPane;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * This is the tree for viewing the content
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -115,33 +115,33 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private static JTree tree = new JTree();
 	private boolean blockExpand = false;
 	private CmsTreeModel treeModel;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JComboBox cbxUnits = new JComboBox();
-	private JComboBox cbxViewDocuments = new JComboBox();
-	private JPopupMenu popup = new JPopupMenu();
-	private ResourceBundle rb = Constants.rb;
-	private JMenuItem miMoveLeft = new JMenuItem(rb.getString("actions.MOVE_LEFT"));
-	private JMenuItem miMoveRight = new JMenuItem(rb.getString("actions.MOVE_RIGHT"));
-	private JMenuItem miMoveUp = new JMenuItem(rb.getString("actions.MOVE_UP"));
-	private JMenuItem miMoveDown = new JMenuItem(rb.getString("actions.MOVE_DOWN"));
-	private JMenuItem miTreeNodeAppend = new JMenuItem(rb.getString("actions.ACTION_TREE_NODE_APPEND"));
-	private JMenuItem miTreeSymlinkAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_SYMLINK_ADD"));
-	private JMenuItem miTreeLinkAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_LINK_ADD"));
-	private JMenuItem miTreeSeparatorAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"));
-	private JMenuItem miTreeJumpAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_JUMP_ADD"));
-	private JMenuItem miDELETE = new JMenuItem(rb.getString("ribbon.delete"));
-	private JMenuItem miCopy = new JMenuItem(rb.getString("actions.ACTION_COPY"));
-	private JMenuItem miPaste = new JMenuItem(rb.getString("actions.ACTION_PASTE"));
-	private JMenuItem miRootDeploysUnit = new JMenuItem();
-	private JMenuItem miRootExportUnit = new JMenuItem();
-	private JMenuItem miRootImportUnit = new JMenuItem();
-	private JMenuItem miContentApprove = new JMenuItem(rb.getString("ribbon.publish.release"));
-	private JMenuItem miTreeExpandAll = new JMenuItem(rb.getString("actions.ACTION_TREE_EXPAND_ALL"));
-	private String strACTIONROOTDEPLOYSUNIT = rb.getString("wizard.editor.start.approve");
-	private String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
-	private String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
-	private String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
-	private HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JComboBox cbxUnits = new JComboBox();
+	private final JComboBox cbxViewDocuments = new JComboBox();
+	private final JPopupMenu popup = new JPopupMenu();
+	private final ResourceBundle rb = Constants.rb;
+	private final JMenuItem miMoveLeft = new JMenuItem(rb.getString("actions.MOVE_LEFT"));
+	private final JMenuItem miMoveRight = new JMenuItem(rb.getString("actions.MOVE_RIGHT"));
+	private final JMenuItem miMoveUp = new JMenuItem(rb.getString("actions.MOVE_UP"));
+	private final JMenuItem miMoveDown = new JMenuItem(rb.getString("actions.MOVE_DOWN"));
+	private final JMenuItem miTreeNodeAppend = new JMenuItem(rb.getString("actions.ACTION_TREE_NODE_APPEND"));
+	private final JMenuItem miTreeSymlinkAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_SYMLINK_ADD"));
+	private final JMenuItem miTreeLinkAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_LINK_ADD"));
+	private final JMenuItem miTreeSeparatorAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_SEPARATOR_ADD"));
+	private final JMenuItem miTreeJumpAdd = new JMenuItem(rb.getString("actions.ACTION_TREE_JUMP_ADD"));
+	private final JMenuItem miDELETE = new JMenuItem(rb.getString("ribbon.delete"));
+	private final JMenuItem miCopy = new JMenuItem(rb.getString("actions.ACTION_COPY"));
+	private final JMenuItem miPaste = new JMenuItem(rb.getString("actions.ACTION_PASTE"));
+	private final JMenuItem miRootDeploysUnit = new JMenuItem();
+	private final JMenuItem miRootExportUnit = new JMenuItem();
+	private final JMenuItem miRootImportUnit = new JMenuItem();
+	private final JMenuItem miContentApprove = new JMenuItem(rb.getString("ribbon.publish.release"));
+	private final JMenuItem miTreeExpandAll = new JMenuItem(rb.getString("actions.ACTION_TREE_EXPAND_ALL"));
+	private final String strACTIONROOTDEPLOYSUNIT = rb.getString("wizard.editor.start.approve");
+	private final String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
+	private final String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
+	private final String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
+	private final HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
 	private Integer[] viewComponentIdsCopy = null;
 	private TreePath previousTreeNodePath = null;
 	private boolean stop = true;
@@ -1187,7 +1187,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		return vc;
 	}
 
-	private Module intLink = new InternalLink(true);
+	private final Module intLink = new InternalLink(true);
 	private int positionCalled = 0;
 	private boolean isSymlinkCalled = false;
 

@@ -15,11 +15,13 @@
  */
 package de.juwimm.cms.plugins;
 
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -29,8 +31,7 @@ public final class SAXHelper {
 	private SAXHelper() {
 	}
 
-	public static void addElement(ContentHandler handler, String elementName, String elementValue, Attributes attr)
-			throws SAXException {
+	public static void addElement(ContentHandler handler, String elementName, String elementValue, Attributes attr) throws SAXException {
 		if (elementName != null) {
 			handler.startElement("", elementName, elementName, attr);
 			String saveVal = (elementValue == null) ? "" : elementValue;

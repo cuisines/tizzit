@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.gui.views.menuentry;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -26,7 +26,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
 
@@ -45,7 +50,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -54,16 +59,16 @@ import de.juwimm.cms.vo.ViewComponentValue;
  */
 public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateListener {
 	private static Logger log = Logger.getLogger(PanMenuentryContent.class);
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JLabel lblTemplate = new JLabel();
-	private JLabel lblTemplateText = new JLabel();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JLabel lblTemplate = new JLabel();
+	private final JLabel lblTemplateText = new JLabel();
 	private boolean shouldBeEditable = false; //will be set through the "load" Method
-	private JPanel panTemplateUnit = new JPanel();
-	private JLabel lblUnitText = new JLabel();
-	private JLabel lblUnit = new JLabel();
+	private final JPanel panTemplateUnit = new JPanel();
+	private final JLabel lblUnitText = new JLabel();
+	private final JLabel lblUnit = new JLabel();
 	private Component component1;
-	private JButton btnChangeTemplate = new JButton();
-	private JButton btnChangeUnit = new JButton();
+	private final JButton btnChangeTemplate = new JButton();
+	private final JButton btnChangeUnit = new JButton();
 
 	public PanMenuentryContent() {
 		super();
@@ -116,11 +121,13 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 		getOptPan().add(panTemplateUnit, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(8, 10, 10, 10), 0, 0));
 	}
 
+	@Override
 	public void unload() {
 		super.unload();
 
 	}
 
+	@Override
 	public void load(ViewComponentValue viewComponentValue) {
 		super.load(viewComponentValue);
 

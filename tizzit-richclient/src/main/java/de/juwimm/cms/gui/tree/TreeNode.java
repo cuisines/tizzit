@@ -24,7 +24,7 @@ import de.juwimm.cms.util.UIConstants;
 /**
  * This is the basic TreeNode seen in the Content Management in the left site and can represent a page,
  * a plugin or whatever.
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -33,9 +33,9 @@ public class TreeNode extends DefaultMutableTreeNode {
 	private DefaultTreeModel treeModel;
 	private boolean init = false;
 
-    public TreeNode() {
+	public TreeNode() {
 		super();
-    }
+	}
 
 	public TreeNode(String title) {
 		super(title);
@@ -61,13 +61,13 @@ public class TreeNode extends DefaultMutableTreeNode {
 	 * @return Returns if the children or the current one has been reloaded
 	 */
 	public boolean loadChildren() {
-	    return false;
+		return false;
 	}
-	
+
 	public void update(Object daoObject) {
-	    
+
 	}
-	
+
 	public boolean isDeleteable() {
 		return false;
 	}

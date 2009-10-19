@@ -39,7 +39,7 @@ import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
  * <p>Most of the code should be abstract from the Database behind - so it should
  * possible to switch to a different XML Provider like eXist or Tamino if needed.</p>
  * 
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -57,7 +57,7 @@ public final class XindiceHelper {
 
 	public static CollectionManager getCollectionManager(Collection coll) throws XMLDBException {
 		if (coll == null) return null;
-		if (htCollectionToCollectionManager.contains(coll)) { return (CollectionManager) htCollectionToCollectionManager.get(coll); }
+		if (htCollectionToCollectionManager.contains(coll)) { return htCollectionToCollectionManager.get(coll); }
 		CollectionManager collectionManager = (CollectionManager) coll.getService("CollectionManager", "1.0");
 		htCollectionToCollectionManager.put(coll, collectionManager);
 		return collectionManager;
@@ -65,7 +65,7 @@ public final class XindiceHelper {
 
 	public static XPathQueryService getXPathQueryService(Collection coll) throws XMLDBException {
 		if (coll == null) return null;
-		if (htCollectionToXPathQueryService.contains(coll)) { return (XPathQueryService) htCollectionToXPathQueryService.get(coll); }
+		if (htCollectionToXPathQueryService.contains(coll)) { return htCollectionToXPathQueryService.get(coll); }
 		XPathQueryService service = (XPathQueryService) coll.getService("XPathQueryService", "1.0");
 		htCollectionToXPathQueryService.put(coll, service);
 		return service;
@@ -73,7 +73,7 @@ public final class XindiceHelper {
 
 	public static MetaService getMetaService(Collection coll) throws XMLDBException {
 		if (coll == null) return null;
-		if (htCollectionToMetaService.contains(coll)) { return (MetaService) htCollectionToMetaService.get(coll); }
+		if (htCollectionToMetaService.contains(coll)) { return htCollectionToMetaService.get(coll); }
 		MetaService metaService = (MetaService) coll.getService("MetaService", "1.0");
 		htCollectionToMetaService.put(coll, metaService);
 		return metaService;

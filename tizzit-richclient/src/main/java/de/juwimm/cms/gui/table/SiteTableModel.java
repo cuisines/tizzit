@@ -25,7 +25,7 @@ import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -33,8 +33,8 @@ import de.juwimm.cms.vo.ViewDocumentValue;
  * @version $Id$
  */
 public class SiteTableModel extends DefaultTableModel {
-	private ResourceBundle rb = Constants.rb;
-	private Vector<String> columnNames = new Vector<String>(2);
+	private final ResourceBundle rb = Constants.rb;
+	private final Vector<String> columnNames = new Vector<String>(2);
 
 	//Vector dataVector = new Vector();
 
@@ -44,7 +44,7 @@ public class SiteTableModel extends DefaultTableModel {
 		columnNames.addElement(rb.getString("panel.sitesAdministration.lblSiteShort"));
 	}
 
-	public void addRow(SiteValue vo,ViewDocumentValue defaultViewDocumentValue) {
+	public void addRow(SiteValue vo, ViewDocumentValue defaultViewDocumentValue) {
 		// Vector is natively used by DefaultTableModel
 		Vector vec = new Vector();
 		vec.add(vo.getName());
@@ -54,6 +54,7 @@ public class SiteTableModel extends DefaultTableModel {
 		addRow(vec);
 	}
 
+	@Override
 	public void addRow(Vector obj) {
 		dataVector.addElement(obj);
 		fireTableRowsInserted(getRowCount(), getRowCount());
@@ -61,14 +62,16 @@ public class SiteTableModel extends DefaultTableModel {
 
 	public void addRows(SiteValue[] vos) {
 		for (int i = 0; i < vos.length; i++) {
-			addRow(vos[i],null);
+			addRow(vos[i], null);
 		}
 	}
 
+	@Override
 	public int getColumnCount() {
 		return columnNames.size();
 	}
 
+	@Override
 	public int getRowCount() {
 		return dataVector.size();
 	}
@@ -85,10 +88,9 @@ public class SiteTableModel extends DefaultTableModel {
 		return retVal;
 	}
 
+	@Override
 	public String getColumnName(int col) {
-		if (columnNames.size() >= col) {
-			return (String) columnNames.elementAt(col);
-		}
+		if (columnNames.size() >= col) { return columnNames.elementAt(col); }
 		return null;
 	}
 
@@ -106,6 +108,7 @@ public class SiteTableModel extends DefaultTableModel {
 	 * then the last column would contain text ("true"/"false"),
 	 * rather than a check box.
 	 */
+	@Override
 	public Class getColumnClass(int c) {
 		try {
 			return getValueAt(0, c).getClass();
@@ -118,6 +121,7 @@ public class SiteTableModel extends DefaultTableModel {
 	 * Don't need to implement this method unless your table's
 	 * editable.
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		//Note that the data/cell address is constant,
 		//no matter where the cell appears onscreen.

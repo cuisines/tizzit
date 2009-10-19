@@ -80,7 +80,7 @@ import de.juwimm.swing.CustomComboBoxModel;
 import de.juwimm.swing.DropDownHolder;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management<</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>

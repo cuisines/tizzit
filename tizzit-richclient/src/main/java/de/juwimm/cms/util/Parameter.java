@@ -18,7 +18,7 @@ package de.juwimm.cms.util;
 import javax.swing.ImageIcon;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>

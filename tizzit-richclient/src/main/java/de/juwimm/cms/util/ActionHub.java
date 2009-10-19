@@ -15,7 +15,14 @@
  */
 package de.juwimm.cms.util;
 
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.EventListener;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -28,10 +35,14 @@ import javax.swing.event.EventListenerList;
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.gui.event.*;
+import de.juwimm.cms.gui.event.ExitEvent;
+import de.juwimm.cms.gui.event.ExitListener;
+import de.juwimm.cms.gui.event.FinishedActionListener;
+import de.juwimm.cms.gui.event.ViewComponentEvent;
+import de.juwimm.cms.gui.event.ViewComponentListener;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -55,6 +66,7 @@ public final class ActionHub {
 	 * between the Nodes in the Tree
 	 */
 	private static KeyListener klContentEdit = new KeyAdapter() {
+		@Override
 		public void keyTyped(KeyEvent ke) {
 			if (!Constants.EDIT_CONTENT) {
 				Constants.EDIT_CONTENT = true;
@@ -63,6 +75,7 @@ public final class ActionHub {
 	};
 
 	private static MouseListener mlContentEdit = new MouseAdapter() {
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (!Constants.EDIT_CONTENT) {
 				Constants.EDIT_CONTENT = true;
@@ -95,7 +108,7 @@ public final class ActionHub {
 
 			htPropProperties.put(uniqueId, pae);
 		} else {
-			pae = (PropertyActionEvent) htPropProperties.get(uniqueId);
+			pae = htPropProperties.get(uniqueId);
 		}
 		ActionHub.fireActionPerformed(pae, true);
 	}
@@ -183,7 +196,7 @@ public final class ActionHub {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -252,7 +265,7 @@ public final class ActionHub {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -281,7 +294,7 @@ public final class ActionHub {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -349,7 +362,7 @@ public final class ActionHub {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -365,6 +378,7 @@ public final class ActionHub {
 			this.messageType = msgType;
 		}
 
+		@Override
 		public void run() {
 			try {
 				SwingUtilities.invokeAndWait(new MessageDlgSwingRunnable(message, messageType));
@@ -375,7 +389,7 @@ public final class ActionHub {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -383,7 +397,7 @@ public final class ActionHub {
 	 */
 	private static class MessageDlgSwingRunnable implements Runnable {
 		private String message = null;
-		private int messageType;
+		private final int messageType;
 
 		public MessageDlgSwingRunnable(String strMessage, int msgType) {
 			this.message = strMessage;

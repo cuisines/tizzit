@@ -22,14 +22,14 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.log4j.Logger;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
 public class CmsTreeModel extends DefaultTreeModel {
 	private static Logger log = Logger.getLogger(CmsTreeModel.class);
-	
+
 	public CmsTreeModel(TreeNode treeNode) {
 		super(treeNode);
 		treeNode.setModel(this);

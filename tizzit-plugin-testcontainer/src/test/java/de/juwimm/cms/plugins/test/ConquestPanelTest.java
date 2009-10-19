@@ -18,7 +18,7 @@ package de.juwimm.cms.plugins.test;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
-import de.juwimm.cms.plugins.client.testcontainer.ConquestPanel;
+import de.juwimm.cms.plugins.client.testcontainer.TizzitPanel;
 
 public class ConquestPanelTest extends TestCase {
 	
@@ -29,14 +29,14 @@ public class ConquestPanelTest extends TestCase {
 	private final String NAMESPACE = "simpletablePlugin";
 	
 	public void testLoadPlugin() {
-		ConquestPanel conquest = new ConquestPanel();
+		TizzitPanel conquest = new TizzitPanel();
 		conquest.configurePlugin(JARPATH,DCFPATH);
 		boolean ret = conquest.loadPlugin();
 		assertEquals(true,ret);
 	}
 	
 	public void testJarDirectory() {
-		ConquestPanel conquest = new ConquestPanel();
+		TizzitPanel conquest = new TizzitPanel();
 		conquest.configurePlugin(JARPATH,DCFPATH);
 		
 		String ret = "";

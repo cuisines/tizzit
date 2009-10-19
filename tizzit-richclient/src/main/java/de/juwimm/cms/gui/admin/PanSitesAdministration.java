@@ -72,7 +72,7 @@ import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>

@@ -26,13 +26,13 @@ import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
  * SearchengineIndexer is a timerbased JMX-bean, which will call the indexing tasks in the lucene package.
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group</p>
  * @author <a href="s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  */
-@ManagedResource(objectName="org.cqcms:name=SearchIndex", description="Search Index Management")
+@ManagedResource(objectName = "org.cqcms:name=SearchIndex", description = "Search Index Management")
 public class SearchIndex {
 	private static Logger log = Logger.getLogger(SearchIndex.class);
 	@Autowired

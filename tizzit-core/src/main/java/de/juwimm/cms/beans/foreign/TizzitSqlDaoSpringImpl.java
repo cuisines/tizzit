@@ -25,8 +25,8 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import de.juwimm.cms.beans.foreign.support.MiniViewComponent;
 
-public class ConQuestSqlDaoSpringImpl extends JdbcDaoSupport implements ConQuestSqlDaoSpring {
-	private final Logger log = Logger.getLogger(ConQuestSqlDaoSpringImpl.class);
+public class TizzitSqlDaoSpringImpl extends JdbcDaoSupport implements TizzitSqlDaoSpring {
+	private final Logger log = Logger.getLogger(TizzitSqlDaoSpringImpl.class);
 
 	public List<MiniViewComponent> getViewComponentByParentId(Integer parentId) {
 		log.info("TreeRepair: getViewComponentByParentId " + parentId);

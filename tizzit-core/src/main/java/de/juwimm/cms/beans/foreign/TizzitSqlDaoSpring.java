@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.juwimm.cms.beans.foreign.support.MiniViewComponent;
 
-public interface ConQuestSqlDaoSpring {
+public interface TizzitSqlDaoSpring {
 	public List<MiniViewComponent> getViewComponentByParentId(Integer parentId);
  
 	public void updateMvc(MiniViewComponent prev, MiniViewComponent next);

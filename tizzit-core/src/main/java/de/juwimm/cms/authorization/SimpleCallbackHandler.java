@@ -15,12 +15,16 @@
  */
 package de.juwimm.cms.authorization;
 
-import javax.security.auth.callback.*;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 
 /**
  * This is the SimpleCallbackHandler, a handler for authenticate a LoginContext again
  * Username and Password. This is needed for internal use of system user and password.
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: Juwi|MacMillan Group GmbH</p>

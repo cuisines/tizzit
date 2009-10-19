@@ -23,7 +23,7 @@ import spin.proxy.CGLibProxyFactory;
 import de.juwimm.cms.remote.ClientServiceSpring;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -41,7 +41,7 @@ public final class CommunicationFactory implements FactoryBean {
 	public Communication getObject() throws Exception {
 		if (instance == null) {
 			Spin.setDefaultProxyFactory(new CGLibProxyFactory());
-			instance = (Communication) Spin.off(new Communication().initialize()); 
+			instance = (Communication) Spin.off(new Communication().initialize());
 			instance.setClientService(clientService);
 			if (log.isDebugEnabled()) log.debug("instanciated new Communication Object by Spring-getObject()");
 		}
@@ -55,13 +55,13 @@ public final class CommunicationFactory implements FactoryBean {
 	public boolean isSingleton() {
 		return true;
 	}
-	
+
 	public ClientServiceSpring getClientService() {
 		return clientService;
 	}
 
 	public void setClientService(ClientServiceSpring clientService) {
 		this.clientService = clientService;
-	} 
+	}
 
 }

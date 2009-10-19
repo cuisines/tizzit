@@ -25,7 +25,7 @@ import de.juwimm.cms.authorization.vo.UserValue;
 import de.juwimm.cms.common.Constants;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -33,9 +33,9 @@ import de.juwimm.cms.common.Constants;
  * @version $Id$
  */
 public class SiteUserTableModel extends DefaultTableModel {
-	private ResourceBundle rb = Constants.rb;
+	private final ResourceBundle rb = Constants.rb;
 	private TableSorter tblUserSorter = null;
-	private Vector<String> columnNames = new Vector<String>(4);
+	private final Vector<String> columnNames = new Vector<String>(4);
 
 	//Vector dataVector = new Vector(); // implemented in super-class
 
@@ -92,21 +92,22 @@ public class SiteUserTableModel extends DefaultTableModel {
 				al.add(((UserValue) ((Object[]) dataVector.elementAt(i))[4]).getUserName());
 			}
 		}
-		return (String[]) al.toArray(new String[0]);
+		return al.toArray(new String[0]);
 	}
 
+	@Override
 	public int getColumnCount() {
 		return columnNames.size();
 	}
 
+	@Override
 	public int getRowCount() {
 		return dataVector.size();
 	}
 
+	@Override
 	public String getColumnName(int col) {
-		if (columnNames.size() >= col) {
-			return (String) columnNames.elementAt(col);
-		}
+		if (columnNames.size() >= col) { return columnNames.elementAt(col); }
 		return null;
 	}
 
@@ -118,6 +119,7 @@ public class SiteUserTableModel extends DefaultTableModel {
 		}
 	}
 
+	@Override
 	public Object getValueAt(int row, int col) {
 		try {
 			return ((Object[]) dataVector.elementAt(row))[col];
@@ -126,6 +128,7 @@ public class SiteUserTableModel extends DefaultTableModel {
 		}
 	}
 
+	@Override
 	public void setValueAt(Object value, int row, int col) {
 		Object[] array = (Object[]) dataVector.elementAt(row);
 		array[col] = value;
@@ -138,6 +141,7 @@ public class SiteUserTableModel extends DefaultTableModel {
 	 * then the last column would contain text ("true"/"false"),
 	 * rather than a check box.
 	 */
+	@Override
 	public Class getColumnClass(int c) {
 		try {
 			return getValueAt(0, c).getClass();
@@ -150,12 +154,14 @@ public class SiteUserTableModel extends DefaultTableModel {
 	 * Don't need to implement this method unless your table's
 	 * editable.
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		//Note that the data/cell address is constant,
 		//no matter where the cell appears onscreen.
 		return (col == 0);
 	}
 
+	@Override
 	public void addRow(Object[] obj) {
 		dataVector.addElement(obj);
 		fireTableRowsInserted(getRowCount(), getRowCount());
@@ -170,6 +176,7 @@ public class SiteUserTableModel extends DefaultTableModel {
 		fireTableRowsInserted(getRowCount(), getRowCount());
 	}
 
+	@Override
 	public void removeRow(int i) {
 		dataVector.removeElementAt(i);
 		this.fireTableRowsDeleted(i, i);

@@ -15,14 +15,26 @@
  */
 package de.juwimm.cms.content.panel;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -40,7 +52,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.swing.NoResizeScrollPane;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -58,23 +70,23 @@ public class PanIteration extends JPanel {
 	private boolean movingItem = false;
 	private boolean enabledSelectThread = true;
 	private Vector<Integer> unkissed = new Vector<Integer>();
-	private DefaultListModel lstModel = new DefaultListModel();
-	private BorderLayout borderLayout1 = new BorderLayout();
+	private final DefaultListModel lstModel = new DefaultListModel();
+	private final BorderLayout borderLayout1 = new BorderLayout();
 	private TreeMap<String, Module> tmItElements = new TreeMap<String, Module>();
 	private TreeMap<String, String> tmItElementsRootnodeName = new TreeMap<String, String>();
 	private TreeMap<Integer, String> tmItElementsOrder = new TreeMap<Integer, String>();
 	private TreeMap<String, Module> tmItElementsOriginal = new TreeMap<String, Module>();
-	private GridBagLayout gblNorth = new GridBagLayout();
-	private GridBagLayout gblPan = new GridBagLayout();
-	private JButton btnUp = new JButton();
-	private JButton btnDeleteMe = new JButton();
-	private JPanel panNorth = new JPanel();
-	private JButton btnDown = new JButton();
-	private JButton btnNew = new JButton();
-	private JList lstIteration = new JList();
-	private JPanel pan = new JPanel();
-	private JSplitPane jSplitPane1 = new JSplitPane();
-	private NoResizeScrollPane jScrollPane1 = new NoResizeScrollPane();
+	private final GridBagLayout gblNorth = new GridBagLayout();
+	private final GridBagLayout gblPan = new GridBagLayout();
+	private final JButton btnUp = new JButton();
+	private final JButton btnDeleteMe = new JButton();
+	private final JPanel panNorth = new JPanel();
+	private final JButton btnDown = new JButton();
+	private final JButton btnNew = new JButton();
+	private final JList lstIteration = new JList();
+	private final JPanel pan = new JPanel();
+	private final JSplitPane jSplitPane1 = new JSplitPane();
+	private final NoResizeScrollPane jScrollPane1 = new NoResizeScrollPane();
 
 	public PanIteration() {
 		try {
@@ -144,14 +156,10 @@ public class PanIteration extends JPanel {
 		jScrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		borderLayout1.setHgap(5);
 		this.add(panNorth, BorderLayout.NORTH);
-		panNorth.add(btnDeleteMe, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(2, 5, 2, 0), 0, 0));
-		panNorth.add(btnUp, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(2, 2, 2, 0), 0, 0));
-		panNorth.add(btnDown, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(2, 2, 2, 0), 0, 0));
-		panNorth.add(btnNew, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(2, 2, 2, 0), 0, 0));
+		panNorth.add(btnDeleteMe, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 0), 0, 0));
+		panNorth.add(btnUp, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 0), 0, 0));
+		panNorth.add(btnDown, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(2, 2, 2, 0), 0, 0));
+		panNorth.add(btnNew, new GridBagConstraints(3, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 2, 2, 0), 0, 0));
 		this.add(jSplitPane1, BorderLayout.CENTER);
 		jSplitPane1.add(jScrollPane1, JSplitPane.TOP);
 		jSplitPane1.add(pan, JSplitPane.BOTTOM);
@@ -189,15 +197,15 @@ public class PanIteration extends JPanel {
 		Iterator it = tmItElementsOrder.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
-			String dcfname = (String) tmItElementsOrder.get(key);
-			Module module = (Module) tmItElementsOriginal.get(dcfname);
-			Module moduleVisible = (Module) tmItElements.get(dcfname);
+			String dcfname = tmItElementsOrder.get(key);
+			Module module = tmItElementsOriginal.get(dcfname);
+			Module moduleVisible = tmItElements.get(dcfname);
 
 			Element conf = (Element) module.getProperties();
 			if (item.getOwnerDocument() != conf.getOwnerDocument()) {
 				conf = (Element) item.getOwnerDocument().importNode(conf, true);
 			}
-			conf = (Element) XercesHelper.renameNode((Node) conf, (String) this.tmItElementsRootnodeName.get(dcfname));
+			conf = (Element) XercesHelper.renameNode(conf, this.tmItElementsRootnodeName.get(dcfname));
 			conf.setAttribute("dcfname", dcfname);
 			conf.setAttribute("description", module.getDescription());
 			item.appendChild(conf);
@@ -320,14 +328,14 @@ public class PanIteration extends JPanel {
 		Iterator it = tmItElementsOrder.keySet().iterator();
 		while (it.hasNext()) {
 			Object key = it.next();
-			String dcfname = (String) tmItElementsOrder.get(key);
-			Module module = (Module) tmItElements.get(dcfname);
+			String dcfname = tmItElementsOrder.get(key);
+			Module module = tmItElements.get(dcfname);
 
 			Element conf = (Element) module.getProperties();
 			if (item.getOwnerDocument() != conf.getOwnerDocument()) {
 				conf = (Element) item.getOwnerDocument().importNode(conf, true);
 			}
-			conf = (Element) XercesHelper.renameNode((Node) conf, (String) this.tmItElementsRootnodeName.get(dcfname));
+			conf = (Element) XercesHelper.renameNode(conf, this.tmItElementsRootnodeName.get(dcfname));
 			conf.setAttribute("dcfname", dcfname);
 			conf.setAttribute("description", AbstractModule.getURLEncoded(module.getDescription()));
 			//conf.setAttribute("label", module.getLabel());
@@ -354,8 +362,8 @@ public class PanIteration extends JPanel {
 				Iterator it = tmItElementsOrder.keySet().iterator();
 				while (it.hasNext()) {
 					Object key = it.next();
-					String dcfname = (String) tmItElementsOrder.get(key);
-					Module module = (Module) tmItElements.get(dcfname);
+					String dcfname = tmItElementsOrder.get(key);
+					Module module = tmItElements.get(dcfname);
 					try {
 						Node conf = XercesHelper.findNode(item, "./*[@dcfname='" + dcfname + "']");
 						module.setProperties(conf);
@@ -378,8 +386,7 @@ public class PanIteration extends JPanel {
 	 * @param tmItElements
 	 * @param labelNodeDcfname
 	 */
-	public void setProperties(TreeMap tmItElementsOrder, TreeMap<String, Module> tmItElements, TreeMap<String, String> tmItElementsRootnodeName,
-			TreeMap<String, Module> tmItElementsOriginal, String labelNodeDcfname, int intMincount, int intMaxcount) {
+	public void setProperties(TreeMap tmItElementsOrder, TreeMap<String, Module> tmItElements, TreeMap<String, String> tmItElementsRootnodeName, TreeMap<String, Module> tmItElementsOriginal, String labelNodeDcfname, int intMincount, int intMaxcount) {
 		this.tmItElementsOrder = tmItElementsOrder;
 		this.tmItElements = tmItElements;
 		this.labelNodeDcfname = labelNodeDcfname;
@@ -396,8 +403,8 @@ public class PanIteration extends JPanel {
 				Iterator it = tmItElementsOrder.keySet().iterator();
 				while (it.hasNext()) {
 					Object key = it.next();
-					String dcfname = (String) tmItElementsOrder.get(key);
-					Module module = (Module) tmItElements.get(dcfname);
+					String dcfname = tmItElementsOrder.get(key);
+					Module module = tmItElements.get(dcfname);
 					module.recycle();
 				}
 			}
@@ -437,14 +444,14 @@ public class PanIteration extends JPanel {
 		if (log.isDebugEnabled()) log.debug(XercesHelper.node2string(root));
 		return root;
 	}
-	
+
 	private int panCount = 0;
-	
+
 	public void addPanel(Module module) {
 		ContentBorderIterationAtomPanel cbi = new ContentBorderIterationAtomPanel();
 		cbi.setLabel(module.getLabel());
 		cbi.setContentModulePanel(module.viewPanelUI());
-		
+
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = panCount++;
@@ -477,8 +484,7 @@ public class PanIteration extends JPanel {
 			while (modIt.hasNext()) {
 				Module mod = (Module) modIt.next();
 				if (!mod.isModuleValid()) {
-					errorPerId
-							.append(Messages.getString("content.moduleFactory.validationPrepend", mod.getLabel()) + "\n");
+					errorPerId.append(Messages.getString("content.moduleFactory.validationPrepend", mod.getLabel()) + "\n");
 					errorPerId.append(mod.getValidationError() + "\n");
 				}
 			}
@@ -488,6 +494,7 @@ public class PanIteration extends JPanel {
 		return errorPerId.toString();
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		this.btnUp.setEnabled(enabled);
 		this.btnDown.setEnabled(enabled);
@@ -516,10 +523,9 @@ public class PanIteration extends JPanel {
 			return label;
 		}
 
+		@Override
 		public String toString() {
-			if (label.equals("")) {
-				return "UNBENANNT";
-			}
+			if (label.equals("")) { return "UNBENANNT"; }
 			return label;
 		}
 
@@ -539,6 +545,7 @@ public class PanIteration extends JPanel {
 			return timestamp;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			boolean retVal = true;
 			IterationItem mo = (IterationItem) obj;
@@ -553,7 +560,8 @@ public class PanIteration extends JPanel {
 			}
 			return retVal;
 		}
-		
+
+		@Override
 		public int hashCode() {
 			return label.hashCode() + item.hashCode() + (int) timestamp;
 		}

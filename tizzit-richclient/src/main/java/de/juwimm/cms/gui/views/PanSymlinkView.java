@@ -26,7 +26,12 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ComponentInputMap;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 import org.jvnet.flamingo.common.JCommandButton;
@@ -41,7 +46,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -50,21 +55,21 @@ import de.juwimm.cms.vo.ViewComponentValue;
  */
 public class PanSymlinkView extends JPanel implements LoadableViewComponentPanel, ActionListener {
 	private static Logger log = Logger.getLogger(PanContentView.class);
-	private ResourceBundle rb = Constants.rb;
-	private BorderLayout borderLayout1 = new BorderLayout();
-	private JTabbedPane tab = new JTabbedPane();
-	private JPanel jPanel1 = new JPanel();
-	private PanMenuentryInternallink viewJump = new PanMenuentryInternallink(true);
-	private JCommandButton btnSave ;
+	private final ResourceBundle rb = Constants.rb;
+	private final BorderLayout borderLayout1 = new BorderLayout();
+	private final JTabbedPane tab = new JTabbedPane();
+	private final JPanel jPanel1 = new JPanel();
+	private final PanMenuentryInternallink viewJump = new PanMenuentryInternallink(true);
+	private JCommandButton btnSave;
 	private JCommandButton btnCancel;
-	private GridBagLayout gridBagLayout1 = new GridBagLayout();
+	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
 
 	public PanSymlinkView() {
 		try {
-			
-			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"),ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32,32)));
-			this.btnSave = new CommandButton( rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(),new Dimension(32,32)));
-			jbInit();			
+
+			this.btnCancel = new CommandButton(rb.getString("dialog.cancel"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_CLOSE.getImage(), new Dimension(32, 32)));
+			this.btnSave = new CommandButton(rb.getString("dialog.save"), ImageWrapperResizableIcon.getIcon(UIConstants.RIBBON_SAVE.getImage(), new Dimension(32, 32)));
+			jbInit();
 			tab.add("Symlink", viewJump);
 
 			ComponentInputMap im = new ComponentInputMap(this);
@@ -105,10 +110,8 @@ public class PanSymlinkView extends JPanel implements LoadableViewComponentPanel
 		jPanel1.setLayout(gridBagLayout1);
 		this.add(tab, BorderLayout.CENTER);
 		this.add(jPanel1, BorderLayout.SOUTH);
-		jPanel1.add(btnSave, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 30, 0));
-		jPanel1.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 30, 0));
+		jPanel1.add(btnSave, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 30, 0));
+		jPanel1.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 30, 0));
 	}
 
 	public void save() throws Exception {
@@ -128,8 +131,7 @@ public class PanSymlinkView extends JPanel implements LoadableViewComponentPanel
 
 	private void cmdCancelActionPerformed(ActionEvent e) {
 		Constants.EDIT_CONTENT = false;
-		ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				Constants.ACTION_TREE_DESELECT));
+		ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_DESELECT));
 	}
 
 	public void actionPerformed(ActionEvent ae) {

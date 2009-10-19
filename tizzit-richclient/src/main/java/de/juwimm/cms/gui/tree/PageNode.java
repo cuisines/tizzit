@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.gui.tree;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -35,7 +35,7 @@ import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -44,7 +44,7 @@ public class PageNode extends TreeNode implements Transferable {
 	private static ResourceBundle rb = Constants.rb;
 	private static Logger log = Logger.getLogger(PageNode.class);
 	private ViewComponentValue viewComponent;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	public static final DataFlavor DATA_FLAVOUR_PAGE_NODE = new DataFlavor(PageNode.class, "PageNode");
 	public static final DataFlavor DATA_FLAVOUR_TEXT_PLAIN = new DataFlavor("text/plain", "Text");
 	public static final DataFlavor[] FLAVORS = {DATA_FLAVOUR_PAGE_NODE, DATA_FLAVOUR_TEXT_PLAIN};
@@ -72,10 +72,9 @@ public class PageNode extends TreeNode implements Transferable {
 		return getViewComponent().getViewComponentId();
 	}
 
+	@Override
 	public String toString() {
-		if (getViewComponent() == null || getViewComponent().isRoot()) {
-			return rb.getString("panel.tree.rootHeading");
-		}
+		if (getViewComponent() == null || getViewComponent().isRoot()) { return rb.getString("panel.tree.rootHeading"); }
 		return getViewComponent().getDisplayLinkName();
 	}
 
@@ -92,6 +91,7 @@ public class PageNode extends TreeNode implements Transferable {
 		return getViewComponent().getStatus();
 	}
 
+	@Override
 	public void update(Object daoObject) {
 		if (daoObject instanceof ViewComponentValue) {
 			update((ViewComponentValue) daoObject);
@@ -130,9 +130,7 @@ public class PageNode extends TreeNode implements Transferable {
 
 	/** implements Transferable interface */
 	public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
-		if (df.equals(DATA_FLAVOUR_PAGE_NODE)) {
-			return this;
-		}
+		if (df.equals(DATA_FLAVOUR_PAGE_NODE)) { return this; }
 		throw new UnsupportedFlavorException(df);
 	}
 
@@ -142,10 +140,10 @@ public class PageNode extends TreeNode implements Transferable {
 	}
 
 	// ----------- Centralization of needed parameters ---------
+	@Override
 	public boolean isDeleteable() {
 		boolean retVal = false;
-		if (isRoot())
-			return false;
+		if (isRoot()) return false;
 		if (this instanceof PageOtherUnitNode) {
 			retVal = false;
 		} else {
@@ -154,10 +152,10 @@ public class PageNode extends TreeNode implements Transferable {
 		return retVal;
 	}
 
+	@Override
 	public boolean isMoveableToUp() {
 		boolean retVal = false;
-		if (isRoot())
-			return false;
+		if (isRoot()) return false;
 		if (getParent().getIndex(this) != 0) {
 			retVal = true;
 		} else {
@@ -166,10 +164,10 @@ public class PageNode extends TreeNode implements Transferable {
 		return retVal;
 	}
 
+	@Override
 	public boolean isMoveableToDown() {
 		boolean retVal = false;
-		if (isRoot())
-			return false;
+		if (isRoot()) return false;
 		if (getParent().getIndex(this) != getParent().getChildCount() - 1) {
 			retVal = true;
 		} else {
@@ -178,10 +176,10 @@ public class PageNode extends TreeNode implements Transferable {
 		return retVal;
 	}
 
+	@Override
 	public boolean isMoveableToLeft() {
 		boolean retVal = false;
-		if (isRoot())
-			return false;
+		if (isRoot()) return false;
 		if (getParent().getParent() == null) {
 			retVal = false;
 		} else {
@@ -190,14 +188,13 @@ public class PageNode extends TreeNode implements Transferable {
 		return retVal;
 	}
 
+	@Override
 	public boolean isMoveableToRight() {
 		boolean retVal = false;
-		if (isRoot())
-			return false;
+		if (isRoot()) return false;
 		DefaultMutableTreeNode prevNode = getPreviousSibling();
 		//normally getIndex(this)==0 and prevNode==null must be the same...
-		if (getParent().getIndex(this) != 0 && prevNode != null && prevNode instanceof TreeNode
-				&& ((TreeNode) prevNode).isAppendingAllowed()) {
+		if (getParent().getIndex(this) != 0 && prevNode != null && prevNode instanceof TreeNode && ((TreeNode) prevNode).isAppendingAllowed()) {
 			retVal = true;
 		} else {
 			retVal = false;
@@ -205,6 +202,7 @@ public class PageNode extends TreeNode implements Transferable {
 		return retVal;
 	}
 
+	@Override
 	public boolean isEditable() {
 		boolean retVal = false;
 		return retVal;
@@ -244,7 +242,7 @@ public class PageNode extends TreeNode implements Transferable {
 
 				default:
 					log.warn("Something is wrong here");
-			//entry = new PageNode();
+					//entry = new PageNode();
 			}
 			if (entry != null) {
 				pageNode.add(entry);
@@ -254,6 +252,7 @@ public class PageNode extends TreeNode implements Transferable {
 		}
 	}
 
+	@Override
 	public boolean loadChildren() {
 		boolean retVal = false;
 		if (!isInit()) {
@@ -285,13 +284,12 @@ public class PageNode extends TreeNode implements Transferable {
 				if (parent == null) {
 					parent = this;
 				}
-				ViewComponentValue parentDao = comm.getViewComponent(parent.getViewId(),
-						1);
+				ViewComponentValue parentDao = comm.getViewComponent(parent.getViewId(), 1);
 				try {
 					if (parentDao.getChildren() != null) {
 						ViewComponentValue[] childrenServerDao = parentDao.getChildren();
 						Enumeration childrenTreeDao = parent.children();
-	
+
 						if (childrenServerDao != null && childrenTreeDao != null && childrenTreeDao.hasMoreElements()) {
 							for (int i = 0; i < childrenServerDao.length; i++) {
 								ViewComponentValue childDao = childrenServerDao[i];

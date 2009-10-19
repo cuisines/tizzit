@@ -251,6 +251,7 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		}
 	}
 
+	//TODO: look into returnvalue...
 	private Realm2viewComponentHbm createRealm2ViewComponentFromLdapRealmValue(RealmLdapValue value, Integer viewComponentId, String roleNeeded) {
 		Realm2viewComponentHbm realm = new Realm2viewComponentHbmImpl();
 		if (value.getLdapRealmId() != null) {

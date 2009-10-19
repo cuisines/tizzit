@@ -16,7 +16,7 @@
 package de.juwimm.cms.gui.event;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * If implemented, the ActionHub will notify the component from finishing the ActionEvent Worker Thread
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>

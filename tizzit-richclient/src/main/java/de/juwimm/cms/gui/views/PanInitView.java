@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -35,7 +35,7 @@ import de.juwimm.cms.gui.controls.UnloadablePanel;
  */
 public final class PanInitView extends JPanel implements UnloadablePanel {
 	private static Logger log = Logger.getLogger(PanInitView.class);
-	private JLabel lblIcon = new JLabel(new ImageIcon(getClass().getResource("/images/tizzit_450x121.png")));
+	private final JLabel lblIcon = new JLabel(new ImageIcon(getClass().getResource("/images/tizzit_450x121.png")));
 	private static PanInitView pan = new PanInitView();
 
 	private PanInitView() {

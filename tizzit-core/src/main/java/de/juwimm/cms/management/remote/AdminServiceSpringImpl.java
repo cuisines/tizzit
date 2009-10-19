@@ -173,19 +173,19 @@ public class AdminServiceSpringImpl extends AdminServiceSpringBase {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void handleStartTreeRepair(Integer parentId) throws Exception {
-		List<MiniViewComponent> lst = super.getConQuestSqlDaoSpring().getViewComponentByParentId(parentId);
+		List<MiniViewComponent> lst = getTizzitSqlDaoSpring().getViewComponentByParentId(parentId);
 		Collections.sort(lst, new MiniViewComponentComparator());
 
 		MiniViewComponent prevMvc = lst.get(0);
 		for (MiniViewComponent currentMvc : lst) {
 			if (prevMvc.equals(currentMvc)) continue;
-			super.getConQuestSqlDaoSpring().updateMvc(prevMvc, currentMvc);
+			getTizzitSqlDaoSpring().updateMvc(prevMvc, currentMvc);
 			prevMvc = currentMvc;
 		}
 
-		super.getConQuestSqlDaoSpring().updateFirstMvc(lst.get(0));
-		super.getConQuestSqlDaoSpring().updateLastMvc(lst.get(lst.size() - 1));
-		super.getConQuestSqlDaoSpring().updateParentMvc(parentId.intValue(), lst.get(0));
+		getTizzitSqlDaoSpring().updateFirstMvc(lst.get(0));
+		getTizzitSqlDaoSpring().updateLastMvc(lst.get(lst.size() - 1));
+		getTizzitSqlDaoSpring().updateParentMvc(parentId.intValue(), lst.get(0));
 	}
 
 	@Override

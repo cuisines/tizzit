@@ -73,9 +73,8 @@ import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.DropDownHolder;
 
-
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -88,22 +87,22 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 	public static final String PROP_CHECKIN = "PanelContent.ACTION_CHECKIN";
 	public static final String PROP_CHECKOUT = "PanelContent.ACTION_CHECKOUT";
 	private static final String ACTION_CONTENT_VERSION_SELECTED = "CONTENT_VERSION_SELECTED";
-	private SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
+	private final SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
 
 	private final ReentrantLock lock = new ReentrantLock();
 	private ContentValue contentValue = null;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private ViewComponentValue loadedViewComponentValue = null;
-	private JScrollPane jScrollpane = new JScrollPane();
+	private final JScrollPane jScrollpane = new JScrollPane();
 	private ContentManager contentManager = ((ContentManager) getBean(Beans.CONTENT_MANAGER));
-	private JPanel jPanel1 = new JPanel();
-	private JLabel lblHeader = new JLabel();
-	private JTextField txtHeadline = new JTextField();
-	private JButton btnDeleteAllOldContentVersions = new JButton();
-	private JLabel lblContentVersions = new JLabel();
-	private JButton btnDeleteSelectedContentVersion = new JButton();
-	private JComboBox cboContentVersions = new JComboBox();
-	private JPanel panContentHeader = new JPanel(); // contains the ContentVersion-DropDown and the Page-Title
+	private final JPanel jPanel1 = new JPanel();
+	private final JLabel lblHeader = new JLabel();
+	private final JTextField txtHeadline = new JTextField();
+	private final JButton btnDeleteAllOldContentVersions = new JButton();
+	private final JLabel lblContentVersions = new JLabel();
+	private final JButton btnDeleteSelectedContentVersion = new JButton();
+	private final JComboBox cboContentVersions = new JComboBox();
+	private final JPanel panContentHeader = new JPanel(); // contains the ContentVersion-DropDown and the Page-Title
 	private JEditorPane txtEditor = null;
 
 	private boolean loadFromDropDown = false;

@@ -70,7 +70,7 @@ import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.NoResizeScrollPane;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -80,24 +80,24 @@ import de.juwimm.swing.NoResizeScrollPane;
 public final class PanContentView extends JPanel implements LoadableViewComponentPanel, ActionListener {
 	private static final long serialVersionUID = 1043431871885717071L;
 	private static Logger log = Logger.getLogger(PanContentView.class);
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private ResourceBundle rb = Constants.rb;
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final ResourceBundle rb = Constants.rb;
 	private ViewComponentValue viewComponent;
-	private JTabbedPane panTab = new JTabbedPane();
+	private final JTabbedPane panTab = new JTabbedPane();
 	private PanMenuentryContent panMenuentry;
 	private PanelContent panContent;
 	private PanelMetaData panMetaData;
-	private JPanel panXmlData = new JPanel();
+	private final JPanel panXmlData = new JPanel();
 	private PanelSafeGuard panSafeGuard;
-	private JPanel panBottom = new JPanel();
+	private final JPanel panBottom = new JPanel();
 	private JCommandButton btnSave;
 	private JCommandButton btnCancel;
 	private JCommandButton btnPreview;
-	private JScrollPane spXmlText = new NoResizeScrollPane();
-	private JEditorPane txtEditor = new JEditorPane(); // for "XML"-Tab
-	private JRadioButton radioPreviewFrameset = new JRadioButton();
-	private JRadioButton radioPreviewWithoutFrame = new JRadioButton();
-	private ButtonGroup bGrp = new ButtonGroup();
+	private final JScrollPane spXmlText = new NoResizeScrollPane();
+	private final JEditorPane txtEditor = new JEditorPane(); // for "XML"-Tab
+	private final JRadioButton radioPreviewFrameset = new JRadioButton();
+	private final JRadioButton radioPreviewWithoutFrame = new JRadioButton();
+	private final ButtonGroup bGrp = new ButtonGroup();
 	private static PanContentView instance = null;
 	private boolean saveStatus = true;
 	private TreePath treeNode;
@@ -253,10 +253,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																											 panMenuentry.unload();
-																																																																																																																											 } else if (lastIndex == 2) {
-																																																																																																																											 panMetaData.unload();
-																																																																																																																											 }*/
+																																																																																																																													 panMenuentry.unload();
+																																																																																																																													 } else if (lastIndex == 2) {
+																																																																																																																													 panMetaData.unload();
+																																																																																																																													 }*/
 
 			String strTabName = "";
 			try {

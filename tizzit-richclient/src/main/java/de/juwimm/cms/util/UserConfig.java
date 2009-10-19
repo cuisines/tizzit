@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.util;
 
-import static de.juwimm.cms.client.beans.Application.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
 
 import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
@@ -26,7 +26,7 @@ import org.w3c.dom.Node;
 import de.juwimm.cms.client.beans.Beans;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -68,8 +68,7 @@ public final class UserConfig extends ConfigReader {
 		try {
 			Node nde = XercesHelper.findNode(this.getConfdoc(), this.getRelativeNodePath() + node);
 			if (nde == null) {
-				nde = XercesHelper.findNode(this.getConfdoc(), this.getRelativeNodePath().substring(0, this.getRelativeNodePath()
-						.length() - 1));
+				nde = XercesHelper.findNode(this.getConfdoc(), this.getRelativeNodePath().substring(0, this.getRelativeNodePath().length() - 1));
 				Element elm = this.getConfdoc().createElement(node);
 				CDATASection cdata = this.getConfdoc().createCDATASection(value);
 				nde.appendChild(elm);

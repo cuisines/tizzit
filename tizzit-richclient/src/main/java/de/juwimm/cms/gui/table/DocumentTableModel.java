@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.gui.table;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.util.Date;
 import java.util.Vector;
@@ -27,7 +27,7 @@ import de.juwimm.cms.vo.DocumentSlimValue;
 /**
  * TableModel for list of all documents in dialog for choosing a document
  * 
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2002, 2003, 2004, 2005</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -36,7 +36,8 @@ import de.juwimm.cms.vo.DocumentSlimValue;
  * @version $Id$
  */
 public class DocumentTableModel extends DefaultTableModel {
-	private Vector<String> columnNames = new Vector<String>(3);
+	private final Vector<String> columnNames = new Vector<String>(3);
+
 	//private SimpleDateFormat sdf = new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat"));
 
 	public DocumentTableModel() {
@@ -57,6 +58,7 @@ public class DocumentTableModel extends DefaultTableModel {
 		addRow(obj);
 	}
 
+	@Override
 	public void addRow(Vector obj) {
 		dataVector.addElement(obj);
 		fireTableRowsInserted(getRowCount(), getRowCount());
@@ -68,10 +70,12 @@ public class DocumentTableModel extends DefaultTableModel {
 		}
 	}
 
+	@Override
 	public int getColumnCount() {
 		return columnNames.size();
 	}
 
+	@Override
 	public int getRowCount() {
 		return dataVector.size();
 	}
@@ -88,10 +92,9 @@ public class DocumentTableModel extends DefaultTableModel {
 		return retVal;
 	}
 
+	@Override
 	public String getColumnName(int col) {
-		if (columnNames.size() >= col) {
-			return (String) columnNames.elementAt(col);
-		}
+		if (columnNames.size() >= col) { return columnNames.elementAt(col); }
 		return null;
 	}
 
@@ -103,6 +106,7 @@ public class DocumentTableModel extends DefaultTableModel {
 		}
 	}
 
+	@Override
 	public Object getValueAt(int row, int col) {
 		try {
 			return ((Object[]) dataVector.elementAt(row))[col];
@@ -111,6 +115,7 @@ public class DocumentTableModel extends DefaultTableModel {
 		}
 	}
 
+	@Override
 	public void setValueAt(Object value, int row, int col) {
 		Object[] array = (Object[]) dataVector.elementAt(row);
 		array[col] = value;
@@ -123,6 +128,7 @@ public class DocumentTableModel extends DefaultTableModel {
 	 * then the last column would contain text ("true"/"false"),
 	 * rather than a check box.
 	 */
+	@Override
 	public Class getColumnClass(int c) {
 		try {
 			return getValueAt(0, c).getClass();
@@ -135,12 +141,14 @@ public class DocumentTableModel extends DefaultTableModel {
 	 * Don't need to implement this method unless your table's
 	 * editable.
 	 */
+	@Override
 	public boolean isCellEditable(int row, int col) {
 		//Note that the data/cell address is constant,
 		//no matter where the cell appears onscreen.
 		return false;
 	}
 
+	@Override
 	public void addRow(Object[] obj) {
 		dataVector.addElement(obj);
 		fireTableRowsInserted(getRowCount(), getRowCount());
@@ -155,6 +163,7 @@ public class DocumentTableModel extends DefaultTableModel {
 		fireTableRowsInserted(getRowCount(), getRowCount());
 	}
 
+	@Override
 	public void removeRow(int i) {
 		dataVector.removeElementAt(i);
 		this.fireTableRowsDeleted(i, i);

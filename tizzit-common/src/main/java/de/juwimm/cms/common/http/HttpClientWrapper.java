@@ -48,7 +48,7 @@ import de.juwimm.cms.common.HttpMessages;
 
 /**
  * <p>
- * Title: ConQuest
+ * Title: Tizzit
  * </p>
  * <p>
  * Description: Enterprise Content Management
@@ -74,7 +74,7 @@ public class HttpClientWrapper {
 	private static String httpProxyPassword = null;
 	private boolean useNTproxy = false;
 	private Properties fileProp = null;
-	private final File propFile = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".conquest");
+	private final File propFile = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".tizzit");
 	private final HashMap<String, HostConfiguration> hostMap = new HashMap<String, HostConfiguration>();
 
 	public static HttpClientWrapper getInstance() {
@@ -108,7 +108,7 @@ public class HttpClientWrapper {
 				// "").toString());
 				setHttpProxyPassword(fileProp.getProperty(HttpClientWrapper.CQ_HTTP_PPROXY_PASSWORD_ENCRYPTED, "no").equalsIgnoreCase("no") ? fileProp.getProperty("http.proxyPassword").toString() : new ClientDesEncrypter().decrypt(fileProp.getProperty("http.proxyPassword")));
 			} catch (Exception exe) {
-				log.error("Could not update the localuser properties from the .conquest file", exe);
+				log.error("Could not update the localuser properties from the .tizzit file", exe);
 			}
 		}
 
@@ -123,9 +123,9 @@ public class HttpClientWrapper {
 	}
 
 	/**
-	 * save in ${user.home}\.conquest (e.g. %USERPROFILE%\.conquest in windows)
+	 * save in ${user.home}\.conquest (e.g. %USERPROFILE%\.tizzit in windows)
 	 * encrypt password always decrypt only if cqHttpPproxyPasswordEncrypted=yes
-	 * in ${user.home}\.conquest
+	 * in ${user.home}\.tizzit
 	 * 
 	 */
 	protected void saveProperties(boolean save) {
@@ -142,10 +142,10 @@ public class HttpClientWrapper {
 				}
 				propFile.createNewFile();
 				FileOutputStream fos = new FileOutputStream(propFile, false);
-				fileProp.store(fos, "Local ConQuest Properties");
+				fileProp.store(fos, "Local Tizzit Properties");
 				fos.close();
 			} catch (Exception exe) {
-				log.error("Error saving to .conquest File: ", exe);
+				log.error("Error saving to .tizzit File: ", exe);
 			}
 		}
 	}

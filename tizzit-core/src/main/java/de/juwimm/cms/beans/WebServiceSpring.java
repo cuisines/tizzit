@@ -25,7 +25,15 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -43,20 +51,51 @@ import org.w3c.dom.Node;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.annotation.HourCache;
-import de.juwimm.cms.components.model.*;
+import de.juwimm.cms.components.model.AddressHbm;
+import de.juwimm.cms.components.model.AddressHbmDao;
+import de.juwimm.cms.components.model.DepartmentHbm;
+import de.juwimm.cms.components.model.DepartmentHbmDao;
+import de.juwimm.cms.components.model.PersonHbm;
+import de.juwimm.cms.components.model.PersonHbmDao;
+import de.juwimm.cms.components.model.TalktimeHbm;
+import de.juwimm.cms.components.model.TalktimeHbmDao;
 import de.juwimm.cms.components.vo.AddressValue;
 import de.juwimm.cms.components.vo.DepartmentValue;
 import de.juwimm.cms.components.vo.PersonValue;
 import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.exceptions.ResourceNotFoundException;
 import de.juwimm.cms.exceptions.UserException;
-import de.juwimm.cms.model.*;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentHbmDao;
+import de.juwimm.cms.model.ContentVersionHbm;
+import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.DocumentHbmDao;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.HostHbmDao;
+import de.juwimm.cms.model.PictureHbm;
+import de.juwimm.cms.model.PictureHbmDao;
+import de.juwimm.cms.model.ShortLinkHbm;
+import de.juwimm.cms.model.ShortLinkHbmDao;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.SiteHbmDao;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.UnitHbmDao;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewComponentHbmDao;
+import de.juwimm.cms.model.ViewComponentHbmImpl;
+import de.juwimm.cms.model.ViewDocumentHbm;
+import de.juwimm.cms.model.ViewDocumentHbmDao;
 import de.juwimm.cms.remote.ViewServiceSpring;
 import de.juwimm.cms.safeguard.realmlogin.SafeguardLoginManager;
 import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
-import de.juwimm.cms.vo.*;
+import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.PictureValue;
+import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
  * @see de.juwimm.cms.remote.WebServiceSpring
@@ -397,7 +436,7 @@ public class WebServiceSpring {
 		byte[] ret = null;
 		try {
 			DocumentHbm docHbm = documentHbmDao.load(documentId);
-			
+
 			ret = documentHbmDao.getDocumentContent(documentId);
 			//IOUtils.toByteArray(docHbm.getDocument().getBinaryStream());
 		} catch (Exception e) {
@@ -867,11 +906,10 @@ public class WebServiceSpring {
 				// Fall: /deutsch/joekel/
 				viewComponentId = viewServiceSpring.getViewComponentId4PathWithViewTypeAndLanguage(path, viewType, language, siteId);
 			}
-			if (viewComponentId == null ) {
-				if("favicon.ico".equals(path)) {
-					return null;
-				}
-				throw new ResourceNotFoundException("Could not read resource: " + path); }
+			if (viewComponentId == null) {
+				if ("favicon.ico".equals(path)) { return null; }
+				throw new ResourceNotFoundException("Could not read resource: " + path);
+			}
 			try {
 				if (log.isDebugEnabled()) log.debug("found viewComponentId " + viewComponentId + " for path");
 				sitemapParams.put("currentDate", DateConverter.getSql2String(new Date(System.currentTimeMillis())));
@@ -923,7 +961,7 @@ public class WebServiceSpring {
 		Set keySet = m.keySet();
 		for (Object object : keySet) {
 			Object val = m.get(object);
-			String vs = (val==null)?"":val.toString();
+			String vs = (val == null) ? "" : val.toString();
 			sb.append(object.toString() + ":" + vs + " ");
 		}
 		return sb.toString();
@@ -1629,7 +1667,7 @@ public class WebServiceSpring {
 			// host has a valid redirect url
 				return redirectUrl;
 			if (host.getRedirectHostName() != null) {
-				// host points to a different host in conquest
+				// host points to a different host in tizzit
 				if (formerHostsSet == null) formerHostsSet = new HashSet<String>();
 				formerHostsSet.add(hostName);
 				if (formerHostsSet.contains(host.getRedirectHostName().getHostName())) {
@@ -1736,11 +1774,11 @@ public class WebServiceSpring {
 		}
 		return 0L;
 	}
-	
+
 	public Boolean getLiveserver(String hostName) {
 		boolean retVal = false;
 		HostHbm host = hostHbmDao.load(hostName);
-		if(host != null) {
+		if (host != null) {
 			retVal = host.isLiveserver();
 		}
 		return retVal;

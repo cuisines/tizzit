@@ -15,13 +15,26 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -40,7 +53,7 @@ import de.juwimm.cms.vo.SiteValue;
 /**
  * Simple Version of PanSitesAdministration for connecting users and sites
  * 
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2002, 2003, 2004, 2005, 2006</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -49,30 +62,30 @@ import de.juwimm.cms.vo.SiteValue;
  */
 public class PanUserSites extends JPanel implements ReloadablePanel {
 	private static Logger log = Logger.getLogger(PanUserSites.class);
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private SiteTableModel tblSiteModel = new SiteTableModel();
 	private SiteUserTableModel tblUserModel = null;
 	private TableSorter tblSiteSorter = null;
 	private TableSorter tblUserSorter = null;
-	private JPanel panDetails = new JPanel();
-	private JButton btnSaveChanges = new JButton(UIConstants.BTN_SAVE);
-	private JTextField txtSiteName = new JTextField();
-	private JTextField txtSiteShort = new JTextField();
-	private JLabel lblSiteShort = new JLabel();
-	private JScrollPane spSite = new JScrollPane();
-	private JTable tblSite = new JTable();
-	private JLabel lblSiteName1 = new JLabel();
-	private GridBagLayout gridBagLayout1 = new GridBagLayout();
-	private JPanel panConnectedUsers = new JPanel();
+	private final JPanel panDetails = new JPanel();
+	private final JButton btnSaveChanges = new JButton(UIConstants.BTN_SAVE);
+	private final JTextField txtSiteName = new JTextField();
+	private final JTextField txtSiteShort = new JTextField();
+	private final JLabel lblSiteShort = new JLabel();
+	private final JScrollPane spSite = new JScrollPane();
+	private final JTable tblSite = new JTable();
+	private final JLabel lblSiteName1 = new JLabel();
+	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
+	private final JPanel panConnectedUsers = new JPanel();
 	private TitledBorder titledBorder2;
-	private JScrollPane spUser = new JScrollPane();
-	private JTable tblUser = new JTable();
-	private BorderLayout borderLayout1 = new BorderLayout();
-	private GridBagLayout gridBagLayout2 = new GridBagLayout();
-	private JLabel lblSiteId = new JLabel();
-	private JLabel lblSiteIdContent = new JLabel();
-	private JPanel jPanel1 = new JPanel();
-	private GridBagLayout gridBagLayout3 = new GridBagLayout();
+	private final JScrollPane spUser = new JScrollPane();
+	private final JTable tblUser = new JTable();
+	private final BorderLayout borderLayout1 = new BorderLayout();
+	private final GridBagLayout gridBagLayout2 = new GridBagLayout();
+	private final JLabel lblSiteId = new JLabel();
+	private final JLabel lblSiteIdContent = new JLabel();
+	private final JPanel jPanel1 = new JPanel();
+	private final GridBagLayout gridBagLayout3 = new GridBagLayout();
 
 	public PanUserSites() {
 		try {
@@ -91,8 +104,7 @@ public class PanUserSites extends JPanel implements ReloadablePanel {
 	}
 
 	void jbInit() throws Exception {
-		titledBorder2 = new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(165, 163, 151)),
-				"Connected Users");
+		titledBorder2 = new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(165, 163, 151)), "Connected Users");
 		this.setLayout(gridBagLayout1);
 		panDetails.setBorder(BorderFactory.createEtchedBorder());
 		panDetails.setDebugGraphicsOptions(0);
@@ -112,31 +124,20 @@ public class PanUserSites extends JPanel implements ReloadablePanel {
 		lblSiteIdContent.setText(" ");
 		jPanel1.setLayout(gridBagLayout3);
 		this.setSize(711, 494);
-		panDetails.add(txtSiteName, new GridBagConstraints(1, 1, 3, 1, 0.6, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		panDetails.add(txtSiteShort, new GridBagConstraints(1, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		this.add(spSite, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST,
-				GridBagConstraints.VERTICAL, new Insets(10, 10, 0, 0), 200, 0));
-		this.add(panDetails, new GridBagConstraints(2, 0, 1, 2, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
+		panDetails.add(txtSiteName, new GridBagConstraints(1, 1, 3, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		panDetails.add(txtSiteShort, new GridBagConstraints(1, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		this.add(spSite, new GridBagConstraints(0, 0, 2, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL, new Insets(10, 10, 0, 0), 200, 0));
+		this.add(panDetails, new GridBagConstraints(2, 0, 1, 2, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 10, 10), 0, 0));
 		spSite.getViewport().add(tblSite, null);
-		panDetails.add(lblSiteName1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		panDetails.add(lblSiteShort, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		panDetails.add(panConnectedUsers, new GridBagConstraints(4, 0, 1, 17, 0.4, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 150, 0));
+		panDetails.add(lblSiteName1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		panDetails.add(lblSiteShort, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		panDetails.add(panConnectedUsers, new GridBagConstraints(4, 0, 1, 17, 0.4, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 150, 0));
 		panConnectedUsers.add(spUser, BorderLayout.CENTER);
 		spUser.getViewport().add(tblUser, null);
-		panDetails.add(btnSaveChanges, new GridBagConstraints(0, 16, 3, 1, 0.0, 1.0, GridBagConstraints.SOUTHWEST,
-				GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0));
-		panDetails.add(lblSiteId, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		panDetails.add(lblSiteIdContent, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
-		panDetails.add(jPanel1, new GridBagConstraints(1, 7, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		panDetails.add(btnSaveChanges, new GridBagConstraints(0, 16, 3, 1, 0.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 10), 0, 0));
+		panDetails.add(lblSiteId, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		panDetails.add(lblSiteIdContent, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 0));
+		panDetails.add(jPanel1, new GridBagConstraints(1, 7, 3, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 	}
 
 	public void reload() {
@@ -198,7 +199,7 @@ public class PanUserSites extends JPanel implements ReloadablePanel {
 				setButtonsEnabled(false);
 				SiteValue vo = (SiteValue) tblSiteSorter.getValueAt(tblSite.getSelectedRow(), 2);
 				int siteToSelect = vo.getSiteId();
-				comm.setConnectedUsersForSite(siteToSelect,	tblUserModel.getSelectedUsers());
+				comm.setConnectedUsersForSite(siteToSelect, tblUserModel.getSelectedUsers());
 				reloadSites();
 				selectSite(siteToSelect);
 				setButtonsEnabled(true);

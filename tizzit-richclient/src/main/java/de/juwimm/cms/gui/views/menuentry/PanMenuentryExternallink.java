@@ -15,12 +15,25 @@
  */
 package de.juwimm.cms.gui.views.menuentry;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
@@ -35,7 +48,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -44,16 +57,16 @@ import de.juwimm.cms.vo.ViewComponentValue;
  */
 public class PanMenuentryExternallink extends PanMenuentry {
 	private static Logger log = Logger.getLogger(PanMenuentryExternallink.class);
-	private ButtonGroup buttonGroup = new ButtonGroup();
-	private JPanel panNewWindow = new JPanel();
-	private JRadioButton rbBlank = new JRadioButton();
-	private JRadioButton rbHeader = new JRadioButton();
-	private JLabel lblLinkAddress = new JLabel();
-	private JTextField txtLinkUrl = new JTextField();
-	private Communication comm;
-	private JPanel panLinkProperties = new JPanel();
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private final JPanel panNewWindow = new JPanel();
+	private final JRadioButton rbBlank = new JRadioButton();
+	private final JRadioButton rbHeader = new JRadioButton();
+	private final JLabel lblLinkAddress = new JLabel();
+	private final JTextField txtLinkUrl = new JTextField();
+	private final Communication comm;
+	private final JPanel panLinkProperties = new JPanel();
 	private Component spacer;
-	private JCheckBox cbNewWindow = new JCheckBox();
+	private final JCheckBox cbNewWindow = new JCheckBox();
 
 	public PanMenuentryExternallink(Communication comm) {
 		super();
@@ -101,6 +114,7 @@ public class PanMenuentryExternallink extends PanMenuentry {
 		buttonGroup.add(rbHeader);
 	}
 
+	@Override
 	public void save() throws Exception {
 		String vindexSave = this.getViewComponent().getViewIndex();
 		super.save();
@@ -125,10 +139,10 @@ public class PanMenuentryExternallink extends PanMenuentry {
 		}
 		if (this.cbNewWindow.isSelected()) {
 			if ((this.getViewComponent().getDisplaySettings() & Constants.DISPLAY_SETTING_NEW_WINDOW) != 1) edited = true;
-			this.getViewComponent().setDisplaySettings((byte) (this.getViewComponent().getDisplaySettings() | Constants.DISPLAY_SETTING_NEW_WINDOW));			
+			this.getViewComponent().setDisplaySettings((byte) (this.getViewComponent().getDisplaySettings() | Constants.DISPLAY_SETTING_NEW_WINDOW));
 		} else {
 			if ((this.getViewComponent().getDisplaySettings() & Constants.DISPLAY_SETTING_NEW_WINDOW) != 0) edited = true;
-			this.getViewComponent().setDisplaySettings((byte) (this.getViewComponent().getDisplaySettings() & ~Constants.DISPLAY_SETTING_NEW_WINDOW));			
+			this.getViewComponent().setDisplaySettings((byte) (this.getViewComponent().getDisplaySettings() & ~Constants.DISPLAY_SETTING_NEW_WINDOW));
 		}
 
 		if (edited) {
@@ -153,6 +167,7 @@ public class PanMenuentryExternallink extends PanMenuentry {
 		}
 	}
 
+	@Override
 	public void load(ViewComponentValue vcd) {
 		super.load(vcd);
 		txtLinkUrl.setText(this.getViewComponent().getReference());

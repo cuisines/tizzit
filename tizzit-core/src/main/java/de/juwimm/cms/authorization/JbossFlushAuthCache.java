@@ -25,7 +25,7 @@ import javax.naming.InitialContext;
 import org.apache.log4j.Logger;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author Richard Hightower

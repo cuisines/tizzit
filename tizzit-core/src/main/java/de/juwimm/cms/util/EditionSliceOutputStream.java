@@ -28,7 +28,7 @@ import de.juwimm.cms.model.EditionSliceHbmDao;
 /**
  * This is the EditionSliceOutputStream for use, if the actual outputStream should be written to the Database.
  *
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: JuwiMacMillan Group</p>
@@ -40,7 +40,7 @@ public class EditionSliceOutputStream extends OutputStream {
 	private EditionHbm edition = null;
 	private ByteArrayOutputStream out = null;
 	private int sliceId = 0;
-	private EditionSliceHbmDao eshd;
+	private final EditionSliceHbmDao eshd;
 
 	public EditionSliceOutputStream(EditionHbm edition, EditionSliceHbmDao eshd) {
 		this.edition = edition;
@@ -48,16 +48,19 @@ public class EditionSliceOutputStream extends OutputStream {
 		out = new ByteArrayOutputStream();
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (log.isDebugEnabled()) log.debug("Close");
 		fetterChecker(true);
 		out.close();
 	}
 
+	@Override
 	public void flush() throws IOException {
 		out.flush();
 	}
 
+	@Override
 	public void write(int b) {
 		out.write(b);
 		fetterChecker(false);

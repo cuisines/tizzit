@@ -49,11 +49,11 @@ public class TestContainerFrame {
 	}
 	
 	private void loadPlugin(String jarpath, String dcfpath) {
-		ConquestPanel conquest = new ConquestPanel();
-		conquest.configurePlugin(jarpath,dcfpath);
-		conquest.loadPlugin();
+		TizzitPanel tizzit = new TizzitPanel();
+		tizzit.configurePlugin(jarpath,dcfpath);
+		tizzit.loadPlugin();
 		fr.getRootPane().remove(configurePanel);
-		fr.getRootPane().add(conquest,BorderLayout.CENTER);
+		fr.getRootPane().add(tizzit,BorderLayout.CENTER);
 		fr.getRootPane().updateUI();
 	}
 	

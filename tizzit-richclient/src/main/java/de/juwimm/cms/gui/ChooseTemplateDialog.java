@@ -47,23 +47,23 @@ import de.juwimm.swing.CustomComboBoxModel;
 import de.juwimm.swing.DropDownHolder;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
 public class ChooseTemplateDialog extends JDialog {
 	private static Logger log = Logger.getLogger(ChooseTemplateDialog.class);
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private ChooseTemplateListener ctl = null;
 	private PageNode pageNode = null;
 	private int position;
-	private JButton cmdCancel = new JButton();
-	private JButton cmdOK = new JButton();
-	private JComboBox cbxTemplates = new JComboBox();
-	private JLabel lblSelectTemplate = new JLabel();
-	private JComboBox cbxUnits = new JComboBox();
-	private JCheckBox cbCreateUnit = new JCheckBox();
+	private final JButton cmdCancel = new JButton();
+	private final JButton cmdOK = new JButton();
+	private final JComboBox cbxTemplates = new JComboBox();
+	private final JLabel lblSelectTemplate = new JLabel();
+	private final JComboBox cbxUnits = new JComboBox();
+	private final JCheckBox cbCreateUnit = new JCheckBox();
 
 	/**
 	 * Use this, if you only want to select the template, nothing more.

@@ -15,14 +15,27 @@
  */
 package de.juwimm.cms.gui.views.menuentry;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.util.Properties;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
@@ -48,7 +61,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -57,18 +70,18 @@ import de.juwimm.cms.vo.ViewComponentValue;
  */
 public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFiredListener {
 	private static Logger log = Logger.getLogger(PanMenuentryInternallink.class);
-	private JButton cmdJump = new JButton();
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JCheckBox cbNewWindow = new JCheckBox();
-	private Module intLink = new InternalLink();
-	private JPanel panLinkProperties = new JPanel();
-	private JLabel lblPath = new JLabel();
-	private JButton btnChange = new JButton();
-	private JLabel lblAnchorDesc = new JLabel();
-	private JLabel lblAnchor = new JLabel();
+	private final JButton cmdJump = new JButton();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JCheckBox cbNewWindow = new JCheckBox();
+	private final Module intLink = new InternalLink();
+	private final JPanel panLinkProperties = new JPanel();
+	private final JLabel lblPath = new JLabel();
+	private final JButton btnChange = new JButton();
+	private final JLabel lblAnchorDesc = new JLabel();
+	private final JLabel lblAnchor = new JLabel();
 	private boolean isSymlink = false;
 	private boolean edited = false;
-	private JCheckBox cbReferrToCompleteDir = new JCheckBox();
+	private final JCheckBox cbReferrToCompleteDir = new JCheckBox();
 	private Component component1;
 
 	public PanMenuentryInternallink(boolean iAmASymlink) {
@@ -135,11 +148,12 @@ public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFi
 		panLinkProperties.add(btnChange, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(4, 10, 4, 10), 0, 0));
 		//row 3
 		panLinkProperties.add(cbReferrToCompleteDir, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 4, 10), 0, 0));
-		
+
 		getOptPan().add(component1, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(8, 0, 0, 0), 0, 0));
 		getOptPan().add(panLinkProperties, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(8, 8, 4, 8), 0, 0));
 	}
 
+	@Override
 	public void save() throws Exception {
 		super.save();
 
@@ -201,6 +215,7 @@ public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFi
 		}
 	}
 
+	@Override
 	public void load(ViewComponentValue vcd) {
 		btnChange.setEnabled(true);
 		edited = false;

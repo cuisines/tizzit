@@ -160,7 +160,7 @@ public final class Utils {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * InnerClass to represent a FileType.

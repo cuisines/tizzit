@@ -16,7 +16,7 @@
 package de.juwimm.cms.common;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -48,7 +48,7 @@ public final class UserRights {
 	public static final String PAGE_UPDATE_LAST_MODIFIED_DATE = "updatePageLastModifiedDate";
 
 	public static final String VIEW_WEBSTATS = "viewWebstats";
-	
+
 	public static final String MANAGE_HOSTS = "manageHosts";
 	public static final String MANAGE_SAFEGUARD = "manageSafeGuard";
 

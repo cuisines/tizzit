@@ -31,7 +31,7 @@ import de.juwimm.cms.gui.PanStatusbar;
 import de.juwimm.cms.gui.views.page.PanelContent;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
@@ -280,7 +280,7 @@ public final class UIConstants {
 	private static ImageIcon load(String path) {
 		String image = IMAGE_PATH + path;
 
-		if (imageCache.containsKey(image)) { return (ImageIcon) imageCache.get(image); }
+		if (imageCache.containsKey(image)) { return imageCache.get(image); }
 		ImageIcon iimage = new ImageIcon(UIConstants.class.getResource(image));
 		imageCache.put(image, iimage);
 		return iimage;
@@ -640,7 +640,7 @@ public final class UIConstants {
 	}
 
 	/**
-	 * <p>Title: ConQuest</p>
+	 * <p>Title: Tizzit</p>
 	 * <p>Description: Enterprise Content Management</p>
 	 * <p>Copyright: Copyright (c) 2004</p>
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>

@@ -23,7 +23,7 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -37,34 +37,28 @@ public class PageInternallinkNode extends PageNode {
 		}
 	}
 
+	@Override
 	public ImageIcon getIcon() {
 		switch (getViewComponent().getStatus()) {
 			case Constants.DEPLOY_STATUS_EDITED:
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-					return UIConstants.INTERNALLINK_EDITED_LIVE;
-				}
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.INTERNALLINK_EDITED_LIVE; }
 				return UIConstants.INTERNALLINK_EDITED;
 			case Constants.DEPLOY_STATUS_FOR_APPROVAL:
 				if (getViewComponent().getDeployCommand() == Constants.DEPLOY_COMMAND_ADD) {
-					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-						return UIConstants.INTERNALLINK_APPROVAL_LIVE;
-					}
+					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.INTERNALLINK_APPROVAL_LIVE; }
 					return UIConstants.INTERNALLINK_APPROVAL;
 				}
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-					return UIConstants.INTERNALLINK_DELETE_LIVE;
-				}
-				return UIConstants.INTERNALLINK_DELETE;	
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.INTERNALLINK_DELETE_LIVE; }
+				return UIConstants.INTERNALLINK_DELETE;
 			case Constants.DEPLOY_STATUS_APPROVED:
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
-					return UIConstants.INTERNALLINK_APPROVED_LIVE;
-				}
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.INTERNALLINK_APPROVED_LIVE; }
 				return UIConstants.INTERNALLINK_APPROVED;
 			default:
 				return UIConstants.INTERNALLINK_DEPLOYED_LIVE;
 		}
 	}
 
+	@Override
 	public boolean isAppendingAllowed() {
 		return false;
 	}

@@ -21,7 +21,7 @@ import java.util.Locale;
 import org.tizzit.util.KeyOrderKeptHashMap;
 
 /**
- * <p>Title: ConQuest</p>
+ * <p>Title: Tizzit</p>
  * <p>Description: Enterprise Content Management<</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -44,7 +44,7 @@ public final class Constants {
 
 	public static File LAST_LOCAL_UPLOAD_DIR = null;
 
-	public static final String DB_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".conquestCache" + System.getProperty("file.separator");
+	public static final String DB_PATH = System.getProperty("user.home") + System.getProperty("file.separator") + ".tizzitCache" + System.getProperty("file.separator");
 	public static String SVG_CACHE = null;
 	public static String URL_HOST = null;
 

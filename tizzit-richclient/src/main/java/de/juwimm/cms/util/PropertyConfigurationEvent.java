@@ -18,7 +18,7 @@ package de.juwimm.cms.util;
 import java.awt.event.ActionEvent;
 
 /**
- * <b>ConQuest Enterprise Content Management</b><br/>
+ * <b>Tizzit Enterprise Content Management</b><br/>
  * <p>Copyright: Copyright (c) 2004</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
@@ -26,7 +26,7 @@ import java.awt.event.ActionEvent;
 public class PropertyConfigurationEvent extends ActionEvent {
 	public static final String PROP_ENABLE = "enable";
 
-	private String uniqueId;
+	private final String uniqueId;
 	private String key;
 	private String value;
 

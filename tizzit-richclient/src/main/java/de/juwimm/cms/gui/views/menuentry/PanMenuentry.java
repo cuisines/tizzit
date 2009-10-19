@@ -59,7 +59,7 @@ import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.DropDownHolder;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2004</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>

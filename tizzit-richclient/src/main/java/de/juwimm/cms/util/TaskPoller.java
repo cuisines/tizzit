@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.util;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.event.ActionEvent;
 import java.util.TimerTask;
@@ -29,7 +29,7 @@ import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 
 /**
- * <p>Title: ConQuest </p>
+ * <p>Title: Tizzit </p>
  * <p>Description: Content Management System</p>
  * <p>Copyright: Copyright (c) 2002, 2003</p>
  * <p>Company: JuwiMacMillan Group GmbH</p>
@@ -39,16 +39,14 @@ import de.juwimm.cms.common.Constants;
 public class TaskPoller extends TimerTask {
 	private static Logger log = Logger.getLogger(TaskPoller.class);
 
+	@Override
 	public void run() {
 		Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 		if (comm.isLoggedIn()) {
 			try {
 				int showTask = 0;
-				if (comm.isNewTask4User() && !UIConstants.isNewTask()
-						&& Constants.CMS_CLIENT_VIEW == Constants.CLIENT_VIEW_CONTENT) {
-					int retVal = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(),
-							rb.getString("msgbox.taskPoller.newTask"), rb.getString("dialog.title"),
-							JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+				if (comm.isNewTask4User() && !UIConstants.isNewTask() && Constants.CMS_CLIENT_VIEW == Constants.CLIENT_VIEW_CONTENT) {
+					int retVal = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), rb.getString("msgbox.taskPoller.newTask"), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
 					if (retVal == JOptionPane.YES_OPTION) {
 						showTask = 1;
