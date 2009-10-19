@@ -34,9 +34,9 @@ import org.w3c.dom.*;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.modules.Module;
 
-public final class ConquestPanel extends JPanel {
+public final class TizzitPanel extends JPanel {
 	
-	private static Logger logger = Logger.getLogger(ConquestPanel.class);
+	private static Logger logger = Logger.getLogger(TizzitPanel.class);
 	
 	private String jarpath = null; 
 	private String dcfpath = null;
@@ -48,7 +48,7 @@ public final class ConquestPanel extends JPanel {
 		
 	private ShowContentFrame showContent = new ShowContentFrame();
 		
-	public ConquestPanel() {
+	public TizzitPanel() {
 		this.initialize();
 		ContentManager manager = new ContentManager();
 	}
