@@ -210,6 +210,8 @@ public final class Constants {
 	public static final String PROPERTY_PROPAGATION = "PROPERTY_PROPAGATION";
 	public static final String PROPERTY_DEPROPAGATION = "PROPERTY_DEPROPAGATION";
 	public static final String PROPERTY_CONFIGURATION = "PROPERTY_CONFIGURATION";
+	
+	public static final String ACTION_MAKE_VIEW_OFFLINE = "makeViewOffline";
 
 	public static final int ADD_BEFORE = 0;
 	public static final int ADD_AFTER = 1;
