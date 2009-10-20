@@ -369,28 +369,15 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				btnSave.setEnabled(true);
 			}
 			panMenuentry.load(value);
-			if (panMenuentry.shouldBeEdtiable()) {
-				panMenuentry.setMenuentryEnabled(true);
-				panTab.setEnabledAt(1, true); //Content
-				if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
-					panTab.setEnabledAt(2, true); //metadata
-				}
-			} else {
-				panTab.setSelectedIndex(0);
-				panMenuentry.setMenuentryEnabled(false);
-				// the button for changing the template is invisible if user doesn't have the right to change
-				panMenuentry.setTemplateButtonEnabled(true);
-				this.btnSave.setEnabled(false);
-				panTab.setEnabledAt(1, false); //Content
-				if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
-					panTab.setEnabledAt(2, false); //metadata
-				}
-			}
-			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
-				panMetaData.load(value);
-			}
+			panTab.setSelectedIndex(0);
+			panTab.setEnabledAt(1, panMenuentry.shouldBeEdtiable()); //Content
+			panTab.setEnabledAt(2, comm.isUserInRole(UserRights.PAGE_VIEW_METADATA) && panMenuentry.shouldBeEdtiable()); //metadata
+			if(comm.isUserInRole(UserRights.PAGE_VIEW_METADATA) && panMenuentry.shouldBeEdtiable()) panMetaData.load(value);
+			// the button for changing the template is invisible if user doesn't have the right to change
+			panMenuentry.setTemplateButtonEnabled(panMenuentry.shouldBeEdtiable());
+			this.btnSave.setEnabled(panMenuentry.shouldBeEdtiable());
+			
 			if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD) || (comm.getUser().isMasterRoot())) && (panTab.getSelectedIndex() == 4)) {
-				// || (comm.isUserInRole(UserRights.SITE_ROOT)) at present no customer may see this tab !!!
 				panSafeGuard.load(value);
 			} else {
 				panSafeGuard.load(null); // reset panel (needed that the panel wont be saved for a wrong vc)

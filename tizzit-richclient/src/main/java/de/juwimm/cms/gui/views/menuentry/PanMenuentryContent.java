@@ -226,7 +226,8 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 	}
 
 	public void setMenuentryEnabled(boolean enabled) {
-		this.btnChangeTemplate.setEnabled(enabled);
+		log.debug("setMenuentryEnabled" + enabled);
+	/*	this.btnChangeTemplate.setEnabled(enabled);
 		this.getTxtOnlineStart().setDateButtonEnabled(enabled);
 		this.getTxtOnlineStop().setDateButtonEnabled(enabled);
 		this.getTxtText().setEnabled(enabled);
@@ -239,7 +240,7 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 			} else {
 				this.getTxtUrlLinkName().setEditable(false);
 			}
-		}
+		}*/
 	}
 
 	public void setTemplateButtonEnabled(boolean enabled) {

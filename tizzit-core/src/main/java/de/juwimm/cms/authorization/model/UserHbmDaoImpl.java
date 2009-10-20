@@ -139,19 +139,12 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 
 	@Override
 	protected UserLoginValue handleGetUserLoginValue(UserHbm user) throws Exception {
-		log.info(">>>>>>>>>>>>>>>>>>>> am in getUserLoginValue...");
 		UserLoginValue value = new UserLoginValue();
-		log.info(">>>>>>>>>>>>>>>>>>>> created Value...");
 		try {
 			value.setUser(user.getUserValue());
-			log.info(">>>>>>>>>>>>>>>>>>>> set user...");
 			value.setSiteConfigXML(user.getConfigXML());
-			log.info(">>>>>>>>>>>>>>>>>>>> set xml config");
-			log.info(">>>>>>>>>>>>>>>>>>>> active site: " + user.getActiveSite());
 			value.setSiteName(user.getActiveSite().getName());
-			log.info(">>>>>>>>>>>>>>>>>>>> found and set active Site...");
 			Collection<UnitHbm> units = getUnits4ActiveSite(user);
-			log.info(">>>>>>>>>>>>>>>>>>>> the units...: " + units);
 			if (units != null) {
 				UnitValue[] uv = new UnitValue[units.size()];
 				int i = 0;

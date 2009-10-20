@@ -185,7 +185,6 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 		SiteHbm site = null;
 		try {
 			site = super.getSiteHbmDao().load(siteId);
-			log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>site loaded: " + site.getName());
 		} catch (Exception exe) {
 			throw new SecurityException("Invalid SiteId");
 		}
@@ -193,19 +192,14 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 
 		try {
 			user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
-			log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>user loaded: " + user.getUserId());
 		} catch (Exception ex) {
 			throw new SecurityException("Invalid Principal");
 		}
 		if (!user.isMasterRoot() && !user.getSites().contains(site)) { throw new SecurityException("User is not a member of the given site!"); }
 		user.setActiveSite(site);
-		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> active site set");
 		user.setLoginDate((System.currentTimeMillis()));
-		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> loginDate  set");
 		LoginContext lc = new LoginContext("juwimm-cms-security-domain", new InternalCallbackHandler(passwd));
-		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> loginContext created: " + lc.toString());
 		lc.login();
-		log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> am in");
 		/*
 		 * if(log.isDebugEnabled()) { Subject subj = lc.getSubject();
 		 * Principal[] prip = (Principal[]) subj.getPrincipals().toArray(new
