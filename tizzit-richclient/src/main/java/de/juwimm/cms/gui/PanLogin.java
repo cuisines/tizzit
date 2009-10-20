@@ -53,6 +53,7 @@ import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
 import de.juwimm.cms.exceptions.NoSitesException;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
@@ -199,6 +200,9 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 		} catch (NoSitesException se) {
 			this.progressBar.setIndeterminate(false);
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n" + rb.getString("exception.NoSites"), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
+		} catch (LocalizedException exe) {			
+			this.progressBar.setIndeterminate(false);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n\"" + exe.getLocalizedMessage() + "\"\n", rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception exe) {
 			log.error("Login Error", exe);
 			this.progressBar.setIndeterminate(false);

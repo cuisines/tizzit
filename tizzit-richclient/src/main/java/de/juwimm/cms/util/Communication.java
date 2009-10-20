@@ -42,10 +42,12 @@ import javax.swing.tree.TreePath;
 import org.andromda.spring.RemoteServiceLocator;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.springframework.remoting.RemoteAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.SpringSecurityException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.providers.rcp.RemoteAuthenticationException;
 import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
 import org.tizzit.util.ArraySorter;
 import org.tizzit.util.Comparer;
@@ -69,6 +71,7 @@ import de.juwimm.cms.components.vo.PersonValue;
 import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.content.frame.DlgModal;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
+import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
 import de.juwimm.cms.exceptions.NeededFieldsMissingException;
 import de.juwimm.cms.exceptions.NoSitesException;
@@ -442,7 +445,7 @@ public class Communication implements ExitListener, ActionListener {
 		return dbHelper;
 	}
 
-	public SiteValue[] getSites(String userName, String passwd) throws InvalidUsernameException, NoSitesException {
+	public SiteValue[] getSites(String userName, String passwd) throws InvalidUsernameException, NoSitesException,LocalizedException {
 		log.info("Trying to fetching Sites for User " + userName);
 		try {
 			SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
@@ -450,9 +453,14 @@ public class Communication implements ExitListener, ActionListener {
 			GrantedAuthority[] authorities = remoteAuthenticationService.attemptAuthentication(userName, String.valueOf(passwd));
 			SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userName, String.valueOf(passwd), authorities));
 			log.debug(SecurityContextHolder.getContext().getAuthentication());
-		} catch (SpringSecurityException e) {
-			log.info("authentication failed: " + e.getMessage());
-			throw new InvalidUsernameException();
+		} catch (RemoteAccessException e){
+			if(e.getCause() != null && e.getCause() instanceof SpringSecurityException){
+				log.info("authentication failed: " + e.getMessage());
+				throw new InvalidUsernameException();
+			}
+			LocalizedException ge = new LocalizedException("communication.login.unkwownError","unknown error",e);
+			ge.logThrowException();
+			throw ge;
 		}
 
 		try {
