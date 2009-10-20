@@ -60,7 +60,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	private static final long serialVersionUID = -6958197452475472452L;
 	private static Logger log = Logger.getLogger(PanRibbon.class);
 	public static final String CMS_LANG_DE = "cmslanguagegerman";
-	public static final String CMS_LANG_EN = "cmslanguageenglish";
+	public static final String CMS_LANG_EN = "cmslanguageenglish";	
 
 	JCommandButton newContentButton;
 	JCommandButton refreshTreeButton;
@@ -70,6 +70,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	private JCommandButton deleteNodeButton;
 	private JCommandButton releaseSiteButton;
 	private JCommandButton reviseSiteButton;
+	private JCommandButton offlineButton;
 	private JCommandButton deployButton;
 	private JCommandButton checkInButton;
 	private JCommandButton checkOutButton;
@@ -146,6 +147,9 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 
 		checkInButton.addActionListener(actionListener);
 		checkInButton.getActionModel().setActionCommand(Constants.ACTION_CHECKIN);
+		
+		offlineButton.addActionListener(actionListener);
+		offlineButton.getActionModel().setActionCommand(Constants.ACTION_MAKE_VIEW_OFFLINE);
 
 		checkOutButton.addActionListener(actionListener);
 		checkOutButton.getActionModel().setActionCommand(Constants.ACTION_CHECKOUT);
@@ -213,6 +217,10 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		this.addButton(reviseSiteButton, 1, publishBand);
 		this.addButton(releaseSiteButton, 2, publishBand);
 		this.addButton(deployButton, 3, publishBand);
+		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
+			this.addButton(offlineButton, 4, publishBand);
+		}
+		
 		this.addButton(editViewButton, 0, viewSelectBand);
 		this.addButton(taskViewButton, 1, viewSelectBand);
 		this.addButton(adminViewButton, 2, viewSelectBand);
@@ -280,6 +288,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		deleteNodeButton = createButton(rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
 		releaseSiteButton = createButton(rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
 		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);
+		offlineButton = createButton(rb.getString("ribbon.publish.offline"),UIConstants.RIBBON_OFFLINE); 
 		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
 			deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
 		} else {
@@ -562,6 +571,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 
 			checkInButton.setEnabled(false);
 			checkOutButton.setEnabled(false);
+			offlineButton.setEnabled(false);
 		} else if (e.getActionCommand().equals(Constants.ACTION_TREE_SELECT) || e.getActionCommand().equals(Constants.ACTION_DEPLOY_STATUS_CHANGED)) {
 			TreeNode entry = (TreeNode) e.getSource();
 			updateRibbonButtonsOnSelect(entry);
@@ -766,6 +776,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		reviseSiteButton.setEnabled(state);
 		deployButton.setEnabled(state);
 		releaseSiteButton.setEnabled(state);
+		offlineButton.setEnabled(state);
 		//TODO
 		//mnuPublishLetRelease.setEnabled(false);
 

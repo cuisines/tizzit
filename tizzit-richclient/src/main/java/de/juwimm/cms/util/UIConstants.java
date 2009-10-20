@@ -270,6 +270,7 @@ public final class UIConstants {
 	public static ImageIcon RIBBON_GENERAL_OPTIONS;
 	public static ImageIcon RIBBON_IMPORT_EXPORT_OPTIONS;
 	public static ImageIcon RIBBON_USER_OPTIONS;
+	public static ImageIcon RIBBON_OFFLINE;
 
 	public static ImageIcon ICON_ARROW_RIGHT;
 	public static ImageIcon ICON_ARROW_DOWN;
@@ -506,6 +507,7 @@ public final class UIConstants {
 		RIBBON_GENERAL_OPTIONS = load("ribbon/generalOptions.png");
 		RIBBON_IMPORT_EXPORT_OPTIONS = load("ribbon/importExportOptions.png");
 		RIBBON_USER_OPTIONS = load("ribbon/userOptions.png");
+		RIBBON_OFFLINE = load("ribbon/offline.png");
 
 		ICON_ARROW_RIGHT = load("arrowRight.png");
 		ICON_ARROW_DOWN = load("arrowDown.png");

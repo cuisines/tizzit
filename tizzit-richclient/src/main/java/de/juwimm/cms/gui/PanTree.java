@@ -946,6 +946,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				} catch (Exception exe) {
 					log.error("Error", exe);
 				}
+			}else if(action.equals(Constants.ACTION_MAKE_VIEW_OFFLINE)){
+				comm.removePublishContentVersion(Integer.decode(entry.getViewComponent().getReference()));
 			}
 		}
 		if (action.equals(Constants.ACTION_TREE_REFRESH)) {

@@ -2492,4 +2492,8 @@ public class Communication implements ExitListener, ActionListener {
 	public ViewComponentValue[] copyViewComponentToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) {
 		return getClientService().copyViewComponentsToParent(parentId, viewComponentsIds, position);
 	}
+	
+	public void removePublishContentVersion(Integer contentId){
+		getClientService().removePublishContentVersion(contentId);
+	}
 }
