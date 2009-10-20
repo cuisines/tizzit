@@ -51,6 +51,7 @@ import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.util.UserConfig;
+import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
@@ -148,8 +149,12 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		checkInButton.addActionListener(actionListener);
 		checkInButton.getActionModel().setActionCommand(Constants.ACTION_CHECKIN);
 		
-		offlineButton.addActionListener(actionListener);
-		offlineButton.getActionModel().setActionCommand(Constants.ACTION_MAKE_VIEW_OFFLINE);
+		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
+			offlineButton = createButton(rb.getString("ribbon.publish.offline"),UIConstants.RIBBON_OFFLINE);
+			offlineButton.addActionListener(actionListener);			
+			offlineButton.getActionModel().setActionCommand(Constants.ACTION_MAKE_VIEW_OFFLINE);
+			this.addButton(offlineButton, 4, publishBand);
+		}
 
 		checkOutButton.addActionListener(actionListener);
 		checkOutButton.getActionModel().setActionCommand(Constants.ACTION_CHECKOUT);
@@ -217,9 +222,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		this.addButton(reviseSiteButton, 1, publishBand);
 		this.addButton(releaseSiteButton, 2, publishBand);
 		this.addButton(deployButton, 3, publishBand);
-		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
-			this.addButton(offlineButton, 4, publishBand);
-		}
+		
 		
 		this.addButton(editViewButton, 0, viewSelectBand);
 		this.addButton(taskViewButton, 1, viewSelectBand);
@@ -288,7 +291,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		deleteNodeButton = createButton(rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
 		releaseSiteButton = createButton(rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
 		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);
-		offlineButton = createButton(rb.getString("ribbon.publish.offline"),UIConstants.RIBBON_OFFLINE); 
+		 
 		if (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY)) {
 			deployButton = createButton(rb.getString("actions.ACTION_DEPLOY"), UIConstants.RIBBON_ACTION_DEPLOY);
 		} else {
@@ -571,7 +574,9 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 
 			checkInButton.setEnabled(false);
 			checkOutButton.setEnabled(false);
-			offlineButton.setEnabled(false);
+			if(offlineButton != null){
+				offlineButton.setEnabled(false);
+			}
 		} else if (e.getActionCommand().equals(Constants.ACTION_TREE_SELECT) || e.getActionCommand().equals(Constants.ACTION_DEPLOY_STATUS_CHANGED)) {
 			TreeNode entry = (TreeNode) e.getSource();
 			updateRibbonButtonsOnSelect(entry);
@@ -628,6 +633,8 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			optionsDialog.setVisible(true);
 		} else if (e.getActionCommand().equals(Constants.ACTION_CREATE_UNIT)) {
 			adminViewButton.doActionClick();
+		} else if(e.getActionCommand().equals(Constants.ACTION_MAKE_VIEW_OFFLINE)){
+			offlineButton.setEnabled(false);
 		}
 	}
 
@@ -735,6 +742,11 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		reviseSiteButton.setEnabled(false);
 
 		if (currentEntry instanceof PageNode) {
+			if(offlineButton != null){
+				ViewComponentValue viewComponentValue = ((PageNode)currentEntry).getViewComponent();
+				offlineButton.setEnabled(viewComponentValue.isHasPublishContentVersion());
+			}
+			
 			switch (((PageNode) currentEntry).getStatus()) {
 				case Constants.DEPLOY_STATUS_EDITED:
 					if (!comm.isUserInRole(UserRights.APPROVE)) {
@@ -765,6 +777,8 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 					break;
 			}
 		}
+		
+		
 	}
 
 	private void setEnableEditPublishButtons(boolean state) {
@@ -776,7 +790,9 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		reviseSiteButton.setEnabled(state);
 		deployButton.setEnabled(state);
 		releaseSiteButton.setEnabled(state);
-		offlineButton.setEnabled(state);
+		if(offlineButton != null){
+			offlineButton.setEnabled(state);
+		}
 		//TODO
 		//mnuPublishLetRelease.setEnabled(false);
 

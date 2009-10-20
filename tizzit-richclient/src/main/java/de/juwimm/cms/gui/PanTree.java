@@ -947,6 +947,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					log.error("Error", exe);
 				}
 			}else if(action.equals(Constants.ACTION_MAKE_VIEW_OFFLINE)){
+				entry.getViewComponent().setHasPublishContentVersion(false);
 				comm.removePublishContentVersion(Integer.decode(entry.getViewComponent().getReference()));
 			}
 		}
@@ -1644,6 +1645,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		Iterator it = data.iterator();
 		while (it.hasNext()) {
 			ViewComponentValue view = (ViewComponentValue) it.next();
+			view.setHasPublishContentVersion(true);
 			if (log.isDebugEnabled()) log.debug("" + view.getDeployCommand());
 			if (view.getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE || view.getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
 				if (log.isDebugEnabled()) log.debug("DELETE ViewComponent " + view.getViewComponentId());
