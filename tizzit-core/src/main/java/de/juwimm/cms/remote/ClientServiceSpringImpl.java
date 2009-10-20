@@ -1875,5 +1875,12 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected InputStream handleExportViewComponent(Integer viewComponentId) throws Exception {
 		return getViewServiceSpring().exportViewComponent(viewComponentId);
 	}
+	
+	@Override
+	protected void handleRemovePublishContentVersion(Integer contentId)
+			throws Exception {
+		getContentServiceSpring().removePublishContentVersion(contentId);
+		
+	}
 
 }

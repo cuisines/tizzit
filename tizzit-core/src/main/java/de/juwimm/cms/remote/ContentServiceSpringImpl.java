@@ -1539,13 +1539,21 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleRemoveResources(java.lang.Integer[], java.lang.Integer[])
-	 */
 	@Override
 	protected void handleRemoveResources(Integer[] pictureIds, Integer[] documentsIds) throws Exception {
 		getDocumentHbmDao().deleteDocuments(documentsIds);
 		getPictureHbmDao().deletePictures(pictureIds);
 	}
 
+	@Override
+	protected void handleRemovePublishContentVersion(Integer contentId)	throws Exception {
+		ContentHbm content = getContentHbmDao().load(contentId);
+		ContentVersionHbm publishContentVersion = content.getContentVersionForPublish();
+		if(publishContentVersion == null){
+			return;
+		}
+		content.getContentVersions().remove(publishContentVersion);		
+		getContentHbmDao().update(content);
+		removeContentVersion(publishContentVersion.getContentVersionId());
+	}
 }
