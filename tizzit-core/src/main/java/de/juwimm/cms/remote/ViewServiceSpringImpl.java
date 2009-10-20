@@ -304,7 +304,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			if (view.isLeaf()) { throw new UserException("node is a leaf."); }
 			Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
 			for (Iterator i = view.getChildren().iterator(); i.hasNext();) {
-				vec.addElement(((ViewComponentHbm) i.next()).getDao(-1));
+				ViewComponentHbm vcHbm = (ViewComponentHbm) i.next();
+				ViewComponentValue vc = vcHbm.getDao(-1);				
+				vec.addElement(vc);
 			}
 			if (log.isDebugEnabled()) log.debug("end getViewComponentChildren");
 			return vec.toArray(new ViewComponentValue[0]);
@@ -493,12 +495,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected ViewComponentValue handleGetViewComponentWithDepth(Integer viewComponentId, int depth) throws Exception {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			return view.getDao(depth);
+			ViewComponentValue viewComponentValue = view.getDao(depth);
+			getOnlineStatus(view,viewComponentValue);
+			return viewComponentValue;
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
 	}
 
+	private void getOnlineStatus(ViewComponentHbm viewComponentHbm,ViewComponentValue viewComponentValue){
+		viewComponentValue.setHasPublishContentVersion(getViewComponentHbmDao().hasPublishContentVersion(viewComponentHbm));
+		if(viewComponentValue.getChildren()!=null){
+			for(ViewComponentValue vc:viewComponentValue.getChildren()){
+				getOnlineStatus(getViewComponentHbmDao().load(vc.getViewComponentId()),vc);
+			}
+		}
+	}
 	/**
 	 * @see de.juwimm.cms.remote.ViewServiceSpring#getViewComponent4Unit(java.lang.Integer, java.lang.Integer)
 	 */
@@ -507,7 +519,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		ViewComponentValue vcd = null;
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().find4Unit(unitId, viewDocumentId);
-			vcd = view.getDao(-1);
+			vcd = view.getDao(-1);			
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
