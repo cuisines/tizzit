@@ -69,7 +69,7 @@
                   <artifactItem>
                      <groupId>org.tizzit</groupId>
                      <artifactId>tizzit-richclient</artifactId>
-                     <version>3.0.3-SNAPSHOT</version>
+                     <version>${pom.version}</version>
                      <type>zip</type>                            
                   </artifactItem>
                </artifactItems>
