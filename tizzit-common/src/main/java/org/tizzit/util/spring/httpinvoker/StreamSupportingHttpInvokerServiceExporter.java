@@ -144,8 +144,13 @@ public class StreamSupportingHttpInvokerServiceExporter
     	  }    	  
     	  if(log.isDebugEnabled()){
     		  log.debug(ex);    		  
-    	  }    
-        return new RemoteInvocationResult(new Exception(ex.getMessage()));
+    	  }
+    	 if(ex.getCause() != null){
+    		 return new RemoteInvocationResult(ex.getCause());
+    	 }else{
+    		 return new RemoteInvocationResult(new Exception(ex.getMessage()));
+    	 }
+        
       }
     } finally {
       final ParameterInputStream pi = getParameterInputStreamFrom(invocation);
