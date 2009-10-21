@@ -255,7 +255,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 	}
 
 	@Override
-	protected ContentHbm handleCloneContent(ContentHbm oldContent) throws Exception {
+	protected ContentHbm handleCloneContent(ContentHbm oldContent, Map picturesIds, Map documentsIds) throws Exception {
 		ContentHbm contentHbm = ContentHbm.Factory.newInstance();
 		try {
 			contentHbm.setContentId(sequenceHbmDao.getNextSequenceNumber("content.content_id"));
@@ -265,7 +265,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 		contentHbm.setStatus(oldContent.getStatus());
 		contentHbm.setTemplate(oldContent.getTemplate());
 		contentHbm.setUpdateSearchIndex(oldContent.isUpdateSearchIndex());
-		ContentVersionHbm contentVersion = getContentVersionHbmDao().cloneContentVersion(oldContent.getLastContentVersion());
+		ContentVersionHbm contentVersion = getContentVersionHbmDao().cloneContentVersion(oldContent.getLastContentVersion(), picturesIds, documentsIds);
 		contentHbm = this.create(contentHbm);
 		contentHbm.getContentVersions().add(contentVersion);
 		return contentHbm;

@@ -73,12 +73,16 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 
 	@Override
 	protected void handleDeletePictures(Integer[] ids) throws Exception {
-		if(ids == null || ids.length == 0){
-			return;
-		}		
-		for(Integer pictureId:ids){
+		if (ids == null || ids.length == 0) { return; }
+		for (Integer pictureId : ids) {
 			remove(pictureId);
 		}
-		
+
+	}
+
+	@Override
+	protected Integer handleClonePicture(Integer oldPictureId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

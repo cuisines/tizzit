@@ -1518,11 +1518,21 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		ViewComponentValue[] values = new ViewComponentValue[viewComponentsIds.length];
 		try {
 			ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
+			int parentUnitId = getUnitForViewComponent(parentId);
 			ViewComponentHbm firstChild;
 			for (int i = 0; i < viewComponentsIds.length; i++) {
 				firstChild = parent.getFirstChild();
 				ViewComponentHbm oldViewComponent = getViewComponentHbmDao().load(viewComponentsIds[i]);
-				ViewComponentHbm viewComponent = getViewComponentHbmDao().cloneViewComponent(oldViewComponent);
+				ContentHbm content = getContentHbmDao().load(Integer.parseInt(oldViewComponent.getReference()));
+				ContentVersionHbm lastContentVersion = content.getLastContentVersion();
+				int childUnitId = getUnitForViewComponent(oldViewComponent.getViewComponentId());
+				Hashtable<Integer, Integer> picIds = null;
+				Hashtable<Integer, Integer> docIds = null;
+				if (parentUnitId != childUnitId) {
+					picIds = clonePictures(parentUnitId, lastContentVersion);
+					docIds = cloneDocuments(parentUnitId, lastContentVersion);
+				}
+				ViewComponentHbm viewComponent = getViewComponentHbmDao().cloneViewComponent(oldViewComponent, picIds, docIds);
 				parent.addChild(viewComponent);
 				viewComponent.setParent(parent);
 
@@ -1542,6 +1552,37 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 		return values;
 
+	}
+
+	private Hashtable<Integer, Integer> clonePictures(Integer unitId, ContentVersionHbm lastContentVersion) {
+		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
+		String text = lastContentVersion.getText();
+		text = Base64.decodeToString(text);
+		try {
+			Document content = XercesHelper.string2Dom(text);
+			Iterator cvIt = XercesHelper.findNodes(content, "//picture");
+			while (cvIt.hasNext()) {
+				Element el = (Element) cvIt.next();
+				Integer oldId = new Integer(el.getAttribute("description"));
+				PictureHbm oldPicture = getPictureHbmDao().load(oldId);
+				Integer newId = (Integer) pictureIds.get(oldId);
+				el.setAttribute("description", newId.toString());
+			}
+			Iterator imgIt = XercesHelper.findNodes(content, "//image");
+			while (imgIt.hasNext()) {
+				Element el = (Element) imgIt.next();
+				Integer oldId = new Integer(el.getAttribute("src"));
+				Integer newId = (Integer) pictureIds.get(oldId);
+				el.setAttribute("src", newId.toString());
+			}
+		} catch (Exception e) {
+
+		}
+		return null;
+	}
+
+	private Hashtable<Integer, Integer> cloneDocuments(Integer unitId, ContentVersionHbm lastContentVersion) {
+		return null;
 	}
 
 	@Override
@@ -1638,6 +1679,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			docIds = importDocuments(unitId, doc);
 		}
 		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds);
+		//importRealmsForViewComponent(doc, viewComponent, 1);
 		parent.addChild(viewComponent);
 		viewComponent.setParent(parent);
 
@@ -1652,6 +1694,15 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return viewComponent.getDao();
 	}
 
+	/**
+	 * 
+	 * @param parentId
+	 * @param doc
+	 * @param withChildren
+	 * @param picIds
+	 * @param docIds
+	 * @return
+	 */
 	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds) {
 		ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
 		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
@@ -1711,39 +1762,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		viewComponent.setChildren(null);
 		viewComponent.setViewDocument(parent.getViewDocument());
 		return getViewComponentHbmDao().create(viewComponent);
-	}
-
-	private Element replacePicturesAndDocumentsIds(Element node, Hashtable<Integer, Integer> pictureIds, Hashtable<Integer, Integer> docIds) {
-		Element cnde = (Element) node.cloneNode(true);
-		Iterator cvit = XercesHelper.findNodes(cnde, "./contentVersion");
-		while (cvit.hasNext()) {
-			Element cvnde = (Element) cvit.next();
-			String textCV = null;
-			try {
-				Node ttextnode = XercesHelper.findNode(cvnde, "./text");
-				textCV = XercesHelper.nodeList2string(ttextnode.getChildNodes());
-				if (textCV != null) textCV = Base64.decodeToString(textCV);
-				if ((textCV != null) && (!textCV.equals("<text/>"))) {
-					try {
-						Document content = XercesHelper.string2Dom(textCV);
-						Iterator cvIt = XercesHelper.findNodes(content, "//picture");
-						while (cvIt.hasNext()) {
-							Element el = (Element) cvIt.next();
-							Integer oldId = new Integer(el.getAttribute("description"));
-							Integer newId = pictureIds.get(oldId);
-							el.setAttribute("description", newId.toString());
-						}
-						ttextnode.setNodeValue(Base64.encodeString(XercesHelper.doc2String(content)));
-					} catch (Exception e) {
-						if (log.isDebugEnabled()) log.error("Error at replacing pictures id");
-					}
-				}
-
-			} catch (Exception e) {
-			}
-
-		}
-		return cnde;
 	}
 
 	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc) {

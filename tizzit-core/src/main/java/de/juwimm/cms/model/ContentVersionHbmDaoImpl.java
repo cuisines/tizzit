@@ -149,23 +149,6 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 	}
 
 	@Override
-	protected ContentVersionHbm handleCloneContentVersion(ContentVersionHbm oldContentVersion) throws Exception {
-		ContentVersionHbm contentVersionHbm = ContentVersionHbm.Factory.newInstance();;
-		try {
-			Integer id = sequenceHbmDao.getNextSequenceNumber("contentversion.content_version_id");
-			contentVersionHbm.setContentVersionId(id);
-		} catch (Exception e) {
-			log.error("Error creating primary key for contentVersion", e);
-		}
-		contentVersionHbm.setText(oldContentVersion.getText());
-		contentVersionHbm.setVersion("1");
-		contentVersionHbm.setHeading(oldContentVersion.getHeading());
-		contentVersionHbm.setCreateDate(System.currentTimeMillis());
-		contentVersionHbm.setCreator(AuthenticationHelper.getUserName());
-		return super.create(contentVersionHbm);
-	}
-
-	@Override
 	protected ContentVersionHbm handleCreateFromXmlWIthMedia(Element cvnde, boolean reusePrimaryKey, boolean liveServer, Map pictureIds, Map documentIds) throws Exception {
 		ContentVersionHbm contentVersion = ContentVersionHbm.Factory.newInstance();
 		if (reusePrimaryKey) {
@@ -216,6 +199,23 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		contentVersion = create(contentVersion);
 
 		return contentVersion;
+	}
+
+	@Override
+	protected ContentVersionHbm handleCloneContentVersion(ContentVersionHbm oldContentVersion, Map picturesIds, Map documentsIds) throws Exception {
+		ContentVersionHbm contentVersionHbm = ContentVersionHbm.Factory.newInstance();;
+		try {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("contentversion.content_version_id");
+			contentVersionHbm.setContentVersionId(id);
+		} catch (Exception e) {
+			log.error("Error creating primary key for contentVersion", e);
+		}
+		contentVersionHbm.setText(oldContentVersion.getText());
+		contentVersionHbm.setVersion("1");
+		contentVersionHbm.setHeading(oldContentVersion.getHeading());
+		contentVersionHbm.setCreateDate(System.currentTimeMillis());
+		contentVersionHbm.setCreator(AuthenticationHelper.getUserName());
+		return super.create(contentVersionHbm);
 	}
 
 }

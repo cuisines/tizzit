@@ -167,12 +167,16 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 
 	@Override
 	protected void handleDeleteDocuments(Integer[] ids) throws Exception {
-		if(ids == null || ids.length == 0){
-			return;
-		}		
-		for(Integer documentId:ids){
+		if (ids == null || ids.length == 0) { return; }
+		for (Integer documentId : ids) {
 			remove(documentId);
 		}
+	}
+
+	@Override
+	protected Integer handleCloneDocument(Integer oldDocumentId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
