@@ -26,8 +26,8 @@ function CRegister(logname) {
 			this.log.debug("start creating RegisterService!");
 		}
     	try {
-    		this.cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("register", getJars("juwimm-registry"));
-    		this.utl = this.cfh.instanciateClass("de.juwimm.registry.remote.RegistryServiceUtil");
+    		this.cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
+    		this.utl = this.cfh.getInstance("de.juwimm.registry.remote.RegistryServiceUtil");
     		this.registerService = this.utl.getHome().create();
     		this.log.debug("RegisterService created\n");
     	} catch(e){
@@ -171,18 +171,8 @@ function CRegister(logname) {
     
     this.registerUserToLms = function(){
     	try { 
-            //this.cfh.retireBorderline();
-	    	//this.cfh.reuseClassloader();
-	    	//log.debug("reuseClassloader: " + this.cfh.reuseClassloader());
-	    	//this.createRegisterService();
-	    	//this.log.debug("Mandant: "+this.mandant);
-	    	//this.log.debug("Value: "+this.value);
-	    	//this.log.debug("Type: "+this.type);
-	    	//this.getUserVO(this.mandant, this.value, this.type);
-	    	//this.log.debug("RegisterUserToLMS: userVO = "+this.userVO);
 	    	this.registerService.registerUserToLms(this.userVO); 
 	        this.userVO.setLmsuser(true); 
-	        //this.updateUserVO();
         } catch (e) { this.log.error("Fehler bei Register User to LMS: "+e); }
     }
     
@@ -301,7 +291,6 @@ function CRegister(logname) {
     
     this.closeCRegister = function(){
         this.registerService = null;
-        this.cfh.retireBorderline();
         this.log.debug("cfh retired");
     }
     

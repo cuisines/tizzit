@@ -10,10 +10,9 @@ function CPoll(logprefix) {
 
     this.createPollVO = function(){
       this.log.debug("createPollVO");
-      var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);  
-      var pollVO = cfh.instanciateClass("de.juwimm.poll.vo.PollValue");
+      var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();  
+      var pollVO = cfh.getInstance("de.juwimm.poll.vo.PollValue");
       pollVO.setDatum(new java.util.Date());
-      cfh.retireBorderline();             
 	  return pollVO;
     }   
     
@@ -81,9 +80,9 @@ function CPoll(logprefix) {
         log.debug("getPollByIdAndUpdateXmldata");
         var id_int = parseInt(id);
         log.debug("id_int: "+id_int);
-         var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+         var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
             try {
-                var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+                var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
                 var pollService = utl.getHome().create();
                 this.pollVO = pollService.getPollById(id_int);                
                 log.debug("poll "+this.pollVO);
@@ -96,9 +95,7 @@ function CPoll(logprefix) {
                 log.error("angefragte poll id: "+id_int);
                 this.success = false;
                 this.error = e;
-            } finally {
-                cfh.retireBorderline();
-            }    
+            } 
             return this.success;    
     } 
     
@@ -108,9 +105,9 @@ function CPoll(logprefix) {
         log.debug("getPollById");
         var id_int = parseInt(id);
         log.debug("id_int: "+id_int);
-         var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+         var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
             try {
-                var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+                var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
                 var pollService = utl.getHome().create();
                 this.pollVO = pollService.getPollById(id_int);                
                 log.debug("poll "+this.pollVO);
@@ -122,9 +119,7 @@ function CPoll(logprefix) {
                 log.error("angefragte poll id: "+id_int);
                 this.success = false;
                 this.error = e;
-            } finally {
-                cfh.retireBorderline();
-            }    
+            } 
             return this.success;    
     }
     
@@ -137,9 +132,9 @@ function CPoll(logprefix) {
 	    	log.debug("user: "+user);
 	    	log.debug(""); //spacer
 		} 
-	    var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+	    var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
 	    try {
-	        var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+	        var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
 	        var pollService = utl.getHome().create();
 	        if(pollService.getPollsBySiteNameUser(site, name, user).iterator().hasNext()) {
 	        	this.pollVO = pollService.getPollsBySiteNameUser(site, name, user).iterator().next();
@@ -157,9 +152,7 @@ function CPoll(logprefix) {
 	        log.error("angefragter user: "+user);
 	        this.success = false;
 	        this.error = e;
-	    } finally {
-	        cfh.retireBorderline();
-	    }    
+	    } 
      	return this.success;    
     }
     
@@ -167,14 +160,13 @@ function CPoll(logprefix) {
      this.update = function(){    
         log.debug("update");
             try {
-                var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+                var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
                 if (this.pollVO.getId == null || this.pollVO.getId == "" ){
-                    throw("Keine ID für pollVO gesetzt. Es kann kein Poll upgedated werden");
+                    throw("Keine ID fï¿½r pollVO gesetzt. Es kann kein Poll upgedated werden");
                 }  
-                var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+                var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
                 var pollService = utl.getHome().create();
-                //Dieses ganze Zeug ist noetig, da sonst der type in JS verloren ist und das update fehlschlaegt
-                var pollVO = cfh.instanciateClass("de.juwimm.poll.vo.PollValue");
+                var pollVO = cfh.getInstance("de.juwimm.poll.vo.PollValue");
                 pollVO.setId(this.getId());
                 pollVO.setName(this.getName());
                 pollVO.setUsername(this.getUsername());
@@ -189,9 +181,7 @@ function CPoll(logprefix) {
                 log.error("angefragte poll id: "+this.id);
                 this.success = false;
                 this.error = e;
-            } finally {
-                cfh.retireBorderline();
-            }        
+            } 
             return this.success;
     }
     
@@ -199,11 +189,10 @@ function CPoll(logprefix) {
     this.createPoll = function(){
            log.debug("createPoll");
            try {              
-                var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);     
-                var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+                var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();     
+                var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
                 var pollService = utl.getHome().create();
-              //Dieses ganze Zeug ist noetig, da sonst der type in JS verloren ist und das update fehlschlaegt
-                var pollVO = cfh.instanciateClass("de.juwimm.poll.vo.PollValue");
+                var pollVO = cfh.getInstance("de.juwimm.poll.vo.PollValue");
                 pollVO.setId(this.getId());
                 pollVO.setName(this.getName());
                 pollVO.setUsername(this.getUsername());
@@ -219,9 +208,7 @@ function CPoll(logprefix) {
                 log.error("angefragte poll id: "+this.id);
                 this.success = false;
                 this.error = e;
-            } finally {
-                cfh.retireBorderline();
-            }        
+            } 
             return this.success;
     }   
     

@@ -21,8 +21,8 @@ function CSMGRegister(logname) {
 		}
 		this.mandant=mandant;
     	try {
-    		this.cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("smg", getJars("juwimm-smg")); 
-    		this.smgService = this.cfh.instanciateClass("de.juwimm.smg.cocoon.CformAccessor").getWebsiteService();
+    		this.cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper(); 
+    		this.smgService = cfh.getInstance("de.juwimm.smg.cocoon.CformAccessor").getWebsiteService();
     		this.log.debug("SMG Service created\n");
     	} catch(e){
     		this.log.error("Fehler: "+e);
@@ -314,8 +314,6 @@ function CSMGRegister(logname) {
     
     this.close = function(){
         this.smgService = null;
-        this.cfh.retireBorderline();
-        this.log.debug("cfh retired");
     }
     
     /*Alle Methoden aus der Klasse RegistryService*/

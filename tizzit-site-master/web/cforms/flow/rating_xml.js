@@ -8,12 +8,11 @@ function cmsratingXml(logprefix, ratingName, site, user, xmlStr_s){
     var log = Packages.org.apache.log4j.Logger.getLogger(logprefix+".cmsrating_xml");
     
     var success = false;
-    //CformHelper
-    var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+    var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
     try {
-        var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+        var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
     	var pollService = utl.getHome().create();
-        var pollVO = cfh.instanciateClass("de.juwimm.poll.vo.PollValue");
+        var pollVO = cfh.getInstance("de.juwimm.poll.vo.PollValue");
         
         pollVO.setXmldata(xmlStr_s);
         pollVO.setDatum(new java.util.Date());
@@ -26,8 +25,6 @@ function cmsratingXml(logprefix, ratingName, site, user, xmlStr_s){
         success = true;        	    	
  	} catch (e) {
 	    log.error("Konnte poll nicht in DB speichern: "+e);
-	} finally {
-	    cfh.retireBorderline();
 	}
 	return success;
 }

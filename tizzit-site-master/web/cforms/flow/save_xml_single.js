@@ -14,10 +14,9 @@ function saveXmlSingle(logprefix, ratingName, site, user, xmlStr_s){
     var log = Packages.org.apache.log4j.Logger.getLogger(logprefix+".saveXmlSingle");
     
     var success = false;
-    //CformHelper
-    var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+    var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
     try {
-        var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+        var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
     	var pollService = utl.getHome().create();
         var pollVO = null;
         
@@ -37,7 +36,7 @@ function saveXmlSingle(logprefix, ratingName, site, user, xmlStr_s){
             log.debug("existing poll updated");
         }else{
         //es existiert noch kein Eintrag mit diesen Parametern -> neu anlegen
-            pollVO = cfh.instanciateClass("de.juwimm.poll.vo.PollValue");            
+            pollVO = cfh.getInstance("de.juwimm.poll.vo.PollValue");            
             pollVO.setXmldata(xmlStr_s);
             pollVO.setDatum(new java.util.Date());
             pollVO.setUsername(user);
@@ -49,8 +48,6 @@ function saveXmlSingle(logprefix, ratingName, site, user, xmlStr_s){
         success = true;        	    	
  	} catch (e) {
 	    log.error("Konnte poll nicht in DB speichern: "+e);
-	} finally {
-	    cfh.retireBorderline();
 	}
 	return success;
 }

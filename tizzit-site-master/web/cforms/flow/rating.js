@@ -37,11 +37,11 @@ function cmsrating(logprefix, ratingName, site, user){
 	    log.debug("request XML String xmlStr_s \n"+xmlStr_s);
 	}
     
-    var cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("poll", pollJars);
+    var cfh = new Packages.org.tizzit.core.classloading.ClassloadingHelper();
     try {
-        var utl = cfh.instanciateClass("de.juwimm.poll.remote.PollServiceUtil"); 
+        var utl = cfh.getInstance("de.juwimm.poll.remote.PollServiceUtil"); 
     	var pollService = utl.getHome().create();
-        var pollVO = cfh.instanciateClass("de.juwimm.poll.vo.PollValue");
+        var pollVO = cfh.getInstance("de.juwimm.poll.vo.PollValue");
         
         pollVO.setXmldata(xmlStr_s);
         pollVO.setDatum(new java.util.Date());
@@ -55,8 +55,6 @@ function cmsrating(logprefix, ratingName, site, user){
             //TODO: Hier DB post    	    	
  	} catch (e) {
 	    log.error("Konnte poll nicht in DB speichern: "+e);
-	} finally {
-	    cfh.retireBorderline();
 	}
 }
 
