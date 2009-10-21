@@ -26,9 +26,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -36,10 +38,14 @@ import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
@@ -48,7 +54,9 @@ import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.DocumentHbmImpl;
 import de.juwimm.cms.model.PictureHbm;
+import de.juwimm.cms.model.PictureHbmImpl;
 import de.juwimm.cms.model.SequenceHbmDao;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.UnitHbm;
@@ -305,7 +313,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
 			for (Iterator i = view.getChildren().iterator(); i.hasNext();) {
 				ViewComponentHbm vcHbm = (ViewComponentHbm) i.next();
-				ViewComponentValue vc = vcHbm.getDao(-1);				
+				ViewComponentValue vc = vcHbm.getDao(-1);
 				vec.addElement(vc);
 			}
 			if (log.isDebugEnabled()) log.debug("end getViewComponentChildren");
@@ -496,21 +504,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
 			ViewComponentValue viewComponentValue = view.getDao(depth);
-			getOnlineStatus(view,viewComponentValue);
+			getOnlineStatus(view, viewComponentValue);
 			return viewComponentValue;
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
 	}
 
-	private void getOnlineStatus(ViewComponentHbm viewComponentHbm,ViewComponentValue viewComponentValue){
+	private void getOnlineStatus(ViewComponentHbm viewComponentHbm, ViewComponentValue viewComponentValue) {
 		viewComponentValue.setHasPublishContentVersion(getViewComponentHbmDao().hasPublishContentVersion(viewComponentHbm));
-		if(viewComponentValue.getChildren()!=null){
-			for(ViewComponentValue vc:viewComponentValue.getChildren()){
-				getOnlineStatus(getViewComponentHbmDao().load(vc.getViewComponentId()),vc);
+		if (viewComponentValue.getChildren() != null) {
+			for (ViewComponentValue vc : viewComponentValue.getChildren()) {
+				getOnlineStatus(getViewComponentHbmDao().load(vc.getViewComponentId()), vc);
 			}
 		}
 	}
+
 	/**
 	 * @see de.juwimm.cms.remote.ViewServiceSpring#getViewComponent4Unit(java.lang.Integer, java.lang.Integer)
 	 */
@@ -519,7 +528,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		ViewComponentValue vcd = null;
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().find4Unit(unitId, viewDocumentId);
-			vcd = view.getDao(-1);			
+			vcd = view.getDao(-1);
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -1538,16 +1547,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected String handleGetViewComponentXmlComplete(Integer viewComponentId, String hostUrl, boolean withMedia) throws Exception {
 		String retVal = "";
-		//		File fle = File.createTempFile("edition_unit_export", ".xml.gz");
-		//		FileOutputStream fout = new FileOutputStream(fle);
-		//		GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
-		//		PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
-		//		EditionHbm edition = super.getEditionHbmDao().create("RETURNEDITION", rootViewComponentId, out, true);
-		//		super.getEditionHbmDao().remove(edition);
-		//		out.flush();
-		//		out.close();
-		//		out = null;
-		//		return new FileInputStream(fle);
 		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(byteOut, true, "UTF-8");
 		out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -1601,42 +1600,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	@Override
-	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString, boolean withMedia, boolean withChildren, Integer unitId) throws Exception {
-
-		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
-		ViewComponentHbm firstChild = parent.getFirstChild();
-		ViewComponentHbm viewComponent = getViewComponentHbmDao().createFromXml(parentId, xmlString, withChildren);
-		parent.addChild(viewComponent);
-		viewComponent.setParent(parent);
-
-		if (firstChild != null) {
-			viewComponent.setNextNode(firstChild);
-			firstChild.setPrevNode(viewComponent);
-			parent.setFirstChild(viewComponent);
-		} else {
-			parent.setFirstChild(viewComponent);
-		}
-
-		return viewComponent.getDao();
-	}
-
-	@Override
 	protected InputStream handleExportViewComponent(Integer viewComponentId) throws Exception {
-		//		try {
-		//			File fle = File.createTempFile("edition_unit_export", ".xml.gz");
-		//			FileOutputStream fout = new FileOutputStream(fle);
-		//			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
-		//			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
-		//			EditionHbm edition = super.getEditionHbmDao().create("RETURNEDITION", rootViewComponentId, out, true);
-		//			super.getEditionHbmDao().remove(edition);
-		//			out.flush();
-		//			out.close();
-		//			out = null;
-		//			return new FileInputStream(fle);
-		//		} catch (Exception e) {
-		//			log.error("Could not export edition unit", e);
-		//			throw new UserException(e.getMessage());
-		//		}
 		File fle = File.createTempFile("view_component_export", ".xml.gz");
 		FileOutputStream fout = new FileOutputStream(fle);
 		GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
@@ -1659,6 +1623,211 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		out.close();
 		out = null;
 		return new FileInputStream(fle);
+	}
+
+	@Override
+	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds) throws Exception {
+		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
+		ViewComponentHbm firstChild = parent.getFirstChild();
+		InputSource domIn = new InputSource(xmlFile);
+		org.w3c.dom.Document doc = XercesHelper.inputSource2Dom(domIn);
+		Hashtable<Integer, Integer> picIds = null;
+		Hashtable<Integer, Integer> docIds = null;
+		if (withMedia) {
+			picIds = importPictures(unitId, doc);
+			docIds = importDocuments(unitId, doc);
+		}
+		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds);
+		parent.addChild(viewComponent);
+		viewComponent.setParent(parent);
+
+		if (firstChild != null) {
+			viewComponent.setNextNode(firstChild);
+			firstChild.setPrevNode(viewComponent);
+			parent.setFirstChild(viewComponent);
+		} else {
+			parent.setFirstChild(viewComponent);
+		}
+
+		return viewComponent.getDao();
+	}
+
+	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds) {
+		ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
+		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
+		try {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("viewcomponent.view_component_id");
+			viewComponent.setViewComponentId(id);
+		} catch (Exception e) {
+			log.error("Error creating/setting primary key", e);
+		}
+		Iterator it = XercesHelper.findNodes(doc, "//viewcomponent");
+		try {
+			while (it.hasNext()) {
+				Node nodeViewComponent = (Node) it.next();
+				String linkName = XercesHelper.getNodeValue(nodeViewComponent, "//linkName");
+				String approvedLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//approvedLinkName");
+				String statusInfo = XercesHelper.getNodeValue(nodeViewComponent, "//statusInfo");
+				String urlLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//urlLinkName");
+				viewComponent.setDisplayLinkName(linkName);
+				viewComponent.setApprovedLinkName(approvedLinkName);
+				viewComponent.setLinkDescription(statusInfo);
+				viewComponent.setUrlLinkName(urlLinkName);
+				byte viewType = new Byte(XercesHelper.getNodeValue(nodeViewComponent, "//viewType")).byteValue();
+				boolean visible = Boolean.valueOf(XercesHelper.getNodeValue(nodeViewComponent, "//visible")).booleanValue();
+				viewComponent.setMetaData(XercesHelper.getNodeValue(nodeViewComponent, "./metaKeywords"));
+				viewComponent.setMetaDescription(XercesHelper.getNodeValue(nodeViewComponent, "./metaDescription"));
+				String onlineStart = XercesHelper.getNodeValue(nodeViewComponent, "./onlineStart");
+				if (!onlineStart.equals("")) {
+					if (log.isDebugEnabled()) log.debug("OnlineStart: " + onlineStart);
+					viewComponent.setOnlineStart(Long.parseLong(onlineStart));
+				}
+				String onlineStop = XercesHelper.getNodeValue(nodeViewComponent, "./onlineStop");
+				if (!onlineStop.equals("")) {
+					if (log.isDebugEnabled()) log.debug("OnlineStop: " + onlineStop);
+					viewComponent.setOnlineStop(Long.parseLong(onlineStop));
+				}
+				viewComponent.setViewLevel(XercesHelper.getNodeValue(nodeViewComponent, "./viewLevel"));
+				viewComponent.setViewIndex(XercesHelper.getNodeValue(nodeViewComponent, "./viewIndex"));
+				viewComponent.setDisplaySettings(Byte.parseByte(XercesHelper.getNodeValue(nodeViewComponent, "./displaySettings")));
+				viewComponent.setShowType(Byte.parseByte(XercesHelper.getNodeValue(nodeViewComponent, "./showType")));
+				viewComponent.setViewType(viewType);
+				viewComponent.setVisible(visible);
+				viewComponent.setSearchIndexed(Boolean.valueOf(XercesHelper.getNodeValue(nodeViewComponent, "./searchIndexed")).booleanValue());
+				viewComponent.setXmlSearchIndexed(Boolean.valueOf(XercesHelper.getNodeValue(nodeViewComponent, "./xmlSearchIndexed")).booleanValue());
+				byte status = Constants.DEPLOY_STATUS_EDITED;
+				viewComponent.setStatus(status);
+				viewComponent.setOnline((byte) 0);
+				Element cnde = (Element) XercesHelper.findNode(nodeViewComponent, "//content");
+				if (cnde != null) {
+					ContentHbm content = getContentHbmDao().createFromXml(cnde, false, false, picIds, docIds);
+					viewComponent.setReference(content.getContentId().toString());
+				}
+
+			}
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Error ar import viewcomponent");
+		}
+		viewComponent.setChildren(null);
+		viewComponent.setViewDocument(parent.getViewDocument());
+		return getViewComponentHbmDao().create(viewComponent);
+	}
+
+	private Element replacePicturesAndDocumentsIds(Element node, Hashtable<Integer, Integer> pictureIds, Hashtable<Integer, Integer> docIds) {
+		Element cnde = (Element) node.cloneNode(true);
+		Iterator cvit = XercesHelper.findNodes(cnde, "./contentVersion");
+		while (cvit.hasNext()) {
+			Element cvnde = (Element) cvit.next();
+			String textCV = null;
+			try {
+				Node ttextnode = XercesHelper.findNode(cvnde, "./text");
+				textCV = XercesHelper.nodeList2string(ttextnode.getChildNodes());
+				if (textCV != null) textCV = Base64.decodeToString(textCV);
+				if ((textCV != null) && (!textCV.equals("<text/>"))) {
+					try {
+						Document content = XercesHelper.string2Dom(textCV);
+						Iterator cvIt = XercesHelper.findNodes(content, "//picture");
+						while (cvIt.hasNext()) {
+							Element el = (Element) cvIt.next();
+							Integer oldId = new Integer(el.getAttribute("description"));
+							Integer newId = pictureIds.get(oldId);
+							el.setAttribute("description", newId.toString());
+						}
+						ttextnode.setNodeValue(Base64.encodeString(XercesHelper.doc2String(content)));
+					} catch (Exception e) {
+						if (log.isDebugEnabled()) log.error("Error at replacing pictures id");
+					}
+				}
+
+			} catch (Exception e) {
+			}
+
+		}
+		return cnde;
+	}
+
+	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc) {
+		Iterator itPictures = XercesHelper.findNodes(doc, "//picture");
+		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
+		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
+		while (itPictures.hasNext()) {
+			Element el = (Element) itPictures.next();
+			Integer id = new Integer(el.getAttribute("id"));
+			String strMimeType = el.getAttribute("mimeType");
+			String strPictureName = XercesHelper.getNodeValue(el, "./pictureName");
+			String strAltText = XercesHelper.getNodeValue(el, "./altText");
+
+			byte[] file = XercesHelper.getNodeValue(el, "./file").getBytes();
+			byte[] thumbnail = XercesHelper.getNodeValue(el, "./thumbnail").getBytes();
+			byte[] preview = null;
+			try {
+				preview = XercesHelper.getNodeValue(el, "./preview").getBytes();
+			} catch (Exception e) {
+
+			}
+			UnitHbm unit = getUnitHbmDao().load(unitId);
+			PictureHbm picture = new PictureHbmImpl();
+			picture.setThumbnail(thumbnail);
+			picture.setPicture(file);
+			picture.setPreview(preview);
+			picture.setMimeType(strMimeType);
+			picture.setAltText(strAltText);
+			picture.setPictureName(strPictureName);
+			picture.setUnit(unit);
+			picture = getPictureHbmDao().create(picture);
+			pictureIds.put(id, picture.getPictureId());
+		}
+		return pictureIds;
+	}
+
+	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc) {
+		Iterator itDocs = XercesHelper.findNodes(doc, "//document");
+		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
+		Hashtable<Integer, Integer> docIds = new Hashtable<Integer, Integer>();
+		while (itDocs.hasNext()) {
+			Element el = (Element) itDocs.next();
+			UnitHbm unit = getUnitHbmDao().load(unitId);
+			Integer id = new Integer(el.getAttribute("id"));
+			String strDocName = XercesHelper.getNodeValue(el, "./name");
+			String strMimeType = el.getAttribute("mimeType");
+			byte[] file = XercesHelper.getNodeValue(el, "./file").getBytes();
+			DocumentHbm document = new DocumentHbmImpl();
+			try {
+				Blob b = Hibernate.createBlob(file);
+				document.setDocument(b);
+			} catch (Exception e) {
+				log.error("Exception copying document to database", e);
+			}
+			document.setDocumentName(strDocName);
+			document.setMimeType(strMimeType);
+			document.setUnit(unit);
+			document = super.getDocumentHbmDao().create(document);
+			docIds.put(id, document.getDocumentId());
+		}
+		return docIds;
+	}
+
+	@Override
+	protected Integer handleGetUnitForViewComponent(Integer viewComponentId) throws Exception {
+		return getViewComponentUnit(viewComponentId);
+	}
+
+	/**
+	 * Search for the not null unit in current viewcomponent or parent until finding one
+	 * @param viewComponentId
+	 * @return
+	 */
+	private Integer getViewComponentUnit(Integer viewComponentId) {
+		Integer value;
+		ViewComponentHbm viewComp = getViewComponentHbmDao().load(viewComponentId);
+		UnitHbm unit = viewComp.getAssignedUnit();
+		if (unit == null) {
+			value = getViewComponentUnit(viewComp.getParent().getViewComponentId());
+		} else {
+			value = unit.getUnitId();
+		}
+		return value;
+
 	}
 
 }

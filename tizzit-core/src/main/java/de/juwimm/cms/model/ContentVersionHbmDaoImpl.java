@@ -22,6 +22,8 @@ package de.juwimm.cms.model;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.Base64;
 import org.tizzit.util.DateConverter;
 import org.tizzit.util.XercesHelper;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -160,6 +163,59 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		contentVersionHbm.setCreateDate(System.currentTimeMillis());
 		contentVersionHbm.setCreator(AuthenticationHelper.getUserName());
 		return super.create(contentVersionHbm);
+	}
+
+	@Override
+	protected ContentVersionHbm handleCreateFromXmlWIthMedia(Element cvnde, boolean reusePrimaryKey, boolean liveServer, Map pictureIds, Map documentIds) throws Exception {
+		ContentVersionHbm contentVersion = ContentVersionHbm.Factory.newInstance();
+		if (reusePrimaryKey) {
+			Integer id = new Integer(cvnde.getAttribute("id"));
+			if (log.isDebugEnabled()) log.debug("creating ContentVersion with existing id " + id);
+			contentVersion.setContentVersionId(id);
+		}
+		contentVersion.setCreateDate(DateConverter.getString2Sql(XercesHelper.getNodeValue(cvnde, "./createDate")).getTime());
+		contentVersion.setHeading(XercesHelper.getNodeValue(cvnde, "./heading"));
+		contentVersion.setVersion(XercesHelper.getNodeValue(cvnde, "./version"));
+		contentVersion.setCreator(XercesHelper.getNodeValue(cvnde, "./creator/userName"));
+		String ttext = null;
+		try {
+			Node ttextnode = XercesHelper.findNode(cvnde, "./text");
+			ttext = XercesHelper.nodeList2string(ttextnode.getChildNodes());
+			if (ttext != null) {
+				ttext = Base64.decodeToString(ttext);
+				Document content = XercesHelper.string2Dom(ttext);
+				Iterator cvIt = XercesHelper.findNodes(content, "//picture");
+				while (cvIt.hasNext()) {
+					Element el = (Element) cvIt.next();
+					Integer oldId = new Integer(el.getAttribute("description"));
+					Integer newId = (Integer) pictureIds.get(oldId);
+					el.setAttribute("description", newId.toString());
+				}
+				Iterator imgIt = XercesHelper.findNodes(content, "//image");
+				while (imgIt.hasNext()) {
+					Element el = (Element) imgIt.next();
+					Integer oldId = new Integer(el.getAttribute("src"));
+					Integer newId = (Integer) pictureIds.get(oldId);
+					el.setAttribute("src", newId.toString());
+				}
+				Iterator docIt = XercesHelper.findNodes(content, "//document");
+				while (docIt.hasNext()) {
+					Element el = (Element) docIt.next();
+					Integer oldId = new Integer(el.getAttribute("src"));
+					Integer newId = (Integer) documentIds.get(oldId);
+					el.setAttribute("src", newId.toString());
+				}
+				ttext = XercesHelper.doc2String(content);
+			}
+		} catch (Exception e) {
+		}
+		if (ttext == null || ttext.equals("<text/>")) {
+			ttext = "";
+		}
+		contentVersion.setText(ttext);
+		contentVersion = create(contentVersion);
+
+		return contentVersion;
 	}
 
 }

@@ -23,6 +23,7 @@ package de.juwimm.cms.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,33 +233,6 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 	}
 
 	@Override
-	protected ContentHbm handleCreateFromXml(Element cnde, boolean reusePrimaryKey, boolean liveDeploy) throws Exception {
-		ContentHbm content = ContentHbm.Factory.newInstance();
-		if (reusePrimaryKey) {
-			Integer id = new Integer(cnde.getAttribute("id"));
-			if (log.isDebugEnabled()) log.debug("creating Content with existing id " + id);
-			content.setContentId(id);
-		}
-		content.setStatus(Integer.parseInt(XercesHelper.getNodeValue(cnde, "./status")));
-		content.setUpdateSearchIndex(true);
-		content.setTemplate(XercesHelper.getNodeValue(cnde, "./template"));
-		content = create(content);
-
-		Iterator cvit = XercesHelper.findNodes(cnde, "./contentVersion");
-		while (cvit.hasNext()) {
-			Element cvnde = (Element) cvit.next();
-			String version = XercesHelper.getNodeValue(cvnde, "./version");
-			// import contentVersion: PUBLS only on livedeploy, all but PUBLS on import
-			if ((liveDeploy && version.equalsIgnoreCase("PUBLS")) || (!liveDeploy && !version.equalsIgnoreCase("PUBLS"))) {
-				ContentVersionHbm contentVersion = getContentVersionHbmDao().createFromXml(cvnde, reusePrimaryKey, liveDeploy);
-				content.getContentVersions().add(contentVersion);
-			}
-		}
-
-		return content;
-	}
-
-	@Override
 	protected ContentHbm handleCreateWithContentVersion(ContentValue contentValue, String creator) throws Exception {
 		ContentHbm contentHbm = ContentHbm.Factory.newInstance();
 		if (contentHbm.getContentId() == null || contentHbm.getContentId().intValue() == 0) {
@@ -313,5 +287,37 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 
 		return sb.toString();
 
+	}
+
+	@Override
+	protected ContentHbm handleCreateFromXml(Element cnde, boolean reusePrimaryKey, boolean liveDeploy, Map pictureIds, Map documentIds) throws Exception {
+		ContentHbm content = ContentHbm.Factory.newInstance();
+		if (reusePrimaryKey) {
+			Integer id = new Integer(cnde.getAttribute("id"));
+			if (log.isDebugEnabled()) log.debug("creating Content with existing id " + id);
+			content.setContentId(id);
+		}
+		content.setStatus(Integer.parseInt(XercesHelper.getNodeValue(cnde, "./status")));
+		content.setUpdateSearchIndex(true);
+		content.setTemplate(XercesHelper.getNodeValue(cnde, "./template"));
+		content = create(content);
+
+		Iterator cvit = XercesHelper.findNodes(cnde, "./contentVersion");
+		while (cvit.hasNext()) {
+			Element cvnde = (Element) cvit.next();
+			String version = XercesHelper.getNodeValue(cvnde, "./version");
+			// import contentVersion: PUBLS only on livedeploy, all but PUBLS on import
+			if ((liveDeploy && version.equalsIgnoreCase("PUBLS")) || (!liveDeploy && !version.equalsIgnoreCase("PUBLS"))) {
+				ContentVersionHbm contentVersion;
+				if ((pictureIds == null) && (documentIds == null)) {
+					contentVersion = getContentVersionHbmDao().createFromXml(cvnde, reusePrimaryKey, liveDeploy);
+				} else {
+					contentVersion = getContentVersionHbmDao().createFromXmlWIthMedia(cvnde, reusePrimaryKey, liveDeploy, pictureIds, documentIds);
+				}
+				content.getContentVersions().add(contentVersion);
+			}
+		}
+
+		return content;
 	}
 }

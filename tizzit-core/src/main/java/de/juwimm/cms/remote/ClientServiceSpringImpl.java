@@ -1867,20 +1867,24 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected ViewComponentValue handleCopyViewComponentToParentFromXml(Integer parentId, String xmlString, boolean withMedia, boolean withChildren, Integer unitId) throws Exception {
-		return getViewServiceSpring().copyViewComponentToParentFromXml(parentId, xmlString, withMedia, withChildren, unitId);
-	}
-
-	@Override
 	protected InputStream handleExportViewComponent(Integer viewComponentId) throws Exception {
 		return getViewServiceSpring().exportViewComponent(viewComponentId);
 	}
-	
+
 	@Override
-	protected void handleRemovePublishContentVersion(Integer contentId)
-			throws Exception {
+	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds) throws Exception {
+		return getViewServiceSpring().importViewComponent(parentId, xmlFile, withMedia, withChildren, unitId, reuseIds);
+	}
+
+	@Override
+	protected void handleRemovePublishContentVersion(Integer contentId) throws Exception {
 		getContentServiceSpring().removePublishContentVersion(contentId);
-		
+
+	}
+
+	@Override
+	protected Integer handleGetUnitForViewComponent(Integer viewComponentId) throws Exception {
+		return getViewServiceSpring().getUnitForViewComponent(viewComponentId);
 	}
 
 }
