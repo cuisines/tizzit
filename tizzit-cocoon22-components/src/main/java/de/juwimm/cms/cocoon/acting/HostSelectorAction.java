@@ -134,10 +134,6 @@ public class HostSelectorAction extends AbstractAction implements SingleThreaded
 		Request request = ObjectModelHelper.getRequest(objectModel);
 		String requestPath = this.getRequestedURL(objectModel);
 		String host = request.getHeader("Host");
-		int portPosition = host.lastIndexOf(":");
-		if (portPosition > 0) {
-			host = host.substring(0, portPosition);
-		}
 		if (host == null) {
 			if (log.isDebugEnabled()) log.debug("No Host header -- failing.");
 			return null;
