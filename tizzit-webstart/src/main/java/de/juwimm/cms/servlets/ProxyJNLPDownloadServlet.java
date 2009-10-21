@@ -165,7 +165,7 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 	private void addLog4jPropertyArgument(String propertyKey) {
 		String propertyValue = props.getProperty(propertyKey);
 		if (propertyValue == null || "".equals(propertyValue)) {
-			log.error("Property " + propertyKey + "is missing from tizzit.properties");
+			log.warn("Property " + propertyKey + "is missing from tizzit.properties");
 			return;
 		}
 		//properties of the email appender e.g. log4j.appender.email.BufferSize=1
