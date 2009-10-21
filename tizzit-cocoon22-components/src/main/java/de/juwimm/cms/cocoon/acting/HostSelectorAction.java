@@ -29,6 +29,7 @@ import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.beans.WebServiceSpring;
@@ -134,6 +135,12 @@ public class HostSelectorAction extends AbstractAction implements SingleThreaded
 		Request request = ObjectModelHelper.getRequest(objectModel);
 		String requestPath = this.getRequestedURL(objectModel);
 		String host = request.getHeader("Host");
+		if (StringUtils.isNotBlank(host)) {
+			int portPosition = host.lastIndexOf(":");
+			if (portPosition > 0) {
+				host = host.substring(0, portPosition);
+			}
+		}
 		if (host == null) {
 			if (log.isDebugEnabled()) log.debug("No Host header -- failing.");
 			return null;
