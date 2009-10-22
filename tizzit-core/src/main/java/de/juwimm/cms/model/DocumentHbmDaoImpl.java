@@ -174,9 +174,16 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	}
 
 	@Override
-	protected Integer handleCloneDocument(Integer oldDocumentId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	protected Integer handleCloneDocument(Integer oldDocumentId, UnitHbm newUnit) throws Exception {
+		DocumentHbm oldDocument = load(oldDocumentId);
+		DocumentHbm newDocument = new DocumentHbmImpl();
+		newDocument.setDocumentName(oldDocument.getDocumentName());
+		newDocument.setMimeType(oldDocument.getMimeType());
+		newDocument.setTimeStamp(oldDocument.getTimeStamp());
+		newDocument.setUnit(newUnit);
+		newDocument.setDocument(oldDocument.getDocument());
+		newDocument = create(newDocument);
+		return newDocument.getDocumentId();
 	}
 
 }

@@ -40,7 +40,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1557,32 +1556,42 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private Hashtable<Integer, Integer> clonePictures(Integer unitId, ContentVersionHbm lastContentVersion) {
 		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
 		String text = lastContentVersion.getText();
-		text = Base64.decodeToString(text);
+		//text = Base64.decodeToString(text);
 		try {
+			UnitHbm newUnit = getUnitHbmDao().load(unitId);
 			Document content = XercesHelper.string2Dom(text);
 			Iterator cvIt = XercesHelper.findNodes(content, "//picture");
 			while (cvIt.hasNext()) {
 				Element el = (Element) cvIt.next();
-				Integer oldId = new Integer(el.getAttribute("description"));
-				PictureHbm oldPicture = getPictureHbmDao().load(oldId);
-				Integer newId = (Integer) pictureIds.get(oldId);
-				el.setAttribute("description", newId.toString());
-			}
-			Iterator imgIt = XercesHelper.findNodes(content, "//image");
-			while (imgIt.hasNext()) {
-				Element el = (Element) imgIt.next();
-				Integer oldId = new Integer(el.getAttribute("src"));
-				Integer newId = (Integer) pictureIds.get(oldId);
-				el.setAttribute("src", newId.toString());
+				String value = el.getAttribute("description");
+				Integer oldId = Integer.parseInt(value);
+				Integer newId = getPictureHbmDao().clonePicture(oldId, newUnit);
+				pictureIds.put(oldId, newId);
 			}
 		} catch (Exception e) {
-
+			if (log.isDebugEnabled()) log.debug("Error at cloning pictures");
 		}
-		return null;
+		return pictureIds;
 	}
 
 	private Hashtable<Integer, Integer> cloneDocuments(Integer unitId, ContentVersionHbm lastContentVersion) {
-		return null;
+		Hashtable<Integer, Integer> documentsIds = new Hashtable<Integer, Integer>();
+		String text = lastContentVersion.getText();
+		//text = Base64.decodeToString(text);
+		try {
+			UnitHbm newUnit = getUnitHbmDao().load(unitId);
+			Document content = XercesHelper.string2Dom(text);
+			Iterator cvIt = XercesHelper.findNodes(content, "//document");
+			while (cvIt.hasNext()) {
+				Element el = (Element) cvIt.next();
+				Integer oldId = Integer.parseInt(el.getAttribute("src"));
+				Integer newId = getDocumentHbmDao().cloneDocument(oldId, newUnit);
+				documentsIds.put(oldId, newId);
+			}
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Error at cloning documents");
+		}
+		return documentsIds;
 	}
 
 	@Override

@@ -210,7 +210,40 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 		} catch (Exception e) {
 			log.error("Error creating primary key for contentVersion", e);
 		}
-		contentVersionHbm.setText(oldContentVersion.getText());
+		/**replace pictures and documents only if not null*/
+		if ((picturesIds != null) || (documentsIds != null)) {
+			String text = oldContentVersion.getText();
+			Document content = XercesHelper.string2Dom(text);
+			if (picturesIds != null) {
+				Iterator cvIt = XercesHelper.findNodes(content, "//picture");
+				while (cvIt.hasNext()) {
+					Element el = (Element) cvIt.next();
+					Integer oldId = new Integer(el.getAttribute("description"));
+					Integer newId = (Integer) picturesIds.get(oldId);
+					el.setAttribute("description", newId.toString());
+				}
+				Iterator imgIt = XercesHelper.findNodes(content, "//image");
+				while (imgIt.hasNext()) {
+					Element el = (Element) imgIt.next();
+					Integer oldId = new Integer(el.getAttribute("src"));
+					Integer newId = (Integer) picturesIds.get(oldId);
+					el.setAttribute("src", newId.toString());
+				}
+			}
+			if (documentsIds != null) {
+				Iterator docIt = XercesHelper.findNodes(content, "//document");
+				while (docIt.hasNext()) {
+					Element el = (Element) docIt.next();
+					Integer oldId = new Integer(el.getAttribute("src"));
+					Integer newId = (Integer) documentsIds.get(oldId);
+					el.setAttribute("src", newId.toString());
+				}
+			}
+			text = XercesHelper.doc2String(content);
+			contentVersionHbm.setText(text);
+		} else {
+			contentVersionHbm.setText(oldContentVersion.getText());
+		}
 		contentVersionHbm.setVersion("1");
 		contentVersionHbm.setHeading(oldContentVersion.getHeading());
 		contentVersionHbm.setCreateDate(System.currentTimeMillis());

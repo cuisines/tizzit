@@ -81,8 +81,21 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 	}
 
 	@Override
-	protected Integer handleClonePicture(Integer oldPictureId) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	protected Integer handleClonePicture(Integer oldPictureId, UnitHbm newUnit) throws Exception {
+		PictureHbm oldPicture = load(oldPictureId);
+		PictureHbm newPicture = new PictureHbmImpl();
+		newPicture.setAltText(oldPicture.getAltText());
+		newPicture.setHeight(oldPicture.getHeight());
+		newPicture.setWidth(oldPicture.getWidth());
+		newPicture.setMimeType(oldPicture.getMimeType());
+		newPicture.setPicture(oldPicture.getPicture());
+		newPicture.setPictureName(oldPicture.getPictureName());
+		newPicture.setPreview(oldPicture.getPreview());
+		newPicture.setThumbnail(oldPicture.getThumbnail());
+		/**set the new unit*/
+		newPicture.setUnit(newUnit);
+		newPicture.setTimeStamp(oldPicture.getTimeStamp());
+		newPicture = create(newPicture);
+		return newPicture.getPictureId();
 	}
 }
