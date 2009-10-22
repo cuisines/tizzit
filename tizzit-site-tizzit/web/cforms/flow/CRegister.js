@@ -240,7 +240,6 @@ function CRegister(logname) {
     
     this.closeCRegister = function(){
         this.registerService = null;
-        this.cfh.retireBorderline();
     }
     
     /*Alle Methoden aus der Klasse RegistryService*/
