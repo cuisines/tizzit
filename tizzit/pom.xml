@@ -931,6 +931,10 @@
 			<id>tizzit-central-snapshot</id>
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -943,6 +947,10 @@
 			<id>tizzit-central-snapshot</id>
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
