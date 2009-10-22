@@ -71,23 +71,25 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	}
 
 	@Override
-	protected Integer handleCreate(byte[] document, String documentName, String mimeType) throws Exception {
+	protected Integer handleCreate(byte[] document, String documentName, String mimeType, UnitHbm unit) throws Exception {
 		DocumentHbm documentHbm = DocumentHbm.Factory.newInstance();
 		Blob data = new BlobImpl(document);
 		documentHbm.setDocument(data);
 		documentHbm.setDocumentName(documentName);
 		documentHbm.setMimeType(mimeType);
+		documentHbm.setUnit(unit);
 		documentHbm.setUpdateSearchIndex(true);
 		return this.create(documentHbm).getDocumentId();
 	}
 
 	@Override
-	protected Integer handleCreate(byte[] document, String documentName, String mimeType, Integer id) throws Exception {
+	protected Integer handleCreate(byte[] document, String documentName, String mimeType, UnitHbm unit, Integer id) throws Exception {
 		DocumentHbm documentHbm = DocumentHbm.Factory.newInstance();
 		Blob data = new BlobImpl(document);
 		documentHbm.setDocument(data);
 		documentHbm.setDocumentName(documentName);
 		documentHbm.setMimeType(mimeType);
+		documentHbm.setUnit(unit);
 		documentHbm.setDocumentId(id);
 		documentHbm.setUpdateSearchIndex(true);
 		return this.create(documentHbm).getDocumentId();
@@ -99,16 +101,19 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 		super.remove(documentHbm);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform, final java.lang.Integer unitId) {
 		return this.findAll(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.unit.unitId = ?", unitId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllPerSite(final int transform, final java.lang.Integer siteId) {
 		return this.findAllPerSite(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.unit.site.siteId = ?", siteId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllPerUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findAllPerUnit(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.unit.unitId = ?", unitId);

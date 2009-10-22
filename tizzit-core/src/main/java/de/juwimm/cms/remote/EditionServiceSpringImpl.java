@@ -198,6 +198,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			ViewComponentHbm viewComponent = null;
 			if (rootVcId != null) {
 				try {
+					log.info("try to load ViewComponent: " + rootVcId);
 					viewComponent = super.getViewComponentHbmDao().load(rootVcId);
 					rootUnit = viewComponent.getAssignedUnit();
 					if (viewComponent.isRoot()) {
@@ -256,7 +257,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 */
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 1/6");
 			if (rootVcId == null) {
-				Collection vdocs = super.getViewDocumentHbmDao().findAll(siteId);
+				log.info("+++++++++++starting deleting...");
+				Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
+				if (vdocs != null) log.info("+++++++++++viewDocs found: " + vdocs.size());
 				Iterator vdocsIt = vdocs.iterator();
 				while (vdocsIt.hasNext()) {
 					ViewDocumentHbm viewDocument = (ViewDocumentHbm) vdocsIt.next();
@@ -269,6 +272,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
 				}
 				Collection units = getUnitHbmDao().findAll(siteId);
+				if (units != null) log.info("+++++++++++units found: " + units.size());
 				getUnitHbmDao().remove(units);
 
 				Collection realms = getRealmJdbcHbmDao().findBySiteId(siteId);
@@ -377,9 +381,13 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					boolean wasFirstChild = false;
 					// After removing we need this information to localize the ViewComponent to reimport
 					prev = viewComponent.getPrevNode();
+					log.info(">>>>>>>>>>>>>>>>>>>>>>>>prev: " + prev);
 					next = viewComponent.getNextNode();
+					log.info(">>>>>>>>>>>>>>>>>>>>>>>>next: " + next);
 					parent = viewComponent.getParent();
+					log.info(">>>>>>>>>>>>>>>>>>>>>>>>parent: " + parent);
 					viewDocument = viewComponent.getViewDocument();
+					log.info(">>>>>>>>>>>>>>>>>>>>>>>>viewDocument: " + viewDocument);
 
 					if (parent != null && parent.getFirstChild().getViewComponentId().equals(viewComponent.getViewComponentId())) wasFirstChild = true;
 					// REMOVE
@@ -876,10 +884,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				}
 				if (log.isDebugEnabled()) log.debug("IMPORTING DOCS");
 				while (itdocs.hasNext()) {
+					log.info(">>>>>>>>>>>>>>>>importing Docs");
 					Element el = (Element) itdocs.next();
 					Integer id = new Integer(el.getAttribute("id"));
+					log.info(">>>>>>>>>>>>>>>>Id: " + id);
 					String strDocName = XercesHelper.getNodeValue(el, "./name");
+					log.info(">>>>>>>>>>>>>>>>Name: " + strDocName);
 					String strMimeType = el.getAttribute("mimeType");
+					log.info(">>>>>>>>>>>>>>>>Mime: " + strMimeType);
 					// byte[] file = Base64.decode(XercesHelper.getNodeValue(el, "./file"));
 					File fle = new File(directory.getParent() + File.separator + "d" + id);
 					byte[] file = new byte[(int) fle.length()];
@@ -969,10 +981,16 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 	private PictureHbm createPictureHbm(byte[] thumbnail, byte[] file, byte[] preview, String strMimeType, String strAltText, String strPictureName, Integer id, UnitHbm unit) {
 		PictureHbm picture;
+		boolean newPicture = (id == 0) ? true : false;
 		if (id == null) {
 			picture = new PictureHbmImpl();
 		} else {
 			picture = super.getPictureHbmDao().load(id);
+			if (picture == null) {
+				newPicture = true;
+				picture = new PictureHbmImpl();
+				picture.setPictureId(id);
+			}
 		}
 		picture.setThumbnail(thumbnail);
 		picture.setPicture(file);
@@ -980,27 +998,31 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		picture.setMimeType(strMimeType);
 		picture.setAltText(strAltText);
 		picture.setPictureName(strPictureName);
+		picture.setUnit(unit);
 
-		if (id == null) {
-			picture.setUnit(unit);
+		if (newPicture) {
 			picture = getPictureHbmDao().create(picture);
 		}
 		return picture;
 	}
 
 	private DocumentHbm createDocumentHbm(byte[] file, String strDocName, String strMimeType, Integer id, UnitHbm unit) {
+		if (unit != null) log.info("createDocumentHbm: name:" + strDocName + " mime: " + strMimeType + " id: " + id + " unit: " + unit.getUnitId());
 		DocumentHbm document;
 		if (id == null) {
 			document = DocumentHbm.Factory.newInstance();
 		} else {
-			document = super.getDocumentHbmDao().load(id);
+			document = getDocumentHbmDao().load(id);
+			if (document == null) {
+				document = getDocumentHbmDao().load(getDocumentHbmDao().create(file, strDocName, strMimeType, unit, id));
+			}
 		}
 
 		document.setDocumentName(strDocName);
 		document.setMimeType(strMimeType);
+		document.setUnit(unit);
 
 		if (id == null) {
-			document.setUnit(unit);
 			document = getDocumentHbmDao().create(document);
 		}
 
