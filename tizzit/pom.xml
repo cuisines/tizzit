@@ -911,6 +911,11 @@
 			<name>Internal Releases</name>
 			<url>http://maven.tizzit.org/content/repositories/releases</url>
 		</repository>
+		<snapshotRepository>
+			<id>tizzit-snapshots</id>
+			<name>Internal Snapshots</name>
+			<url>http://maven.tizzit.org/content/repositories/snapshots</url>
+		</snapshotRepository>
 		<site>
 			<id>tizzit-sites</id>
 			<url>dav:http://maven.tizzit.org/sites-deploy/tizzit</url>

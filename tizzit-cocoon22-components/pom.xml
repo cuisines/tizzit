@@ -175,7 +175,7 @@
 		<dependency>
 			<groupId>org.apache.cocoon</groupId>
 			<artifactId>cocoon-util</artifactId>
-			<version>1.0.0-pl1-SNAPSHOT</version>
+			<version>1.0.0-pl1</version>
 		</dependency>
 
 		<dependency>
@@ -381,7 +381,7 @@
 		<dependency>
 			<groupId>org.apache.cocoon</groupId>
 			<artifactId>cocoon-session-fw-impl</artifactId>
-			<version>1.0.0-beta-2-SNAPSHOT</version>
+			<version>1.0.0-beta-2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.cocoon</groupId>
