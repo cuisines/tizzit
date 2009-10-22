@@ -239,7 +239,7 @@
 					</jnlp>
 					<outputJarVersions>true</outputJarVersions>
 					<sign>
-						<keystore>${pom.basedir}/target/keystore.jks</keystore>
+						<keystore>keystore.jks</keystore>
 						<storetype>JKS</storetype>
 						<storepass>123456</storepass>
 						<keypass>123456</keypass>
@@ -254,7 +254,7 @@
 						<dnameC>DE</dnameC>
 
 						<keystoreConfig>
-							<delete>true</delete>
+							<delete>false</delete>
 							<gen>true</gen>
 						</keystoreConfig>
 

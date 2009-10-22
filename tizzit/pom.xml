@@ -911,11 +911,6 @@
 			<name>Internal Releases</name>
 			<url>http://maven.tizzit.org/content/repositories/releases</url>
 		</repository>
-		<snapshotRepository>
-			<id>tizzit-snapshots</id>
-			<name>Internal Snapshots</name>
-			<url>http://maven.tizzit.org/content/repositories/snapshots</url>
-		</snapshotRepository>
 		<site>
 			<id>tizzit-sites</id>
 			<url>dav:http://maven.tizzit.org/sites-deploy/tizzit</url>
@@ -927,12 +922,22 @@
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/groups/public/</url>
 		</repository>
+		<repository>
+			<id>tizzit-central-snapshot</id>
+			<name>Tizzit Repository</name>
+			<url>http://maven.tizzit.org/content/repositories/snapshots/</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>tizzit-central</id>
 			<name>Tizzit Repository</name>
 			<url>http://maven.tizzit.org/content/groups/public/</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>tizzit-central-snapshot</id>
+			<name>Tizzit Repository</name>
+			<url>http://maven.tizzit.org/content/repositories/snapshots/</url>
 		</pluginRepository>
 	</pluginRepositories>
 
