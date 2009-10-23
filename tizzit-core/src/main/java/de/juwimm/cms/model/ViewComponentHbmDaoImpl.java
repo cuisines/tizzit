@@ -34,6 +34,10 @@ import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
+import de.juwimm.cms.safeguard.model.RealmJaasHbm;
+import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
+import de.juwimm.cms.safeguard.model.RealmLdapHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
@@ -736,7 +740,10 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				}
 			}
 		}
-		out.println(current.getRealm2vc().toXml());
+		if (current.getRealm2vc() != null) {
+			out.println(current.getRealm2vc().toXml());
+		}
+		exportVCRealms(out, current);
 
 		if (depth != 0) { // 1 is only THIS ViewComponent
 			try {
@@ -761,6 +768,32 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		out.println("</viewcomponent>");
 		if (log.isDebugEnabled()) log.debug("toXml end");
+
+	}
+
+	private void exportVCRealms(PrintStream out, ViewComponentHbm viewComponent) {
+		if (viewComponent.getRealm2vc() != null) {
+			Realm2viewComponentHbm realm = viewComponent.getRealm2vc();
+			RealmJaasHbm realmjass = realm.getJaasRealm();
+			RealmJdbcHbm realmjdbc = realm.getJdbcRealm();
+			RealmLdapHbm realmLdapHbm = realm.getLdapRealm();
+			RealmSimplePwHbm realmPw = realm.getSimplePwRealm();
+
+			out.println("<realms>");
+			if (realmjass != null) {
+				out.println("\t" + realmjass.toXml());
+			}
+			if (realmjdbc != null) {
+				out.println("\t" + realmjdbc.toXml());
+			}
+			if (realmLdapHbm != null) {
+				out.println("\t" + realmLdapHbm.toXml());
+			}
+			if (realmPw != null) {
+				out.println("\t" + realmPw.toXml());
+			}
+			out.println("</realms>");
+		}
 
 	}
 

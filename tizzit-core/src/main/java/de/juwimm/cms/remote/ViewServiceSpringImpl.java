@@ -1731,13 +1731,13 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	/**
-	 * 
+	 * Used for import single view component
 	 * @param parentId
 	 * @param doc
 	 * @param withChildren
 	 * @param picIds
 	 * @param docIds
-	 * @return
+	 * @return 
 	 */
 	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds, boolean useNewIds, Integer siteId, Integer fulldeploy) {
 		ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
@@ -1756,7 +1756,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				Integer vcId = new Integer(((Element) nodeViewComponent).getAttribute("id"));
 				Node nodeRealm = XercesHelper.findNode(nodeViewComponent, "realm2viewComponent");
 				/**import realms*/
-				importRealms(doc, siteId, useNewIds);
+				importRealms(nodeViewComponent, siteId, useNewIds);
 				String linkName = XercesHelper.getNodeValue(nodeViewComponent, "//linkName");
 				String approvedLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//approvedLinkName");
 				String statusInfo = XercesHelper.getNodeValue(nodeViewComponent, "//statusInfo");
@@ -1886,7 +1886,13 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return tempRealm;
 	}
 
-	private void importRealms(org.w3c.dom.Document doc, Integer siteId, boolean useNewIDs) {
+	/**
+	 * Import the realms used for a view component
+	 * @param doc
+	 * @param siteId
+	 * @param useNewIDs
+	 */
+	private void importRealms(org.w3c.dom.Node doc, Integer siteId, boolean useNewIDs) {
 		mappingRealmsSimplePw = new Hashtable<Integer, Integer>();
 		mappingRealmsJdbc = new Hashtable<Integer, Integer>();
 		mappingRealmsLdap = new Hashtable<Integer, Integer>();
@@ -1898,6 +1904,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		loginPagesRealm2vc = new Hashtable<Integer, Integer>();
 		try {
 			SiteHbm site = super.getSiteHbmDao().load(siteId);
+			UserHbm userLogged = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			Iterator itRealms = XercesHelper.findNodes(doc, "//realmSimplePw");
 			while (itRealms.hasNext()) {
 				if (log.isDebugEnabled()) log.debug("Found RealmSimplePw to import...");
@@ -1907,6 +1914,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				if (useNewIDs) {
 					realm = getRealmSimplePwHbmDao().create(elmRealm, true);
 					realm.setSite(site);
+					realm.setOwner(userLogged);
 					mappingRealmsSimplePw.put(id, realm.getSimplePwRealmId()); // mapping OLD-ID to NEW-ID
 				} else {
 					try {
@@ -2060,6 +2068,12 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	}
 
+	/**
+	 * Import pictures used in the content of a vc
+	 * @param unitId
+	 * @param doc
+	 * @return
+	 */
 	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc) {
 		Iterator itPictures = XercesHelper.findNodes(doc, "//picture");
 		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
@@ -2094,6 +2108,12 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return pictureIds;
 	}
 
+	/**
+	 * Import documents used in the content of a vc
+	 * @param unitId
+	 * @param doc
+	 * @return
+	 */
 	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc) {
 		Iterator itDocs = XercesHelper.findNodes(doc, "//document");
 		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
