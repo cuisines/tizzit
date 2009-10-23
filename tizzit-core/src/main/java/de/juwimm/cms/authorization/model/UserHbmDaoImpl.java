@@ -53,9 +53,6 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 
 	@Override
 	public UserHbm load(String userId) {
-		if (userId != null) {
-			userId = userId.toLowerCase();
-		}
 		return super.load(userId);
 	}
 

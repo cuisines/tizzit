@@ -166,7 +166,7 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 			}
 			if (log.isDebugEnabled()) log.debug("end getSites");
 		} catch (Exception exe) {
-			log.error("Unknown Error occured inside getSites: " + exe.getMessage());
+			log.error("Unknown Error occured inside getSites: " + exe.getMessage(), exe);
 		}
 		return retArr;
 	}
