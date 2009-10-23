@@ -85,6 +85,14 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "ConfluenceContentPlugin";
 
+	public static final String ELEMENT_NAME_CONFLUENCE_PAGE = "confluencePage";
+	public static final String ELEMENT_NAME_RENDERED_CONTENT = "renderedContent";
+	public static final String ELEMENT_NAME_PAGE_ID = "pageId";
+	public static final String ELEMENT_NAME_CONFLUENCEUR_URLS = "confluenceURLs";
+	public static final String ELEMENT_NAME_USE_STYLES = "useStyles";
+	public static final String ELEMENT_NAME_XML_RPC_METHODS_PREFIX = "xmlRpcMethodsPrefix";
+	public static final String ELEMENT_NAME_VALUE = "value";
+
 	public static final String DEFAULT_RPC_PATH = "/rpc/xmlrpc";
 	public static final String DEFAULT_PLUGIN_ACCESS_KEY = "confluence1";
 	public static final boolean DEFAULT_USE_STYLES = false;
@@ -92,13 +100,17 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 	private ContentHandler parent;
 
 	private static final int PROCESS_NO_PROCESS = -1;
+
 	private static final int PROCESS_PAGE_ID = 10;
 	private static final int PROCESS_CONFLUENCE_URL = 11;
 	private static final int PROCESS_CONFLUENCE_URL_VALUE = 12;
 	private static final int PROCESS_USE_STYLES = 13;
 	private static final int PROCESS_USE_STYLES_VALUE = 14;
-
 	private static final int PROCESS_ACCESS_KEY = 15;
+
+	private static final int PROCESS_CONFLUENCE_PAGE = 100;
+
+	private static final int PROCESS_OTHER_NAMESPACES = 1000;
 
 	private int processing = PROCESS_NO_PROCESS;
 
@@ -152,17 +164,17 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 
 				ConfluencePage cp = this.getPage(null);
 
-				this.parent.startElement("", "confluencePage", "confluencePage", this.createSAXAttributes(cp));
+				this.parent.startElement(PLUGIN_NAMESPACE, ELEMENT_NAME_CONFLUENCE_PAGE, ELEMENT_NAME_CONFLUENCE_PAGE, this.createSAXAttributes(cp));
 
 				String renderedContent = this.getRenderedContent(cp, null);
 				/*
 				 * Print Confluence content into the SAX stream
 				 */
-				this.parent.startElement("", "renderedContent", "renderedContent", new AttributesImpl());
+				this.parent.startElement(PLUGIN_NAMESPACE, ELEMENT_NAME_RENDERED_CONTENT, ELEMENT_NAME_RENDERED_CONTENT, new AttributesImpl());
 				SAXHelper.string2sax(renderedContent, this.parent);
-				this.parent.endElement("", "renderedContent", "renderedContent");
+				this.parent.endElement(PLUGIN_NAMESPACE, ELEMENT_NAME_RENDERED_CONTENT, ELEMENT_NAME_RENDERED_CONTENT);
 
-				this.parent.endElement("", "confluencePage", "confluencePage");
+				this.parent.endElement(PLUGIN_NAMESPACE, ELEMENT_NAME_CONFLUENCE_PAGE, ELEMENT_NAME_CONFLUENCE_PAGE);
 			} else {
 				log.error("Confluence URL not found!");
 			}
@@ -237,21 +249,19 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String name, Attributes atts) throws SAXException {
 		if (PLUGIN_NAMESPACE.equals(uri)) {
-			if ("getPage".equals(localName)) {
-
-			} else if ("pageId".equals(localName)) {
+			if (ELEMENT_NAME_PAGE_ID.equals(localName)) {
 				if (log.isDebugEnabled()) log.debug("Processing element '" + localName + "'.");
 				processing = PROCESS_PAGE_ID;
-			} else if ("confluenceURLs".equals(localName)) {
+			} else if (ELEMENT_NAME_CONFLUENCEUR_URLS.equals(localName)) {
 				if (log.isDebugEnabled()) log.debug("Processing element '" + localName + "'.");
 				this.processing = PROCESS_CONFLUENCE_URL_VALUE;
-			} else if ("useStyles".equals(localName)) {
+			} else if (ELEMENT_NAME_USE_STYLES.equals(localName)) {
 				if (log.isDebugEnabled()) log.debug("Processing element '" + localName + "'.");
 				this.processing = PROCESS_USE_STYLES_VALUE;
-			} else if ("xmlRpcMethodsPrefix".equals(localName)) {
+			} else if (ELEMENT_NAME_XML_RPC_METHODS_PREFIX.equals(localName)) {
 				if (log.isDebugEnabled()) log.debug("Processing element '" + localName + "'.");
 				this.processing = PROCESS_ACCESS_KEY;
-			} else if ("value".equals(localName)) {
+			} else if (ELEMENT_NAME_VALUE.equals(localName)) {
 				if (log.isDebugEnabled()) log.debug("Processing element '" + localName + "'.");
 				switch (this.processing) {
 					case PROCESS_USE_STYLES_VALUE:
@@ -261,7 +271,21 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 						this.processing = PROCESS_CONFLUENCE_URL;
 						break;
 				}
+			} else if (ELEMENT_NAME_CONFLUENCE_PAGE.equals(localName)) {
+				this.processing = PROCESS_CONFLUENCE_PAGE;
 			}
+		} else {
+			//this.parent.startElement(uri, localName, name, atts);
+			this.processing = PROCESS_OTHER_NAMESPACES;
+		}
+
+		switch (this.processing) {
+			case PROCESS_CONFLUENCE_PAGE:
+				this.parent.startElement(uri, localName, name, atts);
+				break;
+			case PROCESS_OTHER_NAMESPACES:
+				this.parent.startElement(uri, localName, name, atts);
+				break;
 		}
 	}
 
@@ -296,6 +320,12 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 				if (log.isDebugEnabled()) log.debug("Setting xmlRpcMethodsPrefix to '" + this.xmlRpcMethodsPrefix + "'.");
 				this.processing = PROCESS_NO_PROCESS;
 				break;
+			case PROCESS_CONFLUENCE_PAGE:
+				this.parent.characters(ch, start, length);
+				break;
+			case PROCESS_OTHER_NAMESPACES:
+				this.parent.characters(ch, start, length);
+				break;
 		}
 	}
 
@@ -303,7 +333,16 @@ public class ConfluenceContentPlugin implements TizzitPlugin {
 	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void endElement(String uri, String localName, String name) throws SAXException {
-		// do nothing
+		switch (this.processing) {
+			case PROCESS_CONFLUENCE_PAGE:
+				this.parent.endElement(uri, localName, name);
+				this.processing = PROCESS_NO_PROCESS;
+				break;
+			case PROCESS_OTHER_NAMESPACES:
+				this.parent.endElement(uri, localName, name);
+				this.processing = PROCESS_NO_PROCESS;
+				break;
+		}
 	}
 
 	/* (non-Javadoc)

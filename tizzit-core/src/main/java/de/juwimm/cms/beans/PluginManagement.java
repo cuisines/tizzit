@@ -61,7 +61,7 @@ public class PluginManagement {
 			try {
 				plugin = (TizzitPlugin) ClassloadingHelper.getInstance(clazzName);
 			} catch (Exception exe) {
-				log.warn("Could not resolve TizzitPlugin with classname " + clazzName + " " + exe.getMessage());
+				log.warn("Could not instantiate TizzitPlugin with classname '" + clazzName + "': " + exe.getMessage());
 				plugin = new NullPlugin();
 			}
 		}
