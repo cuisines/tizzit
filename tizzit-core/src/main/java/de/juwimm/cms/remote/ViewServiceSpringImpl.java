@@ -62,6 +62,14 @@ import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbmImpl;
+import de.juwimm.cms.safeguard.model.RealmJaasHbm;
+import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
+import de.juwimm.cms.safeguard.model.RealmLdapHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDaoImpl;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.vo.SiteValue;
@@ -82,6 +90,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private SearchengineService searchengineService;
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
+	private Hashtable<Integer, Integer> loginPagesSimplePwRealmBackup = null;
+	private Hashtable<Integer, Integer> loginPagesJdbcRealmBackup = null;
+	private Hashtable<Integer, Integer> loginPagesJaasRealmBackup = null;
+	private Hashtable<Integer, Integer> loginPagesLdapRealmBackup = null;
+	private Hashtable<Integer, Integer> loginPagesRealm2viewComponentBackup = null;
+
+	private Hashtable<Integer, Integer> loginPagesRealmsSimplePw = null;
+	private Hashtable<Integer, Integer> loginPagesRealmsJdbc = null;
+	private Hashtable<Integer, Integer> loginPagesRealmsLdap = null;
+	private Hashtable<Integer, Integer> loginPagesRealmsJaas = null;
+
+	private Hashtable<Integer, Integer> mappingRealmsSimplePw = null;
+	private Hashtable<Integer, Integer> mappingRealmsJdbc = null;
+	private Hashtable<Integer, Integer> mappingRealmsLdap = null;
+	private Hashtable<Integer, Integer> mappingRealmsJaas = null;
+	private Hashtable<Integer, Integer> loginPagesRealm2vc = null;
 
 	/**
 	 * @see de.juwimm.cms.remote.ViewServiceSpring#removeViewComponent(java.lang.Integer, boolean)
@@ -1614,6 +1638,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				getMediaXML(doc, out, "document", "src");
 			}
 		}
+
 		out.print("</site>");
 		retVal = byteOut.toString("UTF-8");
 		return retVal;
@@ -1676,7 +1701,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	@Override
-	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds) throws Exception {
+	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds, boolean useNewIds, Integer siteId, Integer fulldeploy) throws Exception {
 		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
 		ViewComponentHbm firstChild = parent.getFirstChild();
 		InputSource domIn = new InputSource(xmlFile);
@@ -1687,8 +1712,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			picIds = importPictures(unitId, doc);
 			docIds = importDocuments(unitId, doc);
 		}
-		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds);
+		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds, useNewIds, siteId, fulldeploy);
 		//importRealmsForViewComponent(doc, viewComponent, 1);
+		/**import realms*/
+
 		parent.addChild(viewComponent);
 		viewComponent.setParent(parent);
 
@@ -1712,9 +1739,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @param docIds
 	 * @return
 	 */
-	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds) {
+	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds, boolean useNewIds, Integer siteId, Integer fulldeploy) {
 		ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
 		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
+
 		try {
 			Integer id = sequenceHbmDao.getNextSequenceNumber("viewcomponent.view_component_id");
 			viewComponent.setViewComponentId(id);
@@ -1725,6 +1753,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		try {
 			while (it.hasNext()) {
 				Node nodeViewComponent = (Node) it.next();
+				Integer vcId = new Integer(((Element) nodeViewComponent).getAttribute("id"));
+				Node nodeRealm = XercesHelper.findNode(nodeViewComponent, "realm2viewComponent");
+				/**import realms*/
+				importRealms(doc, siteId, useNewIds);
 				String linkName = XercesHelper.getNodeValue(nodeViewComponent, "//linkName");
 				String approvedLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//approvedLinkName");
 				String statusInfo = XercesHelper.getNodeValue(nodeViewComponent, "//statusInfo");
@@ -1764,6 +1796,68 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					viewComponent.setReference(content.getContentId().toString());
 				}
 
+				if (fulldeploy > 0) {
+					// use new ids
+					String neededrole = XercesHelper.getNodeValue(nodeRealm, "roleNeeded");
+					String loginPage = XercesHelper.getNodeValue(nodeRealm, "loginPageId");
+					if (loginPage != null && !"".equalsIgnoreCase(loginPage)) {
+						Integer loginPageId = null;
+						try {
+							loginPageId = Integer.valueOf(loginPage);
+						} catch (Exception e) {
+						}
+						if (loginPageId != null) loginPagesRealm2vc.put(vcId, loginPageId);
+					}
+					Node relNode = XercesHelper.findNode(nodeRealm, "jdbcRealmId");
+					if (relNode != null) {
+						Integer id = new Integer(XercesHelper.getNodeValue(relNode));
+						RealmJdbcHbm sqlrealm = super.getRealmJdbcHbmDao().load(mappingRealmsJdbc.get(id));
+						Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, sqlrealm, null, null, null);
+						Realm2viewComponentHbm r = super.getRealm2viewComponentHbmDao().create(tempRealm);
+						viewComponent.setRealm2vc(r);
+					} else {
+						relNode = XercesHelper.findNode(nodeRealm, "simplePwRealmId");
+						if (relNode != null) {
+							Integer id = new Integer(XercesHelper.getNodeValue(relNode));
+							RealmSimplePwHbm realm = super.getRealmSimplePwHbmDao().load(mappingRealmsSimplePw.get(id));
+							Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, null, realm, null, null);
+							Realm2viewComponentHbm r = super.getRealm2viewComponentHbmDao().create(tempRealm);
+							viewComponent.setRealm2vc(r);
+						} else {
+							relNode = XercesHelper.findNode(nodeRealm, "ldapRealmId");
+							if (relNode != null) {
+								Integer id = new Integer(XercesHelper.getNodeValue(relNode));
+								RealmLdapHbm realm = super.getRealmLdapHbmDao().load(mappingRealmsLdap.get(id));
+								Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, null, null, realm, null);
+								Realm2viewComponentHbm r = super.getRealm2viewComponentHbmDao().create(tempRealm);
+								viewComponent.setRealm2vc(r);
+							} else {
+								relNode = XercesHelper.findNode(nodeRealm, "jaasRealmId");
+								if (relNode != null) {
+									Integer id = new Integer(XercesHelper.getNodeValue(relNode));
+									RealmJaasHbm realm = super.getRealmJaasHbmDao().load(mappingRealmsJaas.get(id));
+									Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, null, null, null, realm);
+									Realm2viewComponentHbm r = super.getRealm2viewComponentHbmDao().create(tempRealm);
+									viewComponent.setRealm2vc(r);
+								}
+							}
+						}
+					}
+				} else {
+					Realm2viewComponentHbm tempRealm = new Realm2viewComponentHbmImpl();
+					tempRealm.setViewComponent(viewComponent);
+					Realm2viewComponentHbm r = super.getRealm2viewComponentHbmDao().create(tempRealm);
+					viewComponent.setRealm2vc(r);
+					String loginPage = XercesHelper.getNodeValue(nodeRealm, "loginPageId");
+					if (loginPage != null && !"".equalsIgnoreCase(loginPage)) {
+						Integer loginPageId = null;
+						try {
+							loginPageId = Integer.valueOf(loginPage);
+						} catch (Exception e) {
+						}
+					}
+				}
+
 			}
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) log.debug("Error ar import viewcomponent");
@@ -1771,6 +1865,199 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		viewComponent.setChildren(null);
 		viewComponent.setViewDocument(parent.getViewDocument());
 		return getViewComponentHbmDao().create(viewComponent);
+	}
+
+	private Realm2viewComponentHbm createTempRealm(ViewComponentHbm viewComponent, String neededRole, RealmJdbcHbm jdbcRealm, RealmSimplePwHbm simplePWRealm, RealmLdapHbm ldapRealm, RealmJaasHbm jaasRealm) {
+		Realm2viewComponentHbm tempRealm = new Realm2viewComponentHbmImpl();
+		tempRealm.setViewComponent(viewComponent);
+		tempRealm.setRoleNeeded(neededRole);
+		if (jdbcRealm != null) {
+			tempRealm.setJdbcRealm(super.getRealmJdbcHbmDao().load(jdbcRealm.getJdbcRealmId()));
+		}
+		if (simplePWRealm != null) {
+			tempRealm.setSimplePwRealm(super.getRealmSimplePwHbmDao().load(simplePWRealm.getSimplePwRealmId()));
+		}
+		if (ldapRealm != null) {
+			tempRealm.setLdapRealm(super.getRealmLdapHbmDao().load(ldapRealm.getLdapRealmId()));
+		}
+		if (jaasRealm != null) {
+			tempRealm.setJaasRealm(super.getRealmJaasHbmDao().load(jaasRealm.getJaasRealmId()));
+		}
+		return tempRealm;
+	}
+
+	private void importRealms(org.w3c.dom.Document doc, Integer siteId, boolean useNewIDs) {
+		mappingRealmsSimplePw = new Hashtable<Integer, Integer>();
+		mappingRealmsJdbc = new Hashtable<Integer, Integer>();
+		mappingRealmsLdap = new Hashtable<Integer, Integer>();
+		mappingRealmsJaas = new Hashtable<Integer, Integer>();
+		loginPagesRealmsSimplePw = new Hashtable<Integer, Integer>();
+		loginPagesRealmsJdbc = new Hashtable<Integer, Integer>();
+		loginPagesRealmsLdap = new Hashtable<Integer, Integer>();
+		loginPagesRealmsJaas = new Hashtable<Integer, Integer>();
+		loginPagesRealm2vc = new Hashtable<Integer, Integer>();
+		try {
+			SiteHbm site = super.getSiteHbmDao().load(siteId);
+			Iterator itRealms = XercesHelper.findNodes(doc, "//realmSimplePw");
+			while (itRealms.hasNext()) {
+				if (log.isDebugEnabled()) log.debug("Found RealmSimplePw to import...");
+				Element elmRealm = (Element) itRealms.next();
+				Integer id = new Integer(XercesHelper.getNodeValue(elmRealm, "simplePwRealmId"));
+				RealmSimplePwHbm realm = null;
+				if (useNewIDs) {
+					realm = getRealmSimplePwHbmDao().create(elmRealm, true);
+					realm.setSite(site);
+					mappingRealmsSimplePw.put(id, realm.getSimplePwRealmId()); // mapping OLD-ID to NEW-ID
+				} else {
+					try {
+						if (log.isDebugEnabled()) log.debug("searching RealmSimplePw: " + id);
+						realm = super.getRealmSimplePwHbmDao().load(id);
+						String realmName = XercesHelper.getNodeValue(elmRealm, "realmName");
+						if (realmName != null && realmName.length() > 0) {
+							realm.setRealmName(realmName);
+						} else {
+							realm.setRealmName(null);
+						}
+						realm.setSite(site);
+						{
+							// import users, first delete all existing ones for this realm
+							Collection toDelete = new ArrayList();
+							toDelete.addAll(realm.getSimplePwRealmUsers());
+							Iterator it = toDelete.iterator();
+							while (it.hasNext()) {
+								super.getRealmSimplePwUserHbmDao().remove(((RealmSimplePwUserHbm) it.next()));
+							}
+							toDelete.clear();
+							realm.getSimplePwRealmUsers().clear();
+							Iterator itUsers = XercesHelper.findNodes(elmRealm, "simplePwRealmUsers/realmSimplePwUser");
+							while (itUsers.hasNext()) {
+								Element elmUser = (Element) itUsers.next();
+								RealmSimplePwUserHbm user = ((RealmSimplePwUserHbmDaoImpl) getRealmSimplePwUserHbmDao()).create(elmUser, false);
+								user.setSimplePwRealm(realm);
+
+								realm.getSimplePwRealmUsers().add(user);
+							}
+						}
+					} catch (Exception exe) {
+						if (log.isDebugEnabled()) log.debug("creating RealmSimplePw: " + id);
+						realm = super.getRealmSimplePwHbmDao().create(elmRealm, false);
+						realm.setSite(site);
+					}
+				}
+				String loginPageId = XercesHelper.getNodeValue(elmRealm, "loginPageId");
+				if (loginPageId != null && loginPageId.length() > 0) loginPagesRealmsSimplePw.put(id, new Integer(loginPageId));
+			}
+			itRealms = XercesHelper.findNodes(doc, "//realmLdap");
+			while (itRealms.hasNext()) {
+				if (log.isDebugEnabled()) log.debug("Found RealmLdap to import...");
+				Element elmRealm = (Element) itRealms.next();
+				Integer id = new Integer(XercesHelper.getNodeValue(elmRealm, "ldapRealmId"));
+				RealmLdapHbm realm = null;
+				if (useNewIDs) {
+					realm = super.getRealmLdapHbmDao().create(elmRealm, true);
+					realm.setSite(site);
+					mappingRealmsLdap.put(id, realm.getLdapRealmId()); // mapping OLD-ID to NEW-ID
+				} else {
+					try {
+						if (log.isDebugEnabled()) log.debug("searching RealmLdap: " + id);
+						realm = super.getRealmLdapHbmDao().load(id);
+						String realmName = XercesHelper.getNodeValue(elmRealm, "realmName");
+						if (realmName != null && realmName.length() > 0) {
+							realm.setRealmName(realmName);
+						} else {
+							realm.setRealmName(null);
+						}
+						String ldapPrefix = XercesHelper.getNodeValue(elmRealm, "ldapPrefix");
+						realm.setLdapPrefix(ldapPrefix);
+						String ldapSuffix = XercesHelper.getNodeValue(elmRealm, "ldapSuffix");
+						realm.setLdapSuffix(ldapSuffix);
+						String ldapUrl = XercesHelper.getNodeValue(elmRealm, "ldapUrl");
+						realm.setLdapUrl(ldapUrl);
+						String ldapAuthenticationType = XercesHelper.getNodeValue(elmRealm, "ldapAuthenticationType");
+						realm.setLdapAuthenticationType(ldapAuthenticationType);
+						realm.setSite(site);
+					} catch (Exception exe) {
+						if (log.isDebugEnabled()) log.debug("creating RealmLdap: " + id);
+						realm = super.getRealmLdapHbmDao().create(elmRealm, false);
+						realm.setSite(site);
+					}
+				}
+				String loginPageId = XercesHelper.getNodeValue(elmRealm, "loginPageId");
+				if (loginPageId != null && loginPageId.length() > 0) loginPagesRealmsLdap.put(id, new Integer(loginPageId));
+			}
+			itRealms = XercesHelper.findNodes(doc, "//realmJdbc");
+			while (itRealms.hasNext()) {
+				if (log.isDebugEnabled()) log.debug("Found RealmJdbc to import...");
+				Element elmRealm = (Element) itRealms.next();
+				Integer id = new Integer(XercesHelper.getNodeValue(elmRealm, "jdbcRealmId"));
+				RealmJdbcHbm realm = null;
+				if (useNewIDs) {
+					realm = super.getRealmJdbcHbmDao().create(elmRealm, true);
+					realm.setSite(site);
+					mappingRealmsJdbc.put(id, realm.getJdbcRealmId()); // mapping OLD-ID to NEW-ID
+				} else {
+					try {
+						if (log.isDebugEnabled()) log.debug("searching RealmJdbc: " + id);
+						realm = super.getRealmJdbcHbmDao().load(id);
+						String realmName = XercesHelper.getNodeValue(elmRealm, "realmName");
+						if (realmName != null && realmName.length() > 0) {
+							realm.setRealmName(realmName);
+						} else {
+							realm.setRealmName(null);
+						}
+						String jndiName = XercesHelper.getNodeValue(elmRealm, "jndiName");
+						realm.setJndiName(jndiName);
+						String statementUser = XercesHelper.getNodeValue(elmRealm, "statementUser");
+						realm.setStatementUser(statementUser);
+						String statementRolePerUser = XercesHelper.getNodeValue(elmRealm, "statementRolePerUser");
+						realm.setStatementRolePerUser(statementRolePerUser);
+						realm.setSite(site);
+					} catch (Exception exe) {
+						if (log.isDebugEnabled()) log.debug("creating RealmJdbc: " + id);
+						realm = super.getRealmJdbcHbmDao().create(elmRealm, false);
+						realm.setSite(site);
+					}
+				}
+				String loginPageId = XercesHelper.getNodeValue(elmRealm, "loginPageId");
+				if (loginPageId != null && loginPageId.length() > 0) loginPagesRealmsJdbc.put(id, new Integer(loginPageId));
+			}
+			itRealms = XercesHelper.findNodes(doc, "//realmJaas");
+			while (itRealms.hasNext()) {
+				if (log.isDebugEnabled()) log.debug("Found RealmJaas to import...");
+				Element elmRealm = (Element) itRealms.next();
+				Integer id = new Integer(XercesHelper.getNodeValue(elmRealm, "jaasRealmId"));
+				RealmJaasHbm realm = null;
+				if (useNewIDs) {
+					realm = super.getRealmJaasHbmDao().create(elmRealm, true);
+					realm.setSite(site);
+					mappingRealmsJaas.put(id, realm.getJaasRealmId()); // mapping OLD-ID to NEW-ID
+				} else {
+					try {
+						if (log.isDebugEnabled()) log.debug("searching RealmJaas: " + id);
+						realm = super.getRealmJaasHbmDao().load(id);
+						String realmName = XercesHelper.getNodeValue(elmRealm, "realmName");
+						if (realmName != null && realmName.length() > 0) {
+							realm.setRealmName(realmName);
+						} else {
+							realm.setRealmName(null);
+						}
+						String jaasPolicyName = XercesHelper.getNodeValue(elmRealm, "jaasPolicyName");
+						realm.setJaasPolicyName(jaasPolicyName);
+						realm.setSite(site);
+					} catch (Exception exe) {
+						if (log.isDebugEnabled()) log.debug("creating RealmJaas: " + id);
+						realm = super.getRealmJaasHbmDao().create(elmRealm, false);
+						realm.setSite(site);
+					}
+				}
+				String loginPageId = XercesHelper.getNodeValue(elmRealm, "loginPageId");
+				if (loginPageId != null && loginPageId.length() > 0) loginPagesRealmsJaas.put(id, new Integer(loginPageId));
+			}
+
+		} catch (Exception exe) {
+			log.error("Error occured importRealms: " + exe.getMessage(), exe);
+		}
+
 	}
 
 	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc) {

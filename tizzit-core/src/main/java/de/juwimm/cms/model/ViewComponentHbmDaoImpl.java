@@ -736,7 +736,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				}
 			}
 		}
-		//out.print("<realm2viewComponent><" + current.getRealm2vc().toXml() + "></realm2viewComponent>\n");
+		out.println(current.getRealm2vc().toXml());
 
 		if (depth != 0) { // 1 is only THIS ViewComponent
 			try {
