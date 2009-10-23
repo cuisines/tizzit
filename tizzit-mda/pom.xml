@@ -71,6 +71,6 @@
       <hibernate.inheritance.strategy>subclass</hibernate.inheritance.strategy>
       <hibernate.db.showSql>true</hibernate.db.showSql>
       <!-- hibernate generator class to use for identifiers -->
-      <hibernate.generatorClass>native</hibernate.generatorClass>
+      <hibernate.generatorClass>assigned</hibernate.generatorClass>
    </properties>
 </project>
