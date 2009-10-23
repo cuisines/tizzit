@@ -28,14 +28,24 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -47,6 +57,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.xml.transform.Source;
@@ -57,10 +68,15 @@ import javax.xml.transform.sax.SAXResult;
 
 import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
+import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLFilter;
+import org.xml.sax.helpers.XMLFilterImpl;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
@@ -93,6 +109,7 @@ import de.juwimm.cms.gui.tree.PageSymlinkNode;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.EditionBlobContentHandler;
 import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ContentValue;
@@ -137,6 +154,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private final JMenuItem miRootImportUnit = new JMenuItem();
 	private final JMenuItem miContentApprove = new JMenuItem(rb.getString("ribbon.publish.release"));
 	private final JMenuItem miTreeExpandAll = new JMenuItem(rb.getString("actions.ACTION_TREE_EXPAND_ALL"));
+	private final JMenuItem miImportSite = new JMenuItem(rb.getString("actions.ACTION_IMPORT_SITE"));
+	private final JMenuItem miExportSite = new JMenuItem(rb.getString("actions.ACTION_EXPORT_SITE"));
 	private final String strACTIONROOTDEPLOYSUNIT = rb.getString("wizard.editor.start.approve");
 	private final String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
 	private final String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
@@ -368,14 +387,24 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			});
 			miCopy.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					setCopyPaste(false);
+					//setCopyPaste(false);
 					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.COPY));
 				}
 			});
 			miPaste.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					setCopyPaste(true);
+					//setCopyPaste(true);
 					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.PASTE));
+				}
+			});
+			miExportSite.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.EXPORT_VIEW_COMPONENT));
+				}
+			});
+			miImportSite.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.IMPORT_VIEW_COMPONENT));
 				}
 			});
 			miTreeNodeAppend.addActionListener(comm);
@@ -548,9 +577,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			miContentApprove.setActionCommand(Constants.ACTION_CONTENT_APPROVE);
 			popup.add(miContentApprove);
 		}
-		miPaste.setEnabled(false);
+		//miPaste.setEnabled(false);
+		miCopy.setIcon(UIConstants.ACTION_COPY);
+		miPaste.setIcon(UIConstants.ACTION_PASTE);
 		popup.add(miCopy);
 		popup.add(miPaste);
+		popup.add(miExportSite);
+		popup.add(miImportSite);
 
 		miDELETE.setIcon(UIConstants.MODULE_ITERATION_CONTENT_DELETE);
 		miDELETE.setActionCommand(Constants.ACTION_TREE_NODE_DELETE);
@@ -946,7 +979,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				} catch (Exception exe) {
 					log.error("Error", exe);
 				}
-			}else if(action.equals(Constants.ACTION_MAKE_VIEW_OFFLINE)){
+			} else if (action.equals(Constants.ACTION_MAKE_VIEW_OFFLINE)) {
 				entry.getViewComponent().setHasPublishContentVersion(false);
 				comm.removePublishContentVersion(Integer.decode(entry.getViewComponent().getReference()));
 			}
@@ -1506,40 +1539,61 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			}
 			this.invalidateTreeCache();
 		} else if (e.getType() == ViewComponentEvent.COPY) {
-			viewComponentIdsCopy = new Integer[entriesPath.length];
+			Constants.VIEW_COMPONENT_TO_COPY = entry.getViewComponent().getViewComponentId();
+		} else if (e.getType() == ViewComponentEvent.PASTE) {
+			ViewComponentValue[] viewComponentArray = comm.copyViewComponentToParent(entry.getViewComponent().getViewComponentId(), new Integer[] {Constants.VIEW_COMPONENT_TO_COPY}, ViewComponentEvent.MOVE_LEFT);
+			//			ViewComponentValue viewComponent = pasteTreeNode(entry.getViewComponent().getViewComponentId());
+			ViewComponentValue viewComponent = viewComponentArray[0];
+			PageNode temp = null;
+			switch (viewComponent.getViewType()) {
+				case Constants.VIEW_TYPE_EXTERNAL_LINK:
+					temp = new PageExternallinkNode(viewComponent, treeModel);
+					break;
+				case Constants.VIEW_TYPE_INTERNAL_LINK:
+					temp = new PageInternallinkNode(viewComponent, treeModel);
+					break;
+				case Constants.VIEW_TYPE_SYMLINK:
+					//viewComponentValue.setMetaData(anchor);
+					temp = new PageSymlinkNode(viewComponent, treeModel);
+					break;
+				case Constants.VIEW_TYPE_SEPARATOR:
+					temp = new PageSeparatorNode(viewComponent, treeModel);
+					break;
+				default:
+					temp = new PageContentNode(viewComponent, treeModel);
+					break;
+			}
+			entry.insert(temp, 0);
+			treeModel.nodeStructureChanged(entry);
+		} else if (e.getType() == ViewComponentEvent.EXPORT_VIEW_COMPONENT) {
 			for (int i = 0; i < entriesPath.length; i++) {
 				PageNode local = (PageNode) entriesPath[i].getLastPathComponent();
-				viewComponentIdsCopy[i] = local.getViewComponent().getViewComponentId();
-			}
+				exportTreeNode(local.getViewComponent());
 
-		} else if (e.getType() == ViewComponentEvent.PASTE) {
-			if (viewComponentIdsCopy != null) {
-				PageNode temp = null;
-				ViewComponentValue[] values = comm.copyViewComponentToParent(entry.getViewComponent().getViewComponentId(), viewComponentIdsCopy, Constants.ADD_APPEND);
-				for (int i = 0; i < values.length; i++) {
-					ViewComponentValue viewComponentValue = values[i];
-					switch (viewComponentValue.getViewType()) {
-						case Constants.VIEW_TYPE_EXTERNAL_LINK:
-							temp = new PageExternallinkNode(viewComponentValue, treeModel);
-							break;
-						case Constants.VIEW_TYPE_INTERNAL_LINK:
-							temp = new PageInternallinkNode(viewComponentValue, treeModel);
-							break;
-						case Constants.VIEW_TYPE_SYMLINK:
-							//viewComponentValue.setMetaData(anchor);
-							temp = new PageSymlinkNode(viewComponentValue, treeModel);
-							break;
-						case Constants.VIEW_TYPE_SEPARATOR:
-							temp = new PageSeparatorNode(viewComponentValue, treeModel);
-							break;
-						default:
-							temp = new PageContentNode(viewComponentValue, treeModel);
-							break;
-					}
-					entry.insert(temp, i);
-				}
-				treeModel.nodeStructureChanged(entry);
 			}
+		} else if (e.getType() == ViewComponentEvent.IMPORT_VIEW_COMPONENT) {
+			ViewComponentValue viewComponent = importTreeNode(entry.getViewComponent().getViewComponentId());
+			PageNode temp = null;
+			switch (viewComponent.getViewType()) {
+				case Constants.VIEW_TYPE_EXTERNAL_LINK:
+					temp = new PageExternallinkNode(viewComponent, treeModel);
+					break;
+				case Constants.VIEW_TYPE_INTERNAL_LINK:
+					temp = new PageInternallinkNode(viewComponent, treeModel);
+					break;
+				case Constants.VIEW_TYPE_SYMLINK:
+					//viewComponentValue.setMetaData(anchor);
+					temp = new PageSymlinkNode(viewComponent, treeModel);
+					break;
+				case Constants.VIEW_TYPE_SEPARATOR:
+					temp = new PageSeparatorNode(viewComponent, treeModel);
+					break;
+				default:
+					temp = new PageContentNode(viewComponent, treeModel);
+					break;
+			}
+			entry.insert(temp, 0);
+			treeModel.nodeStructureChanged(entry);
 		}
 	}
 
@@ -1666,6 +1720,96 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private void setCopyPaste(boolean flag) {
 		//miCopy.setEnabled(flag);
 		miPaste.setEnabled(!flag);
+	}
+	private String fileSuffix = ".xml.gz";
+
+	private void exportTreeNode(ViewComponentValue viewComponent) {
+		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new FileFilter() {
+			public boolean accept(File fle) {
+				return (fle.getName().endsWith(fileSuffix) || fle.isDirectory());
+			}
+
+			public String getDescription() {
+				return "XML-Gunzip Site (" + fileSuffix + ")";
+			}
+		});
+		fc.setDialogTitle("Choose Exportfile");
+		int returnVal = fc.showSaveDialog(UIConstants.getMainFrame());
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			try {
+				File file = fc.getSelectedFile();
+				if (!file.getName().endsWith(fileSuffix)) {
+					file = new File(file.getPath() + fileSuffix);
+				}
+				if (file.exists()) {
+					file.delete();
+					file.createNewFile();
+				}
+				comm.createViewComponentForExport(file, viewComponent.getViewComponentId());
+			} catch (Exception exe) {
+				log.error("Error during the export to file", exe);
+
+			}
+		}
+
+	}
+
+	private ViewComponentValue importTreeNode(Integer parentId) {
+		ViewComponentValue viewComponent = null;
+
+		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new FileFilter() {
+			@Override
+			public boolean accept(File fle) {
+				return (fle.getName().endsWith(fileSuffix) || fle.isDirectory());
+			}
+
+			@Override
+			public String getDescription() {
+				return "XML-Gunzip Site";
+			}
+		});
+		fc.setDialogTitle("Choose Importfile");
+		int returnVal = fc.showOpenDialog(UIConstants.getMainFrame());
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			try {
+				File file = fc.getSelectedFile();
+				if (file.exists()) {
+					File preparsedXMLfile = null;
+					XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
+					preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
+					if (log.isDebugEnabled()) log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
+					XMLWriter xmlWriter = new XMLWriter(new OutputStreamWriter(new FileOutputStream(preparsedXMLfile)));
+					filter.setContentHandler(new EditionBlobContentHandler(xmlWriter, preparsedXMLfile));
+					InputSource saxIn = null;
+					try {
+						try {
+							saxIn = new InputSource(new GZIPInputStream(new FileInputStream(file.getAbsolutePath())));
+						} catch (Exception exe) {
+							saxIn = new InputSource(new BufferedReader(new FileReader(file.getAbsolutePath())));
+						}
+					} catch (FileNotFoundException exe) {
+						if (log.isDebugEnabled()) log.error("Error at creating InputSource in paste");
+					}
+					filter.parse(saxIn);
+					xmlWriter.flush();
+					xmlWriter = null;
+					filter = null;
+					System.gc();
+					if (log.isInfoEnabled()) log.info("Finished cutting BLOBs, starting to open XML Document...");
+					Integer unitId = comm.getUnitForViewComponent(parentId);
+					viewComponent = comm.importViewComponentToParent(parentId, new BufferedInputStream(new FileInputStream(preparsedXMLfile)), true, true, unitId, true, comm.getCurrentSite().getSiteId(), 1);
+				} else {
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), "File does not exist", rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
+				}
+			} catch (Exception exe) {
+				log.error("Paste error error", exe);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), "Error at paste", rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			}
+		}
+
+		return viewComponent;
 	}
 
 }

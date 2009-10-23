@@ -141,6 +141,7 @@ public class Main extends JFrame implements ActionListener {
 		if (argv.length >= 2 && argv[0].equals("URL_HOST")) {
 			try {
 				URL url = new URL(argv[1]);
+				Constants.URL_HOST = url.toString();
 				host = url.getHost();
 				Constants.SERVER_SSL = url.getProtocol().equalsIgnoreCase("https");
 				if (Constants.SERVER_SSL) {

@@ -47,7 +47,6 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.SpringSecurityException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.rcp.RemoteAuthenticationException;
 import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
 import org.tizzit.util.ArraySorter;
 import org.tizzit.util.Comparer;
@@ -71,8 +70,8 @@ import de.juwimm.cms.components.vo.PersonValue;
 import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.content.frame.DlgModal;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
-import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
+import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.NeededFieldsMissingException;
 import de.juwimm.cms.exceptions.NoSitesException;
 import de.juwimm.cms.exceptions.UnitnameIsAlreadyUsedException;
@@ -445,7 +444,7 @@ public class Communication implements ExitListener, ActionListener {
 		return dbHelper;
 	}
 
-	public SiteValue[] getSites(String userName, String passwd) throws InvalidUsernameException, NoSitesException,LocalizedException {
+	public SiteValue[] getSites(String userName, String passwd) throws InvalidUsernameException, NoSitesException, LocalizedException {
 		log.info("Trying to fetching Sites for User " + userName);
 		try {
 			SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
@@ -453,12 +452,12 @@ public class Communication implements ExitListener, ActionListener {
 			GrantedAuthority[] authorities = remoteAuthenticationService.attemptAuthentication(userName, String.valueOf(passwd));
 			SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userName, String.valueOf(passwd), authorities));
 			log.debug(SecurityContextHolder.getContext().getAuthentication());
-		} catch (RemoteAccessException e){
-			if(e.getCause() != null && e.getCause() instanceof SpringSecurityException){
+		} catch (RemoteAccessException e) {
+			if (e.getCause() != null && e.getCause() instanceof SpringSecurityException) {
 				log.info("authentication failed: " + e.getMessage());
 				throw new InvalidUsernameException();
 			}
-			LocalizedException ge = new LocalizedException("communication.login.unkwownError","unknown error",e);
+			LocalizedException ge = new LocalizedException("communication.login.unkwownError", "unknown error", e);
 			ge.logThrowException();
 			throw ge;
 		}
@@ -2500,8 +2499,32 @@ public class Communication implements ExitListener, ActionListener {
 	public ViewComponentValue[] copyViewComponentToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) {
 		return getClientService().copyViewComponentsToParent(parentId, viewComponentsIds, position);
 	}
-	
-	public void removePublishContentVersion(Integer contentId){
+
+	public String getViewComponentXmlComplete(Integer viewComponentId) {
+		return getClientService().getViewComponentXmlComplete(viewComponentId, "local:8080", true);
+	}
+
+	public ViewComponentValue importViewComponentToParent(Integer parentId, InputStream xmlString, boolean withMedia, boolean withChildren, Integer unitId, boolean useNewIds, Integer siteId, Integer fulldeploy) {
+		return getClientService().importViewComponent(parentId, xmlString, withMedia, withChildren, unitId, true, useNewIds, siteId, fulldeploy);
+	}
+
+	public void createViewComponentForExport(File output, int viewComponentId) throws Exception {
+		InputStream viewComponentStream = null;
+		/**set view component stream*/
+		viewComponentStream = getClientService().exportViewComponent(viewComponentId);
+		FileOutputStream fileOutput = new FileOutputStream(output);
+		IOUtils.copyLarge(viewComponentStream, fileOutput);
+		IOUtils.closeQuietly(viewComponentStream);
+		IOUtils.closeQuietly(fileOutput);
+		output = null;
+		System.gc();
+	}
+
+	public void removePublishContentVersion(Integer contentId) {
 		getClientService().removePublishContentVersion(contentId);
+	}
+
+	public Integer getUnitForViewComponent(Integer viewComponentId) {
+		return getClientService().getUnitForViewComponent(viewComponentId);
 	}
 }

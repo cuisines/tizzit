@@ -31,6 +31,8 @@ public class ViewComponentEvent {
 	public static final int MOVE_RIGHT = 4;
 	public static final int COPY = 5;
 	public static final int PASTE = 6;
+	public static final int EXPORT_VIEW_COMPONENT = 7;
+	public static final int IMPORT_VIEW_COMPONENT = 8;
 
 	private int i;
 
