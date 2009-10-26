@@ -83,7 +83,9 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 	@Override
 	protected Integer handleClonePicture(Integer oldPictureId, UnitHbm newUnit) throws Exception {
 		PictureHbm oldPicture = load(oldPictureId);
-		PictureHbm newPicture = new PictureHbmImpl();
+		PictureHbm newPicture = PictureHbm.Factory.newInstance();
+		Integer id = sequenceHbmDao.getNextSequenceNumber("picture.picture_id");
+		newPicture.setPictureId(id);
 		newPicture.setAltText(oldPicture.getAltText());
 		newPicture.setHeight(oldPicture.getHeight());
 		newPicture.setWidth(oldPicture.getWidth());

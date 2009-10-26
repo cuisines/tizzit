@@ -296,6 +296,8 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 			Integer id = new Integer(cnde.getAttribute("id"));
 			if (log.isDebugEnabled()) log.debug("creating Content with existing id " + id);
 			content.setContentId(id);
+		} else {
+			content.setContentId(sequenceHbmDao.getNextSequenceNumber("content.content_id"));
 		}
 		content.setStatus(Integer.parseInt(XercesHelper.getNodeValue(cnde, "./status")));
 		content.setUpdateSearchIndex(true);

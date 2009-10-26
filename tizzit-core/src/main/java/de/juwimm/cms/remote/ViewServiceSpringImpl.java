@@ -20,11 +20,17 @@
  */
 package de.juwimm.cms.remote;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.sql.Blob;
 import java.util.ArrayList;
@@ -35,16 +41,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.XercesHelper;
+import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLFilter;
+import org.xml.sax.helpers.XMLFilterImpl;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
@@ -84,7 +97,7 @@ import de.juwimm.cms.vo.compound.ViewIdAndUnitIdValue;
  * @version $Id$
  */
 public class ViewServiceSpringImpl extends ViewServiceSpringBase {
-	private static Logger log = Logger.getLogger(ViewServiceSpringImpl.class);
+	private static Log log = LogFactory.getLog(ViewServiceSpringImpl.class);
 
 	@Autowired
 	private SearchengineService searchengineService;
@@ -1692,15 +1705,43 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	@Override
 	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds, boolean useNewIds, Integer siteId, Integer fulldeploy) throws Exception {
+		String tmpFileName = "";
+		try {
+			tmpFileName = this.storeSiteFile(xmlFile);
+			if (log.isInfoEnabled()) log.info("-------------->importFile saved.");
+		} catch (IOException e) {
+			log.warn("Unable to copy received inputstream: " + e.getMessage(), e);
+		}
 		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
 		ViewComponentHbm firstChild = parent.getFirstChild();
-		InputSource domIn = new InputSource(xmlFile);
+		File preparsedXMLfile = null;
+		XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
+		preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
+		if (log.isDebugEnabled()) log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
+		XMLWriter xmlWriter = new XMLWriter(new OutputStreamWriter(new FileOutputStream(preparsedXMLfile)));
+		filter.setContentHandler(new de.juwimm.cms.util.EditionBlobContentHandler(xmlWriter, preparsedXMLfile));
+		InputSource saxIn = null;
+		try {
+			try {
+				saxIn = new InputSource(new GZIPInputStream(new FileInputStream(tmpFileName)));
+			} catch (Exception exe) {
+				saxIn = new InputSource(new BufferedReader(new FileReader(tmpFileName)));
+			}
+		} catch (FileNotFoundException exe) {
+			if (log.isDebugEnabled()) log.error("Error at creating InputSource in paste");
+		}
+		filter.parse(saxIn);
+		xmlWriter.flush();
+		xmlWriter = null;
+		filter = null;
+		System.gc();
+		InputSource domIn = new InputSource(new BufferedInputStream(new FileInputStream(preparsedXMLfile)));
 		org.w3c.dom.Document doc = XercesHelper.inputSource2Dom(domIn);
 		Hashtable<Integer, Integer> picIds = null;
 		Hashtable<Integer, Integer> docIds = null;
 		if (withMedia) {
-			picIds = importPictures(unitId, doc);
-			docIds = importDocuments(unitId, doc);
+			picIds = importPictures(unitId, doc, preparsedXMLfile);
+			docIds = importDocuments(unitId, doc, preparsedXMLfile);
 		}
 		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds, useNewIds, siteId, fulldeploy);
 		//importRealmsForViewComponent(doc, viewComponent, 1);
@@ -1718,6 +1759,19 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 
 		return viewComponent.getDao();
+
+	}
+
+	private String storeSiteFile(InputStream in) throws IOException {
+		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "editions";
+		File fDir = new File(dir);
+		fDir.mkdirs();
+		File storedEditionFile = File.createTempFile("edition_import_", ".xml.gz", fDir);
+		FileOutputStream out = new FileOutputStream(storedEditionFile);
+		IOUtils.copyLarge(in, out);
+		IOUtils.closeQuietly(out);
+		IOUtils.closeQuietly(in);
+		return storedEditionFile.getAbsolutePath();
 	}
 
 	/**
@@ -2064,36 +2118,48 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @param doc
 	 * @return
 	 */
-	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc) {
+	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc, File directory) {
 		Iterator itPictures = XercesHelper.findNodes(doc, "//picture");
 		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
 		while (itPictures.hasNext()) {
 			Element el = (Element) itPictures.next();
-			Integer id = new Integer(el.getAttribute("id"));
-			String strMimeType = el.getAttribute("mimeType");
-			String strPictureName = XercesHelper.getNodeValue(el, "./pictureName");
-			String strAltText = XercesHelper.getNodeValue(el, "./altText");
-
-			byte[] file = XercesHelper.getNodeValue(el, "./file").getBytes();
-			byte[] thumbnail = XercesHelper.getNodeValue(el, "./thumbnail").getBytes();
-			byte[] preview = null;
 			try {
-				preview = XercesHelper.getNodeValue(el, "./preview").getBytes();
-			} catch (Exception e) {
+				Integer id = new Integer(el.getAttribute("id"));
+				String strMimeType = el.getAttribute("mimeType");
+				String strPictureName = XercesHelper.getNodeValue(el, "./pictureName");
+				String strAltText = XercesHelper.getNodeValue(el, "./altText");
+				File fle = new File(directory.getParent() + File.separator + "f" + id);
+				byte[] file = new byte[(int) fle.length()];
+				new FileInputStream(fle).read(file);
+				fle.delete();
 
+				File fleThumb = new File(directory.getParent() + File.separator + "t" + id);
+				byte[] thumbnail = new byte[(int) fleThumb.length()];
+				new FileInputStream(fleThumb).read(thumbnail);
+				fleThumb.delete();
+
+				byte[] preview = null;
+				File flePreview = new File(directory.getParent() + File.separator + "p" + id);
+				if (flePreview.exists() && flePreview.canRead()) {
+					preview = new byte[(int) flePreview.length()];
+					new FileInputStream(flePreview).read(preview);
+					flePreview.delete();
+				}
+				UnitHbm unit = getUnitHbmDao().load(unitId);
+				PictureHbm picture = new PictureHbmImpl();
+				picture.setThumbnail(thumbnail);
+				picture.setPicture(file);
+				picture.setPreview(preview);
+				picture.setMimeType(strMimeType);
+				picture.setAltText(strAltText);
+				picture.setPictureName(strPictureName);
+				picture.setUnit(unit);
+				picture = getPictureHbmDao().create(picture);
+				pictureIds.put(id, picture.getPictureId());
+			} catch (Exception e) {
+				if (log.isWarnEnabled()) log.warn("Error at importing pictures");
 			}
-			UnitHbm unit = getUnitHbmDao().load(unitId);
-			PictureHbm picture = new PictureHbmImpl();
-			picture.setThumbnail(thumbnail);
-			picture.setPicture(file);
-			picture.setPreview(preview);
-			picture.setMimeType(strMimeType);
-			picture.setAltText(strAltText);
-			picture.setPictureName(strPictureName);
-			picture.setUnit(unit);
-			picture = getPictureHbmDao().create(picture);
-			pictureIds.put(id, picture.getPictureId());
 		}
 		return pictureIds;
 	}
@@ -2104,29 +2170,36 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @param doc
 	 * @return
 	 */
-	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc) {
+	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc, File directory) {
 		Iterator itDocs = XercesHelper.findNodes(doc, "//document");
 		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 		Hashtable<Integer, Integer> docIds = new Hashtable<Integer, Integer>();
 		while (itDocs.hasNext()) {
-			Element el = (Element) itDocs.next();
-			UnitHbm unit = getUnitHbmDao().load(unitId);
-			Integer id = new Integer(el.getAttribute("id"));
-			String strDocName = XercesHelper.getNodeValue(el, "./name");
-			String strMimeType = el.getAttribute("mimeType");
-			byte[] file = XercesHelper.getNodeValue(el, "./file").getBytes();
-			DocumentHbm document = new DocumentHbmImpl();
 			try {
-				Blob b = Hibernate.createBlob(file);
-				document.setDocument(b);
+				Element el = (Element) itDocs.next();
+				UnitHbm unit = getUnitHbmDao().load(unitId);
+				Integer id = new Integer(el.getAttribute("id"));
+				String strDocName = XercesHelper.getNodeValue(el, "./name");
+				String strMimeType = el.getAttribute("mimeType");
+				File fle = new File(directory.getParent() + File.separator + "d" + id);
+				byte[] file = new byte[(int) fle.length()];
+				new FileInputStream(fle).read(file);
+				fle.delete();
+				DocumentHbm document = new DocumentHbmImpl();
+				try {
+					Blob b = Hibernate.createBlob(file);
+					document.setDocument(b);
+				} catch (Exception e) {
+					if (log.isWarnEnabled()) log.warn("Exception copying document to database", e);
+				}
+				document.setDocumentName(strDocName);
+				document.setMimeType(strMimeType);
+				document.setUnit(unit);
+				document = super.getDocumentHbmDao().create(document);
+				docIds.put(id, document.getDocumentId());
 			} catch (Exception e) {
-				log.error("Exception copying document to database", e);
+				if (log.isWarnEnabled()) log.warn("Error at importing documents");
 			}
-			document.setDocumentName(strDocName);
-			document.setMimeType(strMimeType);
-			document.setUnit(unit);
-			document = super.getDocumentHbmDao().create(document);
-			docIds.put(id, document.getDocumentId());
 		}
 		return docIds;
 	}

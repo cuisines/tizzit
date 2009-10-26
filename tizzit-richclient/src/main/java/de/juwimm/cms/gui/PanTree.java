@@ -29,20 +29,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
-import java.util.zip.GZIPInputStream;
 
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -68,15 +62,10 @@ import javax.xml.transform.sax.SAXResult;
 
 import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
-import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLFilter;
-import org.xml.sax.helpers.XMLFilterImpl;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
@@ -109,7 +98,6 @@ import de.juwimm.cms.gui.tree.PageSymlinkNode;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
-import de.juwimm.cms.util.EditionBlobContentHandler;
 import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ContentValue;
@@ -1774,30 +1762,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			try {
 				File file = fc.getSelectedFile();
 				if (file.exists()) {
-					File preparsedXMLfile = null;
-					XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
-					preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
-					if (log.isDebugEnabled()) log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
-					XMLWriter xmlWriter = new XMLWriter(new OutputStreamWriter(new FileOutputStream(preparsedXMLfile)));
-					filter.setContentHandler(new EditionBlobContentHandler(xmlWriter, preparsedXMLfile));
-					InputSource saxIn = null;
-					try {
-						try {
-							saxIn = new InputSource(new GZIPInputStream(new FileInputStream(file.getAbsolutePath())));
-						} catch (Exception exe) {
-							saxIn = new InputSource(new BufferedReader(new FileReader(file.getAbsolutePath())));
-						}
-					} catch (FileNotFoundException exe) {
-						if (log.isDebugEnabled()) log.error("Error at creating InputSource in paste");
-					}
-					filter.parse(saxIn);
-					xmlWriter.flush();
-					xmlWriter = null;
-					filter = null;
-					System.gc();
-					if (log.isInfoEnabled()) log.info("Finished cutting BLOBs, starting to open XML Document...");
 					Integer unitId = comm.getUnitForViewComponent(parentId);
-					viewComponent = comm.importViewComponentToParent(parentId, new BufferedInputStream(new FileInputStream(preparsedXMLfile)), true, true, unitId, true, comm.getCurrentSite().getSiteId(), 1);
+					viewComponent = comm.importViewComponentToParent(parentId, new BufferedInputStream(new FileInputStream(file)), true, true, unitId, true, comm.getCurrentSite().getSiteId(), 1);
+
 				} else {
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), "File does not exist", rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 				}

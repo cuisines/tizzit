@@ -155,6 +155,9 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 			Integer id = new Integer(cvnde.getAttribute("id"));
 			if (log.isDebugEnabled()) log.debug("creating ContentVersion with existing id " + id);
 			contentVersion.setContentVersionId(id);
+		} else {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("contentversion.content_version_id");
+			contentVersion.setContentVersionId(id);
 		}
 		contentVersion.setCreateDate(DateConverter.getString2Sql(XercesHelper.getNodeValue(cvnde, "./createDate")).getTime());
 		contentVersion.setHeading(XercesHelper.getNodeValue(cvnde, "./heading"));
