@@ -59,12 +59,10 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Object getContextObject(Configuration modeConf, Map objectModel) throws ConfigurationException {
-		if (log.isDebugEnabled()) log.debug("getContextObject() -> begin");
 		if (this.prop == null) {
 			this.instantiateWebServiceSpringBean(objectModel);
 			this.load();
 		}
-		if (log.isDebugEnabled()) log.debug("getContextObject() -> end");
 		return this.prop;
 	}
 
@@ -74,7 +72,6 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAttribute(String name, Configuration modeConf, Map objectModel) throws ConfigurationException {
-		if (log.isDebugEnabled()) log.debug("getAttribute() -> begin");
 		Object result;
 		if ("liveserver".equals(name)) {
 			this.instantiateWebServiceSpringBean(objectModel);
@@ -99,7 +96,6 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 				result = super.getAttribute(name, modeConf, objectModel);
 			}
 		}
-		if (log.isDebugEnabled()) log.debug("getAttribute() -> end");
 		return result;
 	}
 

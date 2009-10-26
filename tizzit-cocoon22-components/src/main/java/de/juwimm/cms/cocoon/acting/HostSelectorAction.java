@@ -165,8 +165,7 @@ public class HostSelectorAction extends AbstractAction implements SingleThreaded
 			if ("".equalsIgnoreCase(mandatorDir)) { return null; }
 			String startPageUrl = this.webSpringBean.getStartPage(host);
 			if (log.isDebugEnabled()) {
-				log.debug("found " + HostSelectorAction.MANDATOR_DIR + ": " + mandatorDir);
-				log.debug("found " + HostSelectorAction.STARTPAGE_URL + ": " + startPageUrl);
+				log.debug("found " + HostSelectorAction.MANDATOR_DIR + ": " + mandatorDir + " " + HostSelectorAction.STARTPAGE_URL + ": " + startPageUrl);
 			}
 			if ("".equalsIgnoreCase(startPageUrl)) {
 				startPageUrl = "0";
@@ -174,7 +173,6 @@ public class HostSelectorAction extends AbstractAction implements SingleThreaded
 			sitemapParams.put(HostSelectorAction.MANDATOR_DIR, mandatorDir);
 			sitemapParams.put(HostSelectorAction.STARTPAGE_URL, startPageUrl);
 		}
-		if (log.isDebugEnabled()) log.debug("finished acting");
 		return sitemapParams;
 	}
 

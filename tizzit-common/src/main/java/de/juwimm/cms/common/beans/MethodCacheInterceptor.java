@@ -95,15 +95,15 @@ public class MethodCacheInterceptor implements MethodInterceptor, InitializingBe
 
 			if (cache != null && result != null && !isEmptyCollection) {
 				// cache method result
-				if (log.isDebugEnabled()) {
-					log.debug("Caching result in cache: " + cache.getName() + ", using key: " + cacheKey);
+				if (log.isTraceEnabled()) {
+					log.trace("Caching result in cache: " + cache.getName() + ", using key: " + cacheKey);
 				}
 				element = new Element(cacheKey, (Serializable) result);
 				cache.put(element);
 			}
 		} else {
-			if (log.isDebugEnabled()) {
-				log.debug("Result found in cache: " + cache.getName() + ", using key: " + cacheKey);
+			if (log.isTraceEnabled()) {
+				log.trace("Result found in cache: " + cache.getName() + ", using key: " + cacheKey);
 			}
 			result = element.getObjectValue();
 		}
