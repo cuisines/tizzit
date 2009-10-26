@@ -744,7 +744,7 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		if (currentEntry instanceof PageNode) {
 			if(offlineButton != null){
 				ViewComponentValue viewComponentValue = ((PageNode)currentEntry).getViewComponent();
-				offlineButton.setEnabled(viewComponentValue.isHasPublishContentVersion());
+				offlineButton.setEnabled(viewComponentValue.getOnline()==0?false:true);
 			}
 			
 			switch (((PageNode) currentEntry).getStatus()) {

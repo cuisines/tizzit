@@ -2520,8 +2520,10 @@ public class Communication implements ExitListener, ActionListener {
 		System.gc();
 	}
 
-	public void removePublishContentVersion(Integer contentId) {
-		getClientService().removePublishContentVersion(contentId);
+	public ViewComponentValue makeContentOffline(ViewComponentValue viewComponent) {
+		getClientService().makeContentOffline(viewComponent.getViewComponentId());
+		viewComponent.setOnline((byte)0);
+		return viewComponent;
 	}
 
 	public Integer getUnitForViewComponent(Integer viewComponentId) {
