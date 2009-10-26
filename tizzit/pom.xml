@@ -686,6 +686,7 @@
 	</modules>
 	<properties>
 		<tizzit.version>3.0.4-SNAPSHOT</tizzit.version><!-- -SNAPSHOT -->
+		<javax.activation.version>1.0.2</javax.activation.version>
 		<spring.version>2.5.6</spring.version>
 		<spring.security.version>2.0.4</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>

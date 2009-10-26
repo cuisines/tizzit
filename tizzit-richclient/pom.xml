@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
-			<version>1.0.2</version>
+			<version>${javax.activation.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>spin</groupId>

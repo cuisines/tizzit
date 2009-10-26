@@ -1,44 +1,44 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.tizzit</groupId>
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>org.tizzit</groupId>
    <artifactId>tizzit-web-admin</artifactId>
-	<version>3.0.4-SNAPSHOT</version>
-	<packaging>war</packaging>
+   <version>3.0.4-SNAPSHOT</version>
+   <packaging>war</packaging>
    <name>tizzit Web Admin</name>
-	<parent>
-	   <groupId>org.tizzit</groupId>
-	   <artifactId>tizzit</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
-		<relativePath>../tizzit/pom.xml</relativePath>
-	</parent>
-	<dependencies>
-	   <dependency>
-	      <groupId>org.tizzit</groupId>
-	      <artifactId>tizzit-webstart</artifactId>
-	      <version>3.0.4-SNAPSHOT</version>
-	   </dependency>
-	   <dependency>
-	      <groupId>javax.servlet</groupId>
-	      <artifactId>servlet-api</artifactId>
-	      <version>2.4</version>
-	      <scope>provided</scope>
-	   </dependency>
-	   <dependency>
-	      <groupId>jnlp-jardiff</groupId>
-	      <artifactId>jardiff</artifactId>
-	      <version>1.0</version>
-	   </dependency>
-	   <dependency>
-	      <groupId>jnlp-jardiff</groupId>
-	      <artifactId>jnlp</artifactId>
-	      <version>1.0</version>
-	   </dependency>
-	   <dependency>
-	      <groupId>jnlp-jardiff</groupId>
-	      <artifactId>jnlp-servlet</artifactId>
-	      <version>1.0</version>
-	   </dependency>
-	</dependencies>
+   <parent>
+      <groupId>org.tizzit</groupId>
+      <artifactId>tizzit</artifactId>
+      <version>3.0.4-SNAPSHOT</version>
+      <relativePath>../tizzit/pom.xml</relativePath>
+   </parent>
+   <dependencies>
+      <dependency>
+         <groupId>org.tizzit</groupId>
+         <artifactId>tizzit-webstart</artifactId>
+         <version>3.0.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>servlet-api</artifactId>
+         <version>2.4</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>jnlp-jardiff</groupId>
+         <artifactId>jardiff</artifactId>
+         <version>1.0</version>
+      </dependency>
+      <dependency>
+         <groupId>jnlp-jardiff</groupId>
+         <artifactId>jnlp</artifactId>
+         <version>1.0</version>
+      </dependency>
+      <dependency>
+         <groupId>jnlp-jardiff</groupId>
+         <artifactId>jnlp-servlet</artifactId>
+         <version>1.0</version>
+      </dependency>
+   </dependencies>
    <build>
       <plugins>
          <!-- <plugin>
@@ -70,7 +70,7 @@
                      <groupId>org.tizzit</groupId>
                      <artifactId>tizzit-richclient</artifactId>
                      <version>${pom.version}</version>
-                     <type>zip</type>                            
+                     <type>zip</type>
                   </artifactItem>
                </artifactItems>
                <outputDirectory>target/${project.build.finalName}/</outputDirectory>
@@ -86,12 +86,19 @@
                   <configuration>
                      <tasks>
                         <echo>Copying version.xml and JNLP file...</echo>
-                        <copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="true" failonerror="false">
+                        <copy failonerror="false" overwrite="true" todir="${project.build.directory}/${project.build.finalName}/">
                            <fileset dir="${pom.basedir}/../../tizzit-richclient/target/jnlp">
                               <include name="version.xml" />
                               <include name="*.jnlp" />
                            </fileset>
                         </copy>
+                        <echo>... done!</echo>
+
+                        <property name="activation.excludes" value="**/SUN_MICR.*" />
+                        <property name="activation.file" value="${project.build.directory}/${project.build.finalName}/activation-${javax.activation.version}.jar" />
+                        <echo>Removing '${activation.excludes}' files from '${activation.file}' ...</echo>
+                        <unzip dest="target/_TMP_activation.jar" src="${activation.file}" />
+                        <zip basedir="target/_TMP_activation.jar" destfile="${activation.file}" excludes="${activation.excludes}" />
                         <echo>... done!</echo>
                      </tasks>
                   </configuration>
