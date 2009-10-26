@@ -106,6 +106,7 @@
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
+			<!-- JIRA: TIZZIT-249 - Moved version property to main pom to make it available in tizzit-web-richclient. -->
 			<version>${javax.activation.version}</version>
 		</dependency>
 		<dependency>

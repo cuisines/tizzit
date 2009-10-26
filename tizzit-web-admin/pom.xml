@@ -94,11 +94,13 @@
                         </copy>
                         <echo>... done!</echo>
 
+                        <!-- JIRA: TIZZIT-249 - Removes 'SUN_MICR.*' files from activation-x.x.jar. -->
                         <property name="activation.excludes" value="**/SUN_MICR.*" />
                         <property name="activation.file" value="${project.build.directory}/${project.build.finalName}/activation-${javax.activation.version}.jar" />
+                        <property name="activation.tmp.file" value="target/activation.jar_tmp" />
                         <echo>Removing '${activation.excludes}' files from '${activation.file}' ...</echo>
-                        <unzip dest="target/_TMP_activation.jar" src="${activation.file}" />
-                        <zip basedir="target/_TMP_activation.jar" destfile="${activation.file}" excludes="${activation.excludes}" />
+                        <unzip dest="${activation.tmp.file}" src="${activation.file}" />
+                        <zip basedir="${activation.tmp.file}" destfile="${activation.file}" excludes="${activation.excludes}" />
                         <echo>... done!</echo>
                      </tasks>
                   </configuration>
