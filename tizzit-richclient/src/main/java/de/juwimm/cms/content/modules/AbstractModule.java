@@ -202,6 +202,8 @@ public abstract class AbstractModule implements Module, Cloneable {
 		String retVal = url;
 		try {
 			retVal = URLEncoder.encode(url, "ISO-8859-1");
+			int fss = retVal.indexOf('.');
+			retVal = retVal.substring(0, fss) + "." + retVal.substring(fss).replaceAll("\\.", "");
 			retVal = retVal.replaceAll("[+]", "%20");
 			retVal = retVal.replaceAll("(%2F)", "%20"); // Slash is now a Space
 		} catch (UnsupportedEncodingException exe) {
