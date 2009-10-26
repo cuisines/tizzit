@@ -1546,14 +1546,20 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	@Override
-	protected void handleRemovePublishContentVersion(Integer contentId)	throws Exception {
-		ContentHbm content = getContentHbmDao().load(contentId);
+	protected void handleMakeContentOffline(Integer viewComponentId)	throws Exception {
+		ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
+		ContentHbm content = getContentHbmDao().load(Integer.decode(viewComponent.getReference()));
 		ContentVersionHbm publishContentVersion = content.getContentVersionForPublish();
+		//update online status
+		viewComponent.setOnline((byte)0);
+		getViewComponentHbmDao().update(viewComponent);
+		
 		if(publishContentVersion == null){
 			return;
 		}
+		//remove publish content version
 		content.getContentVersions().remove(publishContentVersion);		
-		getContentHbmDao().update(content);
+		getContentHbmDao().update(content);		
 		removeContentVersion(publishContentVersion.getContentVersionId());
 	}
 }

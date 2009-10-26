@@ -1877,9 +1877,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleRemovePublishContentVersion(Integer contentId) throws Exception {
-		getContentServiceSpring().removePublishContentVersion(contentId);
-
+	protected void handleMakeContentOffline(Integer viewComponentId) throws Exception {
+		getContentServiceSpring().makeContentOffline(viewComponentId);
 	}
 
 	@Override

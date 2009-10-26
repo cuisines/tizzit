@@ -526,20 +526,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected ViewComponentValue handleGetViewComponentWithDepth(Integer viewComponentId, int depth) throws Exception {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			ViewComponentValue viewComponentValue = view.getDao(depth);
-			getOnlineStatus(view, viewComponentValue);
+			ViewComponentValue viewComponentValue = view.getDao(depth);			
 			return viewComponentValue;
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
-		}
-	}
-
-	private void getOnlineStatus(ViewComponentHbm viewComponentHbm, ViewComponentValue viewComponentValue) {
-		viewComponentValue.setHasPublishContentVersion(getViewComponentHbmDao().hasPublishContentVersion(viewComponentHbm));
-		if (viewComponentValue.getChildren() != null) {
-			for (ViewComponentValue vc : viewComponentValue.getChildren()) {
-				getOnlineStatus(getViewComponentHbmDao().load(vc.getViewComponentId()), vc);
-			}
 		}
 	}
 
