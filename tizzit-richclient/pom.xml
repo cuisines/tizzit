@@ -197,6 +197,9 @@
 					</execution>
 				</executions>
 				<configuration>
+					<excludes>
+						<exclude>SUN_MICR.*</exclude>
+					</excludes>
 					<dependencies>
 						<includes>
 							<include>org.tizzit:tizzit-core</include>
