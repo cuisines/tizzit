@@ -62,14 +62,14 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 	public void deleteResourcesFromTree(){
 		for(PictureTreeNode pictureNode :picturesToDelete.values()){
 			this.removeNodeFromParent(pictureNode);
-			picturesToDelete.remove(pictureNode.getId());
 		}
 		
 		for(DocumentTreeNode documentNode :documentsToDelete.values()){
 			this.removeNodeFromParent(documentNode);
-			documentsToDelete.remove(documentNode.getId());
 		}
 		
+		picturesToDelete.clear();
+		documentsToDelete.clear();
 	}
 	
 	@Override
