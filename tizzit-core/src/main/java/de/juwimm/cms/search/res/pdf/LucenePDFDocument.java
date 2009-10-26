@@ -467,12 +467,12 @@ public final class LucenePDFDocument {
 			content = writer.getBuffer().toString();
 
 		} catch (CryptographyException e) {
-			log.error("Error decrypting document: " + e.getMessage());
+			log.warn("Error decrypting document: " + e.getMessage());
 		} catch (InvalidPasswordException e) {
 			// they didn't suppply a password and the default of "" was wrong.
-			log.error("Error: The document is encrypted and will not be indexed.");
+			log.warn("Error: The document is encrypted and will not be indexed.");
 		} catch (IOException i) {
-			log.error("Error indexing document " + i.getMessage());
+			log.warn("Error indexing document " + i.getMessage());
 		} finally {
 			if (pdfDocument != null) {
 				try {
