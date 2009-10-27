@@ -50,7 +50,7 @@ public class EditionCronService {
 					//getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
 					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), null, false);
 				}
-				//getEditionServiceSpring().removeEdition(edition.getEditionId());
+				getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}
 		} catch (Exception e) {
 			log.error("Error importing Edition during crontask", e);
@@ -87,7 +87,7 @@ public class EditionCronService {
 				UserHbm creator = edition.getCreator();
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
-				//getEditionServiceSpring().removeEdition(edition.getEditionId());
+				getEditionServiceSpring().removeEdition(edition.getEditionId());
 				if (edFile != null) {
 					edFile.delete();
 				}

@@ -103,7 +103,7 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 			UserHbm userMe = load(AuthenticationHelper.getUserName());
 			siteId = userMe.getActiveSite().getSiteId();
 		} catch (Exception exe) {
-			log.error("Error while getting the actual siteid inside getRoles()", exe);
+			log.error("Error while getting the actual siteid inside getRoles(), message: " + exe.getMessage(), exe);
 		}
 		Collection coll = null;
 		try {
@@ -113,7 +113,7 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 				coll = getUnitHbmDao().findByUserAndSite(user.getUserId(), siteId);
 			}
 		} catch (Exception exe) {
-			log.error("Unknown error catched during getGroups()");
+			log.error("Unknown error catched during getGroups(), message: " + exe.getMessage(), exe);
 		}
 		return coll;
 	}

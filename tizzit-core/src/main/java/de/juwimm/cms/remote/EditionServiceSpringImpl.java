@@ -67,13 +67,9 @@ import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.components.model.AddressHbm;
-import de.juwimm.cms.components.model.AddressHbmImpl;
 import de.juwimm.cms.components.model.DepartmentHbm;
-import de.juwimm.cms.components.model.DepartmentHbmImpl;
 import de.juwimm.cms.components.model.PersonHbm;
-import de.juwimm.cms.components.model.PersonHbmImpl;
 import de.juwimm.cms.components.model.TalktimeHbm;
-import de.juwimm.cms.components.model.TalktimeHbmImpl;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentVersionHbm;
@@ -310,16 +306,29 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				while (unitsIt.hasNext()) {
 					UnitHbm unit = (UnitHbm) unitsIt.next();
 					Integer newId = unit.getUnitId();
-					Element unitNode = (Element) XercesHelper.findNode(doc, "/edition/units/unit[@id='" + mappingUnitsReverse.get(newId) + "']");
-					if (log.isDebugEnabled()) log.debug("newId " + newId + " mappingUnitsReverse.get(newId)" + mappingUnitsReverse.get(newId) + " unitNode " + unitNode);
+					Element unitNode = null;
+					if (useNewIds) {
+						unitNode = (Element) XercesHelper.findNode(doc, "/edition/units/unit[@id='" + mappingUnitsReverse.get(newId) + "']");
+						if (log.isDebugEnabled()) log.debug("newId " + newId + " mappingUnitsReverse.get(newId)" + mappingUnitsReverse.get(newId) + " unitNode " + unitNode);
+					} else {
+						unitNode = (Element) XercesHelper.findNode(doc, "/edition/units/unit[@id='" + newId + "']");
+						if (log.isDebugEnabled()) log.debug("newId " + newId + " mappingUnitsReverse.get(newId)" + newId + " unitNode " + unitNode);
+
+					}
 					String imageIdstr = unitNode.getAttribute("imageId");
 					if (imageIdstr != null && !imageIdstr.equalsIgnoreCase("") && !imageIdstr.equalsIgnoreCase("null")) {
-						Integer newImageId = mappingPics.get(new Integer(imageIdstr));
+						Integer newImageId = new Integer(imageIdstr);
+						if (useNewIds) {
+							newImageId = mappingPics.get(newImageId);
+						}
 						unit.setImageId(newImageId);
 					}
 					String logoIdstr = unitNode.getAttribute("logoId");
 					if (logoIdstr != null && !logoIdstr.equalsIgnoreCase("") && !logoIdstr.equalsIgnoreCase("null")) {
-						Integer newLogoId = mappingPics.get(new Integer(logoIdstr));
+						Integer newLogoId = new Integer(logoIdstr);
+						if (useNewIds) {
+							newLogoId = mappingPics.get(newLogoId);
+						}
 						unit.setLogoId(newLogoId);
 					}
 				}
@@ -332,7 +341,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			Iterator it = XercesHelper.findNodes(doc, "/edition/units/unit");
 			while (it.hasNext()) {
 				Element unitNode = (Element) it.next();
-				Integer newUnitId = mappingUnits.get(new Integer(unitNode.getAttribute("id")));
+				Integer newUnitId = new Integer(unitNode.getAttribute("id"));
+				if (useNewIds) {
+					newUnitId = mappingUnits.get(newUnitId);
+				}
 				if (log.isDebugEnabled()) log.debug("Import Database Components for UnitId: " + newUnitId + " (old was:" + unitNode.getAttribute("id") + ")");
 				UnitHbm unit = getUnitHbmDao().load(newUnitId);
 				importDatabaseComponents(unitNode, unit, useNewIds);
@@ -350,10 +362,13 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						Element vcNode = (Element) vcNodeIt.next();
 						String oldVcId = vcNode.getAttribute("id");
 						String oldVdId = ((Element) XercesHelper.findNode(doc, "/edition/viewDocuments/viewDocument[@rootViewComponentId='" + oldVcId + "']")).getAttribute("id");
-						Integer newVdlId = mappingVDs.get(new Integer(oldVdId));
+						Integer newVdlId = new Integer(oldVdId);
+						if (useNewIds) {
+							newVdlId = mappingVDs.get(newVdlId);
+						}
 						if (log.isDebugEnabled()) log.debug("Importing one of the Root-ViewComponents with oldVcId:" + oldVcId + " oldVdId:" + oldVdId + " newVdlId:" + newVdlId);
 						ViewDocumentHbm viewDocument = getViewDocumentHbmDao().load(newVdlId);
-						ViewComponentHbm rootViewComponent = createViewComponent(null, viewDocument, null, vcNode, null, null, false, 1);
+						ViewComponentHbm rootViewComponent = createViewComponent(null, viewDocument, null, vcNode, null, null, false, 1, useNewIds);
 						getViewComponentHbmDao().remove(viewDocument.getViewComponent());
 						viewDocument.setViewComponent(rootViewComponent);
 					}
@@ -407,7 +422,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					getViewComponentHbmDao().remove(viewComponent);
 					if (log.isDebugEnabled()) log.debug("SUCC remove!");
 					Integer myOldUnitId = new Integer(vcNode.getAttribute("unitId"));
-					ViewComponentHbm rootview = createViewComponent(myOldUnitId, viewDocument, null, vcNode, parent, prev, false, 2);
+					//FIXME useNewIds or not
+					ViewComponentHbm rootview = createViewComponent(myOldUnitId, viewDocument, null, vcNode, parent, prev, false, 2, useNewIds);
 					if (log.isDebugEnabled()) log.debug("rootview " + rootview + " next " + next);
 					// Linkname check begin
 					try {
@@ -753,27 +769,33 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	}
 
 	private TalktimeHbm createTalktimeHbm(Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingTalktime2) {
-		TalktimeHbm talktime = new TalktimeHbmImpl();
+		TalktimeHbm talktime = TalktimeHbm.Factory.newInstance();
 		try {
 			talktime.setTalkTimes(XercesHelper.nodeList2string(XercesHelper.findNode(ael, "./talkTimes").getChildNodes()));
 		} catch (Exception exe) {
 		}
 		talktime.setTalkTimeType(getNVal(ael, "talkTimeType"));
+		if (!useNewIds) {
+			talktime.setTalkTimeId(Integer.getInteger(getNVal(ael, "id")).longValue());
+		}
 		talktime = getTalktimeHbmDao().create(talktime);
 		return talktime;
 	}
 
 	private DepartmentHbm createDepartmentHbm(Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingDepartments2, Hashtable<Integer, Long> mappingPersons2, Hashtable<Integer, Long> mappingAddresses2, Hashtable<Integer, Long> mappingTalktime2) {
-		DepartmentHbm department = new DepartmentHbmImpl();
+		DepartmentHbm department = DepartmentHbm.Factory.newInstance();
+		if (!useNewIds) {
+			department.setDepartmentId(Integer.getInteger(getNVal(ael, "id")).longValue());
+		}
 		department.setName(ael.getAttribute("name"));
 		department = getDepartmentHbmDao().create(department);
 		return department;
 	}
 
 	private PersonHbm createPersonHbm(UnitHbm unit, Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingPersons2, Hashtable<Integer, Long> mappingAddresses2, Hashtable<Integer, Long> mappingTalktime2) throws Exception {
-		PersonHbm person = new PersonHbmImpl();
+		PersonHbm person = PersonHbm.Factory.newInstance();
 		try {
-			person.setImageId(new Integer(ael.getAttribute("imageid")));
+			person.setImageId(Integer.getInteger(ael.getAttribute("imageid")));
 		} catch (Exception exe) {
 		}
 		try {
@@ -792,7 +814,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			person.setSalutation(getNVal(ael, "salutation"));
 			person.setSex(new Byte(getNVal(ael, "sex")).byteValue());
 			person.setTitle(getNVal(ael, "title"));
-
+			if (!useNewIds) {
+				log.info("personId: " + ael.getAttribute("id") + " als String");
+				long pid = Integer.getInteger(ael.getAttribute("id")).longValue();
+				log.info("personId: " + pid);
+				person.setPersonId(pid);
+			}
 			person.getUnits().add(unit);
 			person = getPersonHbmDao().create(person);
 		} catch (Exception exe) {
@@ -828,7 +855,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	}
 
 	private AddressHbm createAddressHbm(Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingAddresses2) {
-		AddressHbm address = new AddressHbmImpl();
+		AddressHbm address = AddressHbm.Factory.newInstance();
 		address.setAddressType(getNVal(ael, "addressType"));
 		address.setBuildingLevel(getNVal(ael, "buildingLevel"));
 		address.setBuildingNr(getNVal(ael, "buildingNr"));
@@ -847,6 +874,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		address.setStreet(getNVal(ael, "street"));
 		address.setStreetNr(getNVal(ael, "streetNr"));
 		address.setZipCode(getNVal(ael, "zipCode"));
+		if (!useNewIds) {
+			address.setAddressId(Integer.getInteger(ael.getAttribute("id")).longValue());
+			log.info("AddressID: " + address.getAddressId());
+		}
 		address = getAddressHbmDao().create(address);
 		return address;
 	}
@@ -1075,7 +1106,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						if (log.isInfoEnabled()) log.info("Started ROOT-Deploy");
 						savedUnits = moveContainedUnitsAway(view);
 						getViewComponentHbmDao().remove(view);
-						ViewComponentHbm rootview = createViewComponent(ul.getUnitId(), vdl, savedUnits, nde, null, null, liveDeploy, 0);
+						ViewComponentHbm rootview = createViewComponent(ul.getUnitId(), vdl, savedUnits, nde, null, null, liveDeploy, 0, false);
 						rootview.setAssignedUnit(ul);
 						vdl.setViewComponent(rootview);
 					} catch (Exception exe) {
@@ -1285,7 +1316,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				}
 			}
 			// IMPORT
-			ViewComponentHbm rootview = createViewComponent(ul.getUnitId(), vdl, savedUnits, nde, parent, prev, liveDeploy, 0);
+			ViewComponentHbm rootview = createViewComponent(ul.getUnitId(), vdl, savedUnits, nde, parent, prev, liveDeploy, 1, true);
 			rootview.setNextNode(next);
 			if (next != null) {
 				next.setPrevNode(rootview);
@@ -2140,7 +2171,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	 *            <li>2 - means Fulldeploy of an UnitEdition</li>
 	 *            </ul>
 	 */
-	private ViewComponentHbm createViewComponent(Integer unitId, ViewDocumentHbm viewDocument, ArrayList<ViewComponentHbm> savedUnits, Element nde, ViewComponentHbm parent, ViewComponentHbm prev, boolean livedeploy, int fulldeploy) throws Exception {
+	private ViewComponentHbm createViewComponent(Integer unitId, ViewDocumentHbm viewDocument, ArrayList<ViewComponentHbm> savedUnits, Element nde, ViewComponentHbm parent, ViewComponentHbm prev, boolean livedeploy, int fulldeploy, boolean useNewIds) throws Exception {
 		boolean reusePrimaryKey = (fulldeploy == 0);
 		ViewComponentHbm viewComponent = null;
 		try {
@@ -2167,11 +2198,20 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					}
 				}
 				if (fulldeploy > 0) {
-					viewComponent = getViewComponentHbmDao().create(viewDocument, reference, linkName, statusInfo, urlLinkName, null);
-					viewComponent.setApprovedLinkName(approvedLinkName);
-					mappingVCs.put(vcId, viewComponent.getViewComponentId());
+					if (useNewIds) {
+						viewComponent = getViewComponentHbmDao().create(viewDocument, reference, linkName, statusInfo, urlLinkName, null);
+						viewComponent.setApprovedLinkName(approvedLinkName);
+						mappingVCs.put(vcId, viewComponent.getViewComponentId());
+					} else {
+						viewComponent = getViewComponentHbmDao().create(viewDocument, reference, linkName, statusInfo, urlLinkName, vcId);
+						viewComponent.setApprovedLinkName(approvedLinkName);
+						mappingVCs.put(vcId, vcId);
+					}
 					if (fulldeploy == 1) {
 						Integer newUnitId = mappingUnits.get(myUnitId);
+						if (newUnitId == null) {
+							newUnitId = myUnitId;
+						}
 						if (unitId == null || !newUnitId.equals(unitId)) {
 							if (log.isDebugEnabled()) log.debug("newUnitId " + newUnitId + " myUnitId " + myUnitId);
 							UnitHbm unit = getUnitHbmDao().load(newUnitId);
@@ -2321,7 +2361,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				ViewComponentHbm tmp = null;
 				while (it.hasNext()) {
 					Element childnode = (Element) it.next();
-					tmp = createViewComponent(unitId, viewDocument, savedUnits, childnode, viewComponent, childprev, livedeploy, fulldeploy);
+					tmp = createViewComponent(unitId, viewDocument, savedUnits, childnode, viewComponent, childprev, livedeploy, fulldeploy, useNewIds);
 					if (childprev != null) {
 						childprev.setNextNode(tmp);
 					} else {
