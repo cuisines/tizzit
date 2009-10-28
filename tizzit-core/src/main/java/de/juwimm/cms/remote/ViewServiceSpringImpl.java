@@ -44,6 +44,8 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.ejb.CreateException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,6 +64,12 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
+import de.juwimm.cms.components.model.AddressHbm;
+import de.juwimm.cms.components.model.AddressHbmImpl;
+import de.juwimm.cms.components.model.PersonHbm;
+import de.juwimm.cms.components.model.PersonHbmImpl;
+import de.juwimm.cms.components.model.TalktimeHbm;
+import de.juwimm.cms.components.model.TalktimeHbmImpl;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentVersionHbm;
@@ -103,11 +111,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private SearchengineService searchengineService;
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	private Hashtable<Integer, Integer> loginPagesSimplePwRealmBackup = null;
-	private Hashtable<Integer, Integer> loginPagesJdbcRealmBackup = null;
-	private Hashtable<Integer, Integer> loginPagesJaasRealmBackup = null;
-	private Hashtable<Integer, Integer> loginPagesLdapRealmBackup = null;
-	private Hashtable<Integer, Integer> loginPagesRealm2viewComponentBackup = null;
 
 	private Hashtable<Integer, Integer> loginPagesRealmsSimplePw = null;
 	private Hashtable<Integer, Integer> loginPagesRealmsJdbc = null;
@@ -119,6 +122,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private Hashtable<Integer, Integer> mappingRealmsLdap = null;
 	private Hashtable<Integer, Integer> mappingRealmsJaas = null;
 	private Hashtable<Integer, Integer> loginPagesRealm2vc = null;
+
+	private Hashtable<Long, Long> mappingPersons = null;
 
 	/**
 	 * @see de.juwimm.cms.remote.ViewServiceSpring#removeViewComponent(java.lang.Integer, boolean)
@@ -539,7 +544,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected ViewComponentValue handleGetViewComponentWithDepth(Integer viewComponentId, int depth) throws Exception {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			ViewComponentValue viewComponentValue = view.getDao(depth);			
+			ViewComponentValue viewComponentValue = view.getDao(depth);
 			return viewComponentValue;
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -1695,6 +1700,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			Document doc = XercesHelper.string2Dom(contentVersionText);
 			getMediaXML(doc, out, "picture", "description");
 			getMediaXML(doc, out, "document", "src");
+			getAggregationXML(doc, out);
 		}
 		out.print("</site>");
 		out.flush();
@@ -1703,8 +1709,45 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return new FileInputStream(fle);
 	}
 
+	/**
+	 * 
+	 * @param doc
+	 * @param out
+	 */
+	private void getAggregationXML(Document doc, PrintStream out) throws Exception {
+		try {
+			Iterator it = XercesHelper.findNodes(doc, "//aggregation");
+			while (it.hasNext()) {
+				Node node = (Node) it.next();
+				Iterator itInclude = XercesHelper.findNodes(node, "./include");
+				while (itInclude.hasNext()) {
+					Node nodeInclude = (Node) itInclude.next();
+					Iterator itIncludePerson = XercesHelper.findNodes(nodeInclude, "./include");
+					while (itIncludePerson.hasNext()) {
+						Node nodePerson = (Node) itIncludePerson.next();
+						String type = nodePerson.getAttributes().getNamedItem("type").getNodeValue();
+						if (type.equals("person")) {
+							Long personId = Long.parseLong(nodePerson.getAttributes().getNamedItem("id").getNodeValue());
+							PersonHbm person = getPersonHbmDao().load(personId);
+							out.println(person.toXmlRecursive(1));
+							if (person.getImageId() != null) {
+								PictureHbm pic = getPictureHbmDao().load(person.getImageId());
+								out.println(pic.toXml(0));
+							}
+						}
+					}
+				}
+
+			}
+
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Error at getting  aggregation xml");
+			throw new UserException(e.getMessage());
+		}
+	}
+
 	@Override
-	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds, boolean useNewIds, Integer siteId, Integer fulldeploy) throws Exception {
+	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean useNewIds, Integer siteId, Integer fulldeploy) throws Exception {
 		String tmpFileName = "";
 		try {
 			tmpFileName = this.storeSiteFile(xmlFile);
@@ -1740,10 +1783,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		Hashtable<Integer, Integer> picIds = null;
 		Hashtable<Integer, Integer> docIds = null;
 		if (withMedia) {
-			picIds = importPictures(unitId, doc, preparsedXMLfile);
-			docIds = importDocuments(unitId, doc, preparsedXMLfile);
+			picIds = importPictures(unitId, doc, preparsedXMLfile, useNewIds);
+			docIds = importDocuments(unitId, doc, preparsedXMLfile, useNewIds);
 		}
-		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds, useNewIds, siteId, fulldeploy);
+		/**import persons */
+		mappingPersons = new Hashtable<Long, Long>();
+
+		Iterator it = XercesHelper.findNodes(doc, "//viewcomponent");
+		while (it.hasNext()) {
+			Node nodeViewComponent = (Node) it.next();
+			Integer oldunitId = new Integer(((Element) nodeViewComponent).getAttribute("unitId"));
+			if (oldunitId.intValue() != unitId.intValue()) {
+				importPersons(unitId, doc, useNewIds, picIds);
+				/**import only if not in the same unit*/
+			}
+		}
+		ViewComponentHbm viewComponent = createViewComponentFromXml(parentId, doc, withChildren, picIds, docIds, useNewIds, siteId, fulldeploy, unitId);
 		//importRealmsForViewComponent(doc, viewComponent, 1);
 		/**import realms*/
 
@@ -1760,6 +1815,129 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 		return viewComponent.getDao();
 
+	}
+
+	private Hashtable<Integer, Integer> importPersons(Integer unitId, Document doc, boolean useNewIds, Hashtable<Integer, Integer> picIds) {
+		UnitHbm unit = getUnitHbmDao().load(unitId);
+		Iterator it = XercesHelper.findNodes(doc, "//person");
+		while (it.hasNext()) {
+			try {
+				Element elPerson = (Element) it.next();
+
+				createPersonHbm(unit, elPerson, useNewIds, picIds);
+			} catch (Exception e) {
+				if (log.isWarnEnabled()) log.warn("Person not created correctly at import site");
+			}
+		}
+		return null;
+	}
+
+	private TalktimeHbm createTalktimeHbm(Element ael, boolean useNewIds) {
+		TalktimeHbm talktime = new TalktimeHbmImpl();
+		try {
+			talktime.setTalkTimes(XercesHelper.nodeList2string(XercesHelper.findNode(ael, "./talkTimes").getChildNodes()));
+		} catch (Exception exe) {
+		}
+		talktime.setTalkTimeType(getNVal(ael, "talkTimeType"));
+		if (!useNewIds) {
+			Long id = Long.parseLong(ael.getAttribute("id"));
+			talktime.setTalkTimeId(id);
+		}
+		talktime = getTalktimeHbmDao().create(talktime);
+		return talktime;
+	}
+
+	private PersonHbm createPersonHbm(UnitHbm unit, Element ael, boolean useNewIds, Hashtable<Integer, Integer> picIds) throws Exception {
+		PersonHbm person = new PersonHbmImpl();
+		try {
+			Integer imageId = Integer.parseInt(ael.getAttribute("imageid"));
+			if (picIds != null) {
+				Integer newPicId = picIds.get(imageId);
+				person.setImageId(newPicId);
+			} else {
+				person.setImageId(imageId);
+			}
+		} catch (Exception exe) {
+		}
+		try {
+			person.setBirthDay(getNVal(ael, "birthDay"));
+		} catch (Exception exe) {
+		}
+		try {
+			person.setCountryJob(getNVal(ael, "countryJob"));
+			person.setFirstname(getNVal(ael, "firstname"));
+			person.setJob(getNVal(ael, "job"));
+			person.setJobTitle(getNVal(ael, "jobTitle"));
+			person.setLastname(getNVal(ael, "lastname"));
+			person.setLinkMedicalAssociation(getNVal(ael, "linkMedicalAssociation"));
+			person.setMedicalAssociation(getNVal(ael, "medicalAssociation"));
+			person.setPosition(new Byte(getNVal(ael, "position")).byteValue());
+			person.setSalutation(getNVal(ael, "salutation"));
+			person.setSex(new Byte(getNVal(ael, "sex")).byteValue());
+			person.setTitle(getNVal(ael, "title"));
+			person.getUnits().add(unit);
+			person = getPersonHbmDao().create(person);
+		} catch (Exception exe) {
+			log.warn("Error setting values: ", exe);
+		}
+		try {
+			if (log.isDebugEnabled()) log.debug("looking for addresses to import for person " + person.getPersonId());
+			Iterator itAdr = XercesHelper.findNodes(ael, "./address");
+			while (itAdr.hasNext()) {
+				Element adrEl = (Element) itAdr.next();
+				if (log.isDebugEnabled()) log.debug("found address to import");
+				AddressHbm local = createAddressHbm(adrEl, useNewIds);
+				person.addAddress(local);
+			}
+		} catch (Exception exe) {
+			if (log.isWarnEnabled()) log.warn("Error importing addresses: ", exe);
+			throw new CreateException(exe.getMessage());
+		}
+		try {
+			if (log.isDebugEnabled()) log.debug("looking for talktimes to import for person " + person.getPersonId());
+			Iterator itTTimes = XercesHelper.findNodes(ael, "./talktime");
+			while (itTTimes.hasNext()) {
+				Element elm = (Element) itTTimes.next();
+				if (log.isDebugEnabled()) log.debug("found talktime to import");
+				TalktimeHbm local = createTalktimeHbm(elm, useNewIds);
+				person.addTalktime(local);
+			}
+		} catch (Exception exe) {
+			if (log.isWarnEnabled()) log.warn("Error importing talktimes: ", exe);
+			throw new Exception(exe.getMessage());
+		}
+		mappingPersons.put(Long.parseLong(ael.getAttribute("id")), person.getPersonId());
+		return person;
+	}
+
+	private String getNVal(Element ael, String nodeName) {
+		String tmp = XercesHelper.getNodeValue(ael, "./" + nodeName);
+		if (tmp.equals("null") || tmp.equals("")) { return null; }
+		return tmp;
+	}
+
+	private AddressHbm createAddressHbm(Element ael, boolean useNewIds) {
+		AddressHbm address = new AddressHbmImpl();
+		address.setAddressType(getNVal(ael, "addressType"));
+		address.setBuildingLevel(getNVal(ael, "buildingLevel"));
+		address.setBuildingNr(getNVal(ael, "buildingNr"));
+		address.setCity(getNVal(ael, "city"));
+		address.setCountry(getNVal(ael, "country"));
+		address.setCountryCode(getNVal(ael, "countryCode"));
+		address.setEmail(getNVal(ael, "email"));
+		address.setFax(getNVal(ael, "fax"));
+		address.setHomepage(getNVal(ael, "homepage"));
+		address.setMisc(getNVal(ael, "misc"));
+		address.setMobilePhone(getNVal(ael, "mobilePhone"));
+		address.setPhone1(getNVal(ael, "phone1"));
+		address.setPhone2(getNVal(ael, "phone2"));
+		address.setPostOfficeBox(getNVal(ael, "postOfficeBox"));
+		address.setRoomNr(getNVal(ael, "roomNr"));
+		address.setStreet(getNVal(ael, "street"));
+		address.setStreetNr(getNVal(ael, "streetNr"));
+		address.setZipCode(getNVal(ael, "zipCode"));
+		address = getAddressHbmDao().create(address);
+		return address;
 	}
 
 	private String storeSiteFile(InputStream in) throws IOException {
@@ -1783,7 +1961,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @param docIds
 	 * @return 
 	 */
-	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds, boolean useNewIds, Integer siteId, Integer fulldeploy) {
+	private ViewComponentHbm createViewComponentFromXml(Integer parentId, Document doc, boolean withChildren, Hashtable<Integer, Integer> picIds, Hashtable<Integer, Integer> docIds, boolean useNewIds, Integer siteId, Integer fulldeploy, Integer newUnitId) {
 		ViewComponentHbm viewComponent = ViewComponentHbm.Factory.newInstance();
 		ViewComponentHbm parent = getViewComponentHbmDao().load(parentId);
 
@@ -1836,7 +2014,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				viewComponent.setOnline((byte) 0);
 				Element cnde = (Element) XercesHelper.findNode(nodeViewComponent, "//content");
 				if (cnde != null) {
-					ContentHbm content = getContentHbmDao().createFromXml(cnde, false, false, picIds, docIds);
+					ContentHbm content = getContentHbmDao().createFromXml(cnde, false, false, picIds, docIds, mappingPersons, newUnitId);
 					viewComponent.setReference(content.getContentId().toString());
 				}
 
@@ -2118,7 +2296,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @param doc
 	 * @return
 	 */
-	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc, File directory) {
+	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc, File directory, boolean useNewIds) {
 		Iterator itPictures = XercesHelper.findNodes(doc, "//picture");
 		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
@@ -2148,6 +2326,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				}
 				UnitHbm unit = getUnitHbmDao().load(unitId);
 				PictureHbm picture = new PictureHbmImpl();
+				if (!useNewIds) {
+					picture.setPictureId(id);
+				}
 				picture.setThumbnail(thumbnail);
 				picture.setPicture(file);
 				picture.setPreview(preview);
@@ -2170,7 +2351,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @param doc
 	 * @return
 	 */
-	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc, File directory) {
+	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc, File directory, boolean useNewIds) {
 		Iterator itDocs = XercesHelper.findNodes(doc, "//document");
 		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 		Hashtable<Integer, Integer> docIds = new Hashtable<Integer, Integer>();
@@ -2191,6 +2372,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					document.setDocument(b);
 				} catch (Exception e) {
 					if (log.isWarnEnabled()) log.warn("Exception copying document to database", e);
+				}
+				if (!useNewIds) {
+					document.setDocumentId(id);
 				}
 				document.setDocumentName(strDocName);
 				document.setMimeType(strMimeType);

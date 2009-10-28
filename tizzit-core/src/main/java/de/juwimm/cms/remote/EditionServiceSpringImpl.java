@@ -2352,7 +2352,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				// CONTENT
 				Element cnde = (Element) XercesHelper.findNode(nde, "./content");
 				if (cnde != null) {
-					ContentHbm content = getContentHbmDao().createFromXml(cnde, reusePrimaryKey, livedeploy, null, null);
+					ContentHbm content = getContentHbmDao().createFromXml(cnde, reusePrimaryKey, livedeploy, null, null, null, null);
 					viewComponent.setReference(content.getContentId().toString());
 				}
 				// CHILDREN

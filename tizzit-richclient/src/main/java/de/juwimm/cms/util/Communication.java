@@ -2170,7 +2170,6 @@ public class Communication implements ExitListener, ActionListener {
 		// create directory if it does not exist
 		File cacheDir = new File(Constants.SVG_CACHE);
 		cacheDir.mkdirs();
-
 		// Read the response body.
 		byte[] svgData = HttpClientWrapper.getInstance().getByte(Constants.CMS_PATH_WYSIWYGIMAGE + svgUrl);
 		// svgData = this.getSizedThumbNail(svgData);
@@ -2505,7 +2504,7 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public ViewComponentValue importViewComponentToParent(Integer parentId, InputStream xmlString, boolean withMedia, boolean withChildren, Integer unitId, boolean useNewIds, Integer siteId, Integer fulldeploy) {
-		return getClientService().importViewComponent(parentId, xmlString, withMedia, withChildren, unitId, true, useNewIds, siteId, fulldeploy);
+		return getClientService().importViewComponent(parentId, xmlString, withMedia, withChildren, unitId, useNewIds, siteId, fulldeploy);
 	}
 
 	public void createViewComponentForExport(File output, int viewComponentId) throws Exception {
@@ -2522,7 +2521,7 @@ public class Communication implements ExitListener, ActionListener {
 
 	public ViewComponentValue makeContentOffline(ViewComponentValue viewComponent) {
 		getClientService().makeContentOffline(viewComponent.getViewComponentId());
-		viewComponent.setOnline((byte)0);
+		viewComponent.setOnline((byte) 0);
 		return viewComponent;
 	}
 

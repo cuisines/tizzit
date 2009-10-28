@@ -1872,8 +1872,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean reuseIds, boolean useNewIds, Integer siteId, Integer fulldeploy) throws Exception {
-		return getViewServiceSpring().importViewComponent(parentId, xmlFile, withMedia, withChildren, unitId, reuseIds, useNewIds, siteId, fulldeploy);
+	protected ViewComponentValue handleImportViewComponent(Integer parentId, InputStream xmlFile, boolean withMedia, boolean withChildren, Integer unitId, boolean useNewIds, Integer siteId, Integer fulldeploy) throws Exception {
+		return getViewServiceSpring().importViewComponent(parentId, xmlFile, withMedia, withChildren, unitId, useNewIds, siteId, fulldeploy);
 	}
 
 	@Override

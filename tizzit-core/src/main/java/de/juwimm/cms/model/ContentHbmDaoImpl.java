@@ -290,7 +290,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 	}
 
 	@Override
-	protected ContentHbm handleCreateFromXml(Element cnde, boolean reusePrimaryKey, boolean liveDeploy, Map pictureIds, Map documentIds) throws Exception {
+	protected ContentHbm handleCreateFromXml(Element cnde, boolean reusePrimaryKey, boolean liveDeploy, Map pictureIds, Map documentIds, Map personsIds, Integer newUniId) throws Exception {
 		ContentHbm content = ContentHbm.Factory.newInstance();
 		if (reusePrimaryKey) {
 			Integer id = new Integer(cnde.getAttribute("id"));
@@ -314,7 +314,7 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 				if ((pictureIds == null) && (documentIds == null)) {
 					contentVersion = getContentVersionHbmDao().createFromXml(cvnde, reusePrimaryKey, liveDeploy);
 				} else {
-					contentVersion = getContentVersionHbmDao().createFromXmlWIthMedia(cvnde, reusePrimaryKey, liveDeploy, pictureIds, documentIds);
+					contentVersion = getContentVersionHbmDao().createFromXmlWIthMedia(cvnde, reusePrimaryKey, liveDeploy, pictureIds, documentIds, personsIds, newUniId);
 				}
 				content.getContentVersions().add(contentVersion);
 			}

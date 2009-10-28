@@ -149,7 +149,7 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 	}
 
 	@Override
-	protected ContentVersionHbm handleCreateFromXmlWIthMedia(Element cvnde, boolean reusePrimaryKey, boolean liveServer, Map pictureIds, Map documentIds) throws Exception {
+	protected ContentVersionHbm handleCreateFromXmlWIthMedia(Element cvnde, boolean reusePrimaryKey, boolean liveServer, Map pictureIds, Map documentIds, Map personsIds, Integer newUnitId) throws Exception {
 		ContentVersionHbm contentVersion = ContentVersionHbm.Factory.newInstance();
 		if (reusePrimaryKey) {
 			Integer id = new Integer(cvnde.getAttribute("id"));
@@ -190,6 +190,34 @@ public class ContentVersionHbmDaoImpl extends ContentVersionHbmDaoBase {
 					Integer oldId = new Integer(el.getAttribute("src"));
 					Integer newId = (Integer) documentIds.get(oldId);
 					el.setAttribute("src", newId.toString());
+				}
+				Iterator docAggregation = XercesHelper.findNodes(content, "//aggregation");
+				if (personsIds != null) {
+					while (docAggregation.hasNext()) {
+						Element elAggregation = (Element) docAggregation.next();
+						Iterator itInclude = XercesHelper.findNodes(elAggregation, "./include");
+						while (itInclude.hasNext()) {
+							Node nodeInclude = (Node) itInclude.next();
+							String type = nodeInclude.getAttributes().getNamedItem("type").getNodeValue();
+							if (type.equals("unit")) {
+								if (newUnitId != null) {
+									nodeInclude.getAttributes().getNamedItem("id").setNodeValue(newUnitId.toString());
+								}
+							}
+							Iterator itIncludePerson = XercesHelper.findNodes(nodeInclude, "./include");
+							while (itIncludePerson.hasNext()) {
+								Node nodePerson = (Node) itIncludePerson.next();
+								String typePerson = nodePerson.getAttributes().getNamedItem("type").getNodeValue();
+								if (typePerson.equals("person")) {
+									Long personId = Long.parseLong(nodePerson.getAttributes().getNamedItem("id").getNodeValue());
+									if (personsIds != null) {
+										Long newId = (Long) personsIds.get(personId);
+										nodePerson.getAttributes().getNamedItem("id").setNodeValue(newId.toString());
+									}
+								}
+							}
+						}
+					}
 				}
 				ttext = XercesHelper.doc2String(content);
 			}
