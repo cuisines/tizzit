@@ -212,7 +212,7 @@ public final class Constants {
 	public static final String PROPERTY_CONFIGURATION = "PROPERTY_CONFIGURATION";
 
 	public static final String ACTION_MAKE_VIEW_OFFLINE = "makeViewOffline";
-	public static Integer VIEW_COMPONENT_TO_COPY = null;
+	public static String VIEW_COMPONENT_TO_COPY = null;
 
 	public static final int ADD_BEFORE = 0;
 	public static final int ADD_AFTER = 1;

@@ -21,6 +21,7 @@
 package de.juwimm.cms.components.model;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.w3c.dom.Element;
 
 import de.juwimm.cms.components.vo.PersonValue;
 import de.juwimm.cms.model.SequenceHbmDao;
+import de.juwimm.cms.model.UnitHbm;
 
 /**
  * @see de.juwimm.cms.components.model.PersonHbm
@@ -40,10 +42,10 @@ import de.juwimm.cms.model.SequenceHbmDao;
  */
 public class PersonHbmDaoImpl extends PersonHbmDaoBase {
 	private static Logger log = Logger.getLogger(PersonHbmDaoImpl.class);
-	
+
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,7 +55,7 @@ public class PersonHbmDaoImpl extends PersonHbmDaoBase {
 	public PersonHbm create(PersonHbm personHbm) {
 		if (personHbm.getPersonId() == null) {
 			try {
-				personHbm.setPersonId(new Long(sequenceHbmDao.getNextSequenceNumber("person.person_id").longValue()));		
+				personHbm.setPersonId(new Long(sequenceHbmDao.getNextSequenceNumber("person.person_id").longValue()));
 			} catch (Exception e) {
 				log.error("Error creating primary key", e);
 			}
@@ -258,7 +260,7 @@ public class PersonHbmDaoImpl extends PersonHbmDaoBase {
 	public java.util.Collection findByNameAndUnit(final int transform, final java.lang.Integer unitId, final java.lang.String firstName, final java.lang.String lastName) {
 		return this.findByNameAndUnit(transform, "select p from de.juwimm.cms.components.model.PersonHbm p inner join fetch p.units u where u.unitId = ? and p.firstname like ? and p.lastname like ?", unitId, firstName, lastName);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByName(final int transform, final java.lang.Integer siteId, final java.lang.String firstName, final java.lang.String lastName) {
 		return this.findByName(transform, "select p from de.juwimm.cms.components.model.PersonHbm p inner join fetch p.units u where u.site.siteId = ? and p.firstname like ? and p.lastname like ?", siteId, firstName, lastName);
@@ -271,5 +273,49 @@ public class PersonHbmDaoImpl extends PersonHbmDaoBase {
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findByUnit(transform, "select p from de.juwimm.cms.components.model.PersonHbm p inner join p.units n where n.unitId = ?", unitId);
+	}
+
+	@Override
+	protected PersonHbm handleClonePerson(PersonHbm oldPerson, UnitHbm unit, Integer pictureId) throws Exception {
+		PersonHbm person = PersonHbm.Factory.newInstance();
+		try {
+			Integer id = sequenceHbmDao.getNextSequenceNumber("person.person_id");
+			person.setPersonId(new Long(id));
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.error("Error creating primary key", e);
+		}
+		if (pictureId != null) {
+			person.setImageId(pictureId);
+		}
+		person.setCountryJob(oldPerson.getCountryJob());
+		person.setFirstname(oldPerson.getFirstname());
+		person.setJob(oldPerson.getJob());
+		person.setJobTitle(oldPerson.getJobTitle());
+		person.setLastname(oldPerson.getLastname());
+		person.setLinkMedicalAssociation(oldPerson.getLinkMedicalAssociation());
+		person.setMedicalAssociation(oldPerson.getMedicalAssociation());
+		person.setPosition(oldPerson.getPosition());
+		person.setSalutation(oldPerson.getSalutation());
+		person.setSex(oldPerson.getSex());
+		person.setTitle(oldPerson.getTitle());
+		person.setExternalId(oldPerson.getExternalId());
+		person.setLastModifiedDate(new Date().getTime());
+		try {
+			person.setBirthDay(oldPerson.getBirthDay());
+		} catch (Exception exe) {
+		}
+		Collection<TalktimeHbm> talktimes = oldPerson.getTalktimes();
+		for (TalktimeHbm talktimeHbm : talktimes) {
+			TalktimeHbm talktime = getTalktimeHbmDao().cloneTalkTime(talktimeHbm);
+			person.addTalktime(talktime);
+		}
+		Collection<AddressHbm> addresses = oldPerson.getAddresses();
+		for (AddressHbm addressHbm : addresses) {
+			AddressHbm address = getAddressHbmDao().cloneAddress(addressHbm);
+			person.addAddress(address);
+		}
+		person.getUnits().add(unit);
+		person = create(person);
+		return person;
 	}
 }

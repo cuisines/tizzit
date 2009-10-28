@@ -798,7 +798,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	}
 
 	@Override
-	protected ViewComponentHbm handleCloneViewComponent(ViewComponentHbm oldViewComponent, Map picturesIds, Map documentsIds) throws Exception {
+	protected ViewComponentHbm handleCloneViewComponent(ViewComponentHbm oldViewComponent, Map picturesIds, Map documentsIds, Map personsIds, Integer unitId) throws Exception {
 		ViewComponentHbm viewComponentHbm = ViewComponentHbm.Factory.newInstance();
 		try {
 			Integer id = sequenceHbmDao.getNextSequenceNumber("viewcomponent.view_component_id");
@@ -807,9 +807,6 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			log.error("Error creating/setting primary key", e);
 		}
 		viewComponentHbm.setApprovedLinkName(oldViewComponent.getApprovedLinkName());
-		if (oldViewComponent.getAssignedUnit() != null) {
-			viewComponentHbm.setAssignedUnit(oldViewComponent.getAssignedUnit());
-		}
 		viewComponentHbm.setCreateDate(System.currentTimeMillis());
 		viewComponentHbm.setDeployCommand(oldViewComponent.getDeployCommand());
 		viewComponentHbm.setDisplayLinkName("copy_" + oldViewComponent.getDisplayLinkName());
@@ -833,7 +830,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		viewComponentHbm.setVisible(oldViewComponent.isVisible());
 		viewComponentHbm.setXmlSearchIndexed(oldViewComponent.isXmlSearchIndexed());
 		ContentHbm oldContent = getContentHbmDao().load(Integer.valueOf(oldViewComponent.getReference()));
-		ContentHbm newContent = getContentHbmDao().cloneContent(oldContent, picturesIds, documentsIds);
+		ContentHbm newContent = getContentHbmDao().cloneContent(oldContent, picturesIds, documentsIds, personsIds, unitId);
 		viewComponentHbm.setReference(String.valueOf(newContent.getContentId()));
 		return create(viewComponentHbm);
 	}

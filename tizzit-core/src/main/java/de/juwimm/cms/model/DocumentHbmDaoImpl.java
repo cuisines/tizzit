@@ -186,8 +186,9 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 		newDocument.setMimeType(oldDocument.getMimeType());
 		newDocument.setTimeStamp(oldDocument.getTimeStamp());
 		newDocument.setUnit(newUnit);
-		newDocument.setDocument(oldDocument.getDocument());
 		newDocument = create(newDocument);
+		byte[] blob = getDocumentContent(oldDocumentId);
+		setDocumentContent(newDocument.getDocumentId(), blob);
 		return newDocument.getDocumentId();
 	}
 

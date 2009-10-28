@@ -39,7 +39,7 @@ public class AddressHbmDaoImpl extends AddressHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -50,7 +50,7 @@ public class AddressHbmDaoImpl extends AddressHbmDaoBase {
 		if (addressHbm.getAddressId() == null) {
 			try {
 				Integer id = sequenceHbmDao.getNextSequenceNumber("address.address_id");
-				addressHbm.setAddressId(new Long(id.longValue()));			
+				addressHbm.setAddressId(new Long(id.longValue()));
 			} catch (Exception e) {
 				log.error("Error creating Address: " + e.getMessage(), e);
 			}
@@ -178,6 +178,35 @@ public class AddressHbmDaoImpl extends AddressHbmDaoBase {
 	protected void handleGetTheMostOfNow() throws Exception {
 		// just a hack to prevent AndroMDA from generating this file again
 		// happens if no method is modeled
+	}
+
+	@Override
+	protected AddressHbm handleCloneAddress(AddressHbm oldAddress) throws Exception {
+		AddressHbm address = AddressHbm.Factory.newInstance();
+		Long id = new Long(sequenceHbmDao.getNextSequenceNumber("address.address_id").longValue());
+		address.setAddressId(id);
+		address.setRoomNr(oldAddress.getRoomNr());
+		address.setBuildingLevel(oldAddress.getBuildingLevel());
+		address.setBuildingNr(oldAddress.getBuildingNr());
+		address.setStreet(oldAddress.getStreet());
+		address.setStreetNr(oldAddress.getStreetNr());
+		address.setPostOfficeBox(oldAddress.getPostOfficeBox());
+		address.setCountryCode(oldAddress.getCountryCode());
+		address.setCountry(oldAddress.getCountry());
+		address.setCity(oldAddress.getCity());
+		address.setZipCode(oldAddress.getZipCode());
+		address.setPhone1(oldAddress.getPhone1());
+		address.setPhone2(oldAddress.getPhone2());
+		address.setFax(oldAddress.getFax());
+		address.setMobilePhone(oldAddress.getMobilePhone());
+		address.setEmail(oldAddress.getEmail());
+		address.setHomepage(oldAddress.getHomepage());
+		address.setMisc(oldAddress.getMisc());
+		address.setAddressType(oldAddress.getAddressType());
+		address.setExternalId(oldAddress.getExternalId());
+		address.setLastModifiedDate(new Date().getTime());
+		address = create(address);
+		return address;
 	}
 
 }

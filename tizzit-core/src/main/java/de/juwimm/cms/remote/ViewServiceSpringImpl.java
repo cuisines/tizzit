@@ -1559,11 +1559,15 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				int childUnitId = getUnitForViewComponent(oldViewComponent.getViewComponentId());
 				Hashtable<Integer, Integer> picIds = null;
 				Hashtable<Integer, Integer> docIds = null;
+				Hashtable<Long, Long> personIds = null;
+				UnitHbm newUnit = getUnitHbmDao().load(parentUnitId);
 				if (parentUnitId != childUnitId) {
-					picIds = clonePictures(parentUnitId, lastContentVersion);
-					docIds = cloneDocuments(parentUnitId, lastContentVersion);
+					picIds = clonePictures(newUnit, lastContentVersion);
+					docIds = cloneDocuments(newUnit, lastContentVersion);
+					personIds = clonePersons(newUnit, lastContentVersion, picIds);
+
 				}
-				ViewComponentHbm viewComponent = getViewComponentHbmDao().cloneViewComponent(oldViewComponent, picIds, docIds);
+				ViewComponentHbm viewComponent = getViewComponentHbmDao().cloneViewComponent(oldViewComponent, picIds, docIds, personIds, parentUnitId);
 				parent.addChild(viewComponent);
 				viewComponent.setParent(parent);
 
@@ -1585,12 +1589,50 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	}
 
-	private Hashtable<Integer, Integer> clonePictures(Integer unitId, ContentVersionHbm lastContentVersion) {
+	private Hashtable<Long, Long> clonePersons(UnitHbm newUnit, ContentVersionHbm lastContentVersion, Hashtable<Integer, Integer> picIds) {
+		Hashtable<Long, Long> personsIds = new Hashtable<Long, Long>();
+		String text = lastContentVersion.getText();
+		try {
+			Document doc = XercesHelper.string2Dom(text);
+			Iterator it = XercesHelper.findNodes(doc, "//aggregation");
+			while (it.hasNext()) {
+				Node node = (Node) it.next();
+				Iterator itInclude = XercesHelper.findNodes(node, "./include");
+				while (itInclude.hasNext()) {
+					Node nodeInclude = (Node) itInclude.next();
+					Iterator itIncludePerson = XercesHelper.findNodes(nodeInclude, "./include");
+					while (itIncludePerson.hasNext()) {
+						Node nodePerson = (Node) itIncludePerson.next();
+						String type = nodePerson.getAttributes().getNamedItem("type").getNodeValue();
+						if (type.equals("person")) {
+							Long personId = Long.parseLong(nodePerson.getAttributes().getNamedItem("id").getNodeValue());
+							PersonHbm person = getPersonHbmDao().load(personId);
+							Integer pictureId = null;
+							if (person.getImageId() != null) {
+								pictureId = picIds.get(person.getImageId());
+							}
+							PersonHbm newPerson = getPersonHbmDao().clonePerson(person, newUnit, pictureId);
+							personsIds.put(personId, newPerson.getPersonId());
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Error at cloning pictures");
+		}
+		return personsIds;
+	}
+
+	/**
+	 * 
+	 * @param unitId
+	 * @param lastContentVersion
+	 * @return
+	 */
+	private Hashtable<Integer, Integer> clonePictures(UnitHbm newUnit, ContentVersionHbm lastContentVersion) {
 		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
 		String text = lastContentVersion.getText();
-		//text = Base64.decodeToString(text);
 		try {
-			UnitHbm newUnit = getUnitHbmDao().load(unitId);
 			Document content = XercesHelper.string2Dom(text);
 			Iterator cvIt = XercesHelper.findNodes(content, "//picture");
 			while (cvIt.hasNext()) {
@@ -1606,12 +1648,16 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		return pictureIds;
 	}
 
-	private Hashtable<Integer, Integer> cloneDocuments(Integer unitId, ContentVersionHbm lastContentVersion) {
+	/**
+	 * Clones the documents and sets the unit sent as parameter
+	 * @param unitId
+	 * @param lastContentVersion
+	 * @return
+	 */
+	private Hashtable<Integer, Integer> cloneDocuments(UnitHbm newUnit, ContentVersionHbm lastContentVersion) {
 		Hashtable<Integer, Integer> documentsIds = new Hashtable<Integer, Integer>();
 		String text = lastContentVersion.getText();
-		//text = Base64.decodeToString(text);
 		try {
-			UnitHbm newUnit = getUnitHbmDao().load(unitId);
 			Document content = XercesHelper.string2Dom(text);
 			Iterator cvIt = XercesHelper.findNodes(content, "//document");
 			while (cvIt.hasNext()) {

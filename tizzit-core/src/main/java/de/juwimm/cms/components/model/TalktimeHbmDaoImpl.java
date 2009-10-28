@@ -32,7 +32,7 @@ import de.juwimm.cms.model.SequenceHbmDao;
  */
 public class TalktimeHbmDaoImpl extends de.juwimm.cms.components.model.TalktimeHbmDaoBase {
 	private static Logger log = Logger.getLogger(TalktimeHbmDaoImpl.class);
-	
+
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
 
@@ -105,5 +105,16 @@ public class TalktimeHbmDaoImpl extends de.juwimm.cms.components.model.TalktimeH
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findByUnit(transform, "from de.juwimm.cms.components.model.TalktimeHbm t where t.unit.unitId = ?", unitId);
+	}
+
+	@Override
+	protected TalktimeHbm handleCloneTalkTime(TalktimeHbm oldTalkTime) throws Exception {
+		TalktimeHbm talktime = new TalktimeHbmImpl();
+		Integer id = sequenceHbmDao.getNextSequenceNumber("talktime.talk_time_id");
+		talktime.setTalkTimeId(new Long(id));
+		talktime.setTalkTimes(oldTalkTime.getTalkTimes());
+		talktime.setTalkTimeType(oldTalkTime.getTalkTimeType());
+		talktime = create(talktime);
+		return talktime;
 	}
 }
