@@ -1526,31 +1526,46 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			}
 			this.invalidateTreeCache();
 		} else if (e.getType() == ViewComponentEvent.COPY) {
-			Constants.VIEW_COMPONENT_TO_COPY = entry.getViewComponent().getViewComponentId();
-		} else if (e.getType() == ViewComponentEvent.PASTE) {
-			ViewComponentValue[] viewComponentArray = comm.copyViewComponentToParent(entry.getViewComponent().getViewComponentId(), new Integer[] {Constants.VIEW_COMPONENT_TO_COPY}, ViewComponentEvent.MOVE_LEFT);
-			//			ViewComponentValue viewComponent = pasteTreeNode(entry.getViewComponent().getViewComponentId());
-			ViewComponentValue viewComponent = viewComponentArray[0];
-			PageNode temp = null;
-			switch (viewComponent.getViewType()) {
-				case Constants.VIEW_TYPE_EXTERNAL_LINK:
-					temp = new PageExternallinkNode(viewComponent, treeModel);
-					break;
-				case Constants.VIEW_TYPE_INTERNAL_LINK:
-					temp = new PageInternallinkNode(viewComponent, treeModel);
-					break;
-				case Constants.VIEW_TYPE_SYMLINK:
-					//viewComponentValue.setMetaData(anchor);
-					temp = new PageSymlinkNode(viewComponent, treeModel);
-					break;
-				case Constants.VIEW_TYPE_SEPARATOR:
-					temp = new PageSeparatorNode(viewComponent, treeModel);
-					break;
-				default:
-					temp = new PageContentNode(viewComponent, treeModel);
-					break;
+			String viewComponentsToCopy = "";
+			PageNode local = (PageNode) entriesPath[0].getLastPathComponent();
+			viewComponentsToCopy = local.getViewComponent().getViewComponentId().toString();
+			for (int i = 1; i < entriesPath.length; i++) {
+				local = (PageNode) entriesPath[i].getLastPathComponent();
+				viewComponentsToCopy = viewComponentsToCopy + "," + local.getViewComponent().getViewComponentId().toString();
 			}
-			entry.insert(temp, 0);
+			//Constants.VIEW_COMPONENT_TO_COPY = entry.getViewComponent().getViewComponentId();
+			Constants.VIEW_COMPONENT_TO_COPY = viewComponentsToCopy;
+		} else if (e.getType() == ViewComponentEvent.PASTE) {
+			String pasteItems = Constants.VIEW_COMPONENT_TO_COPY;
+			String[] stringItem = pasteItems.split(",");
+			Integer[] viewComponentsToPaste = new Integer[stringItem.length];
+			for (int i = 0; i < stringItem.length; i++) {
+				viewComponentsToPaste[i] = Integer.parseInt(stringItem[i]);
+			}
+
+			ViewComponentValue[] viewComponentArray = comm.copyViewComponentToParent(entry.getViewComponent().getViewComponentId(), viewComponentsToPaste, ViewComponentEvent.MOVE_LEFT);
+			for (ViewComponentValue viewComponent : viewComponentArray) {
+				PageNode temp = null;
+				switch (viewComponent.getViewType()) {
+					case Constants.VIEW_TYPE_EXTERNAL_LINK:
+						temp = new PageExternallinkNode(viewComponent, treeModel);
+						break;
+					case Constants.VIEW_TYPE_INTERNAL_LINK:
+						temp = new PageInternallinkNode(viewComponent, treeModel);
+						break;
+					case Constants.VIEW_TYPE_SYMLINK:
+						//viewComponentValue.setMetaData(anchor);
+						temp = new PageSymlinkNode(viewComponent, treeModel);
+						break;
+					case Constants.VIEW_TYPE_SEPARATOR:
+						temp = new PageSeparatorNode(viewComponent, treeModel);
+						break;
+					default:
+						temp = new PageContentNode(viewComponent, treeModel);
+						break;
+				}
+				entry.insert(temp, 0);
+			}
 			treeModel.nodeStructureChanged(entry);
 		} else if (e.getType() == ViewComponentEvent.EXPORT_VIEW_COMPONENT) {
 			for (int i = 0; i < entriesPath.length; i++) {
@@ -1685,7 +1700,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private void processApproval(Collection<ViewComponentValue> data, PageNode entry) throws Exception {
 		Iterator it = data.iterator();
 		while (it.hasNext()) {
-			ViewComponentValue view = (ViewComponentValue) it.next();			
+			ViewComponentValue view = (ViewComponentValue) it.next();
 			if (log.isDebugEnabled()) log.debug("" + view.getDeployCommand());
 			if (view.getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE || view.getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
 				if (log.isDebugEnabled()) log.debug("DELETE ViewComponent " + view.getViewComponentId());
@@ -1769,8 +1784,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), "File does not exist", rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 				}
 			} catch (Exception exe) {
-				log.error("Paste error error", exe);
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), "Error at paste", rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				log.error("Import error error", exe);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), "Error at import", rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 
