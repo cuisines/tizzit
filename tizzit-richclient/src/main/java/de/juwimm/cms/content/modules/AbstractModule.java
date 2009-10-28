@@ -203,7 +203,9 @@ public abstract class AbstractModule implements Module, Cloneable {
 		try {
 			retVal = URLEncoder.encode(url, "ISO-8859-1");
 			int fss = retVal.indexOf('.');
-			retVal = retVal.substring(0, fss) + "." + retVal.substring(fss).replaceAll("\\.", "");
+			if (fss != -1) {
+				retVal = retVal.substring(0, fss) + "." + retVal.substring(fss).replaceAll("\\.", "");
+			}
 			retVal = retVal.replaceAll("[+]", "%20");
 			retVal = retVal.replaceAll("(%2F)", "%20"); // Slash is now a Space
 		} catch (UnsupportedEncodingException exe) {
@@ -294,7 +296,7 @@ public abstract class AbstractModule implements Module, Cloneable {
 		} catch (Exception exe) {
 		}
 	}
-	
+
 	public void waitWhileIsntLoaded() {
 		try {
 			Thread t = new Thread() {
@@ -313,7 +315,7 @@ public abstract class AbstractModule implements Module, Cloneable {
 		} catch (Exception exe) {
 		}
 	}
-	
+
 	/**
 	 * @param isLoaded The isLoaded to set.
 	 */
@@ -327,7 +329,7 @@ public abstract class AbstractModule implements Module, Cloneable {
 	protected boolean isLoaded() {
 		return isLoaded;
 	}
-	
+
 	public Object clone() {
 		return clone(true);
 	}
@@ -357,26 +359,28 @@ public abstract class AbstractModule implements Module, Cloneable {
 		}
 		return module;
 	}
+
 	/**
 	 * @return Returns the saveable.
 	 */
 	public final boolean isSaveable() {
 		return this.saveable;
 	}
+
 	/**
 	 * @param isSaveable The saveable to set.
 	 */
 	public final void setSaveable(boolean isSaveable) {
 		this.saveable = isSaveable;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.content.modules.Module#load(org.xml.sax.ContentHandler)
 	 */
 	public void load(ContentHandler ch) {
 		throw new UnsupportedOperationException("actually not supported");
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.content.modules.Module#save(org.xml.sax.ContentHandler)
 	 */
