@@ -35,7 +35,7 @@ import de.juwimm.cms.vo.PictureValue;
  */
 public class PictureHbmImpl extends PictureHbm {
 	private static final long serialVersionUID = 789271321041565274L;
- 
+
 	/**
 	 * @see de.juwimm.cms.model.PictureHbm#toXml(int)
 	 */
@@ -84,6 +84,7 @@ public class PictureHbmImpl extends PictureHbm {
 		pictureSlimValue.setWidth(this.getWidth());
 		pictureSlimValue.setAltText(this.getAltText());
 		pictureSlimValue.setPictureName(this.getPictureName());
+		pictureSlimValue.setThumbnailPopup(this.isThumbnailPopup());
 		return pictureSlimValue;
 	}
 
@@ -104,6 +105,7 @@ public class PictureHbmImpl extends PictureHbm {
 		pictureSlimValue.setWidth(this.getWidth());
 		pictureSlimValue.setAltText(this.getAltText());
 		pictureSlimValue.setPictureName(this.getPictureName());
+		pictureSlimValue.setThumbnailPopup(this.isThumbnailPopup());
 		return pictureSlimValue;
 	}
 
@@ -126,6 +128,7 @@ public class PictureHbmImpl extends PictureHbm {
 		pictureValue.setWidth(this.getWidth());
 		pictureValue.setAltText(this.getAltText());
 		pictureValue.setPictureName(this.getPictureName());
+		pictureValue.setThumbnailPopup(this.isThumbnailPopup());
 		return pictureValue;
 	}
 

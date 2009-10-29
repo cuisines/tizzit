@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.content.modules;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.util.Properties;
 
@@ -123,13 +123,18 @@ public class Picture extends AbstractModule {
 			root.appendChild(elm);
 			setDescription(elm.getAttribute("src"));
 			try {
-				if(getPanPicture().getPictureAltText() != null) {
+				if (getPanPicture().getPictureAltText() != null) {
 					comm.updatePictureAltText(getPanPicture().getPictureId().intValue(), getPanPicture().getPictureAltText());
 				} else {
 					comm.updatePictureAltText(getPanPicture().getPictureId().intValue(), "");
 				}
 			} catch (Exception e) {
 				log.error("Error updating pictureAltText " + getPanPicture().getPictureId().intValue() + " " + getPanPicture().getPictureAltText());
+			}
+			try {
+				comm.updatePictureThumbnailPopup(getPanPicture().getPictureThumbnailPopup(), getPanPicture().getPictureId());
+			} catch (Exception e) {
+				if (log.isDebugEnabled()) log.error("Error updating picture thumbnail with popup " + getPanPicture().getPictureId());
 			}
 		}
 		return root;
@@ -194,7 +199,7 @@ public class Picture extends AbstractModule {
 		if (panBtn != null) panBtn.setEnabled(enabling);
 		imEnabled = enabling;
 	}
-	
+
 	public void recycle() {
 		getPanPicture().setPictureId(0);
 		getPanPicture().setType("");

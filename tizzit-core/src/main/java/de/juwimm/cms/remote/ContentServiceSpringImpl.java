@@ -105,7 +105,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleAddPicture2Unit(Integer unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, null);
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
@@ -115,7 +115,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Integer handleAddPictureWithPreview2Unit(Integer unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName) throws Exception {
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, false, null);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
@@ -383,7 +383,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleCreatePicture(byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, null);
 		pictureHbm = super.getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
 	}
@@ -1546,20 +1546,31 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	@Override
-	protected void handleMakeContentOffline(Integer viewComponentId)	throws Exception {
+	protected void handleMakeContentOffline(Integer viewComponentId) throws Exception {
 		ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
 		ContentHbm content = getContentHbmDao().load(Integer.decode(viewComponent.getReference()));
 		ContentVersionHbm publishContentVersion = content.getContentVersionForPublish();
 		//update online status
-		viewComponent.setOnline((byte)0);
+		viewComponent.setOnline((byte) 0);
 		getViewComponentHbmDao().update(viewComponent);
-		
-		if(publishContentVersion == null){
-			return;
-		}
+
+		if (publishContentVersion == null) { return; }
 		//remove publish content version
-		content.getContentVersions().remove(publishContentVersion);		
-		getContentHbmDao().update(content);		
+		content.getContentVersions().remove(publishContentVersion);
+		getContentHbmDao().update(content);
 		removeContentVersion(publishContentVersion.getContentVersionId());
+	}
+
+	@Override
+	protected boolean handleGetPictureThumbnailPopup(Integer pictureId) throws Exception {
+		PictureHbm picture = super.getPictureHbmDao().load(pictureId);
+		return picture.isThumbnailPopup();
+	}
+
+	@Override
+	protected void handleUpdatePictureThumbnailPopup(boolean withThumbnailPopup, Integer pictureId) throws Exception {
+		PictureHbm picture = super.getPictureHbmDao().load(pictureId);
+		picture.setThumbnailPopup(withThumbnailPopup);
+
 	}
 }

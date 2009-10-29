@@ -40,6 +40,7 @@ import java.io.InputStream;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -96,6 +97,7 @@ public class PanPicture extends JPanel {
 	private JLabel lblAltText = new JLabel();
 	private JLabel lblDirection = new JLabel();
 	private JComboBox cboDirection = new JComboBox();
+	private JCheckBox ckbThumbnailPopup = new JCheckBox();
 	private int pictureWidth = -1;
 	private int pictureHeight = -1;
 	private int pictureId = -1;
@@ -276,6 +278,7 @@ public class PanPicture extends JPanel {
 		lblAltText.setText(rb.getString("panel.content.picture.altText"));
 		lblDirection.setText(rb.getString("panel.content.picture.Direction"));
 		pnlPreview.add(btnPreview, BorderLayout.CENTER);
+		ckbThumbnailPopup.setText(rb.getString("panel.content.picture.ThumbnailPopup"));
 		// upper part
 		this.add(lblPictNo, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(17, 15, 0, 13), 0, 0));
 		this.add(lblPictId, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(17, 0, 0, 0), 60, 0));
@@ -290,12 +293,15 @@ public class PanPicture extends JPanel {
 		this.add(btnUploadRoot, new GridBagConstraints(3, 5, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
 		this.add(btnEdit, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
 		// lower part
-		this.add(lblDirection, new GridBagConstraints(0, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
-		this.add(cboDirection, new GridBagConstraints(2, 7, 2, 2, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 50, 6), 188, 2));
-		this.add(lblPictureSubtext, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 0, 0), 7, 0));
-		this.add(txtPictureSubtext, new GridBagConstraints(2, 8, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 188, 2));
-		this.add(lblAltText, new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
-		this.add(txtAltText, new GridBagConstraints(2, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
+		//
+		this.add(ckbThumbnailPopup, new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
+		this.add(lblDirection, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
+		this.add(cboDirection, new GridBagConstraints(2, 8, 2, 2, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 50, 6), 188, 2));
+		this.add(lblPictureSubtext, new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 0, 0), 7, 0));
+		this.add(txtPictureSubtext, new GridBagConstraints(2, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 188, 2));
+		this.add(lblAltText, new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
+		this.add(txtAltText, new GridBagConstraints(2, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
+
 	}
 
 	protected void btnUploadActionPerformed(ActionEvent e) {
@@ -511,6 +517,7 @@ public class PanPicture extends JPanel {
 					this.lblFileName.setVisible(false);
 				}
 				this.txtAltText.setText(pic.getAltText());
+				this.ckbThumbnailPopup.setSelected(pic.isThumbnailPopup());
 				setPictureHeight(pic.getHeight());
 				setPictureWidth(pic.getWidth());
 				this.pictureId = picture;
@@ -564,6 +571,10 @@ public class PanPicture extends JPanel {
 
 	public String getPictureFileName() {
 		return this.lblFileName.getText();
+	}
+
+	public boolean getPictureThumbnailPopup() {
+		return this.ckbThumbnailPopup.isSelected();
 	}
 
 }

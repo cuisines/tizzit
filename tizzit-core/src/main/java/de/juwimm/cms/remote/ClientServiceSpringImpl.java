@@ -1886,4 +1886,15 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		return getViewServiceSpring().getUnitForViewComponent(viewComponentId);
 	}
 
+	@Override
+	protected boolean handleGetPictureThumbnailPopup(Integer pictureId) throws Exception {
+		return getContentServiceSpring().getPictureThumbnailPopup(pictureId);
+	}
+
+	@Override
+	protected void handleUpdatePictureThumbnailPopup(boolean withThumbnailPopup, Integer pictureId) throws Exception {
+		getContentServiceSpring().updatePictureThumbnailPopup(withThumbnailPopup, pictureId);
+
+	}
+
 }

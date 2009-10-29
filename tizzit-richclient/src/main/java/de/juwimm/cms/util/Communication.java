@@ -1282,6 +1282,14 @@ public class Communication implements ExitListener, ActionListener {
 		getClientService().updatePictureAltText(Integer.valueOf(pictureId), altText);
 	}
 
+	public boolean getPictureThumbnailPopup(Integer pictureId) {
+		return getClientService().getPictureThumbnailPopup(pictureId);
+	}
+
+	public void updatePictureThumbnailPopup(boolean withThumbnailPopup, Integer pictureId) {
+		getClientService().updatePictureThumbnailPopup(withThumbnailPopup, pictureId);
+	}
+
 	public void updatePictureData(int pictureId, byte[] picture, String mimeType, byte[] thumbnail) throws Exception {
 		getClientService().updatePictureData(Integer.valueOf(pictureId), picture, mimeType, thumbnail);
 	}
