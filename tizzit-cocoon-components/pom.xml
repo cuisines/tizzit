@@ -4,20 +4,20 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.0.4-SNAPSHOT</version>
+		<version>3.0.4</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-cocoon-components</artifactId>
 	<name>tizzit Cocoon Components</name>
-	<version>3.0.4-SNAPSHOT</version>
+	<version>3.0.4</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-common</artifactId>
-			<version>3.0.4-SNAPSHOT</version>
+			<version>3.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cocoon</groupId>
