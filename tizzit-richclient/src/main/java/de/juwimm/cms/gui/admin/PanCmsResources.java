@@ -8,19 +8,26 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -33,12 +40,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 
+import de.juwimm.cms.common.Constants.ResourceUsageState;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.CmsResourcesCellRenderer;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.CmsResourcesTreeNode;
+import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.CmsStateResourceTreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.DocumentTreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.PictureTreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.SiteTreeNode;
@@ -75,6 +84,7 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	
 	private JPanel treeControlPanel;
 	private JButton deleteResource;
+	private MultiComboBox filterMultiComboBox;
 	
 	public static final String TitleKey = "panCmsResources.title";
 	
@@ -95,7 +105,6 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		sizeValueLabel = new JLabel();		
 		treeControlPanel = new JPanel();
 		deleteResource = new JButton();
-		
 		this.communication = communication;
 		initLayout();
 		initListeners();
@@ -110,24 +119,29 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 			}
 
 			public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-				TreePath path = event.getPath();
-				Object entry = path.getLastPathComponent();				
-				if(entry instanceof UnitTreeNode){
-					UIConstants.setWorker(true);
-					splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-					UnitTreeNode unitNode = (UnitTreeNode)entry;
-					unitNode.removeAllChildren();
-					List unsusedResources = communication.getUnsusedResources4Unit(unitNode.getId());
-					if(unsusedResources != null && unsusedResources.size() > 0){
-						for(Object resource:unsusedResources){
-							if(resource instanceof DocumentSlimValue){
-								unitNode.add(new DocumentTreeNode((DocumentSlimValue)resource));
-							}else{
-								unitNode.add(new PictureTreeNode((PictureSlimstValue)resource));							
+				try{
+					TreePath path = event.getPath();
+					Object entry = path.getLastPathComponent();				
+					if(entry instanceof UnitTreeNode){
+						UIConstants.setWorker(true);
+						splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						UnitTreeNode unitNode = (UnitTreeNode)entry;
+						unitNode.removeAllChildren();
+						List<Boolean> values = filterMultiComboBox.getValues();
+						Map<Object,ResourceUsageState> resources = (Map<Object,ResourceUsageState>)communication.getResources4Unit(unitNode.getId(),values.get(0),values.get(1),values.get(2),values.get(3));
+						if(resources != null && resources.size() > 0){
+							for(Entry<Object,ResourceUsageState> resource:resources.entrySet()){
+								if(resource.getKey() instanceof DocumentSlimValue){
+									unitNode.add(new DocumentTreeNode((DocumentSlimValue)resource.getKey(),resource.getValue()));
+								}else{
+									unitNode.add(new PictureTreeNode((PictureSlimstValue)resource.getKey(),resource.getValue()));							
+								}
 							}
-						}
-						treeModel.nodeStructureChanged(unitNode);
+							treeModel.nodeStructureChanged(unitNode);
+						}					
 					}
+				}
+				finally{
 					UIConstants.setWorker(false);
 					splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				}
@@ -159,6 +173,10 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 			        DocumentTreeNode documentNode = null;
 			        PictureTreeNode pictureNode = null;
 			        
+			        if(node instanceof CmsStateResourceTreeNode && ((CmsStateResourceTreeNode)node).getState()==ResourceUsageState.Used){
+			        	return; 
+			        }
+			        
 			        if (node instanceof DocumentTreeNode){
 			        	documentNode = (DocumentTreeNode)node ;
 			        }else if(node instanceof PictureTreeNode) {
@@ -169,7 +187,7 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 			        if(e.getX()>treeResources.getPathBounds(path).x+new JCheckBox().getPreferredSize().width){ 
 			        	return;
 			        }
-		        	if(documentNode!= null){	        	
+		        	if(documentNode!= null){		        		
 		        		if(documentNode.toogleCheck()){
 		        			treeModel.addResourceToDelete(documentNode);
 		        		}else{
@@ -264,8 +282,17 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		treeScrolable.setMinimumSize(new Dimension(150, 600));
 		treeScrolable.setVerifyInputWhenFocusTarget(true);
 		
+		JPanel treeContainer = new JPanel(new BorderLayout());	
+		filterMultiComboBox = new MultiComboBox();
+		filterMultiComboBox.addSeparator(rb.getString("panCmsResources.documents"));
+		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"));
+		filterMultiComboBox.addItem(rb.getString("panCmsResources.unused"),true);
+		filterMultiComboBox.addSeparator(rb.getString("panCmsResources.pictures"));
+		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"));
+		filterMultiComboBox.addItem(rb.getString("panCmsResources.unused"),true);
 		
-		JPanel treeContainer = new JPanel(new BorderLayout());
+		
+		treeContainer.add(filterMultiComboBox,BorderLayout.NORTH);
 		treeContainer.add(treeScrolable,BorderLayout.CENTER);
 		treeContainer.add(treeControlPanel,BorderLayout.SOUTH);
 		splitPane.setLeftComponent(treeContainer);
@@ -275,6 +302,8 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		splitPane.setDividerLocation(230);
 		
 		this.add(splitPane);//,new GridBagConstraints(0, 0, 1, 1, 1., 1.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));				
+		
+		
 		
 	}
 	
@@ -334,5 +363,91 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	public void save() {
 		
 	}
+	
+	private static class MultiComboBox extends JPanel{
+		private JButton dropButton;
+		private List<String> items;
+		private List<JCheckBox> values;
+		private JPopupMenu popup;
+		private int itemIndex = 0;
+		
+		public MultiComboBox(){
+			dropButton = new JButton(rb.getString("panCmsResources.filter"));
+			items = new ArrayList<String>();
+			values = new ArrayList<JCheckBox>();
+			popup = new JPopupMenu();		
+			popup.setLayout(new GridBagLayout());
+			dropButton.addMouseListener(new MouseAdapter(){				
+				@Override
+				public void mouseClicked(MouseEvent e) {				
+					setVisiblePopup(!popup.isVisible(),e);
+				}				
+			});
+		
+			dropButton.addFocusListener(new FocusListener(){
 
+				public void focusGained(FocusEvent e) {
+				}
+
+				public void focusLost(FocusEvent e) {
+					setVisiblePopup(false,null);					
+				}
+				
+			});
+			this.add(dropButton);
+			this.add(popup);	
+						
+		}
+		
+		private void setVisiblePopup(boolean visible,MouseEvent e){
+			if(visible){
+				Point popupPoint = e.getLocationOnScreen();
+				
+				popupPoint.y += (dropButton.getHeight() -e.getPoint().getY()); 							
+				popupPoint.x -= e.getPoint().getX();
+				popup.setLocation(popupPoint);					
+			}
+			this.popup.setVisible(visible);
+		}
+		
+		private void addItem(String item,boolean state) {
+			items.add(item);
+			JCheckBox checkBox = new JCheckBox();			
+			values.add(checkBox);
+			checkBox.setSelected(state);
+			GridBagConstraints gridBagConstraint = new GridBagConstraints();
+			gridBagConstraint.gridy=itemIndex;
+			gridBagConstraint.anchor=GridBagConstraints.WEST;
+			gridBagConstraint.insets = new Insets(1,18,1,40);
+			JPanel itemPanel = new JPanel(new BorderLayout());
+			itemPanel.add(checkBox,BorderLayout.WEST);
+			itemPanel.add(new JLabel(item),BorderLayout.CENTER);
+			popup.add(itemPanel,gridBagConstraint);
+			itemIndex++;
+		}
+		private void addItem(String item) {
+			addItem(item,false);
+		}
+		
+		private void addSeparator(String item) {
+			GridBagConstraints gridBagConstraint = new GridBagConstraints();
+			gridBagConstraint.gridy=itemIndex;
+			gridBagConstraint.insets = new Insets(1,3,1,40);
+			gridBagConstraint.anchor=GridBagConstraints.WEST;
+			JPanel itemPanel = new JPanel(new BorderLayout());			
+			itemPanel.add(new JLabel(item),BorderLayout.CENTER);			
+			popup.add(itemPanel,gridBagConstraint);
+			itemIndex++;
+		}
+		
+		public List<Boolean> getValues(){
+			List<Boolean> booleanValues = new ArrayList<Boolean>();
+			if(values.size() >0){
+				for(JCheckBox checkBox:values){
+					booleanValues.add(checkBox.isSelected());
+				}
+			}
+			return booleanValues;
+		}
+	}
 }

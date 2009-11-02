@@ -3,17 +3,22 @@ package de.juwimm.cms.gui.tree;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTree;
+import javax.swing.plaf.basic.BasicLabelUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 
+import de.juwimm.cms.common.Constants.ResourceUsageState;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.DocumentSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
@@ -81,8 +86,9 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		private static final long serialVersionUID = 1L;
 		private boolean isChecked = false;
 		T value;
-		public CmsResourcesTreeNode(String name){
+		public CmsResourcesTreeNode(String name,T value){
 			super(name);			
+			this.value = value;
 		}
 		public T getValue(){
 			return value;
@@ -97,12 +103,26 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		}
 	}
 	
+	public static abstract class CmsStateResourceTreeNode<T> extends CmsResourcesTreeNode<T>{		
+		private static final long serialVersionUID = 7680943302220865979L;
+		private ResourceUsageState state;
+		
+		public CmsStateResourceTreeNode(String name,T value,ResourceUsageState state) {
+			super(name,value);
+			this.state = state;
+		}
+		
+		public ResourceUsageState getState(){
+			return state;
+		}
+
+	}
+	
 	public static class SiteTreeNode extends CmsResourcesTreeNode<SiteValue>{
 		private static final long serialVersionUID = -7236858154971687599L;
 		
 		public SiteTreeNode(SiteValue site){
-			super(site.getName());
-			this.value = site;
+			super(site.getName(),site);
 		}
 		@Override
 		public ImageIcon getIcon() {
@@ -119,8 +139,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		private static final long serialVersionUID = 3099538424767131542L;
 		
 		public UnitTreeNode(UnitValue unit){
-			super(unit.getName());
-			value = unit;
+			super(unit.getName(),unit);
 		}
 		
 		@Override
@@ -134,17 +153,16 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		}
 
 	}
-	public static class DocumentTreeNode extends CmsResourcesTreeNode<DocumentSlimValue>{
+	public static class DocumentTreeNode extends CmsStateResourceTreeNode<DocumentSlimValue>{
 		private static final long serialVersionUID = 3777971038493127103L;
 		
-		public DocumentTreeNode(DocumentSlimValue document) {
-			super(document.getDocumentName());
-			this.value = document;		
+		public DocumentTreeNode(DocumentSlimValue document,ResourceUsageState state) {
+			super(document.getDocumentName(),document,state);
 		}
 		
 		@Override
 		public ImageIcon getIcon() {		
-			return UIConstants.ICON_CALENDAR;
+			return UIConstants.ICON_DOCUMENT;
 		}
 
 		@Override
@@ -159,11 +177,11 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		
 	}
 	
-	public static class PictureTreeNode extends CmsResourcesTreeNode<PictureSlimstValue>{
+	public static class PictureTreeNode extends CmsStateResourceTreeNode<PictureSlimstValue>{
 		private static final long serialVersionUID = 3777971038493127103L;
 		
-		public PictureTreeNode(PictureSlimstValue picture) {
-			super(picture.getPictureName());
+		public PictureTreeNode(PictureSlimstValue picture,ResourceUsageState state) {
+			super(picture.getPictureName(),picture,state);
 			this.value = picture;		
 		}
 		
@@ -174,7 +192,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		
 		@Override
 		public ImageIcon getIcon() {		
-			return UIConstants.ICON_DECRYPTED;
+			return UIConstants.ICON_PICTURE;
 		}
 
 		@Override
@@ -186,9 +204,13 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 	
 	public static class CmsResourcesCellRenderer extends DefaultTreeCellRenderer{
 		private static final long serialVersionUID = 1L;
-		JCheckBox checkBox = new JCheckBox();
-		JPanel panel = new JPanel();
 		
+		
+		CmsResourcesLabelUI labelUI =new CmsResourcesLabelUI();
+		
+		public CmsResourcesCellRenderer(){
+			this.setUI(labelUI);
+		}
 		
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus) {		
 			super.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
@@ -196,20 +218,60 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 				TreeNode tn = (TreeNode) value;
 				setIcon(tn.getIcon());							
 			}
-			if(value instanceof DocumentTreeNode || value instanceof PictureTreeNode){								
+			if(value instanceof CmsStateResourceTreeNode){
+				JCheckBox checkBox = new JCheckBox();
+				JPanel panel = new JPanel();
+				CmsStateResourceTreeNode node = (CmsStateResourceTreeNode)value;				
 				panel.setBackground(Color.white);
+				if(node.getState() == ResourceUsageState.Used){
+					checkBox.setEnabled(false);
+				}
 				checkBox.setBackground(Color.white);
-				checkBox.setSelected(((CmsResourcesTreeNode)value).isChecked());
+				checkBox.setSelected(node.isChecked());
 				panel.setOpaque(false);
 				this.setOpaque(false);
 				panel.setLayout(new BorderLayout());
 				panel.add(checkBox, BorderLayout.WEST);
 				panel.add(this, BorderLayout.CENTER);				
+				labelUI.setState(node.getState());
 				return panel;
+			}else{
+				labelUI.setState(null);
 			}
 			
 			return this;
 			
 		}
-	}	
+	}
+	
+	private static class CmsResourcesLabelUI extends BasicLabelUI{
+		ResourceUsageState state = null;
+		
+		public void setState(ResourceUsageState state){
+			this.state = state;
+		}		
+		@Override
+		public void paint(Graphics g, JComponent c) {		
+			super.paint(g, c);
+			if(state == null){
+				return;
+			}
+			
+			switch(state){
+				case Unsused:{
+					g.setColor(new Color(141,195,68));
+					break;
+				}
+				case Used:{
+					g.setColor(new Color(248,25,25));
+					break;
+				}
+				case UsedInOlderVersions:{
+					g.setColor(new Color(243,251,13));
+					break;
+				}				
+			}
+			g.drawRect(0, 0, 15, 15);
+		}
+	}
 }

@@ -276,6 +276,9 @@ public final class UIConstants {
 
 	public static ImageIcon ICON_ARROW_RIGHT;
 	public static ImageIcon ICON_ARROW_DOWN;
+	public static ImageIcon ICON_PICTURE;
+	public static ImageIcon ICON_DOCUMENT;
+	
 
 	private UIConstants() {
 	}
@@ -515,6 +518,9 @@ public final class UIConstants {
 
 		ICON_ARROW_RIGHT = load("arrowRight.png");
 		ICON_ARROW_DOWN = load("arrowDown.png");
+		
+		ICON_PICTURE = load("16x16/16_bild.gif");
+		ICON_DOCUMENT = load("16x16/16_komp_importdoc.gif");
 
 	}
 
