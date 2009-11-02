@@ -675,7 +675,7 @@
 		<module>../tizzit-xmlsearch-xindice</module>
 		<module>../tizzit-webstart</module>
 
-		<module>../tizzit-cocoon22-components</module>
+		<module>../tizzit-cocoon-block</module>
 		<module>../tizzit-web-cocoon22</module>
 
 		<module>../tizzit-richclient</module>
@@ -904,7 +904,7 @@
 				</property>
 			</activation>
 			<modules>
-				<module>../tizzit-cocoon22-components</module>
+				<module>../tizzit-cocoon-block</module>
 				<module>../tizzit-web-cocoon22</module>
 			</modules>
 		</profile>

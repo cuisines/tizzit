@@ -46,7 +46,7 @@
       <!-- TizziT - Cocoon components / block-->
       <dependency>
         <groupId>org.tizzit</groupId>
-        <artifactId>tizzit-cocoon22-components</artifactId>
+        <artifactId>tizzit-cocoon-block</artifactId>
         <version>3.0.4-SNAPSHOT</version>
       </dependency>
     <dependency>
