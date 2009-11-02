@@ -221,6 +221,8 @@ public final class Constants {
 	public static final int OS_WINDOWS = 1;
 	public static final int OS_LINUX = 2;
 	public static final int OS_MACOSX = 3;
+	
+	public static final String PUBLISH_VERSION = "PUBLS";
 
 	private Constants() {
 	}
@@ -240,5 +242,12 @@ public final class Constants {
 		}
 		return false;
 	}
-
+	
+		
+	
+	public enum ResourceUsageState{
+		Used,Unsused,UsedInOlderVersions;
+	}
+	
+	
 }
