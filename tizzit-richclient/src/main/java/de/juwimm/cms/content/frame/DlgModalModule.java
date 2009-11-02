@@ -15,7 +15,12 @@
  */
 package de.juwimm.cms.content.frame;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
@@ -64,6 +69,8 @@ public class DlgModalModule extends JDialog {
 		int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		this.setSize(width, height);
+		this.setMinimumSize(new Dimension(440, 440));
+		this.setPreferredSize(new Dimension(440, 440));
 		this.setLocation((screenWidth / 2) - (width / 2), (screenHeight / 2) - (height / 2));
 		this.setTitle(Messages.getString("panel.content.DlgModalModule", module.getLabel(), module.getDescription()));
 		this.getRootPane().setDefaultButton(btnOk);
@@ -93,10 +100,8 @@ public class DlgModalModule extends JDialog {
 		});
 		panButtons.setLayout(new GridBagLayout());
 		this.getContentPane().add(panButtons, BorderLayout.SOUTH);
-		panButtons.add(btnOk, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
-		panButtons.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.SOUTHEAST,
-				GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 1, 0));
+		panButtons.add(btnOk, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
+		panButtons.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 1, 0));
 	}
 
 	void btnOkActionPerformed(ActionEvent e) {
@@ -111,8 +116,7 @@ public class DlgModalModule extends JDialog {
 		} else {
 			Thread t = new Thread(new Runnable() {
 				public void run() {
-					JOptionPane.showMessageDialog(getContentPane(), module.getValidationError(), 
-							Messages.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(getContentPane(), module.getValidationError(), Messages.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			});
 			t.setPriority(Thread.NORM_PRIORITY);

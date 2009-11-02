@@ -15,9 +15,14 @@
  */
 package de.juwimm.cms.content.frame;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -89,10 +94,8 @@ public class DlgModalPicture extends JDialog {
 		});
 		panButtons.setLayout(new GridBagLayout());
 		this.getContentPane().add(panButtons, BorderLayout.SOUTH);
-		panButtons.add(btnOk, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
-		panButtons.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.SOUTHEAST,
-				GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 1, 0));
+		panButtons.add(btnOk, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 0, 0));
+		panButtons.add(btnCancel, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 1, 0));
 		this.getContentPane().add(getRootPanel(), BorderLayout.CENTER);
 	}
 

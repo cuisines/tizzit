@@ -67,6 +67,7 @@ import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.content.modules.Module;
 import de.juwimm.cms.gui.FrmProgressDialog;
+import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
@@ -172,6 +173,8 @@ public class PanPicture extends JPanel {
 		this.pictureId = pictureId;
 		if (pictureId > 0) {
 			loadPreview(pictureId);
+			this.btnPreview.setEnabled(true);
+			this.btnPreview.setText("");
 		} else {
 			this.btnPreview.setIcon(null);
 			this.lblPictId.setText(" ");
@@ -222,6 +225,8 @@ public class PanPicture extends JPanel {
 		});
 
 		btnPreview.setBorder(null);
+		btnPreview.setText(rb.getString("panel.content.picture.dragdrop"));
+		btnPreview.setEnabled(false);
 		btnPreview.setPreferredSize(new Dimension(120, 120));
 		btnPreview.addActionListener(new java.awt.event.ActionListener() {
 
@@ -278,6 +283,8 @@ public class PanPicture extends JPanel {
 		lblAltText.setText(rb.getString("panel.content.picture.altText"));
 		lblDirection.setText(rb.getString("panel.content.picture.Direction"));
 		pnlPreview.add(btnPreview, BorderLayout.CENTER);
+		//btnPreview.setTransferHandler(tranferHandler);
+		btnPreview.setTransferHandler(new FileTransferHandler(this));
 		ckbThumbnailPopup.setText(rb.getString("panel.content.picture.ThumbnailPopup"));
 		// upper part
 		this.add(lblPictNo, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(17, 15, 0, 13), 0, 0));
@@ -294,7 +301,7 @@ public class PanPicture extends JPanel {
 		this.add(btnEdit, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 18, 0, 6), 58, 0));
 		// lower part
 		//
-		this.add(ckbThumbnailPopup, new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
+		this.add(ckbThumbnailPopup, new GridBagConstraints(2, 7, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 0, 0, 0), 7, 0));
 		this.add(lblDirection, new GridBagConstraints(0, 8, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(11, 15, 0, 0), 7, 0));
 		this.add(cboDirection, new GridBagConstraints(2, 8, 2, 2, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 50, 6), 188, 2));
 		this.add(lblPictureSubtext, new GridBagConstraints(0, 9, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 0, 0), 7, 0));
@@ -345,77 +352,94 @@ public class PanPicture extends JPanel {
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File[] files = fc.getSelectedFiles();
-			if (files != null) {
-				for (int i = (files.length - 1); i >= 0; i--) {
-					this.lblFile.setVisible(true);
-					this.lblFileName.setVisible(true);
-					this.lblFileName.setText(files[i].getName());
-					Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
-					if (files[i].length() > 4000000) {
-						this.setCursor(Cursor.getDefaultCursor());
-						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + files[i].getName(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-						continue;
-					}
-					FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"), rb.getString("panel.content.upload.ParseFile"), 100);
-					prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-					try {
-						byte[] bty = getBytesFromFile(files[i]);
-
-						ImageIcon tmpIcon = new ImageIcon(bty);
-						ImageIcon thumbnail = null;
-						if (tmpIcon.getIconWidth() > 90 || tmpIcon.getIconHeight() > 90) {
-							thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90, -1, Image.SCALE_DEFAULT));
-						} else {
-							thumbnail = tmpIcon;
-						}
-						ByteArrayOutputStream out = manipulateImage(thumbnail.getImage());
-
-						String fext = Utils.getExtension(files[i]);
-						String mimetype = "image/jpeg";
-						if (fext.equals(Utils.JPEG) || fext.equals(Utils.JPG)) {
-							mimetype = "image/jpeg";
-						} else if (fext.equals(Utils.GIF)) {
-							mimetype = "image/gif";
-						} else if (fext.equals(Utils.TIF) || fext.equals(Utils.TIFF)) {
-							mimetype = "image/tif";
-						}
-
-						prog.setProgress(rb.getString("panel.content.upload.Uploading"), 50);
-						int existingPicId = 0;
-						try {
-							existingPicId = comm.getPictureIdForUnitAndName(unit, files[i].getName());
-						} catch (Exception e) {
-							log.error("Error during getting getPictureIdForUnitAndName");
-						}
-						if (existingPicId == 0) {
-							retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName());
-						} else {
-							/**picture name already exists=>dialog message*/
-							PictureSlimValue picSlimVal = comm.getPicture(existingPicId);
-							retInt = picSlimVal.getPictureId();
-							DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, bty, out.toByteArray());
-							int frameHeight = 180;
-							int frameWidth = 250;
-							saveDialog.setSize(frameWidth, frameHeight);
-							saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
-							saveDialog.setModal(true);
-							saveDialog.setVisible(true);
-
-						}
-
-						setPictureId(retInt);
-					} catch (Exception exe) {
-						log.error("Error during the upload of the picture " + files[i].getName(), exe);
-					} finally {
-						prog.setProgress(rb.getString("panel.content.upload.Finished"), 100);
-						prog.dispose();
-					}
-				}
-			}
+			uploadFiles(files, unit, fc.getCurrentDirectory());
 			this.setCursor(Cursor.getDefaultCursor());
 		} else {
 			this.setCursor(Cursor.getDefaultCursor());
+		}
+	}
+
+	/**
+	 * Upload the selected images
+	 * @param files
+	 * @param unit
+	 * @param localUploadDir
+	 */
+	public void uploadFiles(File[] files, int unit, File localUploadDir) {
+		int retInt = 0;
+		if (files != null) {
+			for (int i = (files.length - 1); i >= 0; i--) {
+				this.lblFile.setVisible(true);
+				this.lblFileName.setVisible(true);
+				this.lblFileName.setText(files[i].getName());
+				Constants.LAST_LOCAL_UPLOAD_DIR = localUploadDir;
+				if (files[i].length() > 4000000) {
+					this.setCursor(Cursor.getDefaultCursor());
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + files[i].getName(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					continue;
+				}
+				FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"), rb.getString("panel.content.upload.ParseFile"), 100);
+				prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+				try {
+
+					byte[] bty = getBytesFromFile(files[i]);
+
+					ImageIcon tmpIcon = new ImageIcon(bty);
+					ImageIcon thumbnail = null;
+					if (tmpIcon.getIconWidth() > 90 || tmpIcon.getIconHeight() > 90) {
+						thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90, -1, Image.SCALE_DEFAULT));
+					} else {
+						thumbnail = tmpIcon;
+					}
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					try {
+						out = manipulateImage(thumbnail.getImage());
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.content.picture.onlyPictures"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+
+					String fext = Utils.getExtension(files[i]);
+					String mimetype = "image/jpeg";
+					if (fext.equals(Utils.JPEG) || fext.equals(Utils.JPG)) {
+						mimetype = "image/jpeg";
+					} else if (fext.equals(Utils.GIF)) {
+						mimetype = "image/gif";
+					} else if (fext.equals(Utils.TIF) || fext.equals(Utils.TIFF)) {
+						mimetype = "image/tif";
+					}
+
+					prog.setProgress(rb.getString("panel.content.upload.Uploading"), 50);
+					int existingPicId = 0;
+					try {
+						existingPicId = comm.getPictureIdForUnitAndName(unit, files[i].getName());
+					} catch (Exception e) {
+						log.error("Error during getting getPictureIdForUnitAndName");
+					}
+					if (existingPicId == 0) {
+						retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName());
+					} else {
+						/**picture name already exists=>dialog message*/
+						PictureSlimValue picSlimVal = comm.getPicture(existingPicId);
+						retInt = picSlimVal.getPictureId();
+						DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, bty, out.toByteArray());
+						int frameHeight = 180;
+						int frameWidth = 250;
+						saveDialog.setSize(frameWidth, frameHeight);
+						saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
+						saveDialog.setModal(true);
+						saveDialog.setVisible(true);
+
+					}
+					setPictureId(retInt);
+				} catch (Exception exe) {
+					log.error("Error during the upload of the picture " + files[i].getName(), exe);
+				} finally {
+					prog.setProgress(rb.getString("panel.content.upload.Finished"), 100);
+					prog.dispose();
+				}
+			}
 		}
 	}
 
@@ -474,6 +498,8 @@ public class PanPicture extends JPanel {
 			public void actionPerformed(ActionEvent ae) {
 				loadPreview(new Integer(ae.getActionCommand()).intValue());
 				btnEdit.setEnabled(true);
+				btnPreview.setEnabled(true);
+				btnPreview.setText("");
 			}
 		});
 		int frameHeight = 500;

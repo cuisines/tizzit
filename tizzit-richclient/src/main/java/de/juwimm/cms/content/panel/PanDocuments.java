@@ -61,6 +61,7 @@ import de.juwimm.cms.content.frame.helper.DocumentFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.gui.FrmProgressDialog;
+import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.gui.table.DocumentTableModel;
 import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.util.Communication;
@@ -235,6 +236,8 @@ public class PanDocuments extends JPanel {
 		this.add(cboRegion, BorderLayout.NORTH);
 		this.add(getViewSelectPan(), BorderLayout.WEST);
 		scrollPane.getViewport().add(tblDocuments, null);
+		scrollPane.setTransferHandler(new FileTransferHandler(this));
+
 	}
 
 	private void loadThumbs(Integer unit) {
@@ -391,55 +394,69 @@ public class PanDocuments extends JPanel {
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File[] files = fc.getSelectedFiles();
-			if ((files != null) && (files.length > 0)) {
-				for (int i = (files.length - 1); i >= 0; i--) {
-					File file = files[i];
-
-					FrmProgressDialog prog = new FrmProgressDialog(Messages.getString("panel.content.documents.addDocument"), Messages.getString("panel.content.upload.ParseFile"), 100);
-					prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-					try {
-						String fext = Utils.getExtension(file);
-
-						String mimetype = Utils.getMimeType4Extension(fext);
-						if (mimetype.equals("")) {
-							mimetype = "application/octet-stream";
-						}
-						prog.setProgress(Messages.getString("panel.content.upload.Uploading"), 50);
-						int existingDocId = comm.getDocumentIdForNameAndUnit(file.getName(), unit);
-						//this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
-						if (!isDataActualization) {
-							if (existingDocId == 0) {
-								this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
-							} else {
-								DlgSaveDocument saveDialog = new DlgSaveDocument(file, unit, file.getName(), mimetype, existingDocId);
-								int frameHeight = 180;
-								int frameWidth = 250;
-								saveDialog.setSize(frameWidth, frameHeight);
-								saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
-								saveDialog.setModal(true);
-								saveDialog.setVisible(true);
-							}
-						} else {
-							if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
-								this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
-							} else if ((existingDocId != 0) && (!file.getName().equalsIgnoreCase(selectedDocName))) {
-								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("dialog.saveDocument.imposibleToOverwrite"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
-							}
-						}
-
-					} catch (Exception exe) {
-						log.error("Error upload document " + file.getName(), exe);
-					} finally {
-						prog.setProgress(Messages.getString("panel.content.upload.Finished"), 100);
-						prog.dispose();
-						prog.setCursor(Cursor.getDefaultCursor());
-					}
-				}
-			}
+			uploadFiles(files, unit, documentId);
 			Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
 		}
 		this.setCursor(Cursor.getDefaultCursor());
+	}
+
+	/**
+	 *
+	 * @param files
+	 * @param unit
+	 * @param documentId
+	 */
+	public void uploadFiles(File[] files, int unit, Integer documentId) {
+		if ((files != null) && (files.length > 0)) {
+			for (int i = (files.length - 1); i >= 0; i--) {
+				File file = files[i];
+
+				FrmProgressDialog prog = new FrmProgressDialog(Messages.getString("panel.content.documents.addDocument"), Messages.getString("panel.content.upload.ParseFile"), 100);
+				prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+				try {
+					String fext = Utils.getExtension(file);
+
+					String mimetype = Utils.getMimeType4Extension(fext);
+					if (mimetype.equals("")) {
+						mimetype = "application/octet-stream";
+					}
+					prog.setProgress(Messages.getString("panel.content.upload.Uploading"), 50);
+					int existingDocId = comm.getDocumentIdForNameAndUnit(file.getName(), unit);
+					//this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+					if (!isDataActualization) {
+						if (existingDocId == 0) {
+							this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+						} else {
+							DlgSaveDocument saveDialog = new DlgSaveDocument(file, unit, file.getName(), mimetype, existingDocId);
+							int frameHeight = 180;
+							int frameWidth = 250;
+							saveDialog.setSize(frameWidth, frameHeight);
+							saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
+							saveDialog.setModal(true);
+							saveDialog.setVisible(true);
+						}
+					} else {
+						if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
+							this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+						} else if ((existingDocId != 0) && (!file.getName().equalsIgnoreCase(selectedDocName))) {
+							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("dialog.saveDocument.imposibleToOverwrite"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+						}
+					}
+
+				} catch (Exception exe) {
+					log.error("Error upload document " + file.getName(), exe);
+				} finally {
+					prog.setProgress(Messages.getString("panel.content.upload.Finished"), 100);
+					prog.dispose();
+					prog.setCursor(Cursor.getDefaultCursor());
+				}
+			}
+		}
+	}
+
+	public void refreshList() {
+		loadThumbs(((CboModel) this.cboRegion.getSelectedItem()).getRegionId());
 	}
 
 	public Integer getDocumentId() {
