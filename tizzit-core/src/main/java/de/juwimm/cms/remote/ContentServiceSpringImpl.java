@@ -33,14 +33,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.Map.Entry;
 import java.util.zip.GZIPOutputStream;
+
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
@@ -49,6 +53,7 @@ import org.w3c.dom.Node;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.common.Constants.ResourceUsageState;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
@@ -70,6 +75,8 @@ import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
+import de.juwimm.cms.search.beans.SearchengineService;
+import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
  * @see de.juwimm.cms.remote.ContentServiceSpring
@@ -79,7 +86,7 @@ import de.juwimm.cms.vo.ViewDocumentValue;
 public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	private static Log log = LogFactory.getLog(ContentServiceSpringImpl.class);
 	public static final byte MAX_NO_OF_CONTENT_VERSIONS_PER_PAGE = 10;
-
+	
 	public class DocumentCountWrapper {
 		private HashMap<Integer, Integer> deltaDocuments = null;
 
@@ -1332,56 +1339,59 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected Integer handleGetDocumentIdForNameAndUnit(String name, Integer unitId) throws Exception {
 		return getDocumentHbmDao().getIdForNameAndUnit(name, unitId);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected List handleGetUnusedResources4Unit(Integer unitId) throws Exception {
-		List result = new ArrayList();
-		List<Integer> usedDocuments = new ArrayList<Integer>();
-		List<Integer> usedPictures = new ArrayList<Integer>();
+	protected Map handleGetResources4Unit(Integer unitId,
+			boolean usedDoc, boolean unusedDoc,
+			boolean usedPict, boolean unusedPict) throws Exception {
+		Map<Object,ResourceUsageState> result = new HashMap<Object, ResourceUsageState>();
+		Map<Integer,ResourceUsageState> documents = new HashMap<Integer,ResourceUsageState>();
+		Map<Integer,ResourceUsageState> pictures = new HashMap<Integer,ResourceUsageState>();
 
 		DocumentSlimValue[] dbDocuments = this.getAllSlimDocuments4Unit(unitId);
 		PictureSlimstValue[] dbPictures = this.getAllSlimPictures4Unit(unitId);
 
-		List<ContentVersionHbm> contentVersions = getAllContentVersions4Unit(unitId);
-		getUsedResourcesFromContentVersions(contentVersions, usedDocuments, usedPictures);
+		Map<Integer,List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(unitId);
+		getUsedResourcesFromContentVersions(contentVersions, documents, pictures);
 
-		result.addAll(new UnusedResourceComparer<DocumentSlimValue>() {
+		result.putAll(new UnusedResourceComparer<DocumentSlimValue>() {
 			@Override
 			Integer getId(DocumentSlimValue resource) {
 				return resource.getDocumentId();
 			}
-		}.extract(dbDocuments, usedDocuments));
+		}.extract(dbDocuments, documents,usedDoc,unusedDoc));
 
-		result.addAll(new UnusedResourceComparer<PictureSlimstValue>() {
+		result.putAll(new UnusedResourceComparer<PictureSlimstValue>() {
 			@Override
 			Integer getId(PictureSlimstValue resource) {
 				return resource.getPictureId();
 			}
-		}.extract(dbPictures, usedPictures));
+		}.extract(dbPictures, pictures,usedPict,unusedPict));
 
 		return result;
 	}
 
-	private List<ContentVersionHbm> getAllContentVersions4Unit(Integer unitId) {
-		List<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
+	private Map<Integer,List<ContentVersionHbm>> getAllContentVersions4Unit(Integer unitId) {
+		Map<Integer,List<ContentVersionHbm>> contentVersions= new HashMap<Integer,List<ContentVersionHbm>>();
 		List<ViewComponentHbm> rootViewDocuments = (List<ViewComponentHbm>) getViewComponentHbmDao().findRootViewComponents4Unit(unitId);
+		
 		if (rootViewDocuments != null && rootViewDocuments.size() > 0) {
 			for (ViewComponentHbm root : rootViewDocuments) {
-				contentVersions.addAll(getContentVersionsRecursive(root));
+				contentVersions.putAll(getContentVersionsRecursive(root));
 			}
 		}
 		return contentVersions;
 	}
 
-	private List<ContentVersionHbm> getContentVersionsRecursive(ViewComponentHbm root) {
+	private Map<Integer,List<ContentVersionHbm>> getContentVersionsRecursive(ViewComponentHbm root) {
 
-		List<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
-		contentVersions.addAll(getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
+		Map<Integer,List<ContentVersionHbm>> contentVersions= new HashMap<Integer,List<ContentVersionHbm>>();
+		contentVersions.put(root.getViewComponentId(),(List<ContentVersionHbm>) getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
 		Collection children = root.getChildren();
 		if (children != null && children.size() > 0) {
 			for (Object child : children) {
-				contentVersions.addAll(getContentVersionsRecursive((ViewComponentHbm) child));
+				contentVersions.putAll(getContentVersionsRecursive((ViewComponentHbm) child));				
 			}
 		}
 
@@ -1396,26 +1406,31 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	private abstract class UnusedResourceComparer<T> {
 		abstract Integer getId(T resource);
 
-		@SuppressWarnings("unchecked")
-		public List extract(T[] resources, List<Integer> used) {
-			List unusedResources = new ArrayList();
+		public Map<T,ResourceUsageState> extract(T[] resources, Map<Integer,ResourceUsageState> used, boolean usedRes, boolean unusedRes) {
+			Map<T,ResourceUsageState> resourceResult = new HashMap<T, ResourceUsageState>();
 			if (resources != null && resources.length > 0) {
 				boolean emptyUsedResources = false;
 				if (used == null || used.size() == 0) {
 					emptyUsedResources = true;
 				}
 				for (T resource : resources) {
-					if (emptyUsedResources) {
-						unusedResources.add(resource);
+					if (emptyUsedResources && unusedRes) {
+						resourceResult.put(resource,ResourceUsageState.Unsused);
 						continue;
 					}
-
-					if (!used.contains(this.getId(resource))) {
-						unusedResources.add(resource);
+					Integer resourceId = this.getId(resource);
+					if (!used.containsKey(resourceId)) {
+						if(unusedRes){
+							resourceResult.put(resource,ResourceUsageState.Unsused);
+						}
+					}else{						
+						if(usedRes){
+							resourceResult.put(resource,used.get(resourceId));
+						}
 					}
 				}
 			}
-			return unusedResources;
+			return resourceResult;
 		}
 	}
 
@@ -1425,21 +1440,51 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @param documents - list of used documents
 	 * @param pictures - list of used pictures
 	 */
-	private void getUsedResourcesFromContentVersions(List<ContentVersionHbm> contentVersions, List<Integer> documents, List<Integer> pictures) {
+	private void getUsedResourcesFromContentVersions(Map<Integer,List<ContentVersionHbm>> contentVersions, Map<Integer, ResourceUsageState> documents, Map<Integer, ResourceUsageState> pictures) {
 		if (contentVersions == null || contentVersions.size() == 0) { return; }
-		for (ContentVersionHbm contentVersion : contentVersions) {
-			String content = contentVersion.getText();
-			if (content != null) {
-				try {
-					Document document = XercesHelper.string2Dom(content);
-					getResourcesFromContentVersion(document, documents, "document", "src");
-					getResourcesFromContentVersion(document, pictures, "picture", "description");
-				} catch (Exception e) {
-					log.info("could not parse used ressources: " + e.getMessage());
-					if (log.isDebugEnabled()) log.debug("Parsing Error", e);
+				
+		for (Entry<Integer,List<ContentVersionHbm>> contentVersionGroup : contentVersions.entrySet()) {
+			Integer maxVersion = 0;
+			ContentVersionHbm publishContentVersion=null;
+			
+			//search max revision
+			for(ContentVersionHbm contentVersion:contentVersionGroup.getValue()){
+				if(contentVersion.getVersion().equals(Constants.PUBLISH_VERSION)){
+					publishContentVersion = contentVersion;
+					break;
+				}
+				int versionNumber = Integer.decode(contentVersion.getVersion());
+				if(versionNumber > maxVersion){
+					maxVersion = versionNumber;
 				}
 			}
-		}
+			
+			if(publishContentVersion!=null){
+				publishContentVersion.setVersion(Integer.toString(++maxVersion));
+			}
+			for(ContentVersionHbm contentVersion:contentVersionGroup.getValue()){
+				String content = contentVersion.getText();
+				ResourceUsageState state=null;
+				Integer currentVersion = Integer.decode(contentVersion.getVersion());
+				if(currentVersion<maxVersion){
+					state = ResourceUsageState.UsedInOlderVersions;
+				}else if(currentVersion==maxVersion){
+					state = ResourceUsageState.Used;
+				}
+				if (content != null) {
+					try {
+						Document domDocument = XercesHelper.string2Dom(content);
+						//tags from content that represent documents and pictures
+						getResourcesFromContentVersion(domDocument,state, documents, "document", "src");
+						getResourcesFromContentVersion(domDocument,state, pictures, "picture", "description");
+						getResourcesFromContentVersion(domDocument,state, pictures, "image", "src");
+					} catch (Exception e) {
+						log.info("could not parse used ressources: " + e.getMessage());
+						if (log.isDebugEnabled()) log.debug("Parsing Error", e);
+					}
+				}
+			}
+		}			
 	}
 
 	private List<ContentVersionHbm> getContentVersionUsingResource(List<ContentVersionHbm> contentVersions, Integer resourceId, String type, String attributeNameId) {
@@ -1465,15 +1510,29 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	/**
 	 * 
 	 * @param contentVersionNode xml node
+	 * @param state 
 	 * @param resources used resources list ids
 	 * @param type tag name of the resource
 	 * @param attributeName attribute that indicates the id of the resource
 	 */
-	private void getResourcesFromContentVersion(Node contentVersionNode, List<Integer> resources, String type, String attributeName) {
+	private void getResourcesFromContentVersion(Node contentVersionNode, ResourceUsageState state, Map<Integer, ResourceUsageState> resources, String type, String attributeName) {
 		Iterator it = XercesHelper.findNodes(contentVersionNode, "//" + type);
 		while (it.hasNext()) {
 			Node node = (Node) it.next();
-			resources.add(Integer.parseInt(node.getAttributes().getNamedItem(attributeName).getNodeValue()));
+			Node attributeNode = node.getAttributes().getNamedItem(attributeName);
+			if(attributeNode == null){
+				continue;
+			}
+			Integer resourceId = Integer.parseInt(attributeNode.getNodeValue());
+			
+			if(resources.containsKey(resourceId)){
+				//if state is Used I don't care if they are used in older version too
+				//State Used is powerfull than UsedInOlderVersions
+				if(resources.get(resourceId) == ResourceUsageState.Used){
+					continue;
+				}
+			}
+			resources.put(resourceId, state);
 		}
 	}
 

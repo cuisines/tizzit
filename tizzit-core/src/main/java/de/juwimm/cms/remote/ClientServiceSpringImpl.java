@@ -23,6 +23,7 @@ package de.juwimm.cms.remote;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -1845,11 +1846,6 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected List handleGetUnusedResources4Unit(Integer unitId) throws Exception {
-		return getContentServiceSpring().getUnusedResources4Unit(unitId);
-	}
-
-	@Override
 	protected ViewComponentValue[] handleCopyViewComponentsToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) throws Exception {
 		return getViewServiceSpring().copyViewComponentsToParent(parentId, viewComponentsIds, position);
 
@@ -1895,6 +1891,14 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected void handleUpdatePictureThumbnailPopup(boolean withThumbnailPopup, Integer pictureId) throws Exception {
 		getContentServiceSpring().updatePictureThumbnailPopup(withThumbnailPopup, pictureId);
 
+	}
+
+	
+	@Override
+	protected Map handleGetResources4Unit(Integer unitId,
+			boolean usedDocuments, boolean unusedDocuments,
+			boolean usedPictures, boolean unusedPictures) throws Exception {
+		return getContentServiceSpring().getResources4Unit(unitId, usedDocuments, unusedDocuments, usedPictures, unusedPictures);
 	}
 
 }
