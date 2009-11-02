@@ -2,6 +2,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:servlet="http://cocoon.apache.org/schema/servlet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://cocoon.apache.org/schema/servlet http://cocoon.apache.org/schema/servlet/cocoon-servlet-1.0.xsd">
   <bean class="org.apache.cocoon.sitemap.SitemapServlet" name="org.tizzit.tizzit-cocoon22.service">
-    <servlet:context context-path="blockcontext:/tizzit-cocoon22-components/" mount-path="/" />
+    <servlet:context context-path="blockcontext:/tizzit-cocoon-block/" mount-path="/" />
   </bean>
 </beans>
