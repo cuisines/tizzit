@@ -9,7 +9,7 @@
     <relativePath>../tizzit/pom.xml</relativePath>
   </parent>
 
-  <name>tizzit Cocoon 2.2 Web Application</name>
+  <name>tizzit Cocoon Web Application</name>
   <groupId>org.tizzit</groupId>
   <artifactId>tizzit-web-cocoon22</artifactId>
   <version>3.0.4-SNAPSHOT</version>

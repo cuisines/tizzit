@@ -45,7 +45,7 @@ import de.juwimm.cms.vo.SiteValue;
  * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id$
- * @since tizzit-web-cocoon22 02.09.2009
+ * @since tizzit-web-cocoon 02.09.2009
  */
 public class TizzitPropertyModule extends AbstractJXPathModule implements InputModule, ThreadSafe {
 	private static final Log log = LogFactory.getLog(TizzitPropertyModule.class);
@@ -175,7 +175,7 @@ public class TizzitPropertyModule extends AbstractJXPathModule implements InputM
 			prop.load(is);
 			prop.setProperty("cmsTemplatesPath", prop.get("tizzitPropertiesBeanSpring.cmsTemplatesPath").toString());
 			prop.setProperty("externalLibPath", prop.get("tizzitPropertiesBeanSpring.externalLib.path").toString());
-			
+
 		} catch (Exception exe) {
 			log.warn("Unable to load props from \"" + PROPERTIES_FILENAME + "\"!");
 		}

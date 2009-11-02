@@ -10,31 +10,29 @@
     <parameter name="transformer-factory" value="net.sf.saxon.TransformerFactoryImpl" />
   </component>
   <markup-languages>
-      <xsp-language logger="core.markup.xsp" name="xsp">
-          <parameter name="prefix" value="xsp"/>
-          <parameter name="uri" value="http://apache.org/xsp"/>
-          <!--+
+    <xsp-language logger="core.markup.xsp" name="xsp">
+      <parameter name="prefix" value="xsp" />
+      <parameter name="uri" value="http://apache.org/xsp" />
+      <!--+
         | These two flags determine whether XSP expression interpolation
         | shall take place in attribute values and text nodes, respectively.
         | The syntax {#expr} has been chosen that a clash with existing
         | XSPs and logicsheets is unlikely.  The possibility to switch these
         | features off is here only for safety.
         +-->
-          <parameter name="attr-interpolation" value="true"/>
-          <parameter name="text-interpolation" value="true"/>
-          <!--+
+      <parameter name="attr-interpolation" value="true" />
+      <parameter name="text-interpolation" value="true" />
+      <!--+
         | Properties for the java language
         +-->
-          <target-language name="java">
-				   <builtin-logicsheet>
-				      <parameter name="prefix" value="esql"/>
-				      <parameter name="uri" value="http://apache.org/cocoon/SQL/v2"/>
-				                    <parameter name="href"
-				                        value="resource://org/apache/cocoon/components/language/markup/xsp/java/esql.xsl"
-				                    />
-				                </builtin-logicsheet>
-				                <!--..... End configuration from 'esql' -->
-								       </target-language>
-								        </xsp-language>
-								    </markup-languages>
+      <target-language name="java">
+        <builtin-logicsheet>
+          <parameter name="prefix" value="esql" />
+          <parameter name="uri" value="http://apache.org/cocoon/SQL/v2" />
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/esql.xsl" />
+        </builtin-logicsheet>
+        <!--..... End configuration from 'esql' -->
+      </target-language>
+    </xsp-language>
+  </markup-languages>
 </components>

@@ -596,13 +596,13 @@
 				</executions>
 			</plugin>
 			 -->
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.0-beta-9.1</version>
-        <configuration>
-          <workingDirectory>${basedir}/target/checkout</workingDirectory>
-          <useReleaseProfile>true</useReleaseProfile>
-          <connectionUrl>scm:svn:https://tizzit.googlecode.com/svn/trunk/tizzit</connectionUrl>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.0-beta-9.1</version>
+				<configuration>
+					<workingDirectory>${basedir}/target/checkout</workingDirectory>
+					<useReleaseProfile>true</useReleaseProfile>
+					<connectionUrl>scm:svn:https://tizzit.googlecode.com/svn/trunk/tizzit</connectionUrl>
 
 					<!--
 						override default "clean, verify" preparationGoals with just "install":
@@ -614,9 +614,8 @@
 					<arguments>-Dmaven.test.skip=true</arguments>
 
 
-        </configuration>
-      </plugin>
-
+				</configuration>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -661,6 +660,19 @@
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>2.2</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.1.1</version>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -675,6 +687,7 @@
 		<module>../tizzit-xmlsearch-xindice</module>
 		<module>../tizzit-webstart</module>
 
+		<module>../tizzit-cocoon-components</module>
 		<module>../tizzit-cocoon-block</module>
 		<module>../tizzit-web-cocoon22</module>
 
@@ -685,7 +698,8 @@
 		<module>../tizzit-plugin-testcontainer</module>
 	</modules>
 	<properties>
-		<tizzit.version>3.0.4-SNAPSHOT</tizzit.version><!-- -SNAPSHOT -->
+		<tizzit.version>3.0.4-SNAPSHOT</tizzit.version>
+		<!-- -SNAPSHOT -->
 
 		<!-- JIRA: TIZZIT-249 - The version is used in the pom.xml files of tizzit-richclient and tizzit-web-admin. -->
 		<javax.activation.version>1.0.2</javax.activation.version>
@@ -742,9 +756,7 @@
 					Change driver jar for appropriate database For MySQL use:
 					mysql-connector-java-X-bin.jar For Hypersonic use: hsqldb.jar
 				-->
-				<jdbc.driver.jar>
-					/path/to/hsqldb/hsqldb.jar
-				</jdbc.driver.jar>
+				<jdbc.driver.jar> /path/to/hsqldb/hsqldb.jar </jdbc.driver.jar>
 				<!--
 					Change driver for appropriate database For MySQL use:
 					com.mysql.jdbc.Driver For Hypersonic use: org.hsqldb.jdbcDriver For
@@ -759,9 +771,7 @@
 					com.progress.sql.jdbc.JdbcProgressDriver For Derby use:
 					org.apache.derby.jdbc.EmbeddedDriver
 				-->
-				<jdbc.driver>
-					oracle.jdbc.driver.OracleDriver
-				</jdbc.driver>
+				<jdbc.driver> oracle.jdbc.driver.OracleDriver </jdbc.driver>
 				<jdbc.url>jdbc:oracle:thin:@localhost:1521:XE</jdbc.url>
 				<jdbc.username>system</jdbc.username>
 				<jdbc.password>oracle</jdbc.password>
@@ -790,20 +800,14 @@
 					Progress use:
 					org.jboss.resource.adapter.jdbc.vendor.DummyExceptionSorter
 				-->
-				<jdbc.exception.sorter>
-					org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
-				</jdbc.exception.sorter>
+				<jdbc.exception.sorter> org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter </jdbc.exception.sorter>
 			</properties>
 			<build>
 				<pluginManagement>
 					<plugins>
 						<plugin>
-							<groupId>
-								org.andromda.maven.plugins
-							</groupId>
-							<artifactId>
-								andromdapp-maven-plugin
-							</artifactId>
+							<groupId> org.andromda.maven.plugins </groupId>
+							<artifactId> andromdapp-maven-plugin </artifactId>
 							<version>3.2</version>
 							<!--
 								provides the injection of the script wrapper support into the
@@ -814,14 +818,10 @@
 								</executions>
 							-->
 							<configuration>
-								<scriptWrapper>
-									org.andromda.scriptwrappers.GroovyScriptWrapper
-								</scriptWrapper>
+								<scriptWrapper> org.andromda.scriptwrappers.GroovyScriptWrapper </scriptWrapper>
 								<locations>
 									<location>
-										<rootPath>
-											${pom.basedir}/src/main/java
-										</rootPath>
+										<rootPath> ${pom.basedir}/src/main/java </rootPath>
 										<!--
 											adjust these to include or exclude specific files, by default
 											all files found in the rootPath are considered <includes>

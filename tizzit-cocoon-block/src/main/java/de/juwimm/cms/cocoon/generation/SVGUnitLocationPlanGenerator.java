@@ -23,7 +23,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.xml.transform.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -41,6 +45,7 @@ import org.apache.cocoon.generation.AbstractGenerator;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
+import org.tizzit.cocoon.generic.sax.SVGMarkContentHandler;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,10 +54,9 @@ import org.xml.sax.SAXException;
 
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
-import de.juwimm.cms.cocoon.sax.SVGMarkContentHandler;
 
 /**
- * 
+ *
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
  * company Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$

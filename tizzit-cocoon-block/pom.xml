@@ -9,10 +9,15 @@
 	</parent>
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-cocoon-block</artifactId>
-	<name>tizzit Cocoon 2.2 Components / Block</name>
+	<name>tizzit Cocoon Block</name>
 	<version>3.0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<dependencies>
+		<dependency>
+			<groupId>org.tizzit</groupId>
+			<artifactId>tizzit-cocoon-components</artifactId>
+			<version>3.0.4-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-core</artifactId>
@@ -479,6 +484,10 @@
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<version>2.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

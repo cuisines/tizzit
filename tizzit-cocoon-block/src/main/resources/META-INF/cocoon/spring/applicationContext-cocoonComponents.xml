@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p" xmlns:pipeline="http://cocoon.apache.org/schema/pipeline" xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd     http://cocoon.apache.org/schema/pipeline http://cocoon.apache.org/schema/pipeline/cocoon-pipeline-1.0.xsd">
 
+    <bean class="org.tizzit.cocoon.generic.transformation.ContentIncludeTransformer" name="org.apache.cocoon.transformation.Transformer/contentInclude" scope="prototype">
+        <property name="defaultEncoding">
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="org.apache.cocoon.configuration.Settings" />
+                <property name="propertyPath" value="containerEncoding" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean class="org.tizzit.cocoon.generic.transformation.TidyHTMLTransformer" name="org.apache.cocoon.transformation.Transformer/htmlToXHTML" scope="prototype">
+        <property name="defaultEncoding">
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="org.apache.cocoon.configuration.Settings" />
+                <property name="propertyPath" value="containerEncoding" />
+            </bean>
+        </property>
+        <property name="properties">
+            <props>
+                <prop key="jtidy-config">resource://jtidy.properties</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean class="org.tizzit.cocoon.generic.transformation.UtilTransformer" name="org.apache.cocoon.transformation.Transformer/jutil" scope="prototype" />
+    <!--<bean class="org.tizzit.cocoon.generic.serialization.UJACPdfSerializer" name="org.apache.cocoon.serialization.Serializer/ujac" scope="prototype" />-->
+    <bean class="org.tizzit.cocoon.generic.acting.MultiParamResourceExistsAction" name="org.apache.cocoon.acting.Action/multiParamResourceExistsAction" scope="prototype" />
+
+    <bean class="org.tizzit.cocoon.generic.generation.XMLRequestParserGenerator" name="org.apache.cocoon.generation.Generator/XMLRequestParserGenerator" scope="prototype">
+        <property name="parser" ref="org.apache.cocoon.core.xml.SAXParser" />
+        <property name="defaultEncoding">
+            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
+                <property name="targetBeanName" value="org.apache.cocoon.configuration.Settings" />
+                <property name="propertyPath" value="containerEncoding" />
+            </bean>
+        </property>
+    </bean>
+
     <!-- Property examples:
         <property name="myServiceBeanName" ref="myService" />
 

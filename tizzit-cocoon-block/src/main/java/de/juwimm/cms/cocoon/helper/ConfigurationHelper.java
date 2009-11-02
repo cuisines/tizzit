@@ -34,9 +34,13 @@ import org.apache.log4j.Logger;
  * read the configuration of the Action from the sitemap
  * @version $Id$
  */
-public class ConfigurationHelper {
+public class ConfigurationHelper extends org.tizzit.cocoon.generic.helper.ConfigurationHelper {
 	private static Logger log = Logger.getLogger(ConfigurationHelper.class);
 	private static Properties props = null;
+
+	public ConfigurationHelper() {
+		super();
+	}
 
 	public static String getDCFUrl(String siteShort) {
 		if (props == null) {
@@ -68,52 +72,4 @@ public class ConfigurationHelper {
 		return siteShort;
 	}
 
-	public static String getDsJndiName(Configuration config) throws ConfigurationException {
-		String dsJndiName = new String();
-
-		try {
-			dsJndiName = config.getChild("dsJndiName").getValue();
-		} catch (ConfigurationException e) {
-			log.error(e);
-		}
-		if (dsJndiName.length() == 0) throw new ConfigurationException("dsJndiName in sitemap not found or empty");
-
-		return dsJndiName;
-	}
-
-	public static String getClassName(Configuration config) throws ConfigurationException {
-		String classname = new String();
-
-		try {
-			classname = config.getChild("classname").getValue();
-		} catch (ConfigurationException e) {
-			log.error(e);
-		}
-
-		if (classname.length() == 0) throw new ConfigurationException("classname in sitemap not found or empty");
-
-		return classname;
-	}
-
-	public static String[] getJarNames(Configuration config) throws ConfigurationException {
-		String jarNames[] = null;
-		Configuration cfg = config.getChild("classpath");
-
-		if (cfg != null) {
-			Configuration[] cfgJarNames = cfg.getChildren("jar");
-
-			jarNames = new String[cfgJarNames.length];
-			for (int i = 0; i < cfgJarNames.length; i++) {
-				try {
-					jarNames[i] = cfgJarNames[i].getValue();
-				} catch (ConfigurationException e) {
-					log.error("jarNames[" + i + "] ", e);
-				}
-			}
-		}
-
-		if (jarNames.length == 0) throw new ConfigurationException("no jarNames in Configuration found");
-
-		return jarNames;
-	}
 }

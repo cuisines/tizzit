@@ -3,7 +3,7 @@
   <distributable />
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value> classpath:applicationContext-base-cocoon22.xml </param-value>
+    <param-value> classpath:applicationContext-base-cocoon.xml </param-value>
   </context-param>
 
   <!-- Servlet Filters ================================================ -->
@@ -132,8 +132,6 @@
   -->
   <servlet>
     <servlet-name>DispatcherServlet</servlet-name>
-    <!--<servlet-class>org.apache.cocoon.tools.rcl.wrapper.servlet.ReloadingServlet</servlet-class>-->
-    <!--<servlet-class>org.tizzit.classloading.ReloadingServlet</servlet-class>-->
     <servlet-class>org.tizzit.core.classloading.ExternalLibClassLoaderInjectServlet</servlet-class>
     <init-param>
       <param-name>servlet-class</param-name>

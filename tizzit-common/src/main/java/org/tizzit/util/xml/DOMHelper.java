@@ -1,4 +1,4 @@
-package de.juwimm.util.xml.ns;
+package org.tizzit.util.xml;
 
 import java.io.File;
 import java.io.InputStream;
@@ -42,7 +42,10 @@ import org.xml.sax.helpers.DefaultHandler;
  * Helperclass for XML/XPath Functionality.
  * <p>Copyright: Copyright JuwiMacMillan Group GmbH (c) 2008</p>
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
+ * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+ * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id$
+ * @since tizzit-common 02.11.2009
  */
 public final class DOMHelper {
 	private static Logger log = Logger.getLogger(DOMHelper.class);
@@ -267,9 +270,9 @@ public final class DOMHelper {
 	/**
 	 * This ContentHandler is to remove the xml Header. The OMIT_XML_DECLARATION does not work actually.
 	 * @author <a href="mailto:j2ee@juwimm.com">Sascha-Matthias Kulawik</a>
-	 * company Juwi|MacMillan Group GmbH, Walsrode, Germany
+	 * company Juwi MacMillan Group GmbH, Walsrode, Germany
 	 * @version $Id$
-	 * @since juwimm-linde-cocoon22 28.05.2008
+	 * @since tizzit-common 02.11.2009
 	 */
 	public static class OmitXmlDeclarationContentHandler extends DefaultHandler implements ContentHandler {
 		private ContentHandler parent;

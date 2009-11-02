@@ -158,7 +158,7 @@
       </map:serializer>
       <map:serializer logger="sitemap.serializer.svg2png" mime-type="image/png" name="svg2png" src="org.apache.cocoon.serialization.SVGSerializer" />
       <map:serializer logger="sitemap.serializer.fo2pdf" mime-type="application/pdf" name="fo2pdf" src="org.apache.cocoon.serialization.FOPSerializer">
-        <map:serializer logger="sitemap.serializer.ujac" mime-type="application/pdf" name="ujac" src="de.juwimm.cms.cocoon.serialization.UJACPdfSerializer">
+        <map:serializer logger="sitemap.serializer.ujac" mime-type="application/pdf" name="ujac" src="org.tizzit.cocoon.generic.serialization.UJACPdfSerializer">
           <encoding>utf-8</encoding>
           <support-toc>true</support-toc>
         </map:serializer>

@@ -18,16 +18,19 @@ package de.juwimm.cms.cocoon.acting;
 import org.apache.avalon.framework.thread.SingleThreaded;
 
 /**
- * 
+ *
  * @author toerberj
- * 
+ *
  * @see de.juwimm.cms.cocoon.acting.GenericAction
- * 
+ *
  * AbstractAction implements Action, Component, LogEnabled
  * AbstractConfigurableAction implements Action, Component, LogEnabled, Configurable
- * 
+ *
  * we already have some Actions which implement Interface SingleThreaded, so we assume we need a GenericAction which also implements SingleThreaded;
- * we also assume that single threaded is enough at the moment; 
+ * we also assume that single threaded is enough at the moment;
+ *
+ * @deprecated Use {@link org.tizzit.cocoon.generic.acting.GenericActionSingleThreaded} instead!
  */
-public class GenericActionSingleThreaded extends GenericAction implements SingleThreaded {
+@Deprecated
+public class GenericActionSingleThreaded extends org.tizzit.cocoon.generic.acting.GenericActionSingleThreaded implements SingleThreaded {
 }
