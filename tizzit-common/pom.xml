@@ -2,11 +2,11 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.tizzit</groupId>
    <artifactId>tizzit-common</artifactId>
-   <version>3.0.5-SNAPSHOT</version>
+   <version>3.0.5</version>
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
-      <version>3.0.5-SNAPSHOT</version>
+      <version>3.0.5</version>
       <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
    <packaging>jar</packaging>

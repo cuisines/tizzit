@@ -7,10 +7,10 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.0.5-SNAPSHOT</version>
+		<version>3.0.5</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
-	<version>3.0.5-SNAPSHOT</version>
+	<version>3.0.5</version>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
