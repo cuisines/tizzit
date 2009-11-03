@@ -18,8 +18,11 @@ import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
@@ -28,7 +31,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -36,13 +41,17 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 
+import org.apache.log4j.Logger;
+
 import de.juwimm.cms.common.Constants.ResourceUsageState;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
+import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.CmsResourcesCellRenderer;
@@ -58,6 +67,7 @@ import de.juwimm.cms.vo.DocumentSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.swing.NoResizeScrollPane;
 
 /**
@@ -65,7 +75,7 @@ import de.juwimm.swing.NoResizeScrollPane;
  * @version $Id$
  */
 public class PanCmsResources extends JPanel implements UnloadablePanel,ReloadablePanel{
-	
+	private static Logger log = Logger.getLogger(PanCmsResources.class);
 	private JTree treeResources;
 	private JPanel detailsPane;
 	private JSplitPane splitPane;
@@ -75,16 +85,18 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	private JLabel nameLabel;
 	private JLabel typeLabel;
 	private JLabel createdLabel;
-	private JLabel sizeLabel;
+	private JLabel resourceStateLabel;
 	
 	private JLabel nameValueLabel;
 	private JLabel typeValueLabel;
 	private JLabel createdValueLabel;
-	private JLabel sizeValueLabel;
+	private JLabel resourceStateValueLabel;
+	private JTable viewComponentsTable;
 	
 	private JPanel treeControlPanel;
 	private JButton deleteResource;
 	private MultiComboBox filterMultiComboBox;
+	private ViewComponentsTableModel viewComponentsTableModel = new ViewComponentsTableModel();
 	
 	public static final String TitleKey = "panCmsResources.title";
 	
@@ -93,18 +105,19 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	PanCmsResources(Communication communication){
 		splitPane = new JSplitPane();
 		treeResources = new JTree();
+		resourceStateValueLabel= new JLabel();
+		resourceStateLabel = new JLabel(rb.getString("panCmsResources.resourceState"));
 		detailsPane = new JPanel();		
 		resourcePanel = new JPanel();
 		nameLabel = new JLabel();
 		typeLabel = new JLabel();
 		createdLabel = new JLabel();
-		sizeLabel = new JLabel();		
 		nameValueLabel = new JLabel();
 		typeValueLabel = new JLabel();
 		createdValueLabel = new JLabel();
-		sizeValueLabel = new JLabel();		
 		treeControlPanel = new JPanel();
 		deleteResource = new JButton();
+		viewComponentsTable = new JTable();
 		this.communication = communication;
 		initLayout();
 		initListeners();
@@ -119,32 +132,8 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 			}
 
 			public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-				try{
-					TreePath path = event.getPath();
-					Object entry = path.getLastPathComponent();				
-					if(entry instanceof UnitTreeNode){
-						UIConstants.setWorker(true);
-						splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						UnitTreeNode unitNode = (UnitTreeNode)entry;
-						unitNode.removeAllChildren();
-						List<Boolean> values = filterMultiComboBox.getValues();
-						Map<Object,ResourceUsageState> resources = (Map<Object,ResourceUsageState>)communication.getResources4Unit(unitNode.getId(),values.get(0),values.get(1),values.get(2),values.get(3));
-						if(resources != null && resources.size() > 0){
-							for(Entry<Object,ResourceUsageState> resource:resources.entrySet()){
-								if(resource.getKey() instanceof DocumentSlimValue){
-									unitNode.add(new DocumentTreeNode((DocumentSlimValue)resource.getKey(),resource.getValue()));
-								}else{
-									unitNode.add(new PictureTreeNode((PictureSlimstValue)resource.getKey(),resource.getValue()));							
-								}
-							}
-							treeModel.nodeStructureChanged(unitNode);
-						}					
-					}
-				}
-				finally{
-					UIConstants.setWorker(false);
-					splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				}
+				TreePath path = event.getPath();
+				refreshNode(path);
 			}			
 		});
 		treeResources.addTreeSelectionListener(new TreeSelectionListener(){
@@ -152,6 +141,7 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 			public void valueChanged(TreeSelectionEvent e) {
 				TreePath path = e.getPath();
 				Object entry = path.getLastPathComponent();
+				
 				if(entry instanceof DocumentTreeNode){
 					updateDocumentDetails((DocumentTreeNode)entry);					
 				}else if(entry instanceof PictureTreeNode){
@@ -221,18 +211,66 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		});
 	}
 
+	private void refreshNode(TreePath path){
+		try{
+			
+			Object entry = path.getLastPathComponent();				
+			if(entry instanceof UnitTreeNode){
+				UIConstants.setWorker(true);
+				splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				UnitTreeNode unitNode = (UnitTreeNode)entry;
+				unitNode.removeAllChildren();
+				List<Boolean> values = filterMultiComboBox.getValues();
+				Map<Object,ResourceUsageState> resources = (Map<Object,ResourceUsageState>)communication.getResources4Unit(unitNode.getId(),values.get(0),values.get(1),values.get(2),values.get(3));
+				if(resources != null && resources.size() > 0){
+					for(Entry<Object,ResourceUsageState> resource:resources.entrySet()){
+						if(resource.getKey() instanceof DocumentSlimValue){
+							unitNode.add(new DocumentTreeNode((DocumentSlimValue)resource.getKey(),resource.getValue()));
+						}else{
+							unitNode.add(new PictureTreeNode((PictureSlimstValue)resource.getKey(),resource.getValue()));							
+						}
+					}							
+				}	
+				treeModel.nodeStructureChanged(unitNode);
+				treeResources.treeDidChange();
+			}
+		}
+		finally{
+			UIConstants.setWorker(false);
+			splitPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+	}
 	public void updateDocumentDetails(DocumentTreeNode entry){
 		DocumentSlimValue value = entry.getValue();
 		nameValueLabel.setText(value.getDocumentName());
 		typeValueLabel.setText(value.getMimeType());
 		createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));
+		resourceStateValueLabel.setText(rb.getString("panCmsResources.state."+entry.getState().getKey()));
+		
+		if(entry.getState() != ResourceUsageState.Unsused){
+			Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>)communication.getDocumentUsage(value.getDocumentId());
+			this.viewComponentsTableModel.setRows(viewComponentValues);			
+			this.viewComponentsTable.setModel(viewComponentsTableModel);
+			this.viewComponentsTable.setVisible(true);
+		}else{
+			this.viewComponentsTable.setVisible(false);
+		}
 	}
 	
 	public void updatePictureDetails(PictureTreeNode entry){
 		PictureSlimstValue value = entry.getValue();
 		nameValueLabel.setText(value.getPictureName());
 		typeValueLabel.setText(value.getMimeType());
-		createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));		
+		createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));
+		resourceStateValueLabel.setText(rb.getString("panCmsResources.state."+entry.getState().getKey()));
+		if(entry.getState() != ResourceUsageState.Unsused){
+			Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>)communication.getPictureUsage(value.getPictureId());
+			this.viewComponentsTableModel.setRows(viewComponentValues);			
+			this.viewComponentsTable.setModel(new TableSorter(viewComponentsTableModel, this.viewComponentsTable.getTableHeader()));
+			this.viewComponentsTable.setVisible(true);
+		}else{
+			this.viewComponentsTable.setVisible(false);
+		}
 	}
 	
 	public void emptyDetails(){		
@@ -244,6 +282,11 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	private void initLayout(){
 		this.setLayout(new BorderLayout());
 		this.setSize(636, 271);
+				
+		viewComponentsTable.setModel(viewComponentsTableModel);
+		JScrollPane tableScrollPane =new JScrollPane(viewComponentsTable);
+		viewComponentsTable.setFillsViewportHeight(true);
+
 		treeResources.setAutoscrolls(true);		
 		detailsPane.setLayout(new BorderLayout());
 		detailsPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 3, 3));
@@ -258,21 +301,20 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		resourcePanel.add(nameLabel,new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(nameValueLabel,new GridBagConstraints(1, 0, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		
-//		resourcePanel.add(sizeLabel,new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-//		resourcePanel.add(sizeValueLabel,new GridBagConstraints(1, 1, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
+		resourcePanel.add(resourceStateLabel,new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
+		resourcePanel.add(resourceStateValueLabel,new GridBagConstraints(1, 1, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		
 		resourcePanel.add(typeLabel,new GridBagConstraints(0, 2, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(typeValueLabel,new GridBagConstraints(1, 2, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		
 		resourcePanel.add(createdLabel,new GridBagConstraints(0, 3, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(createdValueLabel,new GridBagConstraints(1, 3, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-		
-		resourcePanel.add(new JPanel(),new GridBagConstraints(0, 4, 2, 1, 1.0, 1.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));		
+		resourcePanel.add(new JLabel(rb.getString("panCmsResources.usingViewComponents.label")),new GridBagConstraints(0, 4, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
+		resourcePanel.add(tableScrollPane,new GridBagConstraints(0, 5, 2, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));		
 		
 		nameLabel.setText(rb.getString("panCmsResources.details.name"));
 		typeLabel.setText(rb.getString("panCmsResources.details.type"));
-		sizeLabel.setText(rb.getString("panCmsResources.details.size"));
-		createdLabel.setText(rb.getString("panCmsResources.details.created"));
+		createdLabel.setText(rb.getString("panCmsResources.details.created"));				
 		
 		NoResizeScrollPane treeScrolable = new NoResizeScrollPane(treeResources);
 		Dimension treeSize = new Dimension(300, 600);
@@ -283,7 +325,7 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		treeScrolable.setVerifyInputWhenFocusTarget(true);
 		
 		JPanel treeContainer = new JPanel(new BorderLayout());	
-		filterMultiComboBox = new MultiComboBox();
+		filterMultiComboBox = new MultiComboBox(treeResources);
 		filterMultiComboBox.addSeparator(rb.getString("panCmsResources.documents"));
 		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"));
 		filterMultiComboBox.addItem(rb.getString("panCmsResources.unused"),true);
@@ -305,6 +347,33 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 		
 		
 		
+	}
+	
+	private static class ViewComponentsTableModel extends DefaultTableModel{
+		public ViewComponentsTableModel(){
+			super();
+			columnIdentifiers.add(rb.getString("panCmsResources.viewComponent.viewComponentId"));
+			columnIdentifiers.add(rb.getString("panCmsResources.viewComponent.urlLinkName"));
+			columnIdentifiers.add(rb.getString("panCmsResources.viewComponent.displayLinkName"));
+		}
+		
+		private void addRow(ViewComponentValue value) {			
+			Vector rowDate = new Vector();
+			rowDate.add(value.getViewComponentId());
+			rowDate.add(value.getUrlLinkName());
+			rowDate.add(value.getDisplayLinkName());
+			super.addRow(rowDate);
+		}
+		
+		public void setRows(Set<ViewComponentValue> views){
+			this.dataVector.removeAllElements();
+			if(views!=null){
+				for(ViewComponentValue viewComponent:views){
+					this.addRow(viewComponent);
+				}
+			}
+			fireTableRowsInserted(getRowCount(), getRowCount());			
+		}
 	}
 	
 	public void unload() {
@@ -365,13 +434,16 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 	}
 	
 	private static class MultiComboBox extends JPanel{
+		private static final long serialVersionUID = 1L;
 		private JButton dropButton;
 		private List<String> items;
 		private List<JCheckBox> values;
 		private JPopupMenu popup;
+		private JTree treeResources;
 		private int itemIndex = 0;
 		
-		public MultiComboBox(){
+		public MultiComboBox(JTree tree){
+			this.treeResources = tree;			
 			dropButton = new JButton(rb.getString("panCmsResources.filter"));
 			items = new ArrayList<String>();
 			values = new ArrayList<JCheckBox>();
@@ -381,6 +453,9 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 				@Override
 				public void mouseClicked(MouseEvent e) {				
 					setVisiblePopup(!popup.isVisible(),e);
+					if(!popup.isVisible()){
+						refreshTree();
+					}
 				}				
 			});
 		
@@ -390,7 +465,10 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 				}
 
 				public void focusLost(FocusEvent e) {
-					setVisiblePopup(false,null);					
+//					if(popup.isVisible()){
+//						refreshTree();
+//					}
+					setVisiblePopup(false,null);
 				}
 				
 			});
@@ -398,6 +476,21 @@ public class PanCmsResources extends JPanel implements UnloadablePanel,Reloadabl
 			this.add(popup);	
 						
 		}
+		
+		private void refreshTree(){
+			Enumeration<TreePath> paths = treeResources.getExpandedDescendants(new TreePath(treeResources.getModel().getRoot()));
+			while(paths.hasMoreElements()){
+				TreePath currentPath = paths.nextElement();
+				if(currentPath.getPathCount() == 3){
+					try {
+						treeResources.fireTreeWillExpand(currentPath);						
+					} catch (ExpandVetoException e) {
+						log.info("filter tree error");
+					}
+				}
+			}			
+		}
+			
 		
 		private void setVisiblePopup(boolean visible,MouseEvent e){
 			if(visible){

@@ -1,5 +1,6 @@
 package de.juwimm.cms.gui.tree;
 
+import static de.juwimm.cms.common.Constants.rb;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -7,7 +8,6 @@ import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -214,6 +214,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus) {		
 			super.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
+			
 			if (value instanceof TreeNode) {
 				TreeNode tn = (TreeNode) value;
 				setIcon(tn.getIcon());							
@@ -232,7 +233,8 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 				this.setOpaque(false);
 				panel.setLayout(new BorderLayout());
 				panel.add(checkBox, BorderLayout.WEST);
-				panel.add(this, BorderLayout.CENTER);				
+				panel.add(this, BorderLayout.CENTER);
+				
 				labelUI.setState(node.getState());
 				return panel;
 			}else{

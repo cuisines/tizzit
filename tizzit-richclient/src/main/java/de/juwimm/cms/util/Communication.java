@@ -34,6 +34,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -2537,4 +2538,14 @@ public class Communication implements ExitListener, ActionListener {
 	public Integer getUnitForViewComponent(Integer viewComponentId) {
 		return getClientService().getUnitForViewComponent(viewComponentId);
 	}
+	
+	public Set getDocumentUsage(Integer documentId){
+		return getClientService().getDocumentUsage(documentId);
+	}
+	
+	public Set getPictureUsage(Integer pictureId){
+		return getClientService().getPictureUsage(pictureId);
+	}
+	
+	
 }
