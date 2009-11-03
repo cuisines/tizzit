@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -1899,6 +1900,16 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 			boolean usedDocuments, boolean unusedDocuments,
 			boolean usedPictures, boolean unusedPictures) throws Exception {
 		return getContentServiceSpring().getResources4Unit(unitId, usedDocuments, unusedDocuments, usedPictures, unusedPictures);
+	}
+
+	@Override
+	protected Set handleGetDocumentUsage(Integer documentId) throws Exception {
+		return getContentServiceSpring().getDocumentUsage(documentId);
+	}
+
+	@Override
+	protected Set handleGetPictureUsage(Integer pictureId) throws Exception {		
+		return getContentServiceSpring().getPictureUsage(pictureId);
 	}
 
 }

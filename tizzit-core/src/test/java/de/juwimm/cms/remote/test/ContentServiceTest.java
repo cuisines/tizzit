@@ -3,6 +3,7 @@ package de.juwimm.cms.remote.test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import junit.framework.Assert;
@@ -30,7 +31,6 @@ import de.juwimm.cms.model.ViewComponentHbmImpl;
 import de.juwimm.cms.remote.ContentServiceSpringImpl;
 import de.juwimm.cms.vo.DocumentSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
-import de.juwimm.cms.vo.PictureValue;
 
 /**
  * @author fzalum
@@ -161,12 +161,17 @@ public class ContentServiceTest extends TestCase {
 		picture.setPictureId(pictureId);
 		picture.setHeight(1);
 		picture.setWidth(1);
+		UnitHbm unit = new UnitHbmImpl();
+		picture.setUnit(unit);
 		return picture;
 	}
 
 	private DocumentHbm createDocumentHbm(Integer documentId) {
 		DocumentHbm document = new DocumentHbmImpl();
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(documentId);
 		document.setDocumentId(documentId);
+		document.setUnit(unit);
 		return document;
 	}
 
@@ -345,6 +350,96 @@ public class ContentServiceTest extends TestCase {
 				}
 			}
 		}
+	}
+	
+	public void testGetDocumentUsage1() {
+		DocumentHbm mockDocument = createDocumentHbm(1);
+		
+		EasyMock.expect(viewComponentMock.findRootViewComponents4Unit(EasyMock.anyInt())).andReturn(roots);
+
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions1);
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions2);
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(new ArrayList<ContentVersionHbm>()).times(3);
+
+		EasyMock.expect(documentDaoMock.load(EasyMock.anyInt())).andReturn(mockDocument);
+
+		EasyMock.replay(viewComponentMock);
+		EasyMock.replay(contentVersionDaoMock);
+		EasyMock.replay(documentDaoMock);
+
+		Set result = null;
+		try {
+			result = contentService.getDocumentUsage(1);
+		} catch (UserException e) {
+			Assert.assertFalse(true);
+		}
+
+		EasyMock.verify(contentVersionDaoMock);
+		EasyMock.verify(viewComponentMock);
+		EasyMock.verify(documentDaoMock);
+
+		Assert.assertEquals(1, result.size());
+				
+	}
+	
+	public void testGetDocumentUsage2() {
+		DocumentHbm mockDocument = createDocumentHbm(1);
+		
+		EasyMock.expect(viewComponentMock.findRootViewComponents4Unit(EasyMock.anyInt())).andReturn(roots);
+
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions1);
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions2);
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(new ArrayList<ContentVersionHbm>()).times(3);
+
+		EasyMock.expect(documentDaoMock.load(EasyMock.anyInt())).andReturn(mockDocument);
+
+		EasyMock.replay(viewComponentMock);
+		EasyMock.replay(contentVersionDaoMock);
+		EasyMock.replay(documentDaoMock);
+
+		Set result = null;
+		try {
+			result = contentService.getDocumentUsage(3);
+		} catch (UserException e) {
+			Assert.assertFalse(true);
+		}
+
+		EasyMock.verify(contentVersionDaoMock);
+		EasyMock.verify(viewComponentMock);
+		EasyMock.verify(documentDaoMock);
+
+		Assert.assertEquals(0, result.size());
+				
+	}
+	
+	public void testGetPictureUsage() {
+		PictureHbm mockPicture = createPictureHbm(1);
+		
+		EasyMock.expect(viewComponentMock.findRootViewComponents4Unit(EasyMock.anyInt())).andReturn(roots);
+
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions1);
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions2);
+		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(new ArrayList<ContentVersionHbm>()).times(3);
+
+		EasyMock.expect(pictureDaoMock.load(EasyMock.anyInt())).andReturn(mockPicture);
+
+		EasyMock.replay(viewComponentMock);
+		EasyMock.replay(contentVersionDaoMock);
+		EasyMock.replay(pictureDaoMock);
+
+		Set result = null;
+		try {
+			result = contentService.getPictureUsage(11);
+		} catch (UserException e) {
+			Assert.assertFalse(true);
+		}
+
+		EasyMock.verify(contentVersionDaoMock);
+		EasyMock.verify(viewComponentMock);
+		EasyMock.verify(pictureDaoMock);
+
+		Assert.assertEquals(1, result.size());
+				
 	}
 	
 

@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.util.Map.Entry;
@@ -74,9 +76,8 @@ import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
-import de.juwimm.cms.search.beans.SearchengineService;
-import de.juwimm.cms.search.vo.XmlSearchValue;
 
 /**
  * @see de.juwimm.cms.remote.ContentServiceSpring
@@ -1352,7 +1353,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		DocumentSlimValue[] dbDocuments = this.getAllSlimDocuments4Unit(unitId);
 		PictureSlimstValue[] dbPictures = this.getAllSlimPictures4Unit(unitId);
 
-		Map<Integer,List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(unitId);
+		Map<ViewComponentHbm,List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(unitId);
 		getUsedResourcesFromContentVersions(contentVersions, documents, pictures);
 
 		result.putAll(new UnusedResourceComparer<DocumentSlimValue>() {
@@ -1372,26 +1373,26 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		return result;
 	}
 
-	private Map<Integer,List<ContentVersionHbm>> getAllContentVersions4Unit(Integer unitId) {
-		Map<Integer,List<ContentVersionHbm>> contentVersions= new HashMap<Integer,List<ContentVersionHbm>>();
+	private Map<ViewComponentHbm,List<ContentVersionHbm>> getAllContentVersions4Unit(Integer unitId) {
+		Map<ViewComponentHbm,List<ContentVersionHbm>> contentVersions= new HashMap<ViewComponentHbm,List<ContentVersionHbm>>();
 		List<ViewComponentHbm> rootViewDocuments = (List<ViewComponentHbm>) getViewComponentHbmDao().findRootViewComponents4Unit(unitId);
 		
 		if (rootViewDocuments != null && rootViewDocuments.size() > 0) {
 			for (ViewComponentHbm root : rootViewDocuments) {
-				contentVersions.putAll(getContentVersionsRecursive(root));
+				contentVersions.putAll(getAllContentVersionsRecursive(root));
 			}
 		}
 		return contentVersions;
 	}
 
-	private Map<Integer,List<ContentVersionHbm>> getContentVersionsRecursive(ViewComponentHbm root) {
+	private Map<ViewComponentHbm,List<ContentVersionHbm>> getAllContentVersionsRecursive(ViewComponentHbm root) {
 
-		Map<Integer,List<ContentVersionHbm>> contentVersions= new HashMap<Integer,List<ContentVersionHbm>>();
-		contentVersions.put(root.getViewComponentId(),(List<ContentVersionHbm>) getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
+		Map<ViewComponentHbm,List<ContentVersionHbm>> contentVersions= new HashMap<ViewComponentHbm,List<ContentVersionHbm>>();
+		contentVersions.put(root,(List<ContentVersionHbm>) getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
 		Collection children = root.getChildren();
 		if (children != null && children.size() > 0) {
 			for (Object child : children) {
-				contentVersions.putAll(getContentVersionsRecursive((ViewComponentHbm) child));				
+				contentVersions.putAll(getAllContentVersionsRecursive((ViewComponentHbm) child));				
 			}
 		}
 
@@ -1440,10 +1441,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @param documents - list of used documents
 	 * @param pictures - list of used pictures
 	 */
-	private void getUsedResourcesFromContentVersions(Map<Integer,List<ContentVersionHbm>> contentVersions, Map<Integer, ResourceUsageState> documents, Map<Integer, ResourceUsageState> pictures) {
+	private void getUsedResourcesFromContentVersions(Map<ViewComponentHbm,List<ContentVersionHbm>> contentVersions, Map<Integer, ResourceUsageState> documents, Map<Integer, ResourceUsageState> pictures) {
 		if (contentVersions == null || contentVersions.size() == 0) { return; }
 				
-		for (Entry<Integer,List<ContentVersionHbm>> contentVersionGroup : contentVersions.entrySet()) {
+		for (Entry<ViewComponentHbm,List<ContentVersionHbm>> contentVersionGroup : contentVersions.entrySet()) {
 			Integer maxVersion = 0;
 			ContentVersionHbm publishContentVersion=null;
 			
@@ -1632,4 +1633,40 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		picture.setThumbnailPopup(withThumbnailPopup);
 
 	}
+
+	@Override
+	protected Set handleGetDocumentUsage(Integer documentId) throws Exception {
+		DocumentHbm document = super.getDocumentHbmDao().load(documentId);
+		Set<ViewComponentValue> result =  new HashSet<ViewComponentValue>();
+		Map<ViewComponentHbm,List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(document.getUnit().getUnitId());
+		for(Entry<ViewComponentHbm,List<ContentVersionHbm>> contentVersion:contentVersions.entrySet()){
+			List<ContentVersionHbm> usedContentVersions= getContentVersionUsingResource(contentVersion.getValue(),documentId,"document","src");
+			if(usedContentVersions != null && usedContentVersions.size() >0){
+				result.add(contentVersion.getKey().getDao());
+			}
+		}
+		return result;
+	}
+	
+	
+
+	@Override
+	protected Set handleGetPictureUsage(Integer pictureId) throws Exception {
+		PictureHbm picture = getPictureHbmDao().load(pictureId);
+		Set<ViewComponentValue> result =  new HashSet<ViewComponentValue>();
+		Map<ViewComponentHbm,List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(picture.getUnit().getUnitId());
+		for(Entry<ViewComponentHbm,List<ContentVersionHbm>> contentVersion:contentVersions.entrySet()){
+			List<ContentVersionHbm> usedContentVersions= getContentVersionUsingResource(contentVersion.getValue(),pictureId,"picture","description");
+			if(usedContentVersions != null && usedContentVersions.size() >0){
+				result.add(contentVersion.getKey().getDao());
+				continue;
+			}
+			usedContentVersions= getContentVersionUsingResource(contentVersion.getValue(),pictureId,"image","src");
+			if(usedContentVersions != null && usedContentVersions.size() >0){
+				result.add(contentVersion.getKey().getDao());
+			}
+		}
+		return result;
+	}
+			
 }
