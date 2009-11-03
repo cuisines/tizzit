@@ -246,7 +246,16 @@ public final class Constants {
 		
 	
 	public enum ResourceUsageState{
-		Used,Unsused,UsedInOlderVersions;
+		Used("used"),Unsused("unused"),UsedInOlderVersions("usedInOlderVersions");		
+		private final String key;
+		
+		ResourceUsageState(String key){
+			this.key=key;
+		}
+		
+		public String getKey(){
+			return key;
+		}
 	}
 	
 	
