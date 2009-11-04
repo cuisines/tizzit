@@ -25,6 +25,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
@@ -50,6 +51,7 @@ import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.panel.PanSimpleDate;
 import de.juwimm.cms.gui.PanTree;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.event.TCPopupEventQueue;
 import de.juwimm.cms.gui.tree.PageNode;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
@@ -110,6 +112,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		try {
 			setDoubleBuffered(true);
 			jbInit();
+			Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TCPopupEventQueue());
 			txtDisplayedLinkName.addKeyListener(ActionHub.getContentEditKeyListener());
 			txtLinkDescription.addKeyListener(ActionHub.getContentEditKeyListener());
 			txtUrlLinkName.addKeyListener(ActionHub.getContentEditKeyListener());
@@ -121,6 +124,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 			chkXmlSearchIndexed.addKeyListener(ActionHub.getContentEditKeyListener());
 			chkXmlSearchIndexed.addMouseListener(ActionHub.getContentEditMouseListener());
 
+			txtDisplayedLinkName.setInheritsPopupMenu(true);
 			borderStati = new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(165, 163, 151)), rb.getString("panel.panStati"));
 			lblDisplayedLinkname.setText(rb.getString("panel.panelView.lblDisplayedLinkname"));
 			lblLinkDescription.setText(rb.getString("panel.panelView.lblLinkDescription"));
