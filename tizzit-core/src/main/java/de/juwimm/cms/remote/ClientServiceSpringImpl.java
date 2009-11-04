@@ -22,7 +22,6 @@ package de.juwimm.cms.remote;
 
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -180,7 +179,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 			// checkedOut!
 			return cdao;
 		} catch (Exception exception) {
-			if (exception instanceof AlreadyCheckedOutException) { throw (AlreadyCheckedOutException) exception; }
+			if (exception instanceof AlreadyCheckedOutException) {
+				throw (AlreadyCheckedOutException) exception;
+			}
 			UserException ue = new UserException("Error checking out: " + exception.getMessage());
 			log.error("Error checking out ", exception);
 			throw ue;
@@ -468,14 +469,20 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 
 	@Override
 	protected boolean handleIsUserInRole(UserValue uv, String role) throws Exception {
-		if (uv == null) { return false; }
-		if (uv.isMasterRoot()) { return true; }
+		if (uv == null) {
+			return false;
+		}
+		if (uv.isMasterRoot()) {
+			return true;
+		}
 		try {
 			GroupValue[] gv = getUserServiceSpring().getGroups4User(uv.getUserName());
 			if (gv == null) return false;
 			for (int i = 0; i < gv.length; i++) {
 				for (int j = 0; j < gv[i].getRoles().length; j++) {
-					if (gv[i].getRoles()[j].getRoleId().equalsIgnoreCase(role)) { return true; }
+					if (gv[i].getRoles()[j].getRoleId().equalsIgnoreCase(role)) {
+						return true;
+					}
 				}
 			}
 		} catch (Exception exe) {
@@ -1635,7 +1642,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 
 	private String getParents4View(ViewComponentHbm viewComponent) {
 		try {
-			if (viewComponent.getParent().isRoot()) { return "\\"; }
+			if (viewComponent.getParent().isRoot()) {
+				return "\\";
+			}
 		} catch (Exception ex) {
 			return "\\";
 		}
@@ -1740,14 +1749,18 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected UserValue handleGetUserForId(String userId) throws Exception {
 		UserHbm user = getUserHbmDao().load(userId);
-		if (user != null) { return user.getUserValue(); }
+		if (user != null) {
+			return user.getUserValue();
+		}
 		return null;
 	}
 
 	@Override
 	protected TaskValue handleGetTaskForId(Integer taskId) throws Exception {
 		TaskValue tv = getUserServiceSpring().getTaskForId(taskId);
-		if (tv != null) { return tv; }
+		if (tv != null) {
+			return tv;
+		}
 		return null;
 	}
 
@@ -1853,8 +1866,8 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleRemoveResources(Integer[] picturesIds, Integer[] documentsIds) throws Exception {
-		getContentServiceSpring().removeResources(picturesIds, documentsIds);
+	protected void handleRemoveResources(Integer[] picturesIds, Integer[] documentsIds, boolean forceDeleteHistory) throws Exception {
+		getContentServiceSpring().removeResources(picturesIds, documentsIds, forceDeleteHistory);
 
 	}
 
@@ -1898,16 +1911,17 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected Map handleGetResources4Unit(Integer unitId, boolean usedDocuments, boolean unusedDocuments, boolean usedPictures, boolean unusedPictures) throws Exception {
 		return getContentServiceSpring().getResources4Unit(unitId, usedDocuments, unusedDocuments, usedPictures, unusedPictures);
 	}
-	
+
 	@Override
 	protected Set handleGetDocumentUsage(Integer documentId) throws Exception {
 		return getContentServiceSpring().getDocumentUsage(documentId);
 	}
 
 	@Override
-	protected Set handleGetPictureUsage(Integer pictureId) throws Exception {		
+	protected Set handleGetPictureUsage(Integer pictureId) throws Exception {
 		return getContentServiceSpring().getPictureUsage(pictureId);
 	}
+
 	@Override
 	protected void handleDeleteSimplePwRealm(Integer simplePwRealmId) throws Exception {
 		getSafeguardServiceSpring().deleteSimplePwRealm(simplePwRealmId);
