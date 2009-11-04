@@ -1894,14 +1894,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 
 	}
 
-	
 	@Override
-	protected Map handleGetResources4Unit(Integer unitId,
-			boolean usedDocuments, boolean unusedDocuments,
-			boolean usedPictures, boolean unusedPictures) throws Exception {
+	protected Map handleGetResources4Unit(Integer unitId, boolean usedDocuments, boolean unusedDocuments, boolean usedPictures, boolean unusedPictures) throws Exception {
 		return getContentServiceSpring().getResources4Unit(unitId, usedDocuments, unusedDocuments, usedPictures, unusedPictures);
 	}
-
+	
 	@Override
 	protected Set handleGetDocumentUsage(Integer documentId) throws Exception {
 		return getContentServiceSpring().getDocumentUsage(documentId);
@@ -1910,6 +1907,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected Set handleGetPictureUsage(Integer pictureId) throws Exception {		
 		return getContentServiceSpring().getPictureUsage(pictureId);
+	}
+	@Override
+	protected void handleDeleteSimplePwRealm(Integer simplePwRealmId) throws Exception {
+		getSafeguardServiceSpring().deleteSimplePwRealm(simplePwRealmId);
+
 	}
 
 }
