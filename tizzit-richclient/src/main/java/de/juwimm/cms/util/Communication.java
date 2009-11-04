@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -184,10 +183,18 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public boolean isUserInRole(String role) {
-		if (user == null) { return false; }
-		if (user.getUser().isMasterRoot()) { return true; }
-		if (isUserInRolePhysically(role)) { return true; }
-		if (isUserInRolePhysically(UserRights.SITE_ROOT)) { return true; }
+		if (user == null) {
+			return false;
+		}
+		if (user.getUser().isMasterRoot()) {
+			return true;
+		}
+		if (isUserInRolePhysically(role)) {
+			return true;
+		}
+		if (isUserInRolePhysically(UserRights.SITE_ROOT)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -197,21 +204,29 @@ public class Communication implements ExitListener, ActionListener {
 			RoleValue[] roles = groups[i].getRoles();
 			if (roles == null) continue;
 			for (int j = 0; j < roles.length; j++) {
-				if (roles[j].getRoleId().equalsIgnoreCase(role)) { return true; }
+				if (roles[j].getRoleId().equalsIgnoreCase(role)) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	public boolean isUserInRole(UserValue uv, String role) {
-		if (uv == null) { return false; }
-		if (uv.isMasterRoot()) { return true; }
+		if (uv == null) {
+			return false;
+		}
+		if (uv.isMasterRoot()) {
+			return true;
+		}
 		try {
 			GroupValue[] gv = getClientService().getGroups4User(uv.getUserName());
 			if (gv == null) return false;
 			for (int i = 0; i < gv.length; i++) {
 				for (int j = 0; j < gv[i].getRoles().length; j++) {
-					if (gv[i].getRoles()[j].getRoleId().equalsIgnoreCase(role)) { return true; }
+					if (gv[i].getRoles()[j].getRoleId().equalsIgnoreCase(role)) {
+						return true;
+					}
 				}
 			}
 		} catch (Exception exe) {
@@ -409,7 +424,9 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public UserValue getUser() {
-		if (user != null) { return user.getUser(); }
+		if (user != null) {
+			return user.getUser();
+		}
 		return null;
 	}
 
@@ -432,9 +449,13 @@ public class Communication implements ExitListener, ActionListener {
 	public boolean isUserInUnit(int unitId) {
 		//getClientService().isUserInUnit(user.getUser().getUserName(), unitId);
 		UnitValue[] uv = user.getUnits();
-		if (uv == null) { return false; }
+		if (uv == null) {
+			return false;
+		}
 		for (int i = 0; i < uv.length; i++) {
-			if (uv[i].getUnitId().intValue() == unitId) { return true; }
+			if (uv[i].getUnitId().intValue() == unitId) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -696,7 +717,9 @@ public class Communication implements ExitListener, ActionListener {
 
 		public int compare(UserValue firstUser, UserValue secondUser) {
 			int retVal = firstUser.getUserName().toLowerCase().compareTo(secondUser.getUserName().toLowerCase());
-			if (retVal != 0) { return retVal; }
+			if (retVal != 0) {
+				return retVal;
+			}
 			if (firstUser.getFirstName() == null) return -1;
 			if (secondUser.getFirstName() == null) return 1;
 			return firstUser.getFirstName().toLowerCase().compareTo(secondUser.getFirstName().toLowerCase());
@@ -1203,8 +1226,12 @@ public class Communication implements ExitListener, ActionListener {
 			checkOutPages.add(Integer.valueOf(contentId));
 			return cdao;
 		} catch (Exception exception) {
-			if (exception instanceof AlreadyCheckedOutException) { throw (AlreadyCheckedOutException) exception; }
-			if (exception.getCause() != null && exception.getCause() instanceof AlreadyCheckedOutException) { throw (AlreadyCheckedOutException) exception.getCause(); }
+			if (exception instanceof AlreadyCheckedOutException) {
+				throw (AlreadyCheckedOutException) exception;
+			}
+			if (exception.getCause() != null && exception.getCause() instanceof AlreadyCheckedOutException) {
+				throw (AlreadyCheckedOutException) exception.getCause();
+			}
 			UserException ue = new UserException("Error checking out: " + exception.getMessage());
 			log.error("Error checking out ", exception);
 			throw ue;
@@ -1854,7 +1881,6 @@ public class Communication implements ExitListener, ActionListener {
 
 	public int addSimpleRealmToSite(String realmName, int siteId, String loginPageId) {
 		int pk = -1;
-
 		try {
 			pk = getClientService().addSimpleRealmToSite(realmName, Integer.valueOf(siteId), loginPageId);
 		} catch (Exception e) {
@@ -2160,7 +2186,9 @@ public class Communication implements ExitListener, ActionListener {
 
 	public String getSvgUrl(String svgContent) throws UserException {
 		File svgFile = new File(Constants.SVG_CACHE + this.encodeSvgImageName(svgContent) + ".png");
-		if (svgFile.exists()) { return svgFile.getAbsolutePath(); }
+		if (svgFile.exists()) {
+			return svgFile.getAbsolutePath();
+		}
 		try {
 			fetchRemoteSvg(svgContent, svgFile);
 		} catch (Exception e) {
@@ -2493,8 +2521,8 @@ public class Communication implements ExitListener, ActionListener {
 		getClientService().updateHost(hostValue);
 	}
 
-	public Map getResources4Unit(Integer unitId,boolean documentsUsed,boolean documentsUnused,boolean picturesUsed,boolean picturesUnused) {
-		return getClientService().getResources4Unit(unitId,documentsUsed,documentsUnused,picturesUsed,picturesUnused);
+	public Map getResources4Unit(Integer unitId, boolean documentsUsed, boolean documentsUnused, boolean picturesUsed, boolean picturesUnused) {
+		return getClientService().getResources4Unit(unitId, documentsUsed, documentsUnused, picturesUsed, picturesUnused);
 	}
 
 	public Integer getViewComponentChildrenNumber(Integer[] viewComponentsIds) {
@@ -2538,14 +2566,21 @@ public class Communication implements ExitListener, ActionListener {
 	public Integer getUnitForViewComponent(Integer viewComponentId) {
 		return getClientService().getUnitForViewComponent(viewComponentId);
 	}
-	
-	public Set getDocumentUsage(Integer documentId){
+
+	public Set getDocumentUsage(Integer documentId) {
 		return getClientService().getDocumentUsage(documentId);
 	}
-	
-	public Set getPictureUsage(Integer pictureId){
+
+	public Set getPictureUsage(Integer pictureId) {
 		return getClientService().getPictureUsage(pictureId);
 	}
-	
-	
+
+	public void deleteSimplePwRealm(Integer simplePwRealmId) {
+		try {
+			getClientService().deleteSimplePwRealm(simplePwRealmId);
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.error("Error at delete simplePwRealm");
+		}
+	}
+
 }
