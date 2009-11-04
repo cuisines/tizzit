@@ -44,6 +44,7 @@ import org.andromda.spring.RemoteServiceLocator;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.remoting.RemoteAccessException;
+import org.springframework.remoting.RemoteInvocationFailureException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.SpringSecurityException;
 import org.springframework.security.context.SecurityContextHolder;
@@ -2529,8 +2530,12 @@ public class Communication implements ExitListener, ActionListener {
 		return getClientService().getViewComponentChildrenNumber(viewComponentsIds);
 	}
 
-	public void removeResources(Integer[] pictureIds, Integer[] documentIds) {
-		getClientService().removeResources(pictureIds, documentIds);
+	public void removeResources(Integer[] pictureIds, Integer[] documentIds, boolean forceDeleteHistory) throws Exception {
+		try {
+			getClientService().removeResources(pictureIds, documentIds, forceDeleteHistory);
+		} catch (RemoteInvocationFailureException ex) {
+			throw (Exception) ex.getCause();
+		}
 	}
 
 	public ViewComponentValue[] copyViewComponentToParent(Integer parentId, Integer[] viewComponentsIds, Integer position) {

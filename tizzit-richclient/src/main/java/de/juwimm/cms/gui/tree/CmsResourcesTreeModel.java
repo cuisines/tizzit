@@ -1,12 +1,12 @@
 package de.juwimm.cms.gui.tree;
 
-import static de.juwimm.cms.common.Constants.rb;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -30,100 +30,125 @@ import de.juwimm.cms.vo.UnitValue;
  * @version $Id$
  */
 public class CmsResourcesTreeModel extends DefaultTreeModel {
-	
+
 	private static final long serialVersionUID = 7201877101394641381L;
-	private Map<Integer,DocumentTreeNode> documentsToDelete;
-	private Map<Integer,PictureTreeNode> picturesToDelete;
-	
+	private Map<Integer, DocumentTreeNode> documentsToDelete;
+	private Map<Integer, PictureTreeNode> picturesToDelete;
+
 	public CmsResourcesTreeModel(DefaultMutableTreeNode root) {
 		super(root);
-		documentsToDelete = new HashMap<Integer,DocumentTreeNode>();
-		picturesToDelete = new HashMap<Integer,PictureTreeNode>();		
+		documentsToDelete = new HashMap<Integer, DocumentTreeNode>();
+		picturesToDelete = new HashMap<Integer, PictureTreeNode>();
 	}
-	
-	public void addResourceToDelete(DocumentTreeNode documentNode){
-		documentsToDelete.put(documentNode.getId(),documentNode);
+
+	public void addResourceToDelete(DocumentTreeNode documentNode) {
+		documentsToDelete.put(documentNode.getId(), documentNode);
 	}
-	
-	public void addResourceToDelete(PictureTreeNode pictureTreeNode){
-		picturesToDelete.put(pictureTreeNode.getId(),pictureTreeNode);
+
+	public void addResourceToDelete(PictureTreeNode pictureTreeNode) {
+		picturesToDelete.put(pictureTreeNode.getId(), pictureTreeNode);
 	}
-	
-	public void removeResourceFromDelete(DocumentTreeNode documentNode){
+
+	public void removeResourceFromDelete(DocumentTreeNode documentNode) {
 		documentsToDelete.remove(documentNode.getId());
 	}
-	
-	public void removeResourceFromDelete(PictureTreeNode pictureTreeNode){
+
+	public void removeResourceFromDelete(PictureTreeNode pictureTreeNode) {
 		picturesToDelete.remove(pictureTreeNode.getId());
 	}
-	
-	public Integer[] getPicturesToDelete(){
+
+	public Integer[] getPicturesToDelete() {
 		return picturesToDelete.keySet().toArray(new Integer[0]);
 	}
-	public Integer[] getDocumentsToDelete(){
+
+	public Integer[] getDocumentsToDelete() {
 		return documentsToDelete.keySet().toArray(new Integer[0]);
 	}
-	
-	public void deleteResourcesFromTree(){
-		for(PictureTreeNode pictureNode :picturesToDelete.values()){
+
+	public boolean areResourcesUsedInHistory() {
+		for (Entry<Integer, DocumentTreeNode> documentToDelete : documentsToDelete.entrySet()) {
+			if (documentToDelete.getValue().getState() == ResourceUsageState.UsedInOlderVersions) {
+				return true;
+			}
+		}
+		for (Entry<Integer, PictureTreeNode> pictureToDelete : picturesToDelete.entrySet()) {
+			if (pictureToDelete.getValue().getState() == ResourceUsageState.UsedInOlderVersions) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void deleteResourcesFromTree() {
+		for (PictureTreeNode pictureNode : picturesToDelete.values()) {
 			this.removeNodeFromParent(pictureNode);
 		}
-		
-		for(DocumentTreeNode documentNode :documentsToDelete.values()){
+
+		for (DocumentTreeNode documentNode : documentsToDelete.values()) {
 			this.removeNodeFromParent(documentNode);
 		}
-		
+
+		clearResourcesSelection();
+	}
+
+	public void clearResourcesSelection() {
 		picturesToDelete.clear();
 		documentsToDelete.clear();
 	}
-	
+
 	@Override
 	public DefaultMutableTreeNode getRoot() {
-		return (DefaultMutableTreeNode)super.getRoot();
+		return (DefaultMutableTreeNode) super.getRoot();
 	}
-	
-	public static abstract class CmsResourcesTreeNode<T> extends TreeNode{
+
+	public static abstract class CmsResourcesTreeNode<T> extends TreeNode {
 		private static final long serialVersionUID = 1L;
 		private boolean isChecked = false;
 		T value;
-		public CmsResourcesTreeNode(String name,T value){
-			super(name);			
+
+		public CmsResourcesTreeNode(String name, T value) {
+			super(name);
 			this.value = value;
 		}
-		public T getValue(){
+
+		public T getValue() {
 			return value;
 		}
+
 		public abstract Integer getId();
-		public boolean toogleCheck(){
+
+		public boolean toogleCheck() {
 			isChecked = !isChecked;
 			return isChecked;
 		}
-		public boolean isChecked(){
+
+		public boolean isChecked() {
 			return isChecked;
 		}
 	}
-	
-	public static abstract class CmsStateResourceTreeNode<T> extends CmsResourcesTreeNode<T>{		
+
+	public static abstract class CmsStateResourceTreeNode<T> extends CmsResourcesTreeNode<T> {
 		private static final long serialVersionUID = 7680943302220865979L;
 		private ResourceUsageState state;
-		
-		public CmsStateResourceTreeNode(String name,T value,ResourceUsageState state) {
-			super(name,value);
+
+		public CmsStateResourceTreeNode(String name, T value, ResourceUsageState state) {
+			super(name, value);
 			this.state = state;
 		}
-		
-		public ResourceUsageState getState(){
+
+		public ResourceUsageState getState() {
 			return state;
 		}
 
 	}
-	
-	public static class SiteTreeNode extends CmsResourcesTreeNode<SiteValue>{
+
+	public static class SiteTreeNode extends CmsResourcesTreeNode<SiteValue> {
 		private static final long serialVersionUID = -7236858154971687599L;
-		
-		public SiteTreeNode(SiteValue site){
-			super(site.getName(),site);
+
+		public SiteTreeNode(SiteValue site) {
+			super(site.getName(), site);
 		}
+
 		@Override
 		public ImageIcon getIcon() {
 			return UIConstants.ICON_MANDANT;
@@ -134,14 +159,14 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 			return value.getSiteId();
 		}
 	}
-	
-	public static class UnitTreeNode extends CmsResourcesTreeNode<UnitValue>{
+
+	public static class UnitTreeNode extends CmsResourcesTreeNode<UnitValue> {
 		private static final long serialVersionUID = 3099538424767131542L;
-		
-		public UnitTreeNode(UnitValue unit){
-			super(unit.getName(),unit);
+
+		public UnitTreeNode(UnitValue unit) {
+			super(unit.getName(), unit);
 		}
-		
+
 		@Override
 		public ImageIcon getIcon() {
 			return UIConstants.ICON_UNIT;
@@ -153,15 +178,15 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		}
 
 	}
-	public static class DocumentTreeNode extends CmsStateResourceTreeNode<DocumentSlimValue>{
+	public static class DocumentTreeNode extends CmsStateResourceTreeNode<DocumentSlimValue> {
 		private static final long serialVersionUID = 3777971038493127103L;
-		
-		public DocumentTreeNode(DocumentSlimValue document,ResourceUsageState state) {
-			super(document.getDocumentName(),document,state);
+
+		public DocumentTreeNode(DocumentSlimValue document, ResourceUsageState state) {
+			super(document.getDocumentName(), document, state);
 		}
-		
+
 		@Override
-		public ImageIcon getIcon() {		
+		public ImageIcon getIcon() {
 			return UIConstants.ICON_DOCUMENT;
 		}
 
@@ -169,29 +194,29 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		public boolean isEditable() {
 			return true;
 		}
-		
+
 		@Override
 		public Integer getId() {
 			return value.getDocumentId();
 		}
-		
+
 	}
-	
-	public static class PictureTreeNode extends CmsStateResourceTreeNode<PictureSlimstValue>{
+
+	public static class PictureTreeNode extends CmsStateResourceTreeNode<PictureSlimstValue> {
 		private static final long serialVersionUID = 3777971038493127103L;
-		
-		public PictureTreeNode(PictureSlimstValue picture,ResourceUsageState state) {
-			super(picture.getPictureName(),picture,state);
-			this.value = picture;		
+
+		public PictureTreeNode(PictureSlimstValue picture, ResourceUsageState state) {
+			super(picture.getPictureName(), picture, state);
+			this.value = picture;
 		}
-		
+
 		@Override
 		public boolean isEditable() {
 			return true;
 		}
-		
+
 		@Override
-		public ImageIcon getIcon() {		
+		public ImageIcon getIcon() {
 			return UIConstants.ICON_PICTURE;
 		}
 
@@ -199,79 +224,80 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 		public Integer getId() {
 			return value.getPictureId();
 		}
-		
+
 	}
-	
-	public static class CmsResourcesCellRenderer extends DefaultTreeCellRenderer{
+
+	public static class CmsResourcesCellRenderer extends DefaultTreeCellRenderer {
 		private static final long serialVersionUID = 1L;
-		
-		
-		CmsResourcesLabelUI labelUI =new CmsResourcesLabelUI();
-		
-		public CmsResourcesCellRenderer(){
+
+		CmsResourcesLabelUI labelUI = new CmsResourcesLabelUI();
+
+		public CmsResourcesCellRenderer() {
 			this.setUI(labelUI);
 		}
-		
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus) {		
+
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 			super.getTreeCellRendererComponent(tree, value, isSelected, expanded, leaf, row, hasFocus);
-			
+
 			if (value instanceof TreeNode) {
 				TreeNode tn = (TreeNode) value;
-				setIcon(tn.getIcon());							
+				setIcon(tn.getIcon());
 			}
-			if(value instanceof CmsStateResourceTreeNode){
+			if (value instanceof CmsStateResourceTreeNode) {
 				JCheckBox checkBox = new JCheckBox();
 				JPanel panel = new JPanel();
-				CmsStateResourceTreeNode node = (CmsStateResourceTreeNode)value;				
+				CmsStateResourceTreeNode node = (CmsStateResourceTreeNode) value;
 				panel.setBackground(Color.white);
-				if(node.getState() == ResourceUsageState.Used){
+				if (node.getState() == ResourceUsageState.Used) {
 					checkBox.setEnabled(false);
+				} else {
+					checkBox.setSelected(node.isChecked());
 				}
 				checkBox.setBackground(Color.white);
-				checkBox.setSelected(node.isChecked());
 				panel.setOpaque(false);
 				this.setOpaque(false);
 				panel.setLayout(new BorderLayout());
 				panel.add(checkBox, BorderLayout.WEST);
 				panel.add(this, BorderLayout.CENTER);
-				
+
 				labelUI.setState(node.getState());
 				return panel;
-			}else{
+			} else {
 				labelUI.setState(null);
 			}
-			
+
 			return this;
-			
+
 		}
 	}
-	
-	private static class CmsResourcesLabelUI extends BasicLabelUI{
+
+	private static class CmsResourcesLabelUI extends BasicLabelUI {
 		ResourceUsageState state = null;
-		
-		public void setState(ResourceUsageState state){
+
+		public void setState(ResourceUsageState state) {
 			this.state = state;
-		}		
+		}
+
 		@Override
-		public void paint(Graphics g, JComponent c) {		
+		public void paint(Graphics g, JComponent c) {
 			super.paint(g, c);
-			if(state == null){
+			if (state == null) {
 				return;
 			}
-			
-			switch(state){
-				case Unsused:{
-					g.setColor(new Color(141,195,68));
+
+			switch (state) {
+				case Unsused: {
+					g.setColor(new Color(141, 195, 68));
 					break;
 				}
-				case Used:{
-					g.setColor(new Color(248,25,25));
+				case Used: {
+					g.setColor(new Color(248, 25, 25));
 					break;
 				}
-				case UsedInOlderVersions:{
-					g.setColor(new Color(243,251,13));
+				case UsedInOlderVersions: {
+					g.setColor(new Color(243, 251, 13));
 					break;
-				}				
+				}
 			}
 			g.drawRect(0, 0, 15, 15);
 		}
