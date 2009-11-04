@@ -2182,7 +2182,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				if (useNewIDs) {
 					realm = getRealmSimplePwHbmDao().create(elmRealm, true);
 					realm.setSite(site);
-					realm.setOwner(userLogged);
+					//realm.setOwner(userLogged);
 					mappingRealmsSimplePw.put(id, realm.getSimplePwRealmId()); // mapping OLD-ID to NEW-ID
 				} else {
 					try {

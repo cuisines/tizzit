@@ -307,7 +307,9 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 			realm2Vc.setViewComponent(super.getViewComponentHbmDao().load(viewComponentId));
 		}
 		realm2Vc.setRoleNeeded(roleNeeded);
-		realm2Vc.setLoginPage(super.getViewComponentHbmDao().load(Integer.valueOf(value.getLoginPageId())));
+		if (value.getLoginPageId() != null) {
+			realm2Vc.setLoginPage(super.getViewComponentHbmDao().load(Integer.valueOf(value.getLoginPageId())));
+		}
 		realm2Vc.setSimplePwRealm(super.getRealmSimplePwHbmDao().load(simplePwRealmId));
 		return realm2Vc;
 	}
@@ -462,25 +464,25 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 	@Override
 	protected RealmSimplePwValue[] handleGetSimplePwRealmsForUser(String userName) throws Exception {
 		RealmSimplePwValue[] val = null;
-		try {
-			Collection<RealmSimplePwHbm> col = super.getUserHbmDao().load(userName).getSimplePwRealms();
-			final int size = col.size();
-			val = new RealmSimplePwValue[size];
-
-			Iterator<RealmSimplePwHbm> it = col.iterator();
-			int counter = 0;
-
-			while (it.hasNext()) {
-				RealmSimplePwHbm realm = it.next();
-				val[counter] = realm.getRealmSimplePwValue();
-				counter++;
-			}
-
-			return val;
-		} catch (Exception ex) {
-			log.warn("Could not get RealmSimplePw for user " + userName + ": " + ex.getMessage());
-			val = new RealmSimplePwValue[0];
-		}
+		//		try {
+		//			Collection<RealmSimplePwHbm> col = super.getUserHbmDao().load(userName).getSimplePwRealms();
+		//			final int size = col.size();
+		//			val = new RealmSimplePwValue[size];
+		//
+		//			Iterator<RealmSimplePwHbm> it = col.iterator();
+		//			int counter = 0;
+		//
+		//			while (it.hasNext()) {
+		//				RealmSimplePwHbm realm = it.next();
+		//				val[counter] = realm.getRealmSimplePwValue();
+		//				counter++;
+		//			}
+		//
+		//			return val;
+		//		} catch (Exception ex) {
+		//			log.warn("Could not get RealmSimplePw for user " + userName + ": " + ex.getMessage());
+		//			val = new RealmSimplePwValue[0];
+		//		}
 		return val;
 	}
 
@@ -637,7 +639,6 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 	private RealmSimplePwHbm createRealmSimplePwHbm(String realmName, String owner, Integer siteId, String loginPageId) {
 		RealmSimplePwHbm realm = new RealmSimplePwHbmImpl();
 		realm.setRealmName(realmName);
-		realm.setOwner(super.getUserHbmDao().load(owner));
 		realm.setSite(super.getSiteHbmDao().load(siteId));
 		realm.setLoginPageId(loginPageId);
 		return realm;
@@ -648,8 +649,8 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		Integer pk = null;
 		String owner = AuthenticationHelper.getUserName();
 		RealmSimplePwHbm realm = null;
-		realm = super.getRealmSimplePwHbmDao().findByOwnerAndName(owner, realmName);
-		if (realm != null) { throw new AlreadyExistsException("A Realm with the Name " + realmName + " for user " + owner + " already exists!"); }
+		Collection realmCollection = super.getRealmSimplePwHbmDao().findBySiteAndName(siteId, realmName);
+		if ((realmCollection != null) && (realmCollection.size() > 0)) { throw new AlreadyExistsException("A Realm with the Name " + realmName + " for user " + owner + " already exists!"); }
 		try {
 			realm = super.getRealmSimplePwHbmDao().create(this.createRealmSimplePwHbm(realmName, owner, siteId, loginPageId));
 			pk = realm.getSimplePwRealmId();
@@ -896,6 +897,11 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 			}
 		}
 		return XercesHelper.doc2String(navigationDom);
+	}
+
+	@Override
+	protected void handleDeleteSimplePwRealm(Integer simplePwRealmId) throws Exception {
+		super.getRealmSimplePwHbmDao().remove(simplePwRealmId);
 	}
 
 }

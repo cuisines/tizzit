@@ -38,7 +38,7 @@ public class RealmSimplePwHbmDaoImpl extends RealmSimplePwHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	public RealmSimplePwHbm create(RealmSimplePwHbm realmSimplePwHbm) {
 		try {
@@ -112,4 +112,7 @@ public class RealmSimplePwHbmDaoImpl extends RealmSimplePwHbmDaoBase {
 		return this.findByLoginPage(transform, "from de.juwimm.cms.safeguard.model.RealmSimplePwHbm as r where r.loginPageId = ?", loginPageId);
 	}
 
+	public java.util.Collection findBySiteAndName(final int transform, final Integer siteId, final java.lang.String name) {
+		return this.findBySiteAndName(transform, "from de.juwimm.cms.safeguard.model.RealmSimplePwHbm as r where r.site.siteId = ? and r.realmName = ? ", siteId, name);
+	}
 }

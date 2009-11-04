@@ -67,8 +67,8 @@ public class RealmSimplePwHbmImpl extends RealmSimplePwHbm {
 		sb.append(helper.getXMLNode("simplePwRealmId", this.getSimplePwRealmId().toString()));
 		sb.append("<realmName><![CDATA[").append(this.getRealmName()).append("]]></realmName>\n");
 		if (this.getLoginPageId() != null && this.getLoginPageId().length() > 0) sb.append(helper.getXMLNode("loginPageId", this.getLoginPageId()));
-		String ownerId = this.getOwner() != null ? this.getOwner().getUserId() : "";
-		sb.append(helper.getXMLNode("ownerId", ownerId));
+		//String ownerId = this.getOwner() != null ? this.getOwner().getUserId() : "";
+		//sb.append(helper.getXMLNode("ownerId", ownerId));
 		{
 			sb.append("<simplePwRealmUsers>");
 			Collection realmUserList = this.getSimplePwRealmUsers();
