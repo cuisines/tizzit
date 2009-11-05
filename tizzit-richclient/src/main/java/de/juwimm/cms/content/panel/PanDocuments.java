@@ -351,6 +351,14 @@ public class PanDocuments extends JPanel {
 			}
 		} catch (NullPointerException ex) {
 		} catch (Exception ex) {
+			if (ex.getMessage().contains("validation exception")) {
+				JOptionPane.showConfirmDialog(this, rb.getString("panel.content.documents.delete.exception"), rb.getString("panel.content.documents.deleteDocument"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			} else {
+				log.warn("exception on delete document");
+				if (log.isDebugEnabled()) {
+					log.debug(ex);
+				}
+			}
 		}
 	}
 
@@ -489,7 +497,9 @@ public class PanDocuments extends JPanel {
 	 */
 	private class DocumentListSelectionListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
-			if (e.getValueIsAdjusting()) { return; }
+			if (e.getValueIsAdjusting()) {
+				return;
+			}
 			if (tblDocuments.getSelectedRow() >= 0) {
 				DocumentSlimValue vo = (DocumentSlimValue) tblDocumentSorter.getValueAt(tblDocuments.getSelectedRow(), 4);
 				intDocId = vo.getDocumentId();

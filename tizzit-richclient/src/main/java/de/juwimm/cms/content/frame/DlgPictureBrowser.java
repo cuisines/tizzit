@@ -417,7 +417,14 @@ public class DlgPictureBrowser extends JDialog {
 				t.start();
 			}
 		} catch (Exception ex) {
-			log.error("caught error ", ex);
+			if (ex.getMessage().contains("validation exception")) {
+				JOptionPane.showConfirmDialog(this, rb.getString("panel.content.picture.delete.exception"), rb.getString("DlgPictureBrowser.deletePicture"), JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			} else {
+				log.warn("exception on delete document");
+				if (log.isDebugEnabled()) {
+					log.debug(ex);
+				}
+			}
 		}
 	}
 
@@ -461,7 +468,9 @@ public class DlgPictureBrowser extends JDialog {
 
 	private class PictureListSelectionListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
-			if (e.getValueIsAdjusting()) { return; }
+			if (e.getValueIsAdjusting()) {
+				return;
+			}
 			if (tblPictures.getSelectedRow() >= 0) {
 				PictureSlimstValue vo = (PictureSlimstValue) tblPictureSorter.getValueAt(tblPictures.getSelectedRow(), 6);
 				selectedPictureId = vo.getPictureId();

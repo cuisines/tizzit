@@ -1273,7 +1273,11 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public void removeDocument(int documentId) throws Exception {
-		getClientService().removeDocument(Integer.valueOf(documentId));
+		try {
+			getClientService().removeDocument(Integer.valueOf(documentId));
+		} catch (RemoteInvocationFailureException e) {
+			throw (Exception) e.getCause();
+		}
 	}
 
 	/**
@@ -1357,7 +1361,11 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public void removePicture(int pictureId) throws Exception {
-		getClientService().removePicture(Integer.valueOf(pictureId));
+		try {
+			getClientService().removePicture(Integer.valueOf(pictureId));
+		} catch (RemoteInvocationFailureException e) {
+			throw (Exception) e.getCause();
+		}
 	}
 
 	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
