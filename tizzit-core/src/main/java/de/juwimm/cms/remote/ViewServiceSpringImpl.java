@@ -1097,18 +1097,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			}
 			if (viewComponentValue.getDisplayLinkName().trim().equals("")) {
 				throw new UserException("ViewComponentLinkNameIsEmpty");
-			} else if (viewComponent.hasSiblingsWithLinkName(viewComponentValue.getUrlLinkName())) {
-				//				int id = 0;
-				//				String tempText = "";
-				//				boolean foundAnEmptyName = false;
-				//				while (!foundAnEmptyName) {
-				//					id++;
-				//					tempText = viewComponentValue.getUrlLinkName() + "_" + id;
-				//					if (!viewComponent.hasSiblingsWithLinkName(tempText)) {
-				//						foundAnEmptyName = true;
-				//					}
-				//				}
-				//				viewComponentValue.setUrlLinkName(tempText);
 			}
 			if (viewComponentValue.getViewIndex() != null) {
 				viewComponent.setViewIndex(viewComponentValue.getViewIndex());
@@ -1542,23 +1530,66 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	@Override
 	protected Integer handleGetViewComponentChildrenNumber(Integer[] viewComponentsIds) throws Exception {
+		viewComponentsIds = removeSelectedChildrenForCount(viewComponentsIds);
 		return getNumberOfChildren(viewComponentsIds);
 	}
 
+	/**
+	 * For accurate counting of pages in selected nodes,
+	 * removes from the array the selected children of the selected nodes
+	 * @param viewComponentsIds
+	 * @return
+	 */
 	private Integer[] removeSelectedChildrenForCount(Integer[] viewComponentsIds) {
 		Hashtable<Integer, Boolean> isValidForCount = new Hashtable<Integer, Boolean>();
 		for (Integer id : viewComponentsIds) {
-			isValidForCount.put(id, true);
-		}
-		for (Integer id : viewComponentsIds) {
 			try {
-				ViewComponentValue[] children = getViewComponentChildren(id);
-
+				ArrayList<Integer> children = getAllChildren(new Integer[] {id});
+				for (Integer val : viewComponentsIds) {
+					if (children.contains(val) && ((val.intValue()) != (id.intValue()))) {
+						isValidForCount.put(val, false);
+					}
+				}
 			} catch (Exception e) {
-
+				if (log.isWarnEnabled()) log.warn("Error in removeSelectedChildrenForCount");
 			}
 		}
-		return null;
+		ArrayList<Integer> values = new ArrayList<Integer>();
+		for (Integer id : viewComponentsIds) {
+			if (isValidForCount.get(id) == null) {
+				values.add(id);
+			}
+		}
+		Integer[] a = new Integer[values.size()];
+		a = values.toArray(a);
+		return a;
+	}
+
+	private ArrayList<Integer> getAllChildren(Integer[] viewComponentsIds) {
+		ArrayList<Integer> children = new ArrayList<Integer>();
+		for (Integer parentId : viewComponentsIds) {
+			ViewComponentValue[] childrenVec = null;
+			try {
+				childrenVec = getViewComponentChildren(parentId);
+			} catch (Exception e) {
+				children.add(parentId);
+			}
+			if (childrenVec != null) {
+				Integer[] childrenIds = new Integer[childrenVec.length];
+
+				for (int i = 0; i < childrenVec.length; i++) {
+					childrenIds[i] = childrenVec[i].getViewComponentId();
+					children.add(childrenVec[i].getViewComponentId());
+				}
+				ArrayList<Integer> list = getAllChildren(childrenIds);
+				for (Integer tempVal : list) {
+					if (!children.contains(tempVal)) {
+						children.add(tempVal);
+					}
+				}
+			}
+		}
+		return children;
 	}
 
 	/**
@@ -1569,6 +1600,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private Integer getNumberOfChildren(Integer[] viewComponentsIds) {
 		int number = 0;
 		for (Integer parentId : viewComponentsIds) {
+
 			ViewComponentValue[] childrenVec = null;
 			try {
 				childrenVec = getViewComponentChildren(parentId);

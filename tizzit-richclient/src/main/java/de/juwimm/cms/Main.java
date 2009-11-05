@@ -157,7 +157,9 @@ public class Main extends JFrame implements ActionListener {
 		} else {
 			return;
 		}
-		if ("".equalsIgnoreCase(host)) { return; }
+		if ("".equalsIgnoreCase(host)) {
+			return;
+		}
 
 		logSys("CONNECTING HOST " + host + " " + argv[1] + " with SSL " + Constants.SERVER_SSL);
 		Constants.SERVER_HOST = host;
@@ -298,7 +300,9 @@ public class Main extends JFrame implements ActionListener {
 	 * @return message to be print in log 
 	 */
 	private String initMailAppender(Properties prop, String[] arguments) {
-		if (arguments == null || arguments.length == 0) { return "no mail appender log properties specified"; }
+		if (arguments == null || arguments.length == 0) {
+			return "no mail appender log properties specified";
+		}
 		String log4jArguments = null;
 		for (String argument : arguments) {
 			if (argument.contains(LOG4J_PROPERTIES_ARGUMENT)) {
@@ -309,7 +313,9 @@ public class Main extends JFrame implements ActionListener {
 			}
 		}
 
-		if (log4jArguments == null || log4jArguments.isEmpty()) { return "no mail appender log properties specified from server"; }
+		if (log4jArguments == null || log4jArguments.isEmpty()) {
+			return "no mail appender log properties specified from server";
+		}
 
 		//loads all the log4j properties into Properties object
 		//log4jArguments has format "v1=k1\nv2=k2\n ..."
@@ -466,10 +472,12 @@ public class Main extends JFrame implements ActionListener {
 			} else if (action.equals(Constants.ACTION_VIEW_ADMIN) || action.equals(Constants.ACTION_VIEW_ROOT)) {
 				Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_ADMIN;
 				showAdminPanel();
+				panStatusbar.setCountVisible(false);
 			} else if (action.equals(Constants.ACTION_CHANGE_PASSWORD)) {
 				showChangePasswordDialog();
 			} else if (action.equals(Constants.ACTION_SHOW_TASK)) {
 				showTaskPanel();
+				panStatusbar.setCountVisible(false);
 				Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_TASK;
 			} else if (action.equals(Constants.ACTION_SHOW_CONTENT)) {
 				Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_CONTENT;

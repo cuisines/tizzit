@@ -207,6 +207,10 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		this.add(panSSL, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 	}
 
+	public void setCountVisible(boolean visible) {
+		this.lblCountPages.setVisible(visible);
+	}
+
 	public void removeMessage() {
 		lblMessage.setText("");
 	}
@@ -257,6 +261,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 			} else {
 				siteDetails = comm.getSiteName();
 			}
+			setCountVisible(true);
 			lblMandant.setText(siteDetails);
 		} else if (action.equals(Constants.ACTION_STATUSBAR_COUNT)) {
 			setCount((String) e.getSource());

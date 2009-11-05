@@ -264,7 +264,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 					taskViewButton.getActionModel().setSelected(false);
 					editViewButton.getActionModel().setSelected(false);
 					adminViewButton.getActionModel().setSelected(true);
-					System.err.println("admin " + adminViewButton.isEnabled());
 
 				}
 
