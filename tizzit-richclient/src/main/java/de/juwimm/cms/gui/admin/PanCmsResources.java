@@ -303,6 +303,7 @@ public class PanCmsResources extends JPanel implements UnloadablePanel, Reloadab
 		nameValueLabel.setText("");
 		typeValueLabel.setText("");
 		createdValueLabel.setText("");
+		resourceStateValueLabel.setText("");
 	}
 
 	private void initLayout() {
