@@ -1071,14 +1071,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemoveDocument(Integer documentId) throws Exception {
-		//TODO TIZZIT-220 		
-		//		DocumentHbm document = super.getDocumentHbmDao().load(documentId);
-		//		List<ContentVersionHbm> contentVersions = getAllContentVersions4Unit(document.getUnit().getUnitId());
-		//		List<ContentVersionHbm> usedContentVersion = new ArrayList<ContentVersionHbm>();
-		//		usedContentVersion = getContentVersionUsingResource(contentVersions,documentId,"document","src");
-		//		if(usedContentVersion.size() > 0){
-		//			throw new UserException("can not remove");
-		//		}
+		Set viewComponents = getDocumentUsage(documentId);
+		if (viewComponents.size() > 0) {
+			throw new UserException("validation exception");
+		}
 		super.getDocumentHbmDao().remove(documentId);
 	}
 
@@ -1102,6 +1098,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemovePicture(Integer pictureId) throws Exception {
+		Set viewComponents = getPictureUsage(pictureId);
+		if (viewComponents.size() > 0) {
+			throw new UserException("validation exception");
+		}
 		super.getPictureHbmDao().remove(pictureId);
 
 	}

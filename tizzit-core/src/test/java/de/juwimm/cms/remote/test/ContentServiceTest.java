@@ -608,31 +608,6 @@ public class ContentServiceTest extends TestCase {
 		EasyMock.verify(documentDaoMock);
 		EasyMock.verify(pictureDaoMock);
 
-	}
-	// TODO TIZZIT-220	
-	//	public void testRemoveDocument(){
-	//		EasyMock.expect(documentDaoMock.load(EasyMock.anyInt())).andReturn(documentToDelete);
-	//		EasyMock.expect(viewComponentMock.findRootViewComponents4Unit(EasyMock.anyInt())).andReturn(roots);
-	//		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(mockContentVersions);
-	//		EasyMock.expect(contentVersionDaoMock.findContentVersionsByViewComponent(EasyMock.anyInt())).andReturn(new ArrayList<ContentVersionHbm>()).times(4);
-	//		
-	//		EasyMock.replay(documentDaoMock);
-	//		EasyMock.replay(contentVersionDaoMock);
-	//		EasyMock.replay(viewComponentMock);
-	//		
-	//		boolean usedDocumentException = false;
-	//		try {
-	//			contentService.removeDocument(1);
-	//		} catch (UserException e) {
-	//			usedDocumentException = true;
-	//		}
-	//		
-	//		EasyMock.verify(documentDaoMock);
-	//		EasyMock.verify(contentVersionDaoMock);
-	//		EasyMock.verify(viewComponentMock);
-	//		
-	//		Assert.assertTrue(usedDocumentException);
-	//		
-	//	}
+	}	
 
 }
