@@ -15,22 +15,22 @@
  */
 package org.tizzit.util.spring.httpinvoker;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.BufferedOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.FilterOutputStream;
 import java.io.FilterInputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationResult;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Extends <code>HttpInvokerServiceExporter</code> to allow
@@ -47,361 +47,316 @@ import org.apache.commons.logging.LogFactory;
  * @see StreamSupportingHttpInvokerProxyFactoryBean
  * @see HttpInvokerServiceExporter
  */
-public class StreamSupportingHttpInvokerServiceExporter
-  extends HttpInvokerServiceExporter
-{
-  private static final Log log = LogFactory.getLog(StreamSupportingHttpInvokerServiceExporter.class);
-  
-  private boolean emptyInputStreamParameterBeforeReturn = false;
+public class StreamSupportingHttpInvokerServiceExporter extends HttpInvokerServiceExporter {
+	private static final Log log = LogFactory.getLog(StreamSupportingHttpInvokerServiceExporter.class);
 
-  
-  //
-  // METHODS FROM CLASS HttpInvokerServiceExporter
-  //
-  
-  protected RemoteInvocation readRemoteInvocation(final HttpServletRequest request, final InputStream is)
-      throws IOException, ClassNotFoundException
-  {
-    final RemoteInvocation ret = super.readRemoteInvocation(request, new StreamSupportingHttpInvokerRequestExecutor.CloseShieldedInputStream(is));
-    boolean closeIs = true;
-    if(ret instanceof StreamSupportingRemoteInvocation) {
-      final StreamSupportingRemoteInvocation ssri = (StreamSupportingRemoteInvocation)ret;
-      if(ssri.getInputStreamParam() >= 0 && !ssri.isInputStreamParamNull()) {
-        ssri.getArguments()[ssri.getInputStreamParam()] = new ParameterInputStream(is);
-        closeIs = false;
-      }
-    }
-    if(closeIs) {
-      is.close();
-    }
-    return ret;
-  }
+	public StreamSupportingHttpInvokerServiceExporter() {
+		setRegisterTraceInterceptor(false);
+	}
 
-  protected void writeRemoteInvocationResult(final HttpServletRequest request,
-                                             final HttpServletResponse response,
-                                             final RemoteInvocationResult result)
-      throws IOException
-  {
-    if(hasStreamResult(result)) {
-      response.setContentType(StreamSupportingHttpInvokerRequestExecutor.CONTENT_TYPE_SERIALIZED_OBJECT_WITH_STREAM);
-    } else {
-      response.setContentType(CONTENT_TYPE_SERIALIZED_OBJECT);
-    }
+	private boolean emptyInputStreamParameterBeforeReturn = false;
 
-    writeRemoteInvocationResult(request, response, result, response.getOutputStream());
-  }
+	//
+	// METHODS FROM CLASS HttpInvokerServiceExporter
+	//
 
-  protected void writeRemoteInvocationResult(final HttpServletRequest request,
-                                             final HttpServletResponse response,
-                                             final RemoteInvocationResult result,
-                                             final OutputStream os)
-      throws IOException
-  {
-    if(hasStreamResult(result)) {
-      final OutputStream decoratedOut = decorateOutputStream(request, response, os);
-      response.setHeader("Transfer-Encoding", "chunked");
+	protected RemoteInvocation readRemoteInvocation(final HttpServletRequest request, final InputStream is) throws IOException, ClassNotFoundException {
+		final RemoteInvocation ret = super.readRemoteInvocation(request, new StreamSupportingHttpInvokerRequestExecutor.CloseShieldedInputStream(is));
+		boolean closeIs = true;
+		if (ret instanceof StreamSupportingRemoteInvocation) {
+			final StreamSupportingRemoteInvocation ssri = (StreamSupportingRemoteInvocation) ret;
+			if (ssri.getInputStreamParam() >= 0 && !ssri.isInputStreamParamNull()) {
+				ssri.getArguments()[ssri.getInputStreamParam()] = new ParameterInputStream(is);
+				closeIs = false;
+			}
+		}
+		if (closeIs) {
+			is.close();
+		}
+		return ret;
+	}
 
-      try {
-        // We want to be able to close the ObjectOutputStream in order to
-        // properly flush and clear it out, but we don't want it closing
-        // our underlying OutputStream.
-        final ObjectOutputStream oos = new ObjectOutputStream(new CloseShieldedOutputStream(new BufferedOutputStream(decoratedOut, 4096)));
-        try {
-          doWriteRemoteInvocationResult(result, oos);
-          oos.flush();
-        } finally {
-          oos.close();
-        }
-        doWriteReturnInputStream((StreamSupportingRemoteInvocationResult)result, decoratedOut);
-      } finally {
-        decoratedOut.close();
-      }
-    } else {
-      super.writeRemoteInvocationResult(request, response, result, os);
-    }
-  }
+	protected void writeRemoteInvocationResult(final HttpServletRequest request, final HttpServletResponse response, final RemoteInvocationResult result) throws IOException {
+		if (hasStreamResult(result)) {
+			response.setContentType(StreamSupportingHttpInvokerRequestExecutor.CONTENT_TYPE_SERIALIZED_OBJECT_WITH_STREAM);
+		} else {
+			response.setContentType(CONTENT_TYPE_SERIALIZED_OBJECT);
+		}
 
-  protected RemoteInvocationResult invokeAndCreateResult(final RemoteInvocation invocation, final Object targetObject)
-  {
-    try {
-      final Object value = invoke(invocation, targetObject);
-      if(invocation instanceof StreamSupportingRemoteInvocation) {
-        final Boolean closedInputStreamParam = getParameterInputStreamClosedFlag(invocation);
-        if(value instanceof InputStream) {
-          return new StreamSupportingRemoteInvocationResult((InputStream)value, closedInputStreamParam);
-        } else {
-          return new StreamSupportingRemoteInvocationResult(value, closedInputStreamParam);
-        }
-      } else {
-        return new RemoteInvocationResult(value);
-      }
-    } catch (Throwable ex) {
-      if(invocation instanceof StreamSupportingRemoteInvocation) {
-        return new StreamSupportingRemoteInvocationResult(ex, getParameterInputStreamClosedFlag(invocation));
-      } else {  
-    	  if(log.isWarnEnabled()){
-    		  log.warn(ex.getCause().getMessage());
-    	  }    	  
-    	  if(log.isDebugEnabled()){
-    		  log.debug(ex);    		  
-    	  }
-    	 if(ex.getCause() != null){
-    		 return new RemoteInvocationResult(ex.getCause());
-    	 }else{
-    		 return new RemoteInvocationResult(new Exception(ex.getMessage()));
-    	 }
-        
-      }
-    } finally {
-      final ParameterInputStream pi = getParameterInputStreamFrom(invocation);
-      if(pi != null) {
-        try {
-          pi.doRealClose(getEmptyInputStreamParameterBeforeReturn());
-        } catch(IOException e) {
-          log.warn("Error while attempting to close InputStream parameter for RemoteInvocation '" + invocation + "'", e);
-        }
-      }
-    }
-  }
-  
-  
-  
-  
-  
-  //
-  // HELPER METHODS
-  //
-  
+		writeRemoteInvocationResult(request, response, result, response.getOutputStream());
+	}
 
-  /**
-   * See {@link #setEmptyInputStreamParameterBeforeReturn(boolean)}.
-   *
-   * @return <code>true</code> if any InputStream parameter should be
-   *         "emptied" before sending the response to the client.
-   * @see #setEmptyInputStreamParameterBeforeReturn(boolean)
-   */
-  public boolean getEmptyInputStreamParameterBeforeReturn()
-  {
-    return this.emptyInputStreamParameterBeforeReturn;
-  }
+	protected void writeRemoteInvocationResult(final HttpServletRequest request, final HttpServletResponse response, final RemoteInvocationResult result, final OutputStream os) throws IOException {
+		if (hasStreamResult(result)) {
+			final OutputStream decoratedOut = decorateOutputStream(request, response, os);
+			response.setHeader("Transfer-Encoding", "chunked");
 
-  /**
-   * Determines if this servlet should "empty" any InputStream parameter to a
-   * service method before returning to the client.  This is provided as a
-   * workaround for some servlet containers in order to ensure that if an
-   * exception is thrown or the service method returns before the InputStream
-   * parameter is read that the client will not block trying to send the
-   * remaining InputStream to the server.  This means that in the face of an
-   * exception or early return from a method that the client will still finish
-   * uploading all of its data before it becomes aware of the situation,
-   * taking up unnecessary time and bandwidth.  Because of this, a better
-   * solution should be found to this problem in the future.  This property
-   * defaults to <code>false</code>.
-   *
-   * @param emptyInputStreamParameterBeforeReturn
-   *
-   *
-   * @see #getEmptyInputStreamParameterBeforeReturn()
-   */
-  public void setEmptyInputStreamParameterBeforeReturn(final boolean emptyInputStreamParameterBeforeReturn)
-  {
-    this.emptyInputStreamParameterBeforeReturn = emptyInputStreamParameterBeforeReturn;
-  }
+			try {
+				// We want to be able to close the ObjectOutputStream in order to
+				// properly flush and clear it out, but we don't want it closing
+				// our underlying OutputStream.
+				final ObjectOutputStream oos = new ObjectOutputStream(new CloseShieldedOutputStream(new BufferedOutputStream(decoratedOut, 4096)));
+				try {
+					doWriteRemoteInvocationResult(result, oos);
+					oos.flush();
+				} finally {
+					oos.close();
+				}
+				doWriteReturnInputStream((StreamSupportingRemoteInvocationResult) result, decoratedOut);
+			} finally {
+				decoratedOut.close();
+			}
+		} else {
+			super.writeRemoteInvocationResult(request, response, result, os);
+		}
+	}
 
-  protected boolean hasStreamResult(final RemoteInvocationResult result)
-  {
-    return result instanceof StreamSupportingRemoteInvocationResult &&
-           ((StreamSupportingRemoteInvocationResult)result).getHasReturnStream();
-  }
+	protected RemoteInvocationResult invokeAndCreateResult(final RemoteInvocation invocation, final Object targetObject) {
+		try {
+			final Object value = invoke(invocation, targetObject);
+			if (invocation instanceof StreamSupportingRemoteInvocation) {
+				final Boolean closedInputStreamParam = getParameterInputStreamClosedFlag(invocation);
+				if (value instanceof InputStream) {
+					return new StreamSupportingRemoteInvocationResult((InputStream) value, closedInputStreamParam);
+				} else {
+					return new StreamSupportingRemoteInvocationResult(value, closedInputStreamParam);
+				}
+			} else {
+				return new RemoteInvocationResult(value);
+			}
+		} catch (Throwable ex) {
+			if (invocation instanceof StreamSupportingRemoteInvocation) {
+				return new StreamSupportingRemoteInvocationResult(ex, getParameterInputStreamClosedFlag(invocation));
+			} else {
+				if (log.isWarnEnabled()) {
+					log.warn(ex.getCause().getMessage());
+				}
+				if (log.isDebugEnabled()) {
+					log.debug(ex);
+				}
+				if (ex.getCause() != null) {
+					return new RemoteInvocationResult(ex.getCause());
+				} else {
+					return new RemoteInvocationResult(new Exception(ex.getMessage()));
+				}
 
-  protected void doWriteReturnInputStream(final StreamSupportingRemoteInvocationResult result, final OutputStream unbufferedChunkedOut)
-      throws IOException
-  {
-    // We use the unbuffered chunked out with a custom buffer for optimum
-    // performance - partly because we can't be sure that the returned
-    // InputStream is itself buffered.
-    final InputStream isResult = result.getServerSideInputStream();
-    if(isResult != null) {
-      try {
-        final byte[] buffer = new byte[4096];
-        int read;
-        while((read = isResult.read(buffer)) != -1) {
-          unbufferedChunkedOut.write(buffer, 0, read);
-        }
-      } finally {
-        result.setServerSideInputStream(null);
-        isResult.close();
-      }
-    }
-  }
+			}
+		} finally {
+			final ParameterInputStream pi = getParameterInputStreamFrom(invocation);
+			if (pi != null) {
+				try {
+					pi.doRealClose(getEmptyInputStreamParameterBeforeReturn());
+				} catch (IOException e) {
+					log.warn("Error while attempting to close InputStream parameter for RemoteInvocation '" + invocation + "'", e);
+				}
+			}
+		}
+	}
 
-  protected ParameterInputStream getParameterInputStreamFrom(final RemoteInvocation invocation)
-  {
-    if(invocation instanceof StreamSupportingRemoteInvocation) {
-      final StreamSupportingRemoteInvocation ssri = (StreamSupportingRemoteInvocation)invocation;
-      if(ssri.getInputStreamParam() >= 0 && !ssri.isInputStreamParamNull()) {
-        return (ParameterInputStream)ssri.getArguments()[ssri.getInputStreamParam()];
-      }
-    }
-    
-    return null;
-  }
-  
-  protected Boolean getParameterInputStreamClosedFlag(final RemoteInvocation invocation)
-  {
-    final ParameterInputStream pi = getParameterInputStreamFrom(invocation);
-    if(pi != null) {
-      return pi.isClosed() ? Boolean.TRUE : Boolean.FALSE;
-    } else {
-      return null;
-    }
-  }
+	//
+	// HELPER METHODS
+	//
 
+	/**
+	 * See {@link #setEmptyInputStreamParameterBeforeReturn(boolean)}.
+	 *
+	 * @return <code>true</code> if any InputStream parameter should be
+	 *         "emptied" before sending the response to the client.
+	 * @see #setEmptyInputStreamParameterBeforeReturn(boolean)
+	 */
+	public boolean getEmptyInputStreamParameterBeforeReturn() {
+		return this.emptyInputStreamParameterBeforeReturn;
+	}
 
-  /**
-   * Shields an underlying OutputStream from being closed.
-   */
-  public static class CloseShieldedOutputStream extends FilterOutputStream
-  {
-    public CloseShieldedOutputStream(final OutputStream out)
-    {
-      super(out);
-    }
+	/**
+	 * Determines if this servlet should "empty" any InputStream parameter to a
+	 * service method before returning to the client.  This is provided as a
+	 * workaround for some servlet containers in order to ensure that if an
+	 * exception is thrown or the service method returns before the InputStream
+	 * parameter is read that the client will not block trying to send the
+	 * remaining InputStream to the server.  This means that in the face of an
+	 * exception or early return from a method that the client will still finish
+	 * uploading all of its data before it becomes aware of the situation,
+	 * taking up unnecessary time and bandwidth.  Because of this, a better
+	 * solution should be found to this problem in the future.  This property
+	 * defaults to <code>false</code>.
+	 *
+	 * @param emptyInputStreamParameterBeforeReturn
+	 *
+	 *
+	 * @see #getEmptyInputStreamParameterBeforeReturn()
+	 */
+	public void setEmptyInputStreamParameterBeforeReturn(final boolean emptyInputStreamParameterBeforeReturn) {
+		this.emptyInputStreamParameterBeforeReturn = emptyInputStreamParameterBeforeReturn;
+	}
 
-    public void close() throws IOException
-    {
-      flush();
-    }
-  }
+	protected boolean hasStreamResult(final RemoteInvocationResult result) {
+		return result instanceof StreamSupportingRemoteInvocationResult && ((StreamSupportingRemoteInvocationResult) result).getHasReturnStream();
+	}
 
+	protected void doWriteReturnInputStream(final StreamSupportingRemoteInvocationResult result, final OutputStream unbufferedChunkedOut) throws IOException {
+		// We use the unbuffered chunked out with a custom buffer for optimum
+		// performance - partly because we can't be sure that the returned
+		// InputStream is itself buffered.
+		final InputStream isResult = result.getServerSideInputStream();
+		if (isResult != null) {
+			try {
+				final byte[] buffer = new byte[4096];
+				int read;
+				while ((read = isResult.read(buffer)) != -1) {
+					unbufferedChunkedOut.write(buffer, 0, read);
+				}
+			} finally {
+				result.setServerSideInputStream(null);
+				isResult.close();
+			}
+		}
+	}
 
-  /**
-   * Tracks if an InputStream parameter is closed by a service method, if
-   * any input method threw an exception during operation, and if the
-   * service method read the InputStream to the end-of-stream.  Also provides
-   * the ability to optionally read an InputStream to end-of-stream if the
-   * service method did not.
-   */
-  public static class ParameterInputStream extends FilterInputStream
-  {
-    private boolean fullyRead = false;
-    private boolean erroredOut = false;
-    private boolean closed = false;
+	protected ParameterInputStream getParameterInputStreamFrom(final RemoteInvocation invocation) {
+		if (invocation instanceof StreamSupportingRemoteInvocation) {
+			final StreamSupportingRemoteInvocation ssri = (StreamSupportingRemoteInvocation) invocation;
+			if (ssri.getInputStreamParam() >= 0 && !ssri.isInputStreamParamNull()) {
+				return (ParameterInputStream) ssri.getArguments()[ssri.getInputStreamParam()];
+			}
+		}
 
-    public ParameterInputStream(final InputStream in)
-    {
-      super(in);
-    }
+		return null;
+	}
 
-    public boolean isFullyRead()
-    {
-      return this.fullyRead;
-    }
+	protected Boolean getParameterInputStreamClosedFlag(final RemoteInvocation invocation) {
+		final ParameterInputStream pi = getParameterInputStreamFrom(invocation);
+		if (pi != null) {
+			return pi.isClosed() ? Boolean.TRUE : Boolean.FALSE;
+		} else {
+			return null;
+		}
+	}
 
-    public boolean isErroredOut()
-    {
-      return this.erroredOut;
-    }
+	/**
+	 * Shields an underlying OutputStream from being closed.
+	 */
+	public static class CloseShieldedOutputStream extends FilterOutputStream {
+		public CloseShieldedOutputStream(final OutputStream out) {
+			super(out);
+		}
 
-    public boolean isClosed()
-    {
-      return this.closed;
-    }
+		public void close() throws IOException {
+			flush();
+		}
+	}
 
-    public void doRealClose(final boolean emptyStream) throws IOException
-    {
-      if(!isClosed()) {
-        if(log.isDebugEnabled()) log.debug("Service method failed to close InputStream parameter from remote invocation.  Will perform the close anyway.");
-      }
-      if(!isFullyRead() && emptyStream && !isErroredOut()) {
-        final byte[] buf = new byte[4096];
-        //noinspection StatementWithEmptyBody
-        while(read(buf) != -1) ;
-      }
+	/**
+	 * Tracks if an InputStream parameter is closed by a service method, if
+	 * any input method threw an exception during operation, and if the
+	 * service method read the InputStream to the end-of-stream.  Also provides
+	 * the ability to optionally read an InputStream to end-of-stream if the
+	 * service method did not.
+	 */
+	public static class ParameterInputStream extends FilterInputStream {
+		private boolean fullyRead = false;
+		private boolean erroredOut = false;
+		private boolean closed = false;
 
-      super.close();
-    }
+		public ParameterInputStream(final InputStream in) {
+			super(in);
+		}
 
-    protected int checkEos(final int read)
-    {
-      if(read == -1) {
-        this.fullyRead = true;
-      }
-      return read;
-    }
+		public boolean isFullyRead() {
+			return this.fullyRead;
+		}
 
-    protected IOException checkException(final IOException ioe)
-    {
-      this.erroredOut = true;
-      return ioe;
-    }
+		public boolean isErroredOut() {
+			return this.erroredOut;
+		}
 
-    protected void assertOpen() throws IOException
-    {
-      if(this.closed) {
-        throw new IOException("Stream closed");
-      }
-    }
+		public boolean isClosed() {
+			return this.closed;
+		}
 
+		public void doRealClose(final boolean emptyStream) throws IOException {
+			if (!isClosed()) {
+				if (log.isDebugEnabled()) log.debug("Service method failed to close InputStream parameter from remote invocation.  Will perform the close anyway.");
+			}
+			if (!isFullyRead() && emptyStream && !isErroredOut()) {
+				final byte[] buf = new byte[4096];
+				//noinspection StatementWithEmptyBody
+				while (read(buf) != -1);
+			}
 
-    //
-    // METHODS FROM CLASS FilterInputStream
-    //
+			super.close();
+		}
 
-    public int read() throws IOException
-    {
-      assertOpen();
-      try {
-        return checkEos(super.read());
-      } catch(IOException e) {
-        throw checkException(e);
-      }
-    }
+		protected int checkEos(final int read) {
+			if (read == -1) {
+				this.fullyRead = true;
+			}
+			return read;
+		}
 
-    public int read(byte b[]) throws IOException
-    {
-      assertOpen();
-      try {
-        return checkEos(super.read(b));
-      } catch(IOException e) {
-        throw checkException(e);
-      }
-    }
+		protected IOException checkException(final IOException ioe) {
+			this.erroredOut = true;
+			return ioe;
+		}
 
-    public int read(byte b[], int off, int len) throws IOException
-    {
-      assertOpen();
-      try {
-        return checkEos(super.read(b, off, len));
-      } catch(IOException e) {
-        throw checkException(e);
-      }
-    }
+		protected void assertOpen() throws IOException {
+			if (this.closed) {
+				throw new IOException("Stream closed");
+			}
+		}
 
-    public long skip(long n) throws IOException
-    {
-      assertOpen();
-      try {
-        return super.skip(n);
-      } catch(IOException e) {
-        throw checkException(e);
-      }
-    }
+		//
+		// METHODS FROM CLASS FilterInputStream
+		//
 
-    public int available() throws IOException
-    {
-      assertOpen();
-      try {
-        return super.available();
-      } catch(IOException e) {
-        throw checkException(e);
-      }
-    }
+		public int read() throws IOException {
+			assertOpen();
+			try {
+				return checkEos(super.read());
+			} catch (IOException e) {
+				throw checkException(e);
+			}
+		}
 
-    public void close() throws IOException
-    {
-      // Close will happen later.
-      this.closed = true;
-    }
-  }
+		public int read(byte b[]) throws IOException {
+			assertOpen();
+			try {
+				return checkEos(super.read(b));
+			} catch (IOException e) {
+				throw checkException(e);
+			}
+		}
+
+		public int read(byte b[], int off, int len) throws IOException {
+			assertOpen();
+			try {
+				return checkEos(super.read(b, off, len));
+			} catch (IOException e) {
+				throw checkException(e);
+			}
+		}
+
+		public long skip(long n) throws IOException {
+			assertOpen();
+			try {
+				return super.skip(n);
+			} catch (IOException e) {
+				throw checkException(e);
+			}
+		}
+
+		public int available() throws IOException {
+			assertOpen();
+			try {
+				return super.available();
+			} catch (IOException e) {
+				throw checkException(e);
+			}
+		}
+
+		public void close() throws IOException {
+			// Close will happen later.
+			this.closed = true;
+		}
+	}
 }
