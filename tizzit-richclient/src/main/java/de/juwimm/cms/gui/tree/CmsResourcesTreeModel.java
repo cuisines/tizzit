@@ -187,7 +187,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 
 		@Override
 		public ImageIcon getIcon() {
-			return UIConstants.ICON_DOCUMENT;
+			return UIConstants.ICON_RESOURCE_DOCUMENT;
 		}
 
 		@Override
@@ -217,7 +217,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 
 		@Override
 		public ImageIcon getIcon() {
-			return UIConstants.ICON_PICTURE;
+			return UIConstants.ICON_RESOURCE_PICTURE;
 		}
 
 		@Override
@@ -261,6 +261,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 				panel.add(this, BorderLayout.CENTER);
 
 				labelUI.setState(node.getState());
+				labelUI.setResourceType(node instanceof PictureTreeNode ? true : false);
 				return panel;
 			} else {
 				labelUI.setState(null);
@@ -273,9 +274,14 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 
 	private static class CmsResourcesLabelUI extends BasicLabelUI {
 		ResourceUsageState state = null;
+		Boolean isPicture;
 
 		public void setState(ResourceUsageState state) {
 			this.state = state;
+		}
+
+		public void setResourceType(boolean b) {
+			isPicture = b;
 		}
 
 		@Override
@@ -287,7 +293,7 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 
 			switch (state) {
 				case Unsused: {
-					g.setColor(new Color(141, 195, 68));
+					g.setColor(new Color(0x006600));
 					break;
 				}
 				case Used: {
@@ -295,11 +301,20 @@ public class CmsResourcesTreeModel extends DefaultTreeModel {
 					break;
 				}
 				case UsedInOlderVersions: {
-					g.setColor(new Color(243, 251, 13));
+					g.setColor(new Color(0xc8d40b));
 					break;
 				}
 			}
-			g.drawRect(0, 0, 15, 15);
+			if (isPicture) {
+				g.drawRect(0, 2, 15, 12);
+				g.setColor(new Color(0xa9a9a9));
+				g.drawRect(-1, 1, 17, 14);
+			} else {
+				g.drawRect(2, 2, 12, 12);
+				g.setColor(new Color(0xa9a9a9));
+				g.drawRect(1, 1, 14, 14);
+			}
+
 		}
 	}
 }

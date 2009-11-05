@@ -276,9 +276,8 @@ public final class UIConstants {
 
 	public static ImageIcon ICON_ARROW_RIGHT;
 	public static ImageIcon ICON_ARROW_DOWN;
-	public static ImageIcon ICON_PICTURE;
-	public static ImageIcon ICON_DOCUMENT;
-	
+	public static ImageIcon ICON_RESOURCE_PICTURE;
+	public static ImageIcon ICON_RESOURCE_DOCUMENT;
 
 	private UIConstants() {
 	}
@@ -286,7 +285,9 @@ public final class UIConstants {
 	private static ImageIcon load(String path) {
 		String image = IMAGE_PATH + path;
 
-		if (imageCache.containsKey(image)) { return imageCache.get(image); }
+		if (imageCache.containsKey(image)) {
+			return imageCache.get(image);
+		}
 		ImageIcon iimage = new ImageIcon(UIConstants.class.getResource(image));
 		imageCache.put(image, iimage);
 		return iimage;
@@ -518,9 +519,9 @@ public final class UIConstants {
 
 		ICON_ARROW_RIGHT = load("arrowRight.png");
 		ICON_ARROW_DOWN = load("arrowDown.png");
-		
-		ICON_PICTURE = load("16x16/16_bild.gif");
-		ICON_DOCUMENT = load("16x16/16_komp_importdoc.gif");
+
+		ICON_RESOURCE_PICTURE = load("16x16/resource_image.gif");
+		ICON_RESOURCE_DOCUMENT = load("16x16/resource_document.gif");
 
 	}
 
@@ -566,10 +567,14 @@ public final class UIConstants {
 
 		// TODO INTERIM!!!
 		if (propUniqueId.equalsIgnoreCase(PanelContent.PROP_CHECKIN)) {
-			if (imageSizeExpected == IMAGE_SIZE_16) { return MNU_FILE_CHECKIN; }
+			if (imageSizeExpected == IMAGE_SIZE_16) {
+				return MNU_FILE_CHECKIN;
+			}
 			return ACTION_CHECKIN;
 		} else if (propUniqueId.equalsIgnoreCase(PanelContent.PROP_CHECKOUT)) {
-			if (imageSizeExpected == IMAGE_SIZE_16) { return MNU_FILE_CHECKOUT; }
+			if (imageSizeExpected == IMAGE_SIZE_16) {
+				return MNU_FILE_CHECKOUT;
+			}
 			return ACTION_CHECKOUT;
 		}
 		// --- INTERIM END
