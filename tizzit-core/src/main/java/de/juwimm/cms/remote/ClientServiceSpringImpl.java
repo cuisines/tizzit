@@ -1928,4 +1928,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 
 	}
 
+	@Override
+	protected String handleCheckForUniqueUrlLinkName(Integer viewComponentId, Integer parentId, String urlLinkName) throws Exception {
+		return getViewServiceSpring().checkForUniqueUrlLinkName(viewComponentId, parentId, urlLinkName);
+	}
+
 }

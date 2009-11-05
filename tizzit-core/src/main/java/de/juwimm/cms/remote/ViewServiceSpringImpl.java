@@ -158,7 +158,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					throw new UserException(e.getMessage());
 				}
 			}
-			if (isInUse) { throw new UserException("VCINUSE"); }
+			if (isInUse) {
+				throw new UserException("VCINUSE");
+			}
 		}
 		// try to remove
 		try {
@@ -329,7 +331,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		try {
 			if (log.isDebugEnabled()) log.debug("begin addFirstViewComponent");
 			ViewComponentHbm node = super.getViewComponentHbmDao().load(parentId);
-			if (!node.isLeaf()) { throw new UserException("node is not a leaf."); }
+			if (!node.isLeaf()) {
+				throw new UserException("node is not a leaf.");
+			}
 			ViewDocumentHbm vd = super.getViewDocumentHbmDao().load(viewDocumentId);
 			ViewComponentHbm newNode = super.getViewComponentHbmDao().create(getViewComponentHbmDao().create(vd, strReference, strText, strInfo, null));
 			newNode.setParentViewComponent(node);
@@ -350,7 +354,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		try {
 			if (log.isDebugEnabled()) log.debug("begin getViewComponentChildren");
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(parentId);
-			if (view.isLeaf()) { throw new UserException("node is a leaf."); }
+			if (view.isLeaf()) {
+				throw new UserException("node is a leaf.");
+			}
 			Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
 			for (Iterator i = view.getChildren().iterator(); i.hasNext();) {
 				ViewComponentHbm vcHbm = (ViewComponentHbm) i.next();
@@ -371,7 +377,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected Integer handleGetUnit4ViewComponent(Integer viewComponentId) throws Exception {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			if (view.getAssignedUnit() != null) { return view.getAssignedUnit().getUnitId(); }
+			if (view.getAssignedUnit() != null) {
+				return view.getAssignedUnit().getUnitId();
+			}
 			return view.getUnit4ViewComponent();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -398,10 +406,14 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected Integer handleGetViewComponent4UnitViewComponent(Integer viewComponentId) throws Exception {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			if (view.getAssignedUnit() != null) { return view.getViewComponentId(); }
+			if (view.getAssignedUnit() != null) {
+				return view.getViewComponentId();
+			}
 			while (view.getAssignedUnit() == null && !view.isRoot()) {
 				view = view.getParent();
-				if (view.getAssignedUnit() != null) { return view.getViewComponentId(); }
+				if (view.getAssignedUnit() != null) {
+					return view.getViewComponentId();
+				}
 			}
 			return null;
 		} catch (Exception e) {
@@ -693,7 +705,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			}
 		}
 		if (log.isDebugEnabled()) log.debug("LEAVING GET ID FROM TREEPATH");
-		if (ret) { return prevOne; }
+		if (ret) {
+			return prevOne;
+		}
 		return null;
 	}
 
@@ -813,7 +827,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private ViewComponentValue moveComponentUp(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			if (view.getPrevNode() == null) { throw new UserException("Node is already first child."); }
+			if (view.getPrevNode() == null) {
+				throw new UserException("Node is already first child.");
+			}
 			ViewComponentHbm prev = view.getPrevNode();
 			ViewComponentHbm next = view.getNextNode();
 			ViewComponentHbm prevPrev = prev.getPrevNode();
@@ -867,7 +883,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	private ViewComponentValue moveComponentDown(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
-			if (view.getNextNode() == null) { throw new UserException("Node is already last child."); }
+			if (view.getNextNode() == null) {
+				throw new UserException("Node is already last child.");
+			}
 			ViewComponentHbm prev, next, nextNext, parent;
 			prev = view.getPrevNode();
 			next = view.getNextNode();
@@ -986,7 +1004,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			next = view.getNextNode();
 			firstChild = prev.getFirstChild();
 			parent = view.getParent();
-			if (prev == null) { throw new UserException("previous node cannot be null."); }
+			if (prev == null) {
+				throw new UserException("previous node cannot be null.");
+			}
 			prev.setNextNode(next);
 			if (next != null) {
 				next.setPrevNode(prev);
@@ -1078,17 +1098,17 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			if (viewComponentValue.getDisplayLinkName().trim().equals("")) {
 				throw new UserException("ViewComponentLinkNameIsEmpty");
 			} else if (viewComponent.hasSiblingsWithLinkName(viewComponentValue.getUrlLinkName())) {
-				int id = 0;
-				String tempText = "";
-				boolean foundAnEmptyName = false;
-				while (!foundAnEmptyName) {
-					id++;
-					tempText = viewComponentValue.getUrlLinkName() + "_" + id;
-					if (!viewComponent.hasSiblingsWithLinkName(tempText)) {
-						foundAnEmptyName = true;
-					}
-				}
-				viewComponentValue.setUrlLinkName(tempText);
+				//				int id = 0;
+				//				String tempText = "";
+				//				boolean foundAnEmptyName = false;
+				//				while (!foundAnEmptyName) {
+				//					id++;
+				//					tempText = viewComponentValue.getUrlLinkName() + "_" + id;
+				//					if (!viewComponent.hasSiblingsWithLinkName(tempText)) {
+				//						foundAnEmptyName = true;
+				//					}
+				//				}
+				//				viewComponentValue.setUrlLinkName(tempText);
 			}
 			if (viewComponentValue.getViewIndex() != null) {
 				viewComponent.setViewIndex(viewComponentValue.getViewIndex());
@@ -1182,7 +1202,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	private String getParents4View(ViewComponentHbm viewComponent) {
 		try {
-			if (viewComponent.getParent().isRoot()) { return "\\"; }
+			if (viewComponent.getParent().isRoot()) {
+				return "\\";
+			}
 		} catch (Exception ex) {
 			return "\\";
 		}
@@ -1360,9 +1382,13 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected Boolean handleIsUnitAndChangesParentUnitLeft(Integer viewComponentId) throws Exception {
 		try {
 			ViewComponentHbm current = super.getViewComponentHbmDao().load(viewComponentId);
-			if ((current == null) || (current.isRoot()) || (current.getAssignedUnit() == null)) { return Boolean.FALSE; }
+			if ((current == null) || (current.isRoot()) || (current.getAssignedUnit() == null)) {
+				return Boolean.FALSE;
+			}
 			ViewComponentHbm parent = current.getParent();
-			if (parent.isRoot()) { return Boolean.FALSE; }
+			if (parent.isRoot()) {
+				return Boolean.FALSE;
+			}
 			int parentUnitId = parent.getUnit4ViewComponent().intValue();
 			int grandfatherUnitId = parent.getParent().getUnit4ViewComponent().intValue();
 			return (new Boolean(grandfatherUnitId == parentUnitId));
@@ -1384,10 +1410,14 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected Boolean handleIsUnitAndChangesParentUnitRight(Integer viewComponentId) throws Exception {
 		try {
 			ViewComponentHbm current = super.getViewComponentHbmDao().load(viewComponentId);
-			if ((current == null) || (current.isRoot()) || (current.getAssignedUnit() == null)) { return Boolean.FALSE; }
+			if ((current == null) || (current.isRoot()) || (current.getAssignedUnit() == null)) {
+				return Boolean.FALSE;
+			}
 			ViewComponentHbm parent = current.getParent();
 			ViewComponentHbm previous = current.getPrevNode();
-			if (previous == null) { return Boolean.FALSE; }
+			if (previous == null) {
+				return Boolean.FALSE;
+			}
 			int parentUnitId = parent.getUnit4ViewComponent().intValue();
 			int previousUnitId = previous.getUnit4ViewComponent().intValue();
 			return (new Boolean(parentUnitId == previousUnitId));
@@ -1513,6 +1543,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	@Override
 	protected Integer handleGetViewComponentChildrenNumber(Integer[] viewComponentsIds) throws Exception {
 		return getNumberOfChildren(viewComponentsIds);
+	}
+
+	private Integer[] removeSelectedChildrenForCount(Integer[] viewComponentsIds) {
+		Hashtable<Integer, Boolean> isValidForCount = new Hashtable<Integer, Boolean>();
+		for (Integer id : viewComponentsIds) {
+			isValidForCount.put(id, true);
+		}
+		for (Integer id : viewComponentsIds) {
+			try {
+				ViewComponentValue[] children = getViewComponentChildren(id);
+
+			} catch (Exception e) {
+
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -1958,7 +2004,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	private String getNVal(Element ael, String nodeName) {
 		String tmp = XercesHelper.getNodeValue(ael, "./" + nodeName);
-		if (tmp.equals("null") || tmp.equals("")) { return null; }
+		if (tmp.equals("null") || tmp.equals("")) {
+			return null;
+		}
 		return tmp;
 	}
 
@@ -2457,4 +2505,39 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	}
 
+	@Override
+	protected String handleCheckForUniqueUrlLinkName(Integer viewComponentId, Integer parentId, String urlLinkName) throws Exception {
+		ViewComponentValue[] children = getViewComponentChildren(parentId);
+		ArrayList<Integer> existingNumber = new ArrayList<Integer>();
+		boolean flag = false;
+		if (parentId != null) {
+			for (ViewComponentValue viewComponentValue : children) {
+				if ((viewComponentValue.getUrlLinkName().startsWith(urlLinkName)) && (viewComponentId.intValue() != viewComponentValue.getViewComponentId().intValue())) {
+					String existingUrlLinkname = viewComponentValue.getUrlLinkName();
+					if (existingUrlLinkname.equalsIgnoreCase(urlLinkName)) {
+						flag = true;
+					}
+					if (existingUrlLinkname.startsWith(urlLinkName + "_")) {
+						Integer version = Integer.parseInt(existingUrlLinkname.substring(urlLinkName.length() + 1, existingUrlLinkname.length()));
+						existingNumber.add(version);
+					}
+				}
+			}
+			if ((flag) && (existingNumber.size() == 0)) {
+				urlLinkName = urlLinkName + "_1";
+			}
+			if ((existingNumber.size() > 0) && (flag)) {
+				Integer max = 0;
+				for (Integer value : existingNumber) {
+					if (value.intValue() > max.intValue()) {
+						max = value;
+					}
+				}
+				max++;
+				urlLinkName = urlLinkName + "_" + max;
+			}
+
+		}
+		return urlLinkName;
+	}
 }

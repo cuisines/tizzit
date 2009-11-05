@@ -106,7 +106,6 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 	private final JLabel lblLastModifiedData = new JLabel();
 	private final JLabel lblUserLastModifiedText = new JLabel();
 	private final JLabel lblUserLastModifiedData = new JLabel();
-	private boolean saveStatus;
 
 	public PanMenuentry() {
 		try {
@@ -302,13 +301,8 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		return panOptPan;
 	}
 
-	public boolean getSaveStatus() {
-		return saveStatus;
-	}
-
 	public void save() throws Exception {
 		boolean edited = false;
-		saveStatus = true;
 		Date onlineStart = txtOnlineStart.getDate();
 		Date onlineStop = txtOnlineStop.getDate();
 
@@ -316,18 +310,11 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 			edited = true;
 		}
 		this.createUrlLinkName();
-		txtUrlLinkName.setBackground(Color.white);
-		String urlName = txtUrlLinkName.getText();
-		if (!checkUrlLinkNameUnique(urlName)) {
-			ActionHub.showMessageDialog(rb.getString("panel.panelView.dlgUniqueUrl.msg"), JOptionPane.INFORMATION_MESSAGE);
-			txtUrlLinkName.setBackground(Color.red);
-			txtUrlLinkName.requestFocus();
-			saveStatus = false;
-			return;
-		}
+		String urlName = communication.getUniqueUrlLinkName(viewComponent.getViewComponentId(), viewComponent.getParentId(), txtUrlLinkName.getText());
+		txtUrlLinkName.setText(urlName);
 		viewComponent.setDisplayLinkName(txtDisplayedLinkName.getText());
 		viewComponent.setLinkDescription(txtLinkDescription.getText());
-		viewComponent.setUrlLinkName(txtUrlLinkName.getText());
+		viewComponent.setUrlLinkName(urlName);
 		if (viewComponent.getViewType() == Constants.VIEW_TYPE_UNIT || viewComponent.getViewType() == Constants.VIEW_TYPE_CONTENT || viewComponent.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
 			if (chkOpenNewNavi.isSelected()) {
 				if (viewComponent.getViewIndex() != null && !viewComponent.getViewIndex().equals("2")) edited = true;
@@ -727,28 +714,6 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 				txtUrlLinkName.setText(PanMenuentry.tidyUrl(txtDisplayedLinkName.getText()));
 			}
 		}
-	}
-
-	/**
-	 * Checks for unique urlLinkName for a level
-	 * @return boolean
-	 */
-	private boolean checkUrlLinkNameUnique(String urlName) {
-		boolean flag = true;
-		try {
-			if (viewComponent.getParentId() != null) {
-				ViewComponentValue[] children = communication.getViewComponentChildren(viewComponent.getParentId());
-
-				for (ViewComponentValue viewComponentValue : children) {
-					if ((viewComponentValue.getUrlLinkName().equalsIgnoreCase(urlName)) && (viewComponent.getViewComponentId().intValue() != viewComponentValue.getViewComponentId().intValue())) {
-						flag = false;
-					}
-				}
-			}
-		} catch (Exception e) {
-			System.out.println("error at getting children");
-		}
-		return flag;
 	}
 
 	public JLabel getLblUrlLinkName() {

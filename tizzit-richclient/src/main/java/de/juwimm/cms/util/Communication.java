@@ -2588,4 +2588,8 @@ public class Communication implements ExitListener, ActionListener {
 		}
 	}
 
+	public String getUniqueUrlLinkName(Integer viewComponentId, Integer parentId, String urlLinkName) {
+		return getClientService().checkForUniqueUrlLinkName(viewComponentId, parentId, urlLinkName);
+	}
+
 }

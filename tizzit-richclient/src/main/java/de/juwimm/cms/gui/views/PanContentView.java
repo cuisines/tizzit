@@ -245,7 +245,8 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 					panContent.save();
 					if (!getSaveStatus()) {
 
-					return; }
+						return;
+					}
 				}
 				Constants.EDIT_CONTENT = false;
 			}
@@ -253,10 +254,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																													 panMenuentry.unload();
-																																																																																																																													 } else if (lastIndex == 2) {
-																																																																																																																													 panMetaData.unload();
-																																																																																																																													 }*/
+																																																																																																																																					 panMenuentry.unload();
+																																																																																																																																					 } else if (lastIndex == 2) {
+																																																																																																																																					 panMetaData.unload();
+																																																																																																																																					 }*/
 
 			String strTabName = "";
 			try {
@@ -298,13 +299,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			panMenuentry.save();
 			viewComponent = panMenuentry.getViewComponent();
 			saveStatus = true;
-			if (!panMenuentry.getSaveStatus()) {
-				saveStatus = false;
-				if (!isFromSaveButton) {
-					ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_CLICK_NODE));
-				}
-				return;
-			}
+			
 			// Metadata
 			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
 				panMetaData.save();
@@ -372,11 +367,11 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			panTab.setSelectedIndex(0);
 			panTab.setEnabledAt(1, panMenuentry.shouldBeEdtiable()); //Content
 			panTab.setEnabledAt(2, comm.isUserInRole(UserRights.PAGE_VIEW_METADATA) && panMenuentry.shouldBeEdtiable()); //metadata
-			if(comm.isUserInRole(UserRights.PAGE_VIEW_METADATA) && panMenuentry.shouldBeEdtiable()) panMetaData.load(value);
+			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA) && panMenuentry.shouldBeEdtiable()) panMetaData.load(value);
 			// the button for changing the template is invisible if user doesn't have the right to change
 			panMenuentry.setTemplateButtonEnabled(panMenuentry.shouldBeEdtiable());
 			this.btnSave.setEnabled(panMenuentry.shouldBeEdtiable());
-			
+
 			if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD) || (comm.getUser().isMasterRoot())) && (panTab.getSelectedIndex() == 4)) {
 				panSafeGuard.load(value);
 			} else {
