@@ -1,8 +1,10 @@
 <projectDescription>
-  <name>tizzit-cocoon-components</name>
+  <name>tizzit-xmlsearch-xindice</name>
   <comment>The Tizzit Project.</comment>
   <projects>
     <project>tizzit-common</project>
+    <project>tizzit-core</project>
+    <project>tizzit-plugin-api</project>
   </projects>
   <buildSpec>
     <buildCommand>

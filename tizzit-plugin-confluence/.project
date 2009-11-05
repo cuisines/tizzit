@@ -1,7 +1,10 @@
 <projectDescription>
   <name>tizzit-plugin-confluence</name>
   <comment>The Tizzit Project.</comment>
-  <projects/>
+  <projects>
+    <project>tizzit-common</project>
+    <project>tizzit-plugin-api</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>

@@ -43,7 +43,6 @@
   </build>
 
   <dependencies>
-      <!-- TizziT - Cocoon components / block-->
       <dependency>
         <groupId>org.tizzit</groupId>
         <artifactId>tizzit-cocoon-block</artifactId>

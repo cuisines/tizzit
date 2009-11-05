@@ -1,8 +1,8 @@
 <projectDescription>
-  <name>tizzit-cocoon-components</name>
+  <name>tizzit-web-admin</name>
   <comment>The Tizzit Project.</comment>
   <projects>
-    <project>tizzit-common</project>
+    <project>tizzit-webstart</project>
   </projects>
   <buildSpec>
     <buildCommand>

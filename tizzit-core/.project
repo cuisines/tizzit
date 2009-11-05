@@ -1,8 +1,9 @@
 <projectDescription>
-  <name>tizzit-cocoon-components</name>
+  <name>tizzit-core</name>
   <comment>The Tizzit Project.</comment>
   <projects>
     <project>tizzit-common</project>
+    <project>tizzit-plugin-api</project>
   </projects>
   <buildSpec>
     <buildCommand>

@@ -15,7 +15,6 @@
  */
 package de.juwimm.cms.cocoon.acting;
 
-
 /**
  * An <code>Action</code> for dynamically loading of site-specific Actions.
  *

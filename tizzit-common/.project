@@ -1,9 +1,7 @@
 <projectDescription>
-  <name>tizzit-cocoon-components</name>
+  <name>tizzit-common</name>
   <comment>The Tizzit Project.</comment>
-  <projects>
-    <project>tizzit-common</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>

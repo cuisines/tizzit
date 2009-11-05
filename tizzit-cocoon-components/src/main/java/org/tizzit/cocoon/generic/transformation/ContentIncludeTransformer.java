@@ -25,6 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.excalibur.source.Source;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.log4j.Logger;
+import org.tizzit.cocoon.generic.helper.ExceptionHelper;
 import org.tizzit.util.xml.DOMHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -115,51 +116,52 @@ public class ContentIncludeTransformer extends AbstractTransformer implements Se
 				log.warn("The namespace '" + NAMESPACE_CONTENT_INCLUDE_DEPRECATED + "' for '" + CONTENT_INCLUDE_ELEMENT + "' is deprecated! Please use '" + NAMESPACE_CONTENT_INCLUDE + "' instead!");
 			}
 
-			String src = attrs.getValue("src");
+			String src = attrs.getValue("src"); //$NON-NLS-1$
 			this.source = src;
 			Source inputSource = null;
 			try {
 				inputSource = resolver.resolveURI(src);
-			} catch (Exception se) {
-				log.error("Error resolving source " + src, se);
-			}
 
-			String xpathStr = attrs.getValue("xpath");
-			InputStream stream = null;
-			try {
-				stream = inputSource.getInputStream();
+				String xpathStr = attrs.getValue("xpath"); //$NON-NLS-1$
+				InputStream stream = inputSource.getInputStream();
+				try {
+					if ("/*".equals(xpathStr) || "/".equals(xpathStr) || "".equals(xpathStr) || xpathStr == null) {
+						String xml = IOUtils.toString(stream, this.defaultEncoding);
 
-				if ("/*".equals(xpathStr) || "/".equals(xpathStr) || "".equals(xpathStr) || xpathStr == null) {
-					String xml = IOUtils.toString(stream, this.defaultEncoding);
+						DOMHelper.string2sax(xml, contentHandler, this.defaultEncoding);
+					} else {
+						Document doc = null;
 
-					DOMHelper.string2sax(xml, contentHandler, this.defaultEncoding);
-				} else {
-					Document doc = DOMHelper.inputstream2Dom(stream);
+						try {
+							doc = DOMHelper.inputstream2Dom(stream);
+						} catch (Exception exe) {
+							log.warn("Could not create DOM for source '" + this.source + "': " + exe.getMessage(), exe);
+							ExceptionHelper.throwableToSAX(exe, this.contentHandler, "dev");
+						}
 
-					System.setProperty("javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON, "net.sf.saxon.xpath.XPathFactoryImpl");
-					XPath xpath = XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON).newXPath();
-					xpath.setNamespaceContext(new LocalNamespaceContext());
+						if (doc != null) {
+							System.setProperty("javax.xml.xpath.XPathFactory:" + NamespaceConstant.OBJECT_MODEL_SAXON, "net.sf.saxon.xpath.XPathFactoryImpl");
+							XPath xpath = XPathFactory.newInstance(NamespaceConstant.OBJECT_MODEL_SAXON).newXPath();
+							xpath.setNamespaceContext(new LocalNamespaceContext());
 
-					NodeList nl = (NodeList) xpath.evaluate(xpathStr, doc, XPathConstants.NODESET);
-					for (int i = 0; i < nl.getLength(); i++) {
-						DOMHelper.node2sax(nl.item(i), new DOMHelper.OmitXmlDeclarationContentHandler(contentHandler));
+							NodeList nl = (NodeList) xpath.evaluate(xpathStr, doc, XPathConstants.NODESET);
+							for (int i = 0; i < nl.getLength(); i++) {
+								DOMHelper.node2sax(nl.item(i), new DOMHelper.OmitXmlDeclarationContentHandler(contentHandler));
+							}
+						}
 					}
 
-					/*
-					 * DOMHelper.findNodes uses org.jaxen.BaseXPath
-					 */
-					//					Iterator<Node> it = DOMHelper.findNodes(doc, xpath, namespaces);
-					//					while (it.hasNext()) {
-					//						DOMHelper.node2sax(it.next(), new DOMHelper.OmitXmlDeclarationContentHandler(contentHandler));
-					//					}
+				} catch (Exception e) {
+					log.warn("Error executing xpath for source '" + src + "' with xpath '" + xpathStr + "': " + e.getMessage(), e);
+					ExceptionHelper.throwableToSAX(e, this.contentHandler, "dev");
+				} finally {
+					IOUtils.closeQuietly(stream);
+					resolver.release(inputSource);
+					//if (log.isDebugEnabled()) log.debug("'" + src + "'" + " Processed by " + this.getClass().getSimpleName() + " in " + (System.currentTimeMillis() - startParseTime) + " ms.");
 				}
-
-			} catch (Exception e) {
-				log.error("Error executing xpath for source " + src + " with xpath " + xpathStr, e);
-			} finally {
-				IOUtils.closeQuietly(stream);
-				resolver.release(inputSource);
-				//if (log.isDebugEnabled()) log.debug("'" + src + "'" + " Processed by " + this.getClass().getSimpleName() + " in " + (System.currentTimeMillis() - startParseTime) + " ms.");
+			} catch (Exception se) {
+				log.warn("Error resolving source '" + this.source + "': " + se.getMessage(), se);
+				ExceptionHelper.throwableToSAX(se, this.contentHandler, "dev");
 			}
 		}
 	}

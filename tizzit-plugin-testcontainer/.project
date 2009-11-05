@@ -1,8 +1,12 @@
 <projectDescription>
-  <name>tizzit-cocoon-components</name>
+  <name>tizzit-plugin-testcontainer</name>
   <comment>The Tizzit Project.</comment>
   <projects>
     <project>tizzit-common</project>
+    <project>tizzit-core</project>
+    <project>tizzit-loginmodules</project>
+    <project>tizzit-plugin-api</project>
+    <project>tizzit-richclient</project>
   </projects>
   <buildSpec>
     <buildCommand>
