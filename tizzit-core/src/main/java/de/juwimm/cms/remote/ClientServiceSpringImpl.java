@@ -22,6 +22,7 @@ package de.juwimm.cms.remote;
 
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -1931,6 +1932,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected String handleCheckForUniqueUrlLinkName(Integer viewComponentId, Integer parentId, String urlLinkName) throws Exception {
 		return getViewServiceSpring().checkForUniqueUrlLinkName(viewComponentId, parentId, urlLinkName);
+	}
+
+	@Override
+	protected List handleGetEditions() throws Exception {
+		return getContentServiceSpring().getEditions();
 	}
 
 }

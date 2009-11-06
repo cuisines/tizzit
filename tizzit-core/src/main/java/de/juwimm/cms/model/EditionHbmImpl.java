@@ -46,8 +46,10 @@ public class EditionHbmImpl extends EditionHbm {
 			dao.setCreatorName("");
 		}
 		dao.setStatus(getStatus());
-		dao.setViewDocumentId(getViewDocumentId());
+		dao.setViewDocumentId(getViewDocumentId() == null ? 0 : getViewDocumentId());
 		dao.setUnitId(getUnitId());
+		dao.setNeedsDeploy(isNeedsDeploy());
+		dao.setNeedsImport(isNeedsImport());
 		return dao;
 	}
 

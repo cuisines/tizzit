@@ -1874,4 +1874,16 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		return result;
 	}
 
+	@Override
+	protected List handleGetEditions() throws Exception {
+		List<EditionHbm> editions = (List<EditionHbm>) getEditionHbmDao().loadAll();
+		List<EditionValue> editionValues = new ArrayList<EditionValue>();
+		if (editions.size() > 0) {
+			for (EditionHbm edition : editions) {
+				editionValues.add(edition.getDao());
+			}
+		}
+		return editionValues;
+	}
+
 }
