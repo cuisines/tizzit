@@ -2539,10 +2539,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	@Override
 	protected String handleCheckForUniqueUrlLinkName(Integer viewComponentId, Integer parentId, String urlLinkName) throws Exception {
-		ViewComponentValue[] children = getViewComponentChildren(parentId);
-		ArrayList<Integer> existingNumber = new ArrayList<Integer>();
-		boolean flag = false;
 		if (parentId != null) {
+			ViewComponentValue[] children = getViewComponentChildren(parentId);
+			ArrayList<Integer> existingNumber = new ArrayList<Integer>();
+			boolean flag = false;
 			for (ViewComponentValue viewComponentValue : children) {
 				if ((viewComponentValue.getUrlLinkName().startsWith(urlLinkName)) && (viewComponentId.intValue() != viewComponentValue.getViewComponentId().intValue())) {
 					String existingUrlLinkname = viewComponentValue.getUrlLinkName();
