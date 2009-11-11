@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.easymock.LogicalOperator;
 
@@ -39,7 +41,7 @@ import de.juwimm.cms.vo.PictureSlimstValue;
  *
  */
 public class ContentServiceTest extends TestCase {
-
+	private static Log log = LogFactory.getLog(ContentServiceTest.class);
 	List<ContentVersionHbm> mockContentVersions1;
 	List<ContentVersionHbm> mockContentVersions2;
 	List<ContentVersionHbm> mockContentVersions3;
@@ -269,7 +271,9 @@ public class ContentServiceTest extends TestCase {
 					}
 				}
 			} else if (resource.getKey() instanceof PictureSlimstValue) {
-				if (resource.getValue() != ResourceUsageState.Used) Assert.assertTrue(false);
+				if (resource.getValue() == ResourceUsageState.Used) {
+					Assert.assertTrue(false);
+				}
 			}
 		}
 	}
@@ -608,6 +612,6 @@ public class ContentServiceTest extends TestCase {
 		EasyMock.verify(documentDaoMock);
 		EasyMock.verify(pictureDaoMock);
 
-	}	
+	}
 
 }
