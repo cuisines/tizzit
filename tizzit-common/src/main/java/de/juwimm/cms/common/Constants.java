@@ -221,7 +221,7 @@ public final class Constants {
 	public static final int OS_WINDOWS = 1;
 	public static final int OS_LINUX = 2;
 	public static final int OS_MACOSX = 3;
-	
+
 	public static final String PUBLISH_VERSION = "PUBLS";
 
 	private Constants() {
@@ -230,33 +230,49 @@ public final class Constants {
 	public static boolean isClientOS(int operatingSystem) {
 		switch (operatingSystem) {
 			case Constants.OS_LINUX:
-				if (CMS_CLIENT_OPERATING_SYSTEM.length() >= 5 && CMS_CLIENT_OPERATING_SYSTEM.equals("Linux")) { return true; }
+				if (CMS_CLIENT_OPERATING_SYSTEM.length() >= 5 && CMS_CLIENT_OPERATING_SYSTEM.equals("Linux")) {
+					return true;
+				}
 				break;
 			case OS_WINDOWS:
-				if (CMS_CLIENT_OPERATING_SYSTEM.length() >= 7 && CMS_CLIENT_OPERATING_SYSTEM.substring(0, 7).equals("Windows")) { return true; }
+				if (CMS_CLIENT_OPERATING_SYSTEM.length() >= 7 && CMS_CLIENT_OPERATING_SYSTEM.substring(0, 7).equals("Windows")) {
+					return true;
+				}
 				break;
 			case OS_MACOSX:
-				if (CMS_CLIENT_OPERATING_SYSTEM.startsWith("Mac")) { return true; }
+				if (CMS_CLIENT_OPERATING_SYSTEM.startsWith("Mac")) {
+					return true;
+				}
 				break;
 			default:
 		}
 		return false;
 	}
-	
-		
-	
-	public enum ResourceUsageState{
-		Used("used"),Unsused("unused"),UsedInOlderVersions("usedInOlderVersions");		
+
+	public enum ResourceUsageState {
+		Used("used"), Unsused("unused"), UsedInOlderVersions("usedInOlderVersions");
 		private final String key;
-		
-		ResourceUsageState(String key){
-			this.key=key;
+
+		ResourceUsageState(String key) {
+			this.key = key;
 		}
-		
-		public String getKey(){
+
+		public String getKey() {
 			return key;
 		}
 	}
-	
-	
+
+	public enum LiveserverDeployStatus {
+
+		EditionCreated(false), CreateDeployFileForExport(false), TransmitDeployFile(false), FileDeployedOnLiveServer(false), ImportStarted, ImportCleanDatabase, ImportUnits, ImportResources, ImportDatabaseComponents, ImportViewComponents, ImportHosts, Exception;
+
+		boolean stateFromLiveServer = true;
+
+		LiveserverDeployStatus(boolean state) {
+			stateFromLiveServer = state;
+		};
+
+		LiveserverDeployStatus() {
+		};
+	}
 }
