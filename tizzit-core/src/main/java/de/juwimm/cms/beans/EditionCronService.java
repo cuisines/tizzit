@@ -135,6 +135,7 @@ public class EditionCronService {
 		}
 		edition.setDeployStatus(statusValue);
 		edition.setStartActionTimestamp(System.currentTimeMillis());
+		edition.setEndActionTimestamp(null);
 		getEditionHbmDao().update(edition);
 	}
 
