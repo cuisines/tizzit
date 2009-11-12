@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -52,7 +52,8 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 	private PanSafeguardRealmManager panSafeguard;
 	private PanSiteGroups panSiteGroups = null;
 	private PanCmsResources panCmsResources;
-	
+	private PanEditionView panEditionView;
+
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 
 	public PanAdministrationRoot() {
@@ -78,11 +79,8 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 
 		panUnit = new PanUnitGroup();
 		panTab.add(panUnit, rb.getString("panel.admin.tab.unit"));
-		
-		
-		if ((comm.isUserInRole(UserRights.MANAGE_HOSTS))
-				|| (comm.isUserInRole(UserRights.SITE_ROOT))
-				|| (comm.getUser().isMasterRoot())) {
+
+		if ((comm.isUserInRole(UserRights.MANAGE_HOSTS)) || (comm.isUserInRole(UserRights.SITE_ROOT)) || (comm.getUser().isMasterRoot())) {
 			panHost = new PanHost();
 			panTab.add(panHost, rb.getString("panel.admin.tab.hosts"));
 		}
@@ -96,7 +94,7 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 		}
 
 		if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD))
-				// || (comm.isUserInRole(UserRights.SITE_ROOT)) at present no customer may see this tab !!!
+		// || (comm.isUserInRole(UserRights.SITE_ROOT)) at present no customer may see this tab !!!
 				|| (comm.getUser().isMasterRoot())) {
 			panSafeguard = new PanSafeguardRealmManager();
 			panTab.add(panSafeguard, rb.getString("panel.admin.tab.safeguard"));
@@ -107,9 +105,12 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 			panTab.add(panSiteGroups, rb.getString("panel.admin.tab.sitegroups"));
 		}
 
-		panCmsResources = new PanCmsResources(comm);		
-		panTab.add(panCmsResources,rb.getString(PanCmsResources.TitleKey));
-		
+		panCmsResources = new PanCmsResources(comm);
+		panTab.add(panCmsResources, rb.getString(PanCmsResources.TitleKey));
+
+		panEditionView = new PanEditionView(comm);
+		panTab.add(panEditionView, rb.getString(PanEditionView.TitleKey));
+
 		panTab.setSelectedIndex(0);
 
 		/* Change the Tab in panel */
@@ -177,12 +178,18 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 							}
 							panSiteGroups.reload();
 							lastIndex = panTab.indexOfTab(rb.getString("panel.admin.tab.sitegroups"));
-						} else if (strTabName.equalsIgnoreCase(rb.getString(PanCmsResources.TitleKey))){
+						} else if (strTabName.equalsIgnoreCase(rb.getString(PanCmsResources.TitleKey))) {
 							if (lastIndex == panTab.indexOfTab(rb.getString("panel.admin.tab.user"))) {
 								panUser.unload();
 							}
 							panCmsResources.reload();
 							lastIndex = panTab.indexOfTab(rb.getString(PanCmsResources.TitleKey));
+						} else if (strTabName.equalsIgnoreCase(rb.getString(PanEditionView.TitleKey))) {
+							if (lastIndex == panTab.indexOfTab(rb.getString("panel.admin.tab.user"))) {
+								panUser.unload();
+							}
+							panEditionView.reload();
+							lastIndex = panTab.indexOfTab(rb.getString(PanEditionView.TitleKey));
 						}
 						setCursor(Cursor.getDefaultCursor());
 					}

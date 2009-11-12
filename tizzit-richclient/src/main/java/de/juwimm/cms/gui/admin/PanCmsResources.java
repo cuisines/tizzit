@@ -51,7 +51,6 @@ import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants.ResourceUsageState;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
-import de.juwimm.cms.gui.controls.UnloadablePanel;
 import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel;
 import de.juwimm.cms.gui.tree.TreeNode;
@@ -75,7 +74,7 @@ import de.juwimm.swing.NoResizeScrollPane;
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$
  */
-public class PanCmsResources extends JPanel implements UnloadablePanel, ReloadablePanel {
+public class PanCmsResources extends JPanel implements ReloadablePanel {
 	private static Logger log = Logger.getLogger(PanCmsResources.class);
 	private JTree treeResources;
 	private JPanel detailsPane;

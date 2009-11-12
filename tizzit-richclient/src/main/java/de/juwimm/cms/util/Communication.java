@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -2598,6 +2599,10 @@ public class Communication implements ExitListener, ActionListener {
 
 	public String getUniqueUrlLinkName(Integer viewComponentId, Integer parentId, String urlLinkName) {
 		return getClientService().checkForUniqueUrlLinkName(viewComponentId, parentId, urlLinkName);
+	}
+
+	public List<EditionValue> getEditions() {
+		return (List<EditionValue>) getClientService().getEditions();
 	}
 
 }
