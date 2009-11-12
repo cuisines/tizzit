@@ -34,6 +34,7 @@ import javax.ejb.CreateException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.XercesHelper;
 
@@ -606,9 +607,6 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 		return this.findByUnitAndOnline(transform, "from de.juwimm.cms.model.EditionHbm as e where e.unitId = ? and e.status = 1", unitId);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.model.EditionHbmDaoBase#handleCreate(java.lang.String, java.lang.String, java.lang.Integer, boolean, java.lang.Integer, java.lang.Integer, boolean, boolean)
-	 */
 	@Override
 	protected EditionHbm handleCreate(String creator, String comment, Integer viewComponentId, Integer unitId, Integer viewDocumentId, Integer siteId, boolean needsDeploy) throws Exception {
 		EditionHbm newEdition = new EditionHbmImpl();
@@ -624,5 +622,12 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 		newEdition.setNeedsDeploy(needsDeploy);
 		newEdition.setComment(comment);
 		return super.create(newEdition);
+	}
+
+	@Override
+	protected EditionHbm handleFindByWorkServerEdition(Integer workServerEditionId) throws Exception {
+		Query query = getSession().createQuery("from de.juwimm.cms.model.EditionHbm where workServerEditionId = :workServerEditionId");
+		query.setParameter("workServerEditionId", workServerEditionId);
+		return (EditionHbm) query.uniqueResult();
 	}
 }

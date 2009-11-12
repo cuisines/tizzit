@@ -45,6 +45,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
@@ -52,7 +53,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.beans.EditionCronService;
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.common.Constants.LiveserverDeployStatus;
 import de.juwimm.cms.common.Constants.ResourceUsageState;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
 import de.juwimm.cms.exceptions.UserException;
@@ -85,6 +88,8 @@ import de.juwimm.cms.vo.ViewDocumentValue;
 public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	private static Log log = LogFactory.getLog(ContentServiceSpringImpl.class);
 	public static final byte MAX_NO_OF_CONTENT_VERSIONS_PER_PAGE = 10;
+	@Autowired
+	EditionCronService editionCronService;
 
 	public class DocumentCountWrapper {
 		private HashMap<Integer, Integer> deltaDocuments = null;
@@ -1003,7 +1008,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#importEdition(java.lang.Integer, java.io.InputStream)
 	 */
 	@Override
-	protected void handleImportEdition(Integer viewComponentId, InputStream in, boolean useNewIds) throws Exception {
+	protected void handleImportEdition(Integer viewComponentId, InputStream in, boolean useNewIds, Integer workServerEditionId) throws Exception {
 		try {
 			if (log.isInfoEnabled()) log.info("importEdition " + AuthenticationHelper.getUserName());
 			String tmpFileName = "";
@@ -1022,6 +1027,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			edition.setCreator(user);
 			edition.setNeedsImport(true);
 			edition.setCreationDate(new Date().getTime());
+			edition.setWorkServerEditionId(workServerEditionId);
 			if (log.isInfoEnabled()) log.info("-------------->setting unit id");
 			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
 			edition.setEditionFileName(tmpFileName);
@@ -1646,6 +1652,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleDeployEdition(Integer editionId) throws Exception {
 		try {
+			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
 			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
@@ -1693,6 +1700,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 			edition.setEditionFileName(fle.getAbsolutePath());
 		} catch (Exception e) {
+			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}
 	}

@@ -1398,9 +1398,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleImportEditionFromImport(InputStream fis, Integer unitId, boolean useNewIds) throws Exception {
+	protected void handleImportEditionFromImport(InputStream fis, Integer unitId, boolean useNewIds, Integer workServerEditionId) throws Exception {
 		try {
-			getContentServiceSpring().importEdition(unitId, fis, useNewIds);
+			getContentServiceSpring().importEdition(unitId, fis, useNewIds, workServerEditionId);
 		} catch (Exception re) {
 			log.error("Error importing edition from import", re);
 		}
@@ -1937,6 +1937,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected List handleGetEditions() throws Exception {
 		return getContentServiceSpring().getEditions();
+	}
+
+	@Override
+	protected List handleGetDeployStatus(List editions) throws Exception {
+		return getEditionServiceSpring().getDeployStatus(editions);
 	}
 
 }

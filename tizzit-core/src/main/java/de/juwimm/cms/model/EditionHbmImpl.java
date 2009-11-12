@@ -20,6 +20,8 @@
  */
 package de.juwimm.cms.model;
 
+import java.util.Date;
+
 import de.juwimm.cms.vo.EditionValue;
 
 /**
@@ -50,6 +52,10 @@ public class EditionHbmImpl extends EditionHbm {
 		dao.setUnitId(getUnitId());
 		dao.setNeedsDeploy(isNeedsDeploy());
 		dao.setNeedsImport(isNeedsImport());
+		dao.setDeployStatus(getDeployStatus());
+		dao.setStartActionTimestamp(getStartActionTimestamp() == null ? null : new Date(getStartActionTimestamp()));
+		dao.setEndActionTimestamp(getEndActionTimestamp() == null ? new Date() : new Date(getEndActionTimestamp()));
+		dao.setWorkServerEditionId(getWorkServerEditionId());
 		return dao;
 	}
 

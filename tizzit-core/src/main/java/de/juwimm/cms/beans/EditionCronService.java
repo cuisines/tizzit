@@ -2,33 +2,42 @@ package de.juwimm.cms.beans;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
+import de.juwimm.cms.common.Constants.LiveserverDeployStatus;
+import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.EditionHbm;
 import de.juwimm.cms.model.EditionHbmDao;
 import de.juwimm.cms.remote.ContentServiceSpring;
 import de.juwimm.cms.remote.EditionServiceSpring;
 
-@Transactional(propagation = Propagation.REQUIRED)
 public class EditionCronService {
 	private static Logger log = Logger.getLogger(EditionCronService.class);
 	private boolean cronEditionImportIsRunning = false;
 	private boolean cronEditionDeployIsRunning = false;
+	private boolean updateDeployStatusIsRunning = false;
 
 	private EditionHbmDao editionHbmDao;
 	private EditionServiceSpring editionServiceSpring;
 	private ContentServiceSpring contentServiceSpring;
+	@Autowired
+	TizzitPropertiesBeanSpring tizzitProperties;
 
 	/**
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void cronEditionImport() throws Exception {
 		if (cronEditionImportIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
@@ -48,7 +57,7 @@ public class EditionCronService {
 					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 					//null for viewcomponentID for a complete Import?
 					//getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
-					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionFileName(), null, false);
+					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionId(), edition.getEditionFileName(), null, false);
 				}
 				getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}
@@ -64,6 +73,7 @@ public class EditionCronService {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void cronEditionDeploy() throws Exception {
 		if (cronEditionDeployIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
@@ -87,7 +97,7 @@ public class EditionCronService {
 				UserHbm creator = edition.getCreator();
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
-				getEditionServiceSpring().removeEdition(edition.getEditionId());
+				getEditionHbmDao().update(edition);
 				if (edFile != null) {
 					edFile.delete();
 				}
@@ -97,6 +107,51 @@ public class EditionCronService {
 			throw new RuntimeException(e);
 		} finally {
 			cronEditionDeployIsRunning = false;
+		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+	public void logEditionStatusException(Integer editionId, String... extras) {
+		EditionHbm edition = getEditionHbmDao().load(editionId);
+		String statusValue = "" + LiveserverDeployStatus.Exception.name();
+		//save the state on which the the deploy crashed
+		statusValue += ";" + edition.getDeployStatus();
+		if (extras != null && extras.length > 0) {
+			for (String extra : extras) {
+				statusValue += ";" + extra;
+			}
+		}
+		edition.setDeployStatus(statusValue);
+		edition.setEndActionTimestamp(System.currentTimeMillis());
+		getEditionHbmDao().update(edition);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+	public void logEditionStatusInfo(LiveserverDeployStatus status, Integer editionId) {
+		String statusValue = "" + status.name();
+		EditionHbm edition = getEditionHbmDao().load(editionId);
+		if (status == LiveserverDeployStatus.FileDeployedOnLiveServer) {
+			edition.setNeedsDeploy(false);
+		}
+		edition.setDeployStatus(statusValue);
+		edition.setStartActionTimestamp(System.currentTimeMillis());
+		getEditionHbmDao().update(edition);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	public void cronUpdateDeployStatus() {
+		if (!updateDeployStatusIsRunning && !tizzitProperties.isLiveserver()) {
+			updateDeployStatusIsRunning = true;
+			List<EditionHbm> editions = (List<EditionHbm>) getEditionHbmDao().loadAll();
+			try {
+				getEditionServiceSpring().updateDeployStatus(editions);
+			} catch (UserException e) {
+				log.warn("update deploy status from liveserver crashed");
+				if (log.isDebugEnabled()) {
+					log.debug(e);
+				}
+			}
+			updateDeployStatusIsRunning = false;
 		}
 	}
 

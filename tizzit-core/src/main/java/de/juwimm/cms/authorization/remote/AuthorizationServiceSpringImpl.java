@@ -195,7 +195,9 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 		} catch (Exception ex) {
 			throw new SecurityException("Invalid Principal");
 		}
-		if (!user.isMasterRoot() && !user.getSites().contains(site)) { throw new SecurityException("User is not a member of the given site!"); }
+		if (!user.isMasterRoot() && !user.getSites().contains(site)) {
+			throw new SecurityException("User is not a member of the given site!");
+		}
 		user.setActiveSite(site);
 		user.setLoginDate((System.currentTimeMillis()));
 		LoginContext lc = new LoginContext("juwimm-cms-security-domain", new InternalCallbackHandler(passwd));
@@ -260,5 +262,43 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 				}
 			}
 		}
+	}
+
+	private class CredentialCallbackHandler implements CallbackHandler {
+		private final String passwd;
+		private final String user;
+
+		public CredentialCallbackHandler(String user, String passwd) {
+			this.passwd = passwd;
+			this.user = user;
+		}
+
+		public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+			for (int i = 0; i < callbacks.length; i++) {
+				if (callbacks[i] instanceof NameCallback) {
+					NameCallback nc = (NameCallback) callbacks[i];
+					nc.setName(user);
+				} else if (callbacks[i] instanceof PasswordCallback) {
+					PasswordCallback pc = (PasswordCallback) callbacks[i];
+					pc.setPassword(this.passwd.toCharArray());
+				}
+			}
+		}
+	}
+
+	@Override
+	protected UserLoginValue handleRemoteLogin(String userName, String pass) throws Exception {
+		UserHbm user;
+		try {
+			user = super.getUserHbmDao().load(userName);
+		} catch (Exception ex) {
+			throw new SecurityException("Invalid Principal");
+		}
+
+		user.setLoginDate((System.currentTimeMillis()));
+		LoginContext lc = new LoginContext("juwimm-cms-security-domain", new CredentialCallbackHandler(userName, pass));
+		lc.login();
+		UserLoginValue ulv = super.getUserHbmDao().getUserLoginValue(user);
+		return ulv;
 	}
 }

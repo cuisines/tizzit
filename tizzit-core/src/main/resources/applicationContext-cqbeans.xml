@@ -21,15 +21,23 @@
 		<aop:pointcut expression="execution(* de.juwimm.cms.remote.ClientServiceSpring+.*(..))" id="clientService" />
 		<aop:pointcut expression="execution(* de.juwimm.cms.remote.ContentServiceSpring+.*(..))" id="contentService" />
 		<aop:pointcut expression="execution(* de.juwimm.cms.beans.EditionCronService+.*(..))" id="editionCronServicePointcut" />
+		<aop:pointcut expression="execution(* de.juwimm.cms.authorization.remote.AuthorizationServiceSpring+.*(..))" id="authorizationServicePointcut" />		
 		<aop:advisor advice-ref="nanoCacheInterceptor" pointcut-ref="webserviceSpring" />
 		<aop:advisor advice-ref="hourCacheInterceptor" pointcut-ref="hourCachePointcut" />
 		<aop:advisor advice-ref="noTxAdvice" pointcut-ref="webserviceSpring" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="clientService" />
+		<aop:advisor advice-ref="txAdviceRemoteLogin" pointcut-ref="authorizationServicePointcut" />
 		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="contentService" />
 		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="editionCronServicePointcut" />
 	</aop:config>
 
 	<tx:annotation-driven proxy-target-class="false" transaction-manager="transactionManager" />
+
+	<tx:advice id="txAdviceRemoteLogin" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method isolation="SERIALIZABLE" name="remoteLogin" propagation="REQUIRED" rollback-for="java.lang.Exception" />						
+		</tx:attributes>
+	</tx:advice>
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
@@ -145,6 +153,16 @@
 		</property>
 		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
 	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="deployStatusUpdaterTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="editionCronService" />
+				<property name="targetMethod" value="cronUpdateDeployStatus" />
+			</bean>
+		</property>
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
+	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
@@ -153,6 +171,8 @@
 				<ref bean="searchengineIndexerCronTrigger" />
 				<ref bean="editionCronDeployTrigger" />
 				<ref bean="editionCronImportTrigger" />
+				<!-- if it a liverserver this cron is not needed -->
+				<ref bean="deployStatusUpdaterTrigger"/>
 			</list>
 		</property>
 	</bean>

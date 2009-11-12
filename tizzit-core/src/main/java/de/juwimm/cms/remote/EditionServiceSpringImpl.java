@@ -39,7 +39,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 import java.util.zip.GZIPInputStream;
 
 import javax.ejb.CreateException;
@@ -47,6 +50,7 @@ import javax.ejb.CreateException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.GrantedAuthority;
@@ -65,7 +69,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.remote.AuthorizationServiceSpring;
+import de.juwimm.cms.beans.EditionCronService;
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.common.Constants.LiveserverDeployStatus;
 import de.juwimm.cms.components.model.AddressHbm;
 import de.juwimm.cms.components.model.DepartmentHbm;
 import de.juwimm.cms.components.model.PersonHbm;
@@ -97,6 +103,7 @@ import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
 import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm;
 import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDaoImpl;
 import de.juwimm.cms.util.EditionBlobContentHandler;
+import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.ShortLinkValue;
 
 /**
@@ -106,6 +113,8 @@ import de.juwimm.cms.vo.ShortLinkValue;
  */
 public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	private static Log log = LogFactory.getLog(EditionServiceSpringImpl.class);
+	@Autowired
+	EditionCronService editionCronService;
 	/*
 	 * These Hashtables are needed for the FullEdition-Import only
 	 */
@@ -156,7 +165,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	}
 
 	@Override
-	public void handleImportEdition(Integer siteId, String editionFileName, Integer rootVcId, boolean useNewIds) throws Exception {
+	public void handleImportEdition(Integer siteId, Integer editionId, String editionFileName, Integer rootVcId, boolean useNewIds) throws Exception {
+		this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportStarted, editionId);
 		mappingUnits = new Hashtable<Integer, Integer>();
 		mappingUnitsReverse = new Hashtable<Integer, Integer>();
 		mappingVDs = new Hashtable<Integer, Integer>();
@@ -248,6 +258,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * S T E P 1 Clean the complete Database
 			 * ####################################################################################
 			 */
+			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportCleanDatabase, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 1/6");
 			if (rootVcId == null) {
 				Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
@@ -286,6 +297,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * S T E P 2 Import Units WITHOUT IMAGEID, ViewDocuments WITHOUT rootVC, Hosts WITHOUT vcId
 			 * ####################################################################################
 			 */
+			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportUnits, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 2/6");
 			if (rootVcId == null) {
 				importUnitsAndViewDocumentsAndRealms(doc, siteId, useNewIds);
@@ -298,6 +310,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * S T E P 3 Import Pic / Docs, UPDATE Units
 			 * ####################################################################################
 			 */
+			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportResources, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 3/6");
 			importDocumentsAndPictures(doc, rootUnit, useNewIds, preparsedXMLfile);
 			if (rootVcId == null) {
@@ -338,6 +351,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * S T E P 3 U Import Database Components
 			 * ####################################################################################
 			 */
+			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportDatabaseComponents, editionId);
 			Iterator it = XercesHelper.findNodes(doc, "/edition/units/unit");
 			while (it.hasNext()) {
 				Element unitNode = (Element) it.next();
@@ -354,6 +368,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * S T E P 4+5 Import ViewComponents. DONT UPDATE InternalLink IDs Update ViewDocument rootVCIDs
 			 * ####################################################################################
 			 */
+			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportViewComponents, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 4+5(6)/6");
 			if (XercesHelper.findNode(doc, "/edition/viewcomponent") != null) {
 				if (rootVcId == null) {
@@ -467,6 +482,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * Importing Hosts, there is no other dependency on them 
 			 * ####################################################################################
 			 */
+			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportHosts, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 6/6");
 			if (rootVcId == null) {
 				Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
@@ -497,6 +513,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			this.restoreSafeguardLoginPages(true);
 		} catch (Exception exe) {
 			// context.setRollbackOnly();
+			editionCronService.logEditionStatusException(editionId, exe.getMessage());
 			log.error("Error occured processFileImport", exe);
 			throw exe;
 			// this.createUserTask(context.getCallerPrincipal().getName(), "Error importing edition: " + exe.getMessage(), rootVcId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
@@ -884,7 +901,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 	private String getNVal(Element ael, String nodeName) {
 		String tmp = XercesHelper.getNodeValue(ael, "./" + nodeName);
-		if (tmp.equals("null") || tmp.equals("")) { return null; }
+		if (tmp.equals("null") || tmp.equals("")) {
+			return null;
+		}
 		return tmp;
 	}
 
@@ -1573,6 +1592,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handlePublishEditionToLiveserver(Integer editionId) throws Exception {
 		String info = "";
+		editionCronService.logEditionStatusInfo(LiveserverDeployStatus.TransmitDeployFile, editionId);
 		try {
 			String liveServerIP = "";
 			String liveUserName = "";
@@ -1629,7 +1649,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
 
 				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceDeploySpring");
-				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false);
+				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false, editionId);
 
 				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
 
@@ -1644,8 +1664,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			if (log.isInfoEnabled()) log.info("Finished Live-Deployment successfully - " + info);
 
 		} catch (Exception e) {
+			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage());
 		}
+		editionCronService.logEditionStatusInfo(LiveserverDeployStatus.FileDeployedOnLiveServer, editionId);
 	}
 
 	/**
@@ -1776,7 +1798,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	private Integer getUnit4ViewComponent(Integer viewComponentId) throws UserException {
 		try {
 			ViewComponentHbm view = getViewComponentHbmDao().load(viewComponentId);
-			if (view.getAssignedUnit() != null) { return view.getAssignedUnit().getUnitId(); }
+			if (view.getAssignedUnit() != null) {
+				return view.getAssignedUnit().getUnitId();
+			}
 			return view.getUnit4ViewComponent();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -2684,5 +2708,133 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			log.error("Error setting relations in setShortLinkValue: " + e.getMessage(), e);
 		}
 		return shortLink;
+	}
+
+	/**
+	 * It runs on the workserver only
+	 */
+	protected void handleUpdateDeployStatus(List editions) throws Exception {
+		if (editions != null && editions.size() > 0) {
+
+			//group editions by liveserver
+			Map<LiveServerCredentials, List<EditionHbm>> editionsByLiveServers = new HashMap<LiveServerCredentials, List<EditionHbm>>();
+			for (EditionHbm edition : (List<EditionHbm>) editions) {
+				SiteHbm site = getSiteHbmDao().load(edition.getSiteId());
+				LiveServerCredentials credentials = new LiveServerCredentials();
+				org.w3c.dom.Document doc = null;
+				try {
+					doc = XercesHelper.string2Dom(site.getConfigXML());
+					credentials.liveServerIP = XercesHelper.getNodeValue(doc, "/config/default/liveServer/url");
+					credentials.liveServerUserName = XercesHelper.getNodeValue(doc, "/config/default/liveServer/username");
+					credentials.liveServerPass = XercesHelper.getNodeValue(doc, "/config/default/liveServer/password");
+				} catch (Exception exe) {
+					log.error("Error occured reading siteConfig: ", exe);
+				} finally {
+					doc = null;
+				}
+				if (!editionsByLiveServers.containsKey(credentials)) {
+					List<EditionHbm> editionsOnLiveServer = new ArrayList<EditionHbm>();
+					editionsOnLiveServer.add(edition);
+					editionsByLiveServers.put(credentials, editionsOnLiveServer);
+				} else {
+					editionsByLiveServers.get(credentials).add(edition);
+				}
+
+			}
+
+			for (Entry<LiveServerCredentials, List<EditionHbm>> editionsByLiveServer : editionsByLiveServers.entrySet()) {
+				List<EditionHbm> editionStatusesRequest = editionsByLiveServer.getValue();
+				List<EditionValue> editionStatusesResponse = getDeployStatusFromLiveServer(editionsByLiveServer.getValue(), editionsByLiveServer.getKey());
+				for (EditionHbm editionRequest : editionStatusesRequest) {
+					boolean foundEditionInResponse = false;
+					EditionValue editionValueRequest = editionRequest.getDao();
+					for (EditionValue editionResponse : editionStatusesResponse) {
+						if (editionResponse.getWorkServerEditionId().equals(editionValueRequest.getEditionId())) {
+							//update deploy status
+							editionRequest.setDeployStatus(editionResponse.getDeployStatus());
+							editionRequest.setStartActionTimestamp(editionResponse.getStartActionTimestamp().getTime());
+							editionRequest.setEndActionTimestamp(editionResponse.getEndActionTimestamp().getTime());
+							getEditionHbmDao().update(editionRequest);
+							foundEditionInResponse = true;
+							break;
+						}
+					}
+
+					if (!foundEditionInResponse) {
+						//deploy finished
+						getEditionHbmDao().remove(editionRequest.getEditionId());
+					}
+				}
+			}
+
+		}
+	}
+
+	private List<EditionValue> getDeployStatusFromLiveServer(List<EditionHbm> editions, LiveServerCredentials credentials) throws UserException {
+		List<EditionValue> editionsStatus = new ArrayList<EditionValue>();
+		if (editions != null || editions.size() > 0) {
+			try {
+				EditionHbm edition = editions.get(0);
+
+				int unitId = edition.getUnitId();
+				int viewDocumentId = edition.getViewDocumentId();
+
+				System.setProperty("tizzit-liveserver.remoteServer", "http://" + credentials.liveServerIP);
+				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
+
+				try {
+					SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
+					RemoteAuthenticationManager remoteAuthenticationService = (RemoteAuthenticationManager) ctx.getBean("remoteRemoteAuthenticationManagerServiceDeploy");
+					GrantedAuthority[] authorities = remoteAuthenticationService.attemptAuthentication(credentials.liveServerUserName, String.valueOf(credentials.liveServerPass));
+					SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(credentials.liveServerUserName, String.valueOf(credentials.liveServerPass), authorities));
+					log.debug(SecurityContextHolder.getContext().getAuthentication());
+				} catch (SpringSecurityException e) {
+					log.info("authentication failed: " + e.getMessage());
+					throw new UserException(e.getMessage());
+				}
+
+				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
+				if (log.isInfoEnabled()) log.info("Logging in on Liveserver...");
+				autoSpring.remoteLogin(credentials.liveServerUserName, credentials.liveServerPass);
+				if (log.isInfoEnabled()) log.info("Successfully logged in!");
+
+				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceDeploySpring");
+				editionsStatus = clientServiceSpring.getDeployStatus(editions);
+
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
+				throw new UserException(exe.getMessage());
+			}
+		}
+		return editionsStatus;
+	}
+
+	@Override
+	protected List handleGetDeployStatus(List editions) throws Exception {
+		List<EditionValue> editionsResult = new ArrayList<EditionValue>();
+		if (editions != null && editions.size() > 0) {
+			for (EditionHbm edition : (List<EditionHbm>) editions) {
+				EditionHbm liveServerEdition = getEditionHbmDao().findByWorkServerEdition(edition.getEditionId());
+				if (liveServerEdition != null) {
+					editionsResult.add(liveServerEdition.getDao());
+				}
+			}
+		}
+		return editionsResult;
+	}
+
+	private class LiveServerCredentials {
+		private String liveServerIP;
+		private String liveServerUserName;
+		private String liveServerPass;
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof LiveServerCredentials) {
+				LiveServerCredentials credentials = (LiveServerCredentials) obj;
+				return liveServerIP.equals(credentials.liveServerIP) && liveServerPass.equals(credentials.liveServerPass) && liveServerUserName.equals(liveServerUserName);
+			}
+			return false;
+		}
 	}
 }
