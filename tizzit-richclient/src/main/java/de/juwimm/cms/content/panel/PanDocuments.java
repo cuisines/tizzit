@@ -504,6 +504,11 @@ public class PanDocuments extends JPanel {
 				DocumentSlimValue vo = (DocumentSlimValue) tblDocumentSorter.getValueAt(tblDocuments.getSelectedRow(), 4);
 				intDocId = vo.getDocumentId();
 				selectedDocName = vo.getDocumentName();
+				String linkDesc = vo.getDocumentName();
+				if (linkDesc.lastIndexOf(".") != -1) {
+					linkDesc = linkDesc.substring(0, linkDesc.lastIndexOf("."));
+				}
+				txtDocumentDesc.setText(linkDesc);
 			}
 			btnUpdate.setVisible(false);
 			if (intDocId != null) {
