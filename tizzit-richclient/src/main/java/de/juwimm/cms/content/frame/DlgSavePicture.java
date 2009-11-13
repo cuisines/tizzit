@@ -158,6 +158,7 @@ public class DlgSavePicture extends JDialog {
 		if (btnFileOverwrite.isSelected()) {
 			try {
 				comm.updatePictureData(pictureValue.getPictureId(), pictureData, "image/png", pictureThumbnail);
+				comm.updateCachedImage(pictureValue.getPictureId());
 			} catch (Exception ex) {
 				log.error("Could not update Picture: " + pictureValue.getPictureId(), ex);
 			}
@@ -170,7 +171,9 @@ public class DlgSavePicture extends JDialog {
 		try {
 			PictureSlimstValue[] pictures = comm.getAllSlimPictureValues(unitId);
 			for (int i = 0; i < pictures.length; i++) {
-				if (pictures[i].getPictureName().compareToIgnoreCase(fileName) == 0) { return false; }
+				if (pictures[i].getPictureName().compareToIgnoreCase(fileName) == 0) {
+					return false;
+				}
 			}
 		} catch (Exception e) {
 			log.error("Could not find PictureSlimstValues for unit: " + unitId, e);

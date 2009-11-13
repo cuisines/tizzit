@@ -1408,6 +1408,28 @@ public class Communication implements ExitListener, ActionListener {
 		return svgByte;
 	}
 
+	/**
+	 * Used in case of overwrite picture. Refreshed the cache for that image
+	 * @param pictureId
+	 */
+	public void updateCachedImage(Integer pictureId) {
+		String thumbPath = "ejbimage?typ=t&id=" + pictureId;
+		File svgFile = new File(Constants.SVG_CACHE + this.encodeSvgImageName(thumbPath) + ".png");
+		byte[] svgByte = null;
+		try {
+			File cacheDir = new File(Constants.SVG_CACHE);
+			cacheDir.mkdirs();
+			svgByte = getClientService().getPicture(pictureId).getThumbnail();
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(svgFile));
+			out.write(svgByte, 0, svgByte.length);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			log.error("Image with Id " + pictureId + " has not been found");
+		}
+
+	}
+
 	public void removePicture(int pictureId) throws Exception {
 		try {
 			getClientService().removePicture(Integer.valueOf(pictureId));

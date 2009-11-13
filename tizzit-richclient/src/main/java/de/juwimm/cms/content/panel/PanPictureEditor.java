@@ -44,8 +44,6 @@ import javax.swing.event.EventListenerList;
 
 import org.apache.log4j.Logger;
 
-import com.sun.media.jai.widget.DisplayJAI;
-
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.content.frame.DlgSavePicture;
 import de.juwimm.cms.util.Communication;
@@ -57,11 +55,10 @@ import de.juwimm.cms.vo.PictureSlimValue;
  * @version $Id: DlgPictureEditor.java 6 2009-07-30 14:05:05Z skulawik@gmail.com $
  */
 public class PanPictureEditor extends JLayeredPane {
-	static
-	{
+	static {
 		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
-	} 
-	
+	}
+
 	private static final long serialVersionUID = -4307149141989890380L;
 	private static Logger log = Logger.getLogger(PanPicture.class);
 	protected Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
@@ -88,233 +85,237 @@ public class PanPictureEditor extends JLayeredPane {
 	private Point selectStart = null;
 	private Point selectEnd = null;
 	private Rectangle selection = null;
-	private enum ScaleKey {WIDTH, HEIGHT, PERCENT};
+	private enum ScaleKey {
+		WIDTH, HEIGHT, PERCENT
+	};
 	private boolean startedSizeCalculation = false;
 	private EventListenerList cancelListenerList = new EventListenerList();
-	
-	
-	public PanPictureEditor(int pictureID){
-		try{
+
+	public PanPictureEditor(int pictureID) {
+		try {
 			loadPicture(pictureID);
 			init();
-		}
-		catch(Exception ex)
-		{
+		} catch (Exception ex) {
 			log.error("Error while starting PanPictureEditor.", ex);
 		}
 	}
-	
+
 	private void loadPicture(int pic) {
 		try {
 			picSlimVal = comm.getPicture(pic);
 			byte[] picData = comm.getPictureData(pic);
 			Image img = new ImageIcon(picData).getImage();
 			ParameterBlock pb = new ParameterBlock();
-		    pb.add(img);
-			picture = (PlanarImage)JAI.create("AWTImage", pb);
+			pb.add(img);
+			picture = (PlanarImage) JAI.create("AWTImage", pb);
 		} catch (Exception ex) {
-			log.error("catched exception while loading ImagePreview of imageId: "+picture, ex);
-		}	
+			log.error("catched exception while loading ImagePreview of imageId: " + picture, ex);
+		}
 	}
 
-	private  void init() throws Exception{
+	private void init() throws Exception {
 		initPositionsPanel();
 		initResizePanel();
-		
+
 		btnCrop.setMaximumSize(new Dimension(95, 27));
 		btnCrop.setMinimumSize(new Dimension(95, 27));
 		btnCrop.setPreferredSize(new Dimension(95, 27));
 		btnCrop.setToolTipText(rb.getString("panel.content.pictureEditor.btnCrop.tooltiptext"));
-		btnCrop.setText(rb.getString("panel.content.pictureEditor.btnCrop"));
+		btnCrop.setText(rb.getString("panel.content.pictureEditor.btnCrop") + " ");
 		btnCrop.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnCropActionPerformed(e);
 			}
 		});
 		btnCrop.setEnabled(false);
-		
+
 		btnOk.setMaximumSize(new Dimension(95, 27));
 		btnOk.setMinimumSize(new Dimension(95, 27));
 		btnOk.setPreferredSize(new Dimension(95, 27));
-//		btnOk.setToolTipText(rb.getString("panel.content.pictureEditor.btnOk.tooltiptext"));
-		btnOk.setText("Speichern");
+		//		btnOk.setToolTipText(rb.getString("panel.content.pictureEditor.btnOk.tooltiptext"));
+		btnOk.setText(rb.getString("dialog.saveItem.btnSave"));
 		btnOk.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnOkActionPerformed(e);
 			}
-		});	
+		});
 		btnCancel.setMaximumSize(new Dimension(95, 27));
 		btnCancel.setMinimumSize(new Dimension(95, 27));
 		btnCancel.setPreferredSize(new Dimension(95, 27));
-//		btnCancel.setToolTipText(rb.getString("panel.content.pictureEditor.btnCancel.tooltiptext"));
-		btnCancel.setText("Abbrechen");
+		//		btnCancel.setToolTipText(rb.getString("panel.content.pictureEditor.btnCancel.tooltiptext"));
+		btnCancel.setText(rb.getString("dialog.saveItem.btnCancel"));
 		btnCancel.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnCancelActionPerformed(e);
 			}
-		});		
+		});
 		panButtons.setLayout(new GridBagLayout());
 		panButtons.setBorder(BorderFactory.createLoweredBevelBorder());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx=0;
-		c.gridy=0;
-		c.anchor=GridBagConstraints.FIRST_LINE_END;
-		c.insets=new Insets(20, 10, 10, 10);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.FIRST_LINE_END;
+		c.insets = new Insets(20, 10, 10, 10);
 		panButtons.add(btnCrop, c);
-		c.gridy=1;
-		c.gridheight=6;
-		c.insets=new Insets(10, 10, 100, 10);
-		panButtons.add(panResize,c);
-		c.gridy=7;
-		c.gridheight=1;
-		c.insets=new Insets(100, 10, 5, 10);
-		c.anchor=GridBagConstraints.LAST_LINE_END;
-		panButtons.add(btnOk,c);
-		c.gridy=8;
-		c.insets=new Insets(5, 10, 20, 10);
-		panButtons.add(btnCancel,c);
-		
+		c.gridy = 1;
+		c.gridheight = 6;
+		c.insets = new Insets(10, 10, 100, 10);
+		panButtons.add(panResize, c);
+		c.gridy = 7;
+		c.gridheight = 1;
+		c.insets = new Insets(100, 10, 5, 10);
+		c.anchor = GridBagConstraints.LAST_LINE_END;
+		panButtons.add(btnOk, c);
+		c.gridy = 8;
+		c.insets = new Insets(5, 10, 20, 10);
+		panButtons.add(btnCancel, c);
+
 		panButtons.setMaximumSize(new Dimension(170, 600));
 		panButtons.setMinimumSize(new Dimension(170, 600));
 		panButtons.setPreferredSize(new Dimension(170, 600));
-				
-		panImage = new PanDisplayJAIScrollable(picture, picture.getWidth()/10);
-		panImage.addMouseListener(new MouseListener(){
+
+		panImage = new PanDisplayJAIScrollable(picture, picture.getWidth() / 10);
+		panImage.addMouseListener(new MouseListener() {
 			public void mousePressed(MouseEvent e) {
-				if(picture.getBounds().contains(e.getX(), e.getY())){
+				if (picture.getBounds().contains(e.getX(), e.getY())) {
 					selectStart = new Point(e.getX(), e.getY());
 					selectEnd = new Point();
 				}
 			}
+
 			public void mouseReleased(MouseEvent e) {
 				calculateSelection();
-				if(selectStart != null){
+				if (selectStart != null) {
 					btnCrop.setEnabled(true);
 				}
 			}
-			public void mouseClicked(MouseEvent e) {	
+
+			public void mouseClicked(MouseEvent e) {
 				deleteSelection();
 			}
+
 			public void mouseEntered(MouseEvent e) {
-				
+
 			}
+
 			public void mouseExited(MouseEvent e) {
 				calculateMousePosition(0, 0);
-			}			
+			}
 		});
-		panImage.addMouseMotionListener(new MouseMotionListener(){
-			public void mouseDragged(MouseEvent e){
-				if(picture.getBounds().contains(e.getX(), e.getY())){
+		panImage.addMouseMotionListener(new MouseMotionListener() {
+			public void mouseDragged(MouseEvent e) {
+				if (picture.getBounds().contains(e.getX(), e.getY())) {
 					selectEnd.x = e.getX();
 					selectEnd.y = e.getY();
 					calculateSelection();
 					repaint();
 				}
 			}
+
 			public void mouseMoved(MouseEvent e) {
 				calculateMousePosition(e.getX(), e.getY());
 			}
 		});
-		JScrollPane spaRoot = new JScrollPane(panImage);	
+		JScrollPane spaRoot = new JScrollPane(panImage);
 		spaRoot.setMaximumSize(new Dimension(700, 400));
 		spaRoot.setMinimumSize(new Dimension(700, 400));
 		spaRoot.setPreferredSize(new Dimension(700, 400));
-		
+
 		this.setLayout(new BorderLayout());
 		this.setBorder(BorderFactory.createLoweredBevelBorder());
-		
+
 		this.add(panButtons, BorderLayout.EAST);
 		this.add(spaRoot, BorderLayout.CENTER);
-		this.add(panPostions, BorderLayout.SOUTH);		
+		this.add(panPostions, BorderLayout.SOUTH);
 	}
-	
-	private void initPositionsPanel(){
-		lblCurrentSize.setText(" Bildgroesse " + picture.getWidth() + " x " + picture.getHeight());
+
+	private void initPositionsPanel() {
+		lblCurrentSize.setText(rb.getString("panel.content.pictureEditor.imageSize") + " " + picture.getWidth() + " x " + picture.getHeight());
 		lblCurrentSize.setToolTipText(rb.getString("panel.content.pictureEditor.currentSize.toolTip"));
-		
+
 		calculateMousePosition(0, 0);
 		lblMousePosition.setToolTipText(rb.getString("panel.content.pictureEditor.mousePosition.toolTip"));
 		lblMousePosition.setMaximumSize(new Dimension(150, 25));
 		lblMousePosition.setMinimumSize(new Dimension(150, 25));
 		lblMousePosition.setPreferredSize(new Dimension(150, 25));
-		
+
 		calculateSelection();
 		lblSelectedSize.setToolTipText(rb.getString("panel.content.pictureEditor.selectedSize.toolTip"));
-		
+
 		panPostions.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		panPostions.setBorder(BorderFactory.createLoweredBevelBorder());
-		c.gridx=0;
-		c.gridy=0;
-		c.insets=new Insets(5, 20, 5, 75);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(5, 20, 5, 75);
 		panPostions.add(lblMousePosition, c);
-		c.gridx=1;
-		c.insets=new Insets(5, 75, 5, 75);
+		c.gridx = 1;
+		c.insets = new Insets(5, 75, 5, 75);
 		panPostions.add(lblSelectedSize, c);
-		c.gridx=2;
-		c.insets=new Insets(5, 75, 5, 20);
-		panPostions.add(lblCurrentSize, c);		
+		c.gridx = 2;
+		c.insets = new Insets(5, 75, 5, 20);
+		panPostions.add(lblCurrentSize, c);
 		panPostions.setMaximumSize(new Dimension(800, 30));
 		panPostions.setMinimumSize(new Dimension(800, 30));
 		panPostions.setPreferredSize(new Dimension(800, 30));
 	}
-	
-	private void initResizePanel(){
-		lblResizeHeader.setText(rb.getString("panel.content.pictureEditor.resize.header"));		
-	
+
+	private void initResizePanel() {
+		lblResizeHeader.setText(rb.getString("panel.content.pictureEditor.resize.header"));
+
 		SpinnerModel spnModel = new SpinnerNumberModel(100, 1, 100, 1);
 		spnResizePercentalSize.setModel(spnModel);
 		spnResizePercentalSize.setMaximumSize(new Dimension(100, 27));
 		spnResizePercentalSize.setMinimumSize(new Dimension(100, 27));
 		spnResizePercentalSize.setPreferredSize(new Dimension(100, 27));
-		spnResizePercentalSize.addChangeListener(new ChangeListener(){
+		spnResizePercentalSize.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				calculatePictureSize(ScaleKey.PERCENT, ((Integer)spnResizePercentalSize.getValue()).longValue());
-			}	
-		});		
+				calculatePictureSize(ScaleKey.PERCENT, ((Integer) spnResizePercentalSize.getValue()).longValue());
+			}
+		});
 		lblResizePercentalSize.setText(rb.getString("panel.content.pictureEditor.resize.percent"));
 		lblResizePercentalSize.setToolTipText(rb.getString("panel.content.pictureEditor.resize.percent.toolTip"));
 		lblResizePercentalSize.setMaximumSize(new Dimension(50, 27));
 		lblResizePercentalSize.setMinimumSize(new Dimension(50, 27));
 		lblResizePercentalSize.setPreferredSize(new Dimension(50, 27));
-		
+
 		lblResizeWidth.setText(rb.getString("panel.content.pictureEditor.resize.width"));
 		lblResizeWidth.setToolTipText(rb.getString("panel.content.pictureEditor.resize.widht.toolTip"));
 		lblResizeWidth.setMaximumSize(new Dimension(50, 27));
 		lblResizeWidth.setMinimumSize(new Dimension(50, 27));
 		lblResizeWidth.setPreferredSize(new Dimension(50, 27));
 		txtResizeWidth.setValue(picture.getWidth());
-		txtResizeWidth.addPropertyChangeListener("value", new PropertyChangeListener(){
+		txtResizeWidth.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				calculatePictureSize(ScaleKey.WIDTH, (Long)evt.getNewValue());
-			}		
+				calculatePictureSize(ScaleKey.WIDTH, (Long) evt.getNewValue());
+			}
 		});
 		txtResizeWidth.setMaximumSize(new Dimension(50, 27));
 		txtResizeWidth.setMinimumSize(new Dimension(50, 27));
 		txtResizeWidth.setPreferredSize(new Dimension(50, 27));
-		
+
 		lblResizeHeight.setText(rb.getString("panel.content.pictureEditor.resize.height"));
 		lblResizeHeight.setToolTipText(rb.getString("panel.content.pictureEditor.resize.height.toolTip"));
 		lblResizeHeight.setMaximumSize(new Dimension(50, 27));
 		lblResizeHeight.setMinimumSize(new Dimension(50, 27));
 		lblResizeHeight.setPreferredSize(new Dimension(50, 27));
 		txtResizeHeight.setValue(picture.getHeight());
-		txtResizeHeight.addPropertyChangeListener("value", new PropertyChangeListener(){
+		txtResizeHeight.addPropertyChangeListener("value", new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
-				calculatePictureSize(ScaleKey.HEIGHT, (Long)evt.getNewValue());
-			}		
-		});	
+				calculatePictureSize(ScaleKey.HEIGHT, (Long) evt.getNewValue());
+			}
+		});
 		txtResizeHeight.setMaximumSize(new Dimension(50, 27));
 		txtResizeHeight.setMinimumSize(new Dimension(50, 27));
 		txtResizeHeight.setPreferredSize(new Dimension(50, 27));
-		
-		panResize.setLayout(new GridLayout(2,1));
+
+		panResize.setLayout(new GridLayout(2, 1));
 		//panResize.setBorder(BorderFactory.createLoweredBevelBorder());
 		panResize.add(lblResizeHeader);
 		JPanel innerPanel = new JPanel();
-		innerPanel.setLayout(new GridLayout(3,2));
+		innerPanel.setLayout(new GridLayout(3, 2));
 		innerPanel.add(lblResizePercentalSize);
 		innerPanel.add(spnResizePercentalSize);
 		innerPanel.add(lblResizeWidth);
@@ -326,8 +327,8 @@ public class PanPictureEditor extends JLayeredPane {
 		panResize.setMinimumSize(new Dimension(150, 150));
 		panResize.setPreferredSize(new Dimension(150, 150));
 	}
-	
-	private PlanarImage scalePreviewImage(float scale){
+
+	private PlanarImage scalePreviewImage(float scale) {
 		ParameterBlock pb = new ParameterBlock();
 		pb.addSource(picture);
 		pb.add(scale);
@@ -337,132 +338,127 @@ public class PanPictureEditor extends JLayeredPane {
 		pb.add(new InterpolationBilinear());
 		return JAI.create("scale", pb);
 	}
-	
-	private void calculatePictureSize(ScaleKey sk, long value)
-	{
-		if(startedSizeCalculation){
+
+	private void calculatePictureSize(ScaleKey sk, long value) {
+		if (startedSizeCalculation) {
 			return;
 		}
-		startedSizeCalculation=true;
-		if(sk == ScaleKey.WIDTH){
+		startedSizeCalculation = true;
+		if (sk == ScaleKey.WIDTH) {
 			long newWidth = value;
-			if(newWidth > picture.getWidth()){
+			if (newWidth > picture.getWidth()) {
 				newWidth = picture.getWidth();
 				txtResizeWidth.setValue(newWidth);
 			}
-			if(value == picture.getWidth()){
+			if (value == picture.getWidth()) {
 				scaledImage = null;
 			}
-			long newHeight = newWidth*picture.getHeight()/picture.getWidth();
+			long newHeight = newWidth * picture.getHeight() / picture.getWidth();
 			txtResizeHeight.setValue(newHeight);
-			long newPercent = newHeight*100/picture.getHeight();
+			long newPercent = newHeight * 100 / picture.getHeight();
 			spnResizePercentalSize.setValue(new Long(newPercent).intValue());
 		}
-		if(sk == ScaleKey.HEIGHT){
+		if (sk == ScaleKey.HEIGHT) {
 			long newHeight = value;
-			if(newHeight > picture.getHeight()){
+			if (newHeight > picture.getHeight()) {
 				newHeight = picture.getHeight();
 				txtResizeHeight.setValue(newHeight);
 			}
-			if(value == picture.getHeight()){
+			if (value == picture.getHeight()) {
 				scaledImage = null;
 			}
-			long newWidth = newHeight*picture.getWidth()/picture.getHeight();
+			long newWidth = newHeight * picture.getWidth() / picture.getHeight();
 			txtResizeWidth.setValue(newWidth);
-			long newPercent = newWidth*100/picture.getWidth();
+			long newPercent = newWidth * 100 / picture.getWidth();
 			spnResizePercentalSize.setValue(new Long(newPercent).intValue());
 		}
-		if(sk == ScaleKey.PERCENT){
-			if(value == 100){
+		if (sk == ScaleKey.PERCENT) {
+			if (value == 100) {
 				scaledImage = null;
 			}
-			txtResizeHeight.setValue((picture.getHeight()*value/100));
-			txtResizeWidth.setValue((picture.getWidth()*value/100));
-		}	
-		Thread resizer = new Thread(){
-			public void run(){
-				PlanarImage img = scalePreviewImage(((Long)txtResizeWidth.getValue()).floatValue()/picture.getWidth());
+			txtResizeHeight.setValue((picture.getHeight() * value / 100));
+			txtResizeWidth.setValue((picture.getWidth() * value / 100));
+		}
+		Thread resizer = new Thread() {
+			public void run() {
+				PlanarImage img = scalePreviewImage(((Long) txtResizeWidth.getValue()).floatValue() / picture.getWidth());
 				panImage.set(img);
 				scaledImage = img;
 				deleteSelection();
-			}};
+			}
+		};
 		resizer.start();
-		startedSizeCalculation=false;
+		startedSizeCalculation = false;
 	}
-	
-	private void resetSizes()
-	{
-		lblCurrentSize.setText(" Bildgroesse " + picture.getWidth() + " x " + picture.getHeight());
+
+	private void resetSizes() {
+		lblCurrentSize.setText(rb.getString("panel.content.pictureEditor.imageSize") + " " + picture.getWidth() + " x " + picture.getHeight());
 		spnResizePercentalSize.setValue(100);
 		txtResizeHeight.setValue(new Integer(picture.getHeight()).longValue());
 		txtResizeWidth.setValue(new Integer(picture.getWidth()).longValue());
 	}
-	
-	private PlanarImage cropPreviewImage(){
+
+	private PlanarImage cropPreviewImage() {
 		PlanarImage img;
 		ParameterBlock pb = new ParameterBlock();
 		pb.addSource(picture);
-		pb.add((float)selection.x);
-		pb.add((float)selection.y);
-		pb.add((float)selection.width);
-		pb.add((float)selection.height);
-		img = JAI.create("crop",pb, null);		
+		pb.add((float) selection.x);
+		pb.add((float) selection.y);
+		pb.add((float) selection.width);
+		pb.add((float) selection.height);
+		img = JAI.create("crop", pb, null);
 		// croped Image would stay at the same place like in the original
 		// image - upper left corner has to be reseted to zero
-		pb = new ParameterBlock();  
-		pb.addSource(img);  
-		pb.add(-((float)selection.x));  
-		pb.add(-((float)selection.y));  
-		return JAI.create("translate",pb,null);	
+		pb = new ParameterBlock();
+		pb.addSource(img);
+		pb.add(-((float) selection.x));
+		pb.add(-((float) selection.y));
+		return JAI.create("translate", pb, null);
 	}
-	
-	private PlanarImage createThumbnail()
-	{
-		if(picture.getHeight() <= 90){
+
+	private PlanarImage createThumbnail() {
+		if (picture.getHeight() <= 90) {
 			return picture;
 		}
 		//thumbnail height sould be 90
-		float scale = 90f/picture.getHeight();
-		return scalePreviewImage(scale);	
+		float scale = 90f / picture.getHeight();
+		return scalePreviewImage(scale);
 	}
-	
-	private void calculateMousePosition(int x, int y)
-	{
-		String text = new String(" MausPosition ");
-		if(!picture.getBounds().contains(x, y)){
+
+	private void calculateMousePosition(int x, int y) {
+		String text = new String(rb.getString("panel.content.pictureEditor.mousePosition") + " ");
+		if (!picture.getBounds().contains(x, y)) {
 			x = 0;
 			y = 0;
 		}
 		text = text + x + " : " + y;
 		lblMousePosition.setText(text);
 	}
-	
-	private void calculateSelection()
-	{
-		String text = new String(" Markierung ");
-		if(selectStart != null){
-			int minX = (selectStart.x < selectEnd.x)?selectStart.x:selectEnd.x;
-			int maxX = (selectStart.x == minX)?selectEnd.x:selectStart.x;
-			int minY = (selectStart.y < selectEnd.y)?selectStart.y:selectEnd.y;
-			int maxY = (selectStart.y != minY)?selectStart.y:selectEnd.y;
-			text = text + (maxX - minX) + " x " + (maxY-minY);
-			selection = new Rectangle(minX, minY, maxX-minX, maxY-minY);
+
+	private void calculateSelection() {
+		String text = new String(rb.getString("panel.content.pictureEditor.selected") + " ");
+		if (selectStart != null) {
+			int minX = (selectStart.x < selectEnd.x) ? selectStart.x : selectEnd.x;
+			int maxX = (selectStart.x == minX) ? selectEnd.x : selectStart.x;
+			int minY = (selectStart.y < selectEnd.y) ? selectStart.y : selectEnd.y;
+			int maxY = (selectStart.y != minY) ? selectStart.y : selectEnd.y;
+			text = text + (maxX - minX) + " x " + (maxY - minY);
+			selection = new Rectangle(minX, minY, maxX - minX, maxY - minY);
 		}
 		lblSelectedSize.setText(text);
 	}
-	
-	private void deleteSelection()
-	{
-		lblSelectedSize.setText(" Markierung ");
+
+	private void deleteSelection() {
+		lblSelectedSize.setText(rb.getString("panel.content.pictureEditor.selected") + " ");
 		selectStart = null;
 		selectEnd = null;
 		selection = null;
 		btnCrop.setEnabled(false);
 		repaint();
 	}
-	
-	private void btnCropActionPerformed(ActionEvent e){
-		if(scaledImage != null){
+
+	private void btnCropActionPerformed(ActionEvent e) {
+		if (scaledImage != null) {
 			picture = scaledImage;
 			scaledImage = null;
 		}
@@ -472,19 +468,18 @@ public class PanPictureEditor extends JLayeredPane {
 		deleteSelection();
 		resetSizes();
 	}
-	
-	private byte[] planarImage2ByteArray(PlanarImage img){
+
+	private byte[] planarImage2ByteArray(PlanarImage img) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		JAI.create("encode", img, out, "PNG", null);
 		return out.toByteArray();
 	}
 
-	private void btnOkActionPerformed(ActionEvent e){
-		if(scaledImage != null){
+	private void btnOkActionPerformed(ActionEvent e) {
+		if (scaledImage != null) {
 			picture = scaledImage;
 		}
-		DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, planarImage2ByteArray(picture), 
-				planarImage2ByteArray(createThumbnail()));
+		DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, planarImage2ByteArray(picture), planarImage2ByteArray(createThumbnail()));
 		saveDialog.addSaveActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				fireSaveActionListener(ae);
@@ -498,10 +493,10 @@ public class PanPictureEditor extends JLayeredPane {
 		saveDialog.setVisible(true);
 	}
 
-	private void btnCancelActionPerformed(ActionEvent e){
+	private void btnCancelActionPerformed(ActionEvent e) {
 		fireCancelActionListener(e);
 	}
-	
+
 	public void addSaveActionListener(ActionListener al) {
 		this.listenerList.add(ActionListener.class, al);
 	}
@@ -512,7 +507,7 @@ public class PanPictureEditor extends JLayeredPane {
 			((ActionListener) listeners[i + 1]).actionPerformed(e);
 		}
 	}
-	
+
 	public void addCancelActionListener(ActionListener al) {
 		this.cancelListenerList.add(ActionListener.class, al);
 	}
@@ -523,21 +518,19 @@ public class PanPictureEditor extends JLayeredPane {
 			((ActionListener) listeners[i + 1]).actionPerformed(e);
 		}
 	}
-	
-	public void paint(Graphics g)
-	{
+
+	public void paint(Graphics g) {
 		super.paint(g);
 		int offsetX = panImage.getVisibleRect().x;
-		int offsetY = panImage.getVisibleRect().y;	
+		int offsetY = panImage.getVisibleRect().y;
 		int thickness = 3;
-		if(selectStart != null)
-		{
-			int x = selection.x-offsetX;
-			int y = selection.y-offsetY;
-			int width = (panImage.getVisibleRect().width-x<selection.width)?panImage.getVisibleRect().width-x:selection.width;
-			int height = (panImage.getVisibleRect().height-y<selection.height)?panImage.getVisibleRect().height-y:selection.height;
-			for(int i=0; i<thickness; i++){
-				g.drawRect(x+i, y+i, width, height);
+		if (selectStart != null) {
+			int x = selection.x - offsetX;
+			int y = selection.y - offsetY;
+			int width = (panImage.getVisibleRect().width - x < selection.width) ? panImage.getVisibleRect().width - x : selection.width;
+			int height = (panImage.getVisibleRect().height - y < selection.height) ? panImage.getVisibleRect().height - y : selection.height;
+			for (int i = 0; i < thickness; i++) {
+				g.drawRect(x + i, y + i, width, height);
 			}
 		}
 	}
