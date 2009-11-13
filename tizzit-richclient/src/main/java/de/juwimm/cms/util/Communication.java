@@ -2479,7 +2479,7 @@ public class Communication implements ExitListener, ActionListener {
 		InputStream fis = null;
 		try {
 			fis = new BufferedInputStream(new FileInputStream(file));
-			getClientService().importEditionFromImport(fis, viewComponentId, useNewIds);
+			getClientService().importEditionFromImport(fis, viewComponentId, useNewIds, -1);
 		} catch (Exception re) {
 			log.error("Error importing edition from import", re);
 		} finally {
