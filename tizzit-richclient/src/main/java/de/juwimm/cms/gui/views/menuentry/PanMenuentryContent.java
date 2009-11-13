@@ -227,20 +227,20 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 
 	public void setMenuentryEnabled(boolean enabled) {
 		log.debug("setMenuentryEnabled" + enabled);
-	/*	this.btnChangeTemplate.setEnabled(enabled);
-		this.getTxtOnlineStart().setDateButtonEnabled(enabled);
-		this.getTxtOnlineStop().setDateButtonEnabled(enabled);
-		this.getTxtText().setEnabled(enabled);
-		this.getTxtInfo().setEnabled(enabled);
-		this.getChkOpenNewNavi().setEnabled(enabled);
-		this.getOptSelectShow().setEnabled(enabled);
-		{
-			if (this.comm.isUserInRole(UserRights.SITE_ROOT) || this.comm.isUserInRole(UserRights.PAGE_EDIT_URL_LINKNAME)) {
-				this.getTxtUrlLinkName().setEditable(enabled);
-			} else {
-				this.getTxtUrlLinkName().setEditable(false);
-			}
-		}*/
+		/*	this.btnChangeTemplate.setEnabled(enabled);
+			this.getTxtOnlineStart().setDateButtonEnabled(enabled);
+			this.getTxtOnlineStop().setDateButtonEnabled(enabled);
+			this.getTxtText().setEnabled(enabled);
+			this.getTxtInfo().setEnabled(enabled);
+			this.getChkOpenNewNavi().setEnabled(enabled);
+			this.getOptSelectShow().setEnabled(enabled);
+			{
+				if (this.comm.isUserInRole(UserRights.SITE_ROOT) || this.comm.isUserInRole(UserRights.PAGE_EDIT_URL_LINKNAME)) {
+					this.getTxtUrlLinkName().setEditable(enabled);
+				} else {
+					this.getTxtUrlLinkName().setEditable(false);
+				}
+			}*/
 	}
 
 	public void setTemplateButtonEnabled(boolean enabled) {

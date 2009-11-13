@@ -105,6 +105,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 		panSymlink = new PanSymlinkView();
 
 		pnlLeft.setLayout(new BorderLayout());
+		pnlLeft.add(panTree.createParameterPanel(), BorderLayout.NORTH);
 		pnlLeft.add(panTree, BorderLayout.CENTER);
 
 		splitPane.setBorder(null);
@@ -121,8 +122,13 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 		try {
 			panContent.reload();
 			panTree.reload();
+			panTree.setCursor(Cursor.getDefaultCursor());
+			panTree.getParametersPanel().setCursor(Cursor.getDefaultCursor());
+			panContent.setCursor(Cursor.getDefaultCursor());
 		} catch (Exception e) {
 			this.setCursor(Cursor.getDefaultCursor());
+			panTree.getParametersPanel().setCursor(Cursor.getDefaultCursor());
+			panContent.setCursor(Cursor.getDefaultCursor());
 			throw e;
 		}
 	}

@@ -279,6 +279,9 @@ public final class UIConstants {
 	public static ImageIcon ICON_RESOURCE_PICTURE;
 	public static ImageIcon ICON_RESOURCE_DOCUMENT;
 
+	public static ImageIcon TREE_EXPAND_ALL;
+	public static ImageIcon TREE_COLLAPSE_ALL;
+
 	private UIConstants() {
 	}
 
@@ -523,6 +526,9 @@ public final class UIConstants {
 		ICON_RESOURCE_PICTURE = load("16x16/resource_image.gif");
 		ICON_RESOURCE_DOCUMENT = load("16x16/resource_document.gif");
 
+		TREE_COLLAPSE_ALL = load("treeCollapse.png");
+		TREE_EXPAND_ALL = load("treeExpand.png");
+
 	}
 
 	public static ImageIcon getWYSIWYGicon(String imgname) {
@@ -551,6 +557,17 @@ public final class UIConstants {
 			imgi = EMPTY;
 		}
 		return imgi;
+	}
+
+	public static ImageIcon getViewIcons(String language) {
+		String viewUrl = "flags/";
+		ImageIcon img = null;
+		try {
+			img = load(viewUrl + language + ".png");
+		} catch (Exception e) {
+			img = EMPTY;
+		}
+		return img;
 	}
 
 	/**

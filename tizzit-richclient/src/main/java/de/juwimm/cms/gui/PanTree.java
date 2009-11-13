@@ -18,8 +18,14 @@ package de.juwimm.cms.gui;
 import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,8 +44,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -61,6 +72,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.CommandButtonDisplayState;
+import org.jvnet.flamingo.common.JCommandMenuButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -87,6 +101,7 @@ import de.juwimm.cms.exceptions.UserHasNoUnitsException;
 import de.juwimm.cms.gui.event.ChooseTemplateListener;
 import de.juwimm.cms.gui.event.ViewComponentEvent;
 import de.juwimm.cms.gui.event.ViewComponentListener;
+import de.juwimm.cms.gui.ribbon.CommandMenuButtonUI;
 import de.juwimm.cms.gui.tree.CmsTreeModel;
 import de.juwimm.cms.gui.tree.CmsTreeRenderer;
 import de.juwimm.cms.gui.tree.PageContentNode;
@@ -122,7 +137,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private CmsTreeModel treeModel;
 	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private final JComboBox cbxUnits = new JComboBox();
-	private final JComboBox cbxViewDocuments = new JComboBox();
+	private final JComboBox cbxViewDocuments = new JComboBox(new Object[20]);
 	private final JPopupMenu popup = new JPopupMenu();
 	private final ResourceBundle rb = Constants.rb;
 	private final JMenuItem miMoveLeft = new JMenuItem(rb.getString("actions.MOVE_LEFT"));
@@ -148,10 +163,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private final String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
 	private final String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
 	private final String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
+	private JButton refresh;
 	private final HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
 	private Integer[] viewComponentIdsCopy = null;
 	private TreePath previousTreeNodePath = null;
 	private boolean stop = true;
+	private JPanel panelParameters;
+	private ViewDocumentValue[] viewDocuments;
 
 	//private DragSource dragSource = null;
 
@@ -476,17 +494,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
 		NoResizeScrollPane treeView = new NoResizeScrollPane(tree);
-		Dimension treeSize = new Dimension(300, 600);
+		Dimension treeSize = new Dimension(300, 100);
 		treeView.setPreferredSize(treeSize);
 		treeView.setSize(treeSize);
 		treeView.setMaximumSize(treeSize);
-		treeView.setMinimumSize(new Dimension(150, 600));
+		treeView.setMinimumSize(new Dimension(150, 100));
 		treeView.setVerifyInputWhenFocusTarget(true);
 
-		cbxViewDocuments.setMaximumSize(new Dimension(32767, 25));
-		cbxViewDocuments.setMinimumSize(new Dimension(126, 25));
-		cbxViewDocuments.setPreferredSize(new Dimension(130, 21));
-		cbxViewDocuments.setMaximumRowCount(8);
 		this.add(treeView, BorderLayout.CENTER);
 
 		//Sets the preferred size of the combobox so that the combobox has a
@@ -498,12 +512,103 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		cbxUnits.setPreferredSize(cbxUnitsPrefSize);
 		cbxUnits.setMinimumSize(cbxUnitsMinSize);
 
-		this.add(cbxViewDocuments, BorderLayout.SOUTH);
-
 		tree.setScrollsOnExpand(true);
 		tree.setExpandsSelectedPaths(true);
 	}
 
+	public JPanel createParameterPanel() {
+		panelParameters = treeParametersPanel();
+		return panelParameters;
+	}
+
+	public JPanel getParametersPanel() {
+		return panelParameters;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public JPanel treeParametersPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		Dimension paramsSize = new Dimension(250, 90);
+		panel.setPreferredSize(paramsSize);
+		panel.setMinimumSize(paramsSize);
+
+		JCommandMenuButton allOpen = new JCommandMenuButton(rb.getString("panel.tree.parameters.btnOpen"), ImageWrapperResizableIcon.getIcon(UIConstants.TREE_EXPAND_ALL.getImage(), new Dimension(10, 10)));
+		allOpen.setDisplayState(CommandButtonDisplayState.MEDIUM);
+		allOpen.setUI(new CommandMenuButtonUI());
+		allOpen.setHorizontalAlignment(SwingUtilities.LEFT);
+		allOpen.setPreferredSize(new Dimension(15, 20));
+		allOpen.setMaximumSize(new Dimension(15, 20));
+		allOpen.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				expandAllNodes((TreeNode) tree.getModel().getRoot(), true);
+			}
+		});
+
+		final JCommandMenuButton refresh = new JCommandMenuButton(rb.getString("ribbon.ACTION_TREE_REFRESH"), ImageWrapperResizableIcon.getIcon(UIConstants.ACTION_TREE_REFRESH.getImage(), new Dimension(10, 10)));
+		refresh.setDisplayState(CommandButtonDisplayState.MEDIUM);
+		refresh.setHorizontalAlignment(SwingUtilities.LEFT);
+		refresh.setUI(new CommandMenuButtonUI());
+		refresh.setPreferredSize(new Dimension(30, 20));
+		refresh.setMaximumSize(new Dimension(30, 20));
+		refresh.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ActionHub.fireActionPerformed(new ActionEvent(refresh, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_REFRESH));
+			}
+		});
+
+		JCommandMenuButton allClosed = new JCommandMenuButton(rb.getString("panel.tree.parameters.btnClose"), ImageWrapperResizableIcon.getIcon(UIConstants.TREE_COLLAPSE_ALL.getImage(), new Dimension(5, 5)));
+		allClosed.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				expandAllNodes((TreeNode) tree.getModel().getRoot(), false);
+			}
+		});
+		allClosed.setDisplayState(CommandButtonDisplayState.MEDIUM);
+		allClosed.setUI(new CommandMenuButtonUI());
+		allClosed.setHorizontalAlignment(SwingUtilities.LEFT);
+		allClosed.setPreferredSize(new Dimension(15, 20));
+		allClosed.setMaximumSize(new Dimension(15, 20));
+
+		JLabel lblMenu = new JLabel(rb.getString("panel.tree.parameters.lblMenu"));
+		JLabel lblNavigationLanguage = new JLabel(rb.getString("panel.tree.parameters.lblNavigation"));
+		cbxUnits.setPreferredSize(new Dimension(190, 21));
+		cbxUnits.setMinimumSize(new Dimension(190, 21));
+
+		JPanel unitLblPanel = new JPanel();
+		unitLblPanel.setLayout(new GridBagLayout());
+		unitLblPanel.add(lblMenu, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 5, 0), 0, 0));
+		lblMenu.setForeground(Color.white);
+		lblMenu.setPreferredSize(new Dimension(90, 30));
+		lblMenu.setMinimumSize(new Dimension(90, 30));
+		unitLblPanel.setBackground(new Color(128, 128, 128));
+		unitLblPanel.setPreferredSize(new Dimension(100, 30));
+
+		JPanel unitCBBPanel = new JPanel();
+		unitCBBPanel.add(cbxUnits, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 20), 0, 0));
+		unitCBBPanel.add(cbxUnits);
+		unitCBBPanel.setBackground(new Color(128, 128, 128));
+		unitCBBPanel.setPreferredSize(new Dimension(130, 30));
+
+		ComboBoxRenderer renderer = new ComboBoxRenderer();
+		cbxViewDocuments.setRenderer(renderer);
+		cbxViewDocuments.setMaximumSize(new Dimension(32767, 25));
+		cbxViewDocuments.setMinimumSize(new Dimension(126, 25));
+		cbxViewDocuments.setPreferredSize(new Dimension(130, 21));
+		cbxViewDocuments.setMaximumRowCount(20);
+
+		panel.add(lblNavigationLanguage, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
+		panel.add(cbxViewDocuments, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 100, 0, 10), 0, 0));
+		panel.add(unitLblPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 170), 0, 0));
+		panel.add(unitCBBPanel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 90, 0, 0), 0, 0));
+		panel.add(allOpen, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 190), 0, 0));
+		panel.add(allClosed, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 75, 0, 120), 0, 0));
+		panel.add(refresh, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 190, 0, 10), 0, 0));
+
+		return panel;
+	}
 	/**
 	 * @version $Id$
 	 */
@@ -565,7 +670,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			miContentApprove.setActionCommand(Constants.ACTION_CONTENT_APPROVE);
 			popup.add(miContentApprove);
 		}
-		//miPaste.setEnabled(false);
 		miCopy.setIcon(UIConstants.ACTION_COPY);
 		miPaste.setIcon(UIConstants.ACTION_PASTE);
 		popup.add(miCopy);
@@ -611,19 +715,15 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		}
 		popup.addSeparator();
 
-		if (!comm.isUserInRole(UserRights.SITE_ROOT)) {
-			this.add(cbxUnits, BorderLayout.NORTH);
-		} else {
-			this.remove(cbxUnits);
-		}
 		cbxUnits.removeAllItems();
+		cbxUnits.setMinimumSize(new Dimension(126, 21));
 		cbxViewDocuments.removeAllItems();
 
 		ItemListener[] il = cbxViewDocuments.getItemListeners();
 		for (int i = 0; i < il.length; i++) {
 			cbxViewDocuments.removeItemListener(il[i]);
 		}
-		ViewDocumentValue[] viewDocuments = comm.getViewDocuments();
+		viewDocuments = comm.getViewDocuments();
 		PanInternalLink.getLinkCache().clearCache(comm.getSiteId());
 		for (int i = 0; i < viewDocuments.length; i++) {
 			DropDownHolder ddh = null;
@@ -642,10 +742,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				}
 			}
 		});
+
 		this.selectDefaultViewDocument();
 		if (!comm.isUserInRole(UserRights.SITE_ROOT)) {
 			UnitValue[] uv = comm.getUnits();
-			if (uv == null || uv.length == 0) { throw new UserHasNoUnitsException("Ihnen sind keine Einrichtungen zur Bearbeitung zugeordnet.\nBitte wenden Sie sich an Ihren Administrator."); }
+			if (uv == null || uv.length == 0) {
+				throw new UserHasNoUnitsException("Ihnen sind keine Einrichtungen zur Bearbeitung zugeordnet.\nBitte wenden Sie sich an Ihren Administrator.");
+			}
 			cbxUnits.removeAllItems();
 			for (int i = 0; i < uv.length; i++) {
 				cbxUnits.addItem(new DropDownHolder(uv[i], uv[i].getName()));
@@ -668,12 +771,17 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		try {
 			comm.setViewDocument(((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject()));
 			if (!comm.isUserInRole(UserRights.SITE_ROOT)) {
-				if (cbxUnits.getSelectedItem() == null) { return; }
+				if (cbxUnits.getSelectedItem() == null) {
+					return;
+				}
 				int unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId().intValue();
 				comm.setSelectedUnitId(unitId);
 				try {
 					viewComponent = comm.getViewComponent4Unit(unitId, -1);
 				} catch (Exception exe) {
+					if (log.isDebugEnabled()) {
+						log.debug("Error in getViewComponent4Unit");
+					}
 				}
 			} else {
 				try {
@@ -847,7 +955,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				new ImportFullThread(entry.getViewComponent().getViewComponentId()).run();
 			} else if (action.equalsIgnoreCase(this.strACTIONTREEEXPANDALL)) {
 				TreePath startPath = tree.getSelectionPath();
-				expandAllNodes(entry);
+				expandAllNodes(entry, true);
 				tree.removeSelectionPaths(tree.getSelectionPaths());
 				tree.addSelectionPath(startPath);
 			} else if (action.equals(Constants.ACTION_TREE_DESELECT)) {
@@ -990,7 +1098,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		}
 	}
 
-	private void expandAllNodes(TreeNode treeNode) {
+	private void expandAllNodes(TreeNode treeNode, boolean expand) {
 		if (!treeNode.isLeaf() && treeNode instanceof PageNode) {
 			PageNode pageNode = (PageNode) treeNode;
 			try {
@@ -1000,13 +1108,18 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				}
 			} catch (Exception ex) {
 			}
-			tree.expandPath(new TreePath(treeModel.getPathToRoot(pageNode)));
+
 			Enumeration vec = pageNode.children();
 			while (vec.hasMoreElements()) {
 				TreeNode te = (TreeNode) vec.nextElement();
 				if (!te.isLeaf() && te instanceof PageNode) {
-					expandAllNodes(te);
+					expandAllNodes(te, expand);
 				}
+			}
+			if (expand) {
+				tree.expandPath(new TreePath(treeModel.getPathToRoot(pageNode)));
+			} else {
+				tree.collapsePath(new TreePath(treeModel.getPathToRoot(pageNode)));
 			}
 		}
 	}
@@ -1790,6 +1903,52 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		}
 
 		return viewComponent;
+	}
+
+	class ComboBoxRenderer extends DefaultListCellRenderer {
+		private Font uhOhFont;
+
+		public ComboBoxRenderer() {
+			setOpaque(true);
+		}
+
+		/*
+		* This method finds the image and text corresponding
+		* to the selected value and returns the label, set up
+		* to display the text and image.
+		*/
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+
+			ViewDocumentValue selectedIndex = (ViewDocumentValue) ((DropDownHolder) value).getObject();
+			if (isSelected) {
+				setBackground(list.getSelectionBackground());
+				setForeground(list.getSelectionForeground());
+			} else {
+				setBackground(list.getBackground());
+				setForeground(list.getForeground());
+			}
+			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			ImageIcon icon = UIConstants.getViewIcons(selectedIndex.getLanguage());
+			String language = rb.getString("panel.tree.language." + selectedIndex.getLanguage());
+			label.setIcon(icon);
+			if (icon != null) {
+				setText(language + ", " + selectedIndex.getViewType());
+				setFont(list.getFont());
+			} else {
+				setUhOhText("no image available", list.getFont());
+			}
+			return label;
+
+		}
+
+		//Set the font and text when no image was found.
+		protected void setUhOhText(String uhOhText, Font normalFont) {
+			if (uhOhFont == null) {
+				uhOhFont = normalFont.deriveFont(Font.ITALIC);
+			}
+			setFont(uhOhFont);
+			setText(uhOhText);
+		}
 	}
 
 }

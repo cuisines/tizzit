@@ -695,11 +695,58 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public ViewDocumentValue[] getViewDocuments() throws Exception {
-		return getClientService().getViewDocuments();
+		ViewDocumentValue[] documents = getClientService().getViewDocuments();
+		int indexFirst = 0;
+		int indexSec = 0;
+		String[] languages = new String[] {"de", "en", "fr", "it", "es", "ru"};
+		ViewDocumentValue[] orderedDocuments = new ViewDocumentValue[documents.length];
+		ViewDocumentValue[] firstDocuments = new ViewDocumentValue[documents.length];
+		ViewDocumentValue[] secondDocuments = new ViewDocumentValue[documents.length];
+		for (int i = 0; i < languages.length; i++) {
+			for (int j = 0; j < documents.length; j++) {
+				if (documents[j].getLanguage().equalsIgnoreCase(languages[i])) {
+					firstDocuments[indexFirst++] = documents[j];
+				}
+			}
+		}
+		for (int i = 0; i < documents.length; i++) {
+			boolean flag = true;
+			for (int j = 0; j < languages.length; j++) {
+				if (documents[i].getLanguage().equalsIgnoreCase(languages[j])) {
+					flag = false;
+				}
+			}
+			if (flag) {
+				secondDocuments[indexSec++] = documents[i];
+			}
+		}
+		if (firstDocuments != null) Arrays.sort(firstDocuments, new DocumentsComparer());
+		if (secondDocuments != null) Arrays.sort(secondDocuments, new DocumentsComparer());
+		for (int i = 0; i < indexFirst; i++) {
+			orderedDocuments[i] = firstDocuments[i];
+		}
+		for (int i = 0; i < indexSec; i++) {
+			orderedDocuments[i + indexFirst] = secondDocuments[i];
+		}
+		return orderedDocuments;
 	}
 
 	public ViewDocumentValue getViewDocument(String viewType, String language) throws Exception {
 		return getClientService().getViewDocument4ViewTypeAndLanguage(viewType, language);
+	}
+
+	private class DocumentsComparer extends ViewDocumentValue implements Comparator<ViewDocumentValue> {
+		private static final long serialVersionUID = 1L;
+
+		public int compare(ViewDocumentValue firstDoc, ViewDocumentValue secondDoc) {
+			if ((firstDoc == null) || (secondDoc == null)) {
+				return 0;
+			}
+			String firstLanguage = rb.getString("panel.tree.language." + firstDoc.getLanguage());
+			String secondLanguage = rb.getString("panel.tree.language." + secondDoc.getLanguage());
+			int retVal = firstLanguage.toLowerCase().compareToIgnoreCase(secondLanguage);
+			return retVal;
+		}
 	}
 
 	public UserValue[] getAllUser() throws Exception {

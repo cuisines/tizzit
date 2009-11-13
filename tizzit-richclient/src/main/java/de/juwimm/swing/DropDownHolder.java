@@ -15,25 +15,27 @@
  */
 package de.juwimm.swing;
 
+
 /**
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
 
 public class DropDownHolder {
-    private Object objObject = null;
-    private String strToString = "";
+	private Object objObject = null;
+	private String strToString = "";
 
-    public DropDownHolder(Object obj, String strToString) {
-        this.objObject = obj;
-        this.strToString = strToString;
-    }
+	public DropDownHolder(Object obj, String strToString) {
+		this.objObject = obj;
+		this.strToString = strToString;
+	}
 
-    public Object getObject() {
-        return this.objObject;
-    }
+	public Object getObject() {
+		return this.objObject;
+	}
 
-    public String toString() {
-        return this.strToString;
-    }
+	public String toString() {
+		return this.strToString;
+	}
+
 }

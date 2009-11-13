@@ -254,10 +254,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																																					 panMenuentry.unload();
-																																																																																																																																					 } else if (lastIndex == 2) {
-																																																																																																																																					 panMetaData.unload();
-																																																																																																																																					 }*/
+																																																																																																																																									 panMenuentry.unload();
+																																																																																																																																									 } else if (lastIndex == 2) {
+																																																																																																																																									 panMetaData.unload();
+																																																																																																																																									 }*/
 
 			String strTabName = "";
 			try {
@@ -299,7 +299,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			panMenuentry.save();
 			viewComponent = panMenuentry.getViewComponent();
 			saveStatus = true;
-			
+
 			// Metadata
 			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
 				panMetaData.save();
@@ -371,7 +371,6 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			// the button for changing the template is invisible if user doesn't have the right to change
 			panMenuentry.setTemplateButtonEnabled(panMenuentry.shouldBeEdtiable());
 			this.btnSave.setEnabled(panMenuentry.shouldBeEdtiable());
-
 			if ((comm.isUserInRole(UserRights.MANAGE_SAFEGUARD) || (comm.getUser().isMasterRoot())) && (panTab.getSelectedIndex() == 4)) {
 				panSafeGuard.load(value);
 			} else {
