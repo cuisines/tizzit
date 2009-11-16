@@ -1,6 +1,6 @@
 ------------------------server changes
 - execute migration-to-3.0.3.sql (not the complete script but just the part related to the underlaying db)
-- install new war files (tizzit-web-cocoon22...war, tizzit-web-admin....war)
+- install new war files (tizzit-web-cocoon...war, tizzit-web-admin....war)
 - install new tizzit.properties -> view tizzit.properties (tizzit/conf/jboss/conf)
 - install new cqcms-juwimm-plugin-wysiwyg-5.1-all.jar in /lib/client/
 
@@ -34,7 +34,7 @@ into
 -----------------------Changes in dcfsheet-master.xsl
 
 add the line into dcfsheet-master.xsl:
-- <classname>de.juwimm.cms.content.modules.Textfield</classname> 
+- <classname>de.juwimm.cms.content.modules.Textfield</classname>
 
 snippet:
 <xsl:template match="textfield" name="textfield">
@@ -69,7 +69,7 @@ snippet:
 				<classname>de.juwimm.cms.content.modules.Textfield</classname>
 				<classpath>
 					<jar><xsl:value-of select="$cqcms-juwimm-plugin-wysiwyg"/></jar>
-				</classpath> 
+				</classpath>
 				<xsl:choose>
 					<xsl:when test="not(child::*)">
 						<xsl:apply-templates select="." mode="allowall"/>
@@ -85,7 +85,7 @@ snippet:
 			</dcfInitial>
 		</xsl:element>
 	</xsl:template>
-	
-	
+
+
 -----------------------Changes in helper.js for cforms
 - change "importClass(Packages.de.juwimm.util.XercesHelper)" into "importClass(org.tizzit.util.XercesHelper)"

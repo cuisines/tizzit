@@ -16,17 +16,17 @@ the Tomcat classloader is better then the Jboss web classloader
 set <attribute name="Java2ClassLoadingCompliance">false</attribute> to false -> even the same issue
 
 h3. Put / move files
-- put ehcache-1.3.0.jar into server/tizzit-local/lib 
+- put ehcache-1.3.0.jar into server/tizzit-local/lib
   Copy out of the WAR archive / build directory of tizzit-cocoon
-- put hibernate-3.2.5.ga.jar into server/conquest/lib 
+- put hibernate-3.2.5.ga.jar into server/conquest/lib
   Copy out of the WAR archive / build directory of tizzit-cocoon and delete hibernate3.jar
 
-Why do we need to change this: 
+Why do we need to change this:
 Currently the Jboss does load the server/lib files before loading the WEB archives - even if you
 are setting the Jboss settings "UseJBossWebLoader" and "Java2ClassLoadingCompliance" as explained. This causes
 different errors because the same library is 2 times in the classloader in different versions. Ehcache is needed
-in server/lib because the Hibernate will be loaded from there. Not deploying both within the WAR archive also 
-yields in some other errors. 
+in server/lib because the Hibernate will be loaded from there. Not deploying both within the WAR archive also
+yields in some other errors.
 
 - put tizzit-loginmodules-2.X.X.jar in server/tizzit-local/lib
 - put JDBC-lib in server/conquest/lib
@@ -36,7 +36,7 @@ provided in the SVN repository of tizzit
 
 
 ******************************************************* COCOON *********************************************************
-If you want use Cocoon 2.2, just deploy the latest 'tizzit-web-cocoon22-xxx.war' and set the following parameter to 
+If you want use Cocoon 2.2, just deploy the latest 'tizzit-web-cocoon-xxx.war' and set the following parameter to
 false in your Cocoon-Sitemap (e.g.: /tizzit-site-tizzit/web/sitemap.xmap)
 <map:transform type="cinclude">
  <map:parameter name="parallel" value="false" />
@@ -46,14 +46,14 @@ false in your Cocoon-Sitemap (e.g.: /tizzit-site-tizzit/web/sitemap.xmap)
 Don't forget to undeploy your Cocoon 2.1.9 Application (tizzit-web-cocoon-xxx.war) ;)
 
 ************************************************ Transaction Timeout ***************************************************
-Transaction Timeout is handled by applicationContext-cqbeans.xml, but the maximum value is depending on the transaction 
-managers settins. Lower settings are possible (and used), but for bigger imports and deployments 5 minutes might not be 
+Transaction Timeout is handled by applicationContext-cqbeans.xml, but the maximum value is depending on the transaction
+managers settins. Lower settings are possible (and used), but for bigger imports and deployments 5 minutes might not be
 enough. So you need do modify the transaction timeout in jboss-service.xml here:
- 
+
    <mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"
       name="jboss:service=TransactionManager">
       <attribute name="TransactionTimeout">300</attribute>
-      <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute> 
+      <attribute name="ObjectStoreDir">${jboss.server.data.dir}/tx-object-store</attribute>
    </mbean>
 
 ************************************************************************************************************************

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd">
+
+  <map:pipelines>
+    <map:pipeline>
+      <!-- DCF list -->
+      <map:match pattern="**/dcf/dcf.*">
+        <map:act type="multiParamResourceExistsAction">
+          <map:parameter name="checkResource-dcf-1" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf-{request-param:lang}.xml" />
+          <map:parameter name="checkResource-dcf-2" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" />
+          <map:parameter name="checkResource-dcf-3" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/dcf-{request-param:lang}.xml" />
+          <map:parameter name="checkResource-dcf-4" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/dcf.xml" />
+          <map:parameter name="defaultValue-dcf" value="dcf.xml" />
+
+          <map:parameter name="checkResource-dcfTranslation" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/dcf-i18n.xsl" />
+          <map:parameter name="defaultValue-dcfTranslation" value="FAILED" />
+
+          <map:generate src="{dcf}" />
+
+          <map:select type="parameter">
+            <map:parameter name="parameter-selector-test" value="{dcfTranslation}" />
+            <map:when test="FAILED">
+              <!-- DO NOTHING -->
+            </map:when>
+            <map:otherwise>
+              <map:transform src="{dcfTranslation}" type="saxon">
+                <map:parameter name="languageCode" value="{request-param:lang}" />
+              </map:transform>
+            </map:otherwise>
+          </map:select>
+
+          <map:select type="parameter">
+            <map:parameter name="parameter-selector-test" value="{../2}" />
+            <map:when test="html">
+              <map:transform src="dcf.xsl" type="saxon">
+                <map:parameter name="siteShort" value="{../1}" />
+                <map:parameter name="languageCode" value="{request-param:lang}" />
+              </map:transform>
+              <map:serialize type="html" />
+            </map:when>
+            <map:when test="xml">
+              <map:serialize type="xml" />
+            </map:when>
+            <map:otherwise>
+              <map:redirect-to uri="/" />
+            </map:otherwise>
+          </map:select>
+        </map:act>
+      </map:match>
+
+      <!-- DCF for specific template -->
+      <map:match pattern="**/dcf/*.xml">
+        <map:act type="multiParamResourceExistsAction">
+          <map:parameter name="checkResource-dcf-1" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}-{request-param:lang}.xml" />
+          <map:parameter name="checkResource-dcf-2" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" />
+          <map:parameter name="checkResource-dcf-3" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/{2}-{request-param:lang}.xml" />
+          <map:parameter name="checkResource-dcf-4" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/{2}.xml" />
+          <map:parameter name="defaultValue-dcf" value="noTemplatesAvailable.xml" />
+
+          <map:parameter name="checkResource-dcfSheet-1" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />
+          <map:parameter name="checkResource-dcfSheet-2" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/dcfsheet.xsl" />
+          <map:parameter name="defaultValue-dcfSheet" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />
+
+          <map:parameter name="checkResource-dcfTranslation" value="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/target/classes/dcf/{2}-i18n.xsl" />
+          <map:parameter name="defaultValue-dcfTranslation" value="FAILED" />
+
+          <map:generate src="{dcf}" />
+
+          <map:select type="parameter">
+            <map:parameter name="parameter-selector-test" value="{dcf}" />
+            <map:when test="noTemplatesAvailable.xml">
+              <!-- DO NOTHING -->
+            </map:when>
+            <map:otherwise>
+              <map:transform src="{dcfSheet}" type="saxon">
+                <map:parameter name="languageCode" value="{request-param:lang}" />
+              </map:transform>
+            </map:otherwise>
+          </map:select>
+
+          <map:select type="parameter">
+            <map:parameter name="parameter-selector-test" value="{dcfTranslation}" />
+            <map:when test="FAILED">
+              <!-- DO NOTHING -->
+            </map:when>
+            <map:otherwise>
+              <map:transform src="{dcfTranslation}" type="saxon">
+                <map:parameter name="languageCode" value="{request-param:lang}" />
+              </map:transform>
+            </map:otherwise>
+          </map:select>
+          <map:serialize type="xml-iso" />
+        </map:act>
+      </map:match>
+    </map:pipeline>
+
+    <map:pipeline>
+      <map:match pattern="list4dcf/xml/**.xml">
+        <map:read mime-type="text/xml" src="{tizzit-property:cmsTemplatesPath}xml/{1}.xml" />
+      </map:match>
+      <map:match pattern="*/list4dcf/xml/**.xml">
+        <map:read mime-type="text/xml" src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/httpd/xml/{2}.xml" />
+      </map:match>
+    </map:pipeline>
+
+    <map:pipeline>
+      <map:match pattern="**/dcf/**/*.jar">
+        <map:read src="{tizzit-property:externalLibPath}/client/{3}.jar" />
+      </map:match>
+      <map:match pattern="**/dcf/*.jar">
+        <map:read src="{tizzit-property:externalLibPath}/client/{2}.jar" />
+      </map:match>
+    </map:pipeline>
+  </map:pipelines>
+</map:sitemap>

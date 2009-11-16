@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<source>
+    <notice dcfname="notice" label="Attention!" name="notice">
+        <dcfConfig>
+            <classname>de.juwimm.cms.content.modules.SimpleTextArea</classname>
+            <property name="viewOption">
+                <editable>false</editable>
+            </property>
+        </dcfConfig>
+        <dcfInitial>Could not find DCF files in your mandator! Please read the documentation for more informations! This DCF is provided by the tizzit Cocoon web application.</dcfInitial>
+    </notice>
+</source>

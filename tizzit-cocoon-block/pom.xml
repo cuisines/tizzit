@@ -12,6 +12,7 @@
 	<name>tizzit Cocoon Block</name>
 	<version>3.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.tizzit</groupId>
@@ -21,11 +22,6 @@
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-core</artifactId>
-			<version>3.1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tizzit</groupId>
-			<artifactId>tizzit-common</artifactId>
 			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
@@ -415,20 +411,6 @@
 					<artifactId>cocoon-sitemap-impl</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<!--
-			<dependency> <groupId>org.apache.commons</groupId> <artifactId>commons-jci-core</artifactId> <version>1.0</version> </dependency>
-		-->
-		<dependency>
-			<groupId>org.apache.cocoon</groupId>
-			<artifactId>cocoon-rcl-webapp-wrapper</artifactId>
-			<version>1.0.0-M3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.cocoon</groupId>
-			<artifactId>cocoon-rcl-spring-reloader</artifactId>
-			<version>1.0.0-M3</version>
 		</dependency>
 	</dependencies>
 

@@ -895,19 +895,6 @@
 				<webservice.port />
 			</properties>
 		</profile>
-		<!-- build only Cocoon 2.2 (use '-P cocoon22' to activate this profile ) -->
-		<profile>
-			<id>cocoon22</id>
-			<activation>
-				<property>
-					<name>cocoon22</name>
-				</property>
-			</activation>
-			<modules>
-				<module>../tizzit-cocoon-block</module>
-				<module>../tizzit-web-cocoon22</module>
-			</modules>
-		</profile>
 	</profiles>
 	<distributionManagement>
 		<repository>

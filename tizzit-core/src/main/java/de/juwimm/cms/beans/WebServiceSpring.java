@@ -468,7 +468,9 @@ public class WebServiceSpring {
 	@HourCache
 	public String getMandatorDir(String hostName) throws Exception {
 		try {
-			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) { return (""); }
+			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) {
+				return ("");
+			}
 			HostHbm hl = null;
 			try {
 				hl = hostHbmDao.load(hostName);
@@ -500,7 +502,9 @@ public class WebServiceSpring {
 	@HourCache
 	public String resolveShortLink(String hostName, String requestPath) throws Exception {
 		try {
-			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) { return (""); }
+			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) {
+				return ("");
+			}
 			HostHbm host = null;
 			try {
 				host = hostHbmDao.load(hostName);
@@ -571,7 +575,9 @@ public class WebServiceSpring {
 		if (log.isDebugEnabled()) log.debug("GET START PAGE");
 
 		try {
-			if ((hostName == null) || ("".equalsIgnoreCase(hostName))) { return (""); }
+			if ((hostName == null) || ("".equalsIgnoreCase(hostName))) {
+				return ("");
+			}
 			HostHbm hl = null;
 			try {
 				hl = hostHbmDao.load(hostName);
@@ -601,10 +607,6 @@ public class WebServiceSpring {
 		}
 	}
 
-	/**
-	 * @see de.juwimm.cms.remote.WebServiceSpring#getSiteForHost(java.lang.String)
-	 */
-
 	public Integer getSiteForHost(String hostName) throws Exception {
 		Integer siteId = null;
 		if ((!("".equalsIgnoreCase(hostName)) || (hostName != null))) {
@@ -625,6 +627,37 @@ public class WebServiceSpring {
 		}
 		return (siteId);
 	}
+
+	public SiteValue getSiteValueForHost(String hostName) throws Exception {
+		if ((!("".equalsIgnoreCase(hostName)) || (hostName != null))) {
+
+			HostHbm hl = null;
+			try {
+				hl = hostHbmDao.load(hostName);
+			} catch (Exception e) {
+				throw new UserException("Host \"" + hostName + "\" not found!\n" + e.getMessage());
+			}
+			if (hl == null) {
+				if (log.isDebugEnabled()) log.debug("Host with name \"" + hostName + "\" not found");
+				return null;
+			}
+			SiteHbm sl = hl.getSite();
+			if (sl != null) {
+				return sl.getSiteValue();
+			}
+		}
+		return null;
+	}
+
+	//
+	//	public SiteValue getSiteForHost(Integer siteId) throws Exception {
+	//		SiteHbm site = this.siteHbmDao.load(siteId);
+	//		if (site != null) {
+	//			return site.getSiteValue();
+	//		} else {
+	//			return null;
+	//		}
+	//	}
 
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllSites()
@@ -907,7 +940,9 @@ public class WebServiceSpring {
 				viewComponentId = viewServiceSpring.getViewComponentId4PathWithViewTypeAndLanguage(path, viewType, language, siteId);
 			}
 			if (viewComponentId == null) {
-				if ("favicon.ico".equals(path)) { return null; }
+				if ("favicon.ico".equals(path)) {
+					return null;
+				}
 				throw new ResourceNotFoundException("Could not read resource: " + path);
 			}
 			try {
@@ -1434,7 +1469,9 @@ public class WebServiceSpring {
 		}
 		SiteHbm sl = null;
 		sl = hl.getSite();
-		if (sl != null) { return (sl.getSiteId().toString()); }
+		if (sl != null) {
+			return (sl.getSiteId().toString());
+		}
 		return ("");
 	}
 
@@ -1651,7 +1688,9 @@ public class WebServiceSpring {
 	@HourCache
 	public String resolveRedirect(String hostName, String requestPath, Set<String> formerHostsSet) throws Exception {
 		try {
-			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) { return (""); }
+			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) {
+				return ("");
+			}
 			HostHbm host = null;
 			try {
 				host = hostHbmDao.load(hostName);
@@ -1825,7 +1864,7 @@ public class WebServiceSpring {
 	 *    &lt;timeStamp&gt;&lt;![CDATA[dd.MM.yyyy HH:mm:ss]]&gt;&lt;/timeStamp&gt;
 	 * &lt;/image&gt;
 	 * </pre>
-	 * 
+	 *
 	 * @param pictureId
 	 */
 	private String getPictureInfoXml(Integer pictureId) throws Exception {

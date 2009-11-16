@@ -327,7 +327,7 @@
       <map:action name="sendmail" src="org.apache.cocoon.acting.Sendmail" />
       <map:action name="cms.actions.template" src="de.juwimm.cms.cocoon.acting.CmsTemplateAction" />
       <map:action name="cms.actions.xpathvalue" src="de.juwimm.cms.cocoon.acting.XPathValueAction" />
-      <map:action name="cms.actions.hostselector" src="de.juwimm.cms.cocoon.acting.HostSelectorAction" />
+      <!--<map:action name="cms.actions.hostselector" src="de.juwimm.cms.cocoon.acting.HostSelectorAction" />-->
       <map:action name="cms.actions.hoststartpage" src="de.juwimm.cms.cocoon.acting.HostStartPageAction" />
     </map:actions>
     <map:pipes default="caching">
@@ -415,35 +415,11 @@
       <map:match pattern="robots.txt">
         <map:read mime-type="text/plain" src="robots.txt" />
       </map:match>
-      <!--dcfliste in xml, wird von CMS client verwendet-->
-      <map:match pattern="**/dcf/dcf.xml">
-        <map:read mime-type="text/xml" src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" />
+
+      <map:match pattern="**dcf**">
+        <map:mount check-reload="yes" src="dcf/sitemap.xmap" uri-prefix="" />
       </map:match>
-      <!--dcfliste als html, nur zur besseren Uebersicht fuer developer-->
-      <map:match pattern="**/dcf/dcf.html">
-        <map:generate src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcf.xml" type="file" />
-        <map:transform src="{tizzit-property:cmsTemplatesPath}dcf/dcf.xsl">
-          <map:parameter name="clientCode" value="{1}" />
-        </map:transform>
-        <map:serialize type="html" />
-      </map:match>
-      <map:match pattern="**/dcf/**/*.jar">
-        <map:read src="{tizzit-property:externalLibPath}/client/{3}.jar" />
-      </map:match>
-      <map:match pattern="**/dcf/*.jar">
-        <map:read src="{tizzit-property:externalLibPath}/client/{2}.jar" />
-      </map:match>
-      <map:match pattern="**/dcf/*.xml">
-        <map:generate src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/{2}.xml" type="file" />
-        <map:transform src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/dcf/dcfsheet.xsl" />
-        <map:serialize type="xml-iso" />
-      </map:match>
-      <map:match pattern="list4dcf/xml/**.xml">
-        <map:read mime-type="text/xml" src="{tizzit-property:cmsTemplatesPath}xml/{1}.xml" />
-      </map:match>
-      <map:match pattern="*/list4dcf/xml/**.xml">
-        <map:read mime-type="text/xml" src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{1}/web/httpd/xml/{2}.xml" />
-      </map:match>
+
       <map:match pattern="cms/**">
         <map:mount check-reload="yes" src="{tizzit-property:cmsTemplatesPath}" uri-prefix="cms/" />
       </map:match>
@@ -474,7 +450,7 @@
       </map:match>
       <map:match pattern=".*" type="regexp">
         <map:match pattern="">
-          <map:act type="cms.actions.hostselector">
+          <map:act type="hostSelectorAction">
             <map:select type="parameter">
               <map:parameter name="parameter-selector-test" value="{redirectURL}" />
               <map:when test="0">
@@ -495,7 +471,7 @@
           </map:act>
         </map:match>
         <map:match pattern="*">
-          <map:act type="cms.actions.hostselector">
+          <map:act type="hostSelectorAction">
             <map:select type="parameter">
               <map:parameter name="parameter-selector-test" value="{redirectURL}" />
               <map:when test="0">
@@ -508,7 +484,7 @@
           </map:act>
         </map:match>
         <map:match pattern="*/**">
-          <map:act type="cms.actions.hostselector">
+          <map:act type="hostSelectorAction">
             <map:select type="parameter">
               <map:parameter name="parameter-selector-test" value="{redirectURL}" />
               <map:when test="0">

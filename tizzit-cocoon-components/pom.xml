@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
 		<version>3.1.0-SNAPSHOT</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
+
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-cocoon-components</artifactId>
-	<name>tizzit Cocoon Components</name>
 	<version>3.1.0-SNAPSHOT</version>
+
+	<name>tizzit Cocoon Components</name>
+
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -19,138 +23,79 @@
 			<artifactId>tizzit-common</artifactId>
 			<version>3.1.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>ujac</groupId>
+			<artifactId>ujac</artifactId>
+			<version>0.9.25a</version>
+		</dependency>
+
+		<!-- provided dependencies -->
 		<dependency>
 			<groupId>org.apache.cocoon</groupId>
 			<artifactId>cocoon-core</artifactId>
 			<version>2.2.0</version>
 			<scope>provided</scope>
-			<exclusions>
-				<!-- exclude the broken cocoon-sitemap-impl-1.0 -->
-				<exclusion>
-					<groupId>org.apache.cocoon</groupId>
-					<artifactId>cocoon-sitemap-impl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-
-		<!-- include the fixed cocoon-sitemap-impl-1.0 -->
 		<dependency>
 			<groupId>org.apache.cocoon</groupId>
 			<artifactId>cocoon-sitemap-impl</artifactId>
-			<version>1.0.0-pl4</version>
-			<scope>provided</scope>
-			<!-- fix bamboo builds -->
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.cocoon</groupId>
-					<artifactId>cocoon-sitemap-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.cocoon</groupId>
-					<artifactId>cocoon-pipeline-impl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- fix bamboo builds -->
-		<dependency>
-			<groupId>org.apache.cocoon</groupId>
-			<artifactId>cocoon-sitemap-api</artifactId>
 			<version>1.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.cocoon</groupId>
-			<artifactId>cocoon-pipeline-impl</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.cocoon</groupId>
-					<artifactId>cocoon-util</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>net.sf.saxon</groupId>
-			<artifactId>saxon</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
-			<version>1.1</version>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>saxon</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- test dependencies -->
+		<dependency>
+			<groupId>org.apache.cocoon</groupId>
+			<artifactId>cocoon-core</artifactId>
+			<version>2.2.0</version>
+			<scope>test</scope>
+			<type>test-jar</type>
 		</dependency>
 		<dependency>
-			<groupId>ujac</groupId>
-			<artifactId>ujac</artifactId>
-			<version>0.9.25a</version>
+			<groupId>org.apache.cocoon</groupId>
+			<artifactId>cocoon-sitemap-impl</artifactId>
+			<version>1.0.0</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<version>1.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.cocoon</groupId>
+				<artifactId>cocoon-maven-plugin</artifactId>
+				<version>1.0.0-M2</version>
+				<executions>
+					<execution>
+						<id>prepare</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>prepare</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.1</version>

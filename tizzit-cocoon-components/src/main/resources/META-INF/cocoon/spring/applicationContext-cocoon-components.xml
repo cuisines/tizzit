@@ -37,33 +37,4 @@
             </bean>
         </property>
     </bean>
-
-    <!-- Property examples:
-        <property name="myServiceBeanName" ref="myService" />
-
-        <property name="myName" value="%%%myKeyFromPropertyFile%%%" />
-
-        <property name="parser" ref="org.apache.cocoon.core.xml.SAXParser" />
-
-        <property name="defaultEncoding">
-            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-                <property name="targetBeanName" value="org.apache.cocoon.configuration.Settings" />
-                <property name="propertyPath" value="containerEncoding" />
-            </bean>
-        </property>
-
-        <property name="properties">
-            <props>
-                <prop key="jtidy-config">resource://jtidy.properties</prop>
-            </props>
-        </property>
-
-        <property name="defaultEncoding">
-            <bean class="org.springframework.beans.factory.config.PropertyPathFactoryBean">
-                <property name="targetBeanName" value="org.apache.cocoon.configuration.Settings" />
-                <property name="propertyPath" value="containerEncoding" />
-            </bean>
-        </property>
-    -->
-
 </beans>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <dcf>
+        <availableTemplates>
+            <item filename="noTemplatesAvailable">NO TEMPLATES AVAILABLE</item>
+        </availableTemplates>
+    </dcf>
+</config>
