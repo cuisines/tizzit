@@ -73,7 +73,7 @@ public class EditionCronService {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public void cronEditionDeploy() throws Exception {
 		if (cronEditionDeployIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
@@ -97,11 +97,11 @@ public class EditionCronService {
 				UserHbm creator = edition.getCreator();
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
-				getEditionHbmDao().update(edition);
 				if (edFile != null) {
 					edFile.delete();
 				}
 			}
+			editionsToDeploy.clear();
 		} catch (Exception e) {
 			log.error("Error deploying Edition during crontask", e);
 			throw new RuntimeException(e);
@@ -111,29 +111,21 @@ public class EditionCronService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
-	public void logEditionStatusException(Integer editionId, String... extras) {
+	public void logEditionStatusException(Integer editionId, String errorMessage) {
 		EditionHbm edition = getEditionHbmDao().load(editionId);
-		String statusValue = "" + LiveserverDeployStatus.Exception.name();
-		//save the state on which the the deploy crashed
-		statusValue += ";" + edition.getDeployStatus();
-		if (extras != null && extras.length > 0) {
-			for (String extra : extras) {
-				statusValue += ";" + extra;
-			}
-		}
-		edition.setDeployStatus(statusValue);
+		edition.setExceptionMessage(errorMessage);
 		edition.setEndActionTimestamp(System.currentTimeMillis());
 		getEditionHbmDao().update(edition);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
 	public void logEditionStatusInfo(LiveserverDeployStatus status, Integer editionId) {
-		String statusValue = "" + status.name();
+		String statusValue = status.name();
 		EditionHbm edition = getEditionHbmDao().load(editionId);
 		if (status == LiveserverDeployStatus.FileDeployedOnLiveServer) {
 			edition.setNeedsDeploy(false);
 		}
-		edition.setDeployStatus(statusValue);
+		edition.setDeployStatus(statusValue.getBytes());
 		edition.setStartActionTimestamp(System.currentTimeMillis());
 		edition.setEndActionTimestamp(null);
 		getEditionHbmDao().update(edition);
@@ -142,8 +134,9 @@ public class EditionCronService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void cronUpdateDeployStatus() {
 		if (!updateDeployStatusIsRunning && !tizzitProperties.isLiveserver()) {
+			log.info("start cron update deploy statuses");
 			updateDeployStatusIsRunning = true;
-			List<EditionHbm> editions = (List<EditionHbm>) getEditionHbmDao().loadAll();
+			List<EditionHbm> editions = (List<EditionHbm>) getEditionHbmDao().findDeployed();
 			try {
 				getEditionServiceSpring().updateDeployStatus(editions);
 			} catch (UserException e) {
@@ -151,8 +144,10 @@ public class EditionCronService {
 				if (log.isDebugEnabled()) {
 					log.debug(e);
 				}
+			} finally {
+				editions.clear();
+				updateDeployStatusIsRunning = false;
 			}
-			updateDeployStatusIsRunning = false;
 		}
 	}
 

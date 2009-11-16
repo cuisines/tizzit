@@ -1032,6 +1032,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
 			edition.setEditionFileName(tmpFileName);
 			edition.setSiteId(user.getActiveSite().getSiteId());
+			edition.setStartActionTimestamp(System.currentTimeMillis());
+			edition.setEndActionTimestamp(null);
+			edition.setDeployStatus(LiveserverDeployStatus.FileDeployedOnLiveServer.name().getBytes());
 			edition.setUseNewIds(useNewIds);
 			if (log.isInfoEnabled()) log.info("-------------->saving edition");
 			getEditionHbmDao().create(edition);

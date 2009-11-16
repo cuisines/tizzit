@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -629,5 +630,11 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 		Query query = getSession().createQuery("from de.juwimm.cms.model.EditionHbm where workServerEditionId = :workServerEditionId");
 		query.setParameter("workServerEditionId", workServerEditionId);
 		return (EditionHbm) query.uniqueResult();
+	}
+
+	@Override
+	protected List handleFindDeployed() throws Exception {
+		Query query = getSession().createQuery("from de.juwimm.cms.model.EditionHbm where needsDeploy = false and needsImport = false");
+		return query.list();
 	}
 }

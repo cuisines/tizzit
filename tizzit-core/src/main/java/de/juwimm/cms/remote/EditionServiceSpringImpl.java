@@ -2751,9 +2751,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					for (EditionValue editionResponse : editionStatusesResponse) {
 						if (editionResponse.getWorkServerEditionId().equals(editionValueRequest.getEditionId())) {
 							//update deploy status
-							editionRequest.setDeployStatus(editionResponse.getDeployStatus());
-							editionRequest.setStartActionTimestamp(editionResponse.getStartActionTimestamp().getTime());
-							editionRequest.setEndActionTimestamp(editionResponse.getEndActionTimestamp().getTime());
+							editionRequest.setDeployStatus(editionResponse.getDeployStatus() == null ? new byte[0] : editionResponse.getDeployStatus().getBytes());
+							editionRequest.setStartActionTimestamp(editionResponse.getStartActionTimestamp() == null ? null : editionResponse.getStartActionTimestamp().getTime());
+							editionRequest.setEndActionTimestamp(editionResponse.getEndActionTimestamp() == null ? null : editionResponse.getEndActionTimestamp().getTime());
 							getEditionHbmDao().update(editionRequest);
 							foundEditionInResponse = true;
 							break;
@@ -2803,7 +2803,13 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 			} catch (Exception exe) {
 				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
-				throw new UserException(exe.getMessage());
+				//if error connecting to server don't update statuses for requesting edition
+				for (EditionHbm edition : editions) {
+					edition.setWorkServerEditionId(edition.getEditionId());
+					edition.setExceptionMessage(exe.getMessage());
+					edition.setEndActionTimestamp(System.currentTimeMillis());
+					editionsStatus.add(edition.getDao());
+				}
 			}
 		}
 		return editionsStatus;
@@ -2827,6 +2833,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		private String liveServerIP;
 		private String liveServerUserName;
 		private String liveServerPass;
+
+		@Override
+		public int hashCode() {
+			return (liveServerIP + liveServerUserName + liveServerPass).hashCode();
+		}
 
 		@Override
 		public boolean equals(Object obj) {

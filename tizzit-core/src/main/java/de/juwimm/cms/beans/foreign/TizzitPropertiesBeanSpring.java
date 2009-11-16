@@ -44,6 +44,15 @@ public class TizzitPropertiesBeanSpring {
 	private boolean hibernateShowSql;
 	private String editionCronExpression;
 	private ClientMailAppenderConfig clientMailAppenderConfig = new ClientMailAppenderConfig();
+	private String updateDeployStatusCronExpression;
+
+	public String getUpdateDeployStatusCronExpression() {
+		return updateDeployStatusCronExpression;
+	}
+
+	public void setUpdateDeployStatusCronExpression(String updateDeployStatusCronExpression) {
+		this.updateDeployStatusCronExpression = updateDeployStatusCronExpression;
+	}
 
 	public ClientMailAppenderConfig getClientMailAppenderConfig() {
 		return clientMailAppenderConfig;

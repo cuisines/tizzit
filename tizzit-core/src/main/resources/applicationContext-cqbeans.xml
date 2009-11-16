@@ -161,7 +161,7 @@
 				<property name="targetMethod" value="cronUpdateDeployStatus" />
 			</bean>
 		</property>
-		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.updateDeployStatusCronExpression%%%" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
