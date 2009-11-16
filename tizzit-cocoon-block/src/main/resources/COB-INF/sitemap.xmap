@@ -327,7 +327,6 @@
       <map:action name="sendmail" src="org.apache.cocoon.acting.Sendmail" />
       <map:action name="cms.actions.template" src="de.juwimm.cms.cocoon.acting.CmsTemplateAction" />
       <map:action name="cms.actions.xpathvalue" src="de.juwimm.cms.cocoon.acting.XPathValueAction" />
-      <!--<map:action name="cms.actions.hostselector" src="de.juwimm.cms.cocoon.acting.HostSelectorAction" />-->
       <map:action name="cms.actions.hoststartpage" src="de.juwimm.cms.cocoon.acting.HostStartPageAction" />
     </map:actions>
     <map:pipes default="caching">
