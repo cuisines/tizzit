@@ -620,6 +620,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				vo.setPageNameSearch(txtPageNameSearch.getText());
 				if (validateSaveSite(vo)) {
 					if (vo.getSiteId() == null || vo.getSiteId() <= 0) {
+						vo.setSiteId(0);
 						siteToSelect = comm.createSite(vo).getSiteId();
 						vo.setSiteId(siteToSelect);
 					} else {
@@ -685,7 +686,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	 */
 	private class SiteListSelectionListener implements ListSelectionListener {
 		public void valueChanged(ListSelectionEvent e) {
-			if (e.getValueIsAdjusting()) { return; }
+			if (e.getValueIsAdjusting()) {
+				return;
+			}
 			if (tblSite.getSelectedRow() >= 0) {
 				siteSelected(false);
 				setButtonsEnabled(false);
