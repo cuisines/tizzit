@@ -379,7 +379,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				//TODO:	getMessagingHubInvoker().invokeQueue(MessageConstants.QUEUE_NAME_DEPLOY, MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY, prop);
 				boolean needsDeploy = true;
 				//FIXME: get right viewDocument
-				getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, site.getRootUnit().getUnitId(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+				EditionHbm newEedition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, site.getRootUnit().getUnitId(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+				newEedition.setStartActionTimestamp(System.currentTimeMillis());
+				newEedition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
 				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
 			} catch (Exception e) {
 				throw new UserException(e.getMessage());
