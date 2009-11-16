@@ -3,6 +3,7 @@ package de.juwimm.cms.gui.admin;
 import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -55,7 +56,7 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 		tableModel = new EditionTableModel();
 		editionsTable = new JTable();
 		editionsControlPanel = new JPanel();
-		refresh = new JCommandMenuButton("refresh", ImageWrapperResizableIcon.getIcon(UIConstants.ACTION_TREE_REFRESH.getImage(), new Dimension(16, 16)));
+		refresh = new JCommandMenuButton(rb.getString("panEditionView.refresh"), ImageWrapperResizableIcon.getIcon(UIConstants.ACTION_TREE_REFRESH.getImage(), new Dimension(16, 16)));
 		refresh.setUI(new CommandButtonUI());
 		refresh.setDisplayState(CommandButtonDisplayState.MEDIUM);
 		refresh.setHorizontalAlignment(SwingUtilities.LEFT);
@@ -67,11 +68,13 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 		this.editionsTable.setModel(new TableSorter(tableModel, editionsTable.getTableHeader()));
 		EditionsTreeCellRenderer cellRenderer = new EditionsTreeCellRenderer();
 		editionsTable.getColumnModel().getColumn(0).setMaxWidth(200);
-		editionsTable.getColumnModel().getColumn(2).setMaxWidth(75);
-		editionsTable.getColumnModel().getColumn(3).setMaxWidth(75);
 		editionsTable.getColumnModel().getColumn(0).setPreferredWidth(150);
-		editionsTable.getColumnModel().getColumn(2).setPreferredWidth(75);
+		editionsTable.getColumnModel().getColumn(0).setMaxWidth(250);
+		editionsTable.getColumnModel().getColumn(0).setPreferredWidth(250);
+		editionsTable.getColumnModel().getColumn(2).setMaxWidth(120);
+		editionsTable.getColumnModel().getColumn(2).setPreferredWidth(120);
 		editionsTable.getColumnModel().getColumn(3).setPreferredWidth(75);
+		editionsTable.getColumnModel().getColumn(3).setMaxWidth(75);
 
 		editionsTable.getColumnModel().getColumn(2).setCellRenderer(cellRenderer);
 		editionsTable.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
@@ -91,9 +94,11 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 	public void reload() {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
+				editionsControlPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				UIConstants.setWorker(true);
 				loadEditions();
 				UIConstants.setWorker(false);
+				editionsControlPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		});
 	}
@@ -118,7 +123,7 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 			super();
 			columnIdentifiers.add(rb.getString("panEditionView.table.creator"));
 			columnIdentifiers.add(rb.getString("panEditionView.table.userComment"));
-			columnIdentifiers.add(rb.getString("panEditionView.table.createDate"));
+			columnIdentifiers.add(rb.getString("panEditionView.table.lastAction"));
 			columnIdentifiers.add(rb.getString("panEditionView.table.time"));
 			columnIdentifiers.add(rb.getString("panEditionView.table.status"));
 		}
@@ -127,7 +132,11 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 			Vector rowDate = new Vector();
 			rowDate.add(value.getCreatorName());
 			rowDate.add(value.getComment());
-			rowDate.add(value.getCreationDate());
+			if (value.getStartActionTimestamp() != null) {
+				rowDate.add(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(value.getStartActionTimestamp()));
+			} else {
+				rowDate.add("");
+			}
 			Long time = null;
 			if (value.getStartActionTimestamp() != null) {
 				time = value.getEndActionTimestamp().getTime() - value.getStartActionTimestamp().getTime();
@@ -142,7 +151,24 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 			} else {
 				rowDate.add(null);
 			}
-			rowDate.add(value.getDeployStatus());
+			if (value != null && value.getDeployState() != null && !value.getDeployState().equals("")) {
+				if (value.isException()) {
+					String[] stringParams = new String[value.getExtraMessages() == null ? 1 : (value.getExtraMessages().length + 1)];
+					int index = 1;
+					if (value.getExtraMessages() != null) {
+						for (String extraMessage : value.getExtraMessages()) {
+							stringParams[index++] = extraMessage;
+						}
+					}
+					stringParams[0] = Messages.getString("panEditionView.status." + value.getDeployState());
+					rowDate.add(Messages.getString("panEditionView.status." + LiveserverDeployStatus.Exception.name(), stringParams));
+				} else {
+					rowDate.add(Messages.getString("panEditionView.status." + value.getDeployState(), value.getExtraMessages()));
+				}
+
+			} else {
+				rowDate.add("");
+			}
 			super.addRow(rowDate);
 		}
 
@@ -165,37 +191,9 @@ public class PanEditionView extends JPanel implements ReloadablePanel {
 			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			switch (column) {
 				case 2:
-					if (value != null) {
-						setValue(new SimpleDateFormat(rb.getString("dateChooser.format")).format(value));
-						setHorizontalAlignment(SwingConstants.CENTER);
-					}
-					break;
+					setHorizontalAlignment(SwingConstants.CENTER);
 				case 3:
 					setHorizontalAlignment(SwingConstants.CENTER);
-					break;
-				case 4:
-					if (value != null) {
-						setHorizontalAlignment(SwingConstants.LEFT);
-						String status = (String) value;
-
-						String[] deployStatuses = status.split(";");
-						if (LiveserverDeployStatus.Exception.name().equals(deployStatuses[0])) {
-							//status can be 
-							//Exception;ImportHosts;error message
-							//it means exception got in state ImportHosts with error message
-							if (deployStatuses.length > 1) {
-								deployStatuses[1] = rb.getString("panEditionView.status." + deployStatuses[1]);
-							}
-							//ignore 0 index placehorder in the message bundle. start from 1!
-							setValue(Messages.getString("panEditionView.status." + deployStatuses[0], deployStatuses));
-						} else {
-							//status can be 
-							//ImportHosts;message1;message2
-							//ignore 0 index placehorder in the message bundle. start from 1!
-							setValue(Messages.getString("panEditionView.status." + deployStatuses[0], deployStatuses));
-						}
-
-					}
 					break;
 			}
 			return this;
