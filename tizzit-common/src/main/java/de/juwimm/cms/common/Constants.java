@@ -264,15 +264,7 @@ public final class Constants {
 
 	public enum LiveserverDeployStatus {
 
-		EditionCreated(false), CreateDeployFileForExport(false), TransmitDeployFile(false), FileDeployedOnLiveServer(false), ImportStarted, ImportCleanDatabase, ImportUnits, ImportResources, ImportDatabaseComponents, ImportViewComponents, ImportHosts, Exception;
+		EditionCreated, CreateDeployFileForExport, TransmitDeployFile, FileDeployedOnLiveServer, ImportStarted, ImportCleanDatabase, ImportUnits, ImportResources, ImportDatabaseComponents, ImportViewComponents, ImportHosts, Exception;
 
-		boolean stateFromLiveServer = true;
-
-		LiveserverDeployStatus(boolean state) {
-			stateFromLiveServer = state;
-		};
-
-		LiveserverDeployStatus() {
-		};
 	}
 }
