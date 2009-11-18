@@ -193,7 +193,19 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		RealmSimplePwUserHbmDao realmSimplePwUserHbmDao = super.getRealmSimplePwUserHbmDao();
 		RealmSimplePwUserHbm realmSimplePwUserHbm = realmSimplePwUserHbmDao.findByUsernameAndRealmId(realmSimplePwUserValue.getUserName(), simplePwRealmId);
 		if (realmSimplePwUserHbm != null) {
-			pk = realmSimplePwUserHbm.getSimplePwRealmUserId();
+			if (realmSimplePwUserValue.getSimplePwRealmUserId().intValue() != -1) {
+				if (realmSimplePwUserHbm.getSimplePwRealmUserId().intValue() != realmSimplePwUserValue.getSimplePwRealmUserId().intValue()) {
+					return -1;
+				} else {
+					RealmSimplePwUserHbm user = realmSimplePwUserHbmDao.load(realmSimplePwUserValue.getSimplePwRealmUserId());
+					user.setPassword(realmSimplePwUserValue.getPassword());
+					user.setRoles(realmSimplePwUserValue.getRoles());
+					user.setUserName(realmSimplePwUserValue.getUserName());
+					return realmSimplePwUserValue.getSimplePwRealmUserId();
+				}
+			} else {
+				return -1;
+			}
 		} else {
 			RealmSimplePwUserHbm user = this.createRealmSimplePwUserHbmFromValue(simplePwRealmId, realmSimplePwUserValue);
 			user = realmSimplePwUserHbmDao.create(user);
@@ -650,7 +662,9 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		String owner = AuthenticationHelper.getUserName();
 		RealmSimplePwHbm realm = null;
 		Collection realmCollection = super.getRealmSimplePwHbmDao().findBySiteAndName(siteId, realmName);
-		if ((realmCollection != null) && (realmCollection.size() > 0)) { throw new AlreadyExistsException("A Realm with the Name " + realmName + " for user " + owner + " already exists!"); }
+		if ((realmCollection != null) && (realmCollection.size() > 0)) {
+			throw new AlreadyExistsException("A Realm with the Name " + realmName + " for user " + owner + " already exists!");
+		}
 		try {
 			realm = super.getRealmSimplePwHbmDao().create(this.createRealmSimplePwHbm(realmName, owner, siteId, loginPageId));
 			pk = realm.getSimplePwRealmId();

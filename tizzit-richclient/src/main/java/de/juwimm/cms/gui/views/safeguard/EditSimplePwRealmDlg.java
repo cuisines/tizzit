@@ -15,21 +15,30 @@
  */
 package de.juwimm.cms.gui.views.safeguard;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.gui.admin.safeguard.PanChooseLoginPage;
 import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
 import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.UIConstants;
 import de.juwimm.swing.DropDownHolder;
 import de.juwimm.swing.SortingListModel;
 
@@ -93,7 +102,7 @@ public class EditSimplePwRealmDlg extends JDialog {
 			gridBagConstraints11.gridx = 2;
 			gridBagConstraints11.gridy = 3;
 			gridBagConstraints11.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints11.insets = new java.awt.Insets(10,10,0,10);
+			gridBagConstraints11.insets = new java.awt.Insets(10, 10, 0, 10);
 			gridBagConstraints11.weightx = 1.0;
 			GridBagConstraints gridBagConstraints12 = new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0);
 			gridBagConstraints12.insets = new java.awt.Insets(12, 10, 0, 0);
@@ -201,6 +210,7 @@ public class EditSimplePwRealmDlg extends JDialog {
 					lblUserIdDisplay.setText("");
 					txtUserName.setText("[new User]");
 					txtPassword.setText("");
+					txtRoles.setText("");
 					setActive(true);
 				}
 			});
@@ -226,17 +236,26 @@ public class EditSimplePwRealmDlg extends JDialog {
 						value.setSimplePwRealmUserId(Integer.parseInt(lblUserIdDisplay.getText()));
 					}
 					value.setUserName(getTxtUserName().getText());
-					value.setPassword(getTxtPassword().getText());
-					value.setRoles(getTxtRoles().getText());
-					if (value.getSimplePwRealmUserId() == -1) {
-						value.setSimplePwRealmUserId(comm.addUserToSimpleRealm(Integer.valueOf(realmValue.getSimplePwRealmId()), value));
-						((SortingListModel) lstUser.getModel()).addElement(new DropDownHolder(value, value.getUserName()));
+					if (!getTxtPassword().getText().equalsIgnoreCase("")) {
+						value.setPassword(getTxtPassword().getText());
+						value.setRoles(getTxtRoles().getText());
+						int id = comm.addUserToSimpleRealm(Integer.valueOf(realmValue.getSimplePwRealmId()), value);
+						if (id == -1) {
+							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelSafeguard.userAlreadyExists"));
+						} else {
+							value.setSimplePwRealmUserId(id);
+							int selectedIndex = getLstUser().getSelectedIndex();
+							if (getLstUser().getSelectedIndex() >= 0) {
+								((SortingListModel) getLstUser().getModel()).removeElementAt(getLstUser().getSelectedIndex());
+							}
+							((SortingListModel) lstUser.getModel()).addElement(new DropDownHolder(value, value.getUserName()));
+							if (selectedIndex >= 0) {
+								lstUser.setSelectedIndex(selectedIndex);
+
+							}
+						}
 					} else {
-						comm.deleteSimplePwRealmUser(Integer.valueOf(value.getSimplePwRealmUserId()));
-						((SortingListModel) lstUser.getModel()).removeElementAt(lstUser.getSelectedIndex());
-						value.setSimplePwRealmUserId(comm.addUserToSimpleRealm(Integer.valueOf(realmValue.getSimplePwRealmId()), value));
-						lblUserIdDisplay.setText(String.valueOf(value.getSimplePwRealmUserId()));
-						((SortingListModel) lstUser.getModel()).addElement(new DropDownHolder(value, value.getUserName()));
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelSafeguard.enterPassword"));
 					}
 				}
 			});

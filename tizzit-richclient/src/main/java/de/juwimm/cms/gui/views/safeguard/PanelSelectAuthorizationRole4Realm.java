@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 package de.juwimm.cms.gui.views.safeguard;
-import static de.juwimm.cms.common.Constants.*;
 
+import static de.juwimm.cms.common.Constants.rb;
+
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -49,16 +51,20 @@ public class PanelSelectAuthorizationRole4Realm extends JPanel {
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
 		gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gridBagConstraints1.gridy = 0;
-		gridBagConstraints1.weightx = 1.0;
+		gridBagConstraints1.weightx = 6.0;
+		gridBagConstraints1.gridwidth = 2;
 		gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
-		gridBagConstraints1.insets = new java.awt.Insets(10, 10, 10, 10);
+		gridBagConstraints1.insets = new java.awt.Insets(10, 10, 10, 0);
 		gridBagConstraints1.gridx = 1;
 		GridBagConstraints gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-		gridBagConstraints.insets = new java.awt.Insets(13, 10, 0, 0);
+		gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+		gridBagConstraints.gridwidth = 1;
 		gridBagConstraints.gridy = 0;
 		lblRequiredRole = new JLabel();
+		lblRequiredRole.setPreferredSize(new Dimension(90, 22));
+		lblRequiredRole.setMinimumSize(new Dimension(90, 22));
 		lblRequiredRole.setText(rb.getString("panel.panelSafeguard.requiredRole"));
 		this.setLayout(new GridBagLayout());
 		this.add(lblRequiredRole, gridBagConstraints);

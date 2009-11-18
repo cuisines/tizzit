@@ -18,18 +18,23 @@ package de.juwimm.cms.gui.views.safeguard;
 import static de.juwimm.cms.client.beans.Application.getBean;
 import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.Insets;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.gui.admin.safeguard.PanChooseLoginPage;
@@ -37,6 +42,7 @@ import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.swing.DropDownHolder;
+import de.juwimm.swing.NoResizeScrollPane;
 
 /**
  * 
@@ -47,21 +53,23 @@ import de.juwimm.swing.DropDownHolder;
 public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface {
 	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private static final long serialVersionUID = -6113726552044888649L;
-	private JComboBox jComboBoxRealms = null;
 	private JButton btnAddSimpleRealm = null;
 	private JButton btnManageRealm = null;
 	private JButton btnDeleteRealm = null;
 	private JLabel lblChooseRealm = null;
+	private JList lstRealms = new JList();
+	private DefaultListModel dlmRealms = new DefaultListModel();
 	private PanChooseLoginPage panChooseLoginPage = null;
 	private PanelSelectAuthorizationRole4Realm panRequiredRole = null;
 
 	public void fillRealmList() {
 		RealmSimplePwValue[] vals = comm.getSimplePwRealmsForSite(Integer.valueOf(comm.getSiteId()));
+		dlmRealms = new DefaultListModel();
 		DefaultComboBoxModel listmodel = new DefaultComboBoxModel();
 		if (vals != null) {
 			for (int i = 0; i < vals.length; i++) {
-				//listmodel.addElement(new DropDownHolder(vals[i], vals[i].getRealmName() + " (" + vals[i].getOwner() + ")"));
 				listmodel.addElement(new DropDownHolder(vals[i], vals[i].getRealmName()));
+				dlmRealms.addElement(new DropDownHolder(vals[i], vals[i].getRealmName()));
 			}
 			this.panChooseLoginPage.setEnabled(true);
 			this.panRequiredRole.setEnabled(true);
@@ -69,21 +77,19 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 			this.panChooseLoginPage.setEnabled(false);
 			this.panRequiredRole.setEnabled(false);
 		}
-		this.jComboBoxRealms.setModel(listmodel);
+		this.lstRealms.setModel(dlmRealms);
 	}
 
 	public Integer getSelectedRealm() throws Exception {
-		RealmSimplePwValue val = (RealmSimplePwValue) ((DropDownHolder) jComboBoxRealms.getSelectedItem()).getObject();
+		RealmSimplePwValue val = (RealmSimplePwValue) (lstRealms.getSelectedValue());
 		return Integer.valueOf(val.getSimplePwRealmId());
 	}
 
 	public void setExistingRealm(Integer realmId) {
-		for (int i = 0; i < jComboBoxRealms.getItemCount(); i++) {
-			DropDownHolder val = (DropDownHolder) jComboBoxRealms.getItemAt(i);
+		for (int i = 0; i < dlmRealms.getSize(); i++) {
+			DropDownHolder val = (DropDownHolder) dlmRealms.get(i);
 			if (((RealmSimplePwValue) val.getObject()).getSimplePwRealmId() == realmId.intValue()) {
-				jComboBoxRealms.setSelectedItem(val);
-				//String owner = ((RealmSimplePwValue) val.getObject()).getOwner();
-				//boolean mayEdit = (owner != null && owner.equalsIgnoreCase(comm.getUser().getUserName()) || comm.getUser().isMasterRoot());
+				lstRealms.setSelectedIndex(i);
 				boolean mayEdit = true;
 				this.getBtnManageRealm().setEnabled(mayEdit);
 				this.getBtnDeleteRealm().setEnabled(mayEdit);
@@ -116,20 +122,20 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 		gridBagConstraints.fill = java.awt.GridBagConstraints.NONE;
 		gridBagConstraints.gridy = 0;
 		lblChooseRealm = new JLabel();
+		lblChooseRealm.setPreferredSize(new Dimension(90, 22));
+		lblChooseRealm.setMinimumSize(new Dimension(90, 22));
 		lblChooseRealm.setText(rb.getString("panel.panelSafeguard.realm.choose"));
 		GridBagConstraints gridBagConstraints11 = new GridBagConstraints();
 		gridBagConstraints11.gridx = 3;
-		gridBagConstraints11.insets = new java.awt.Insets(10, 10, 0, 10);
-		gridBagConstraints11.anchor = java.awt.GridBagConstraints.NORTHWEST;
-		gridBagConstraints11.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		gridBagConstraints11.insets = new java.awt.Insets(0, 10, 0, 10);
+		gridBagConstraints11.anchor = java.awt.GridBagConstraints.NORTHEAST;
 		gridBagConstraints11.weightx = 1.0;
 		gridBagConstraints11.weighty = 1.0;
 		gridBagConstraints11.gridy = 1;
 		GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 		gridBagConstraints4.gridx = 3;
 		gridBagConstraints4.insets = new java.awt.Insets(10, 10, 0, 10);
-		gridBagConstraints4.anchor = java.awt.GridBagConstraints.NORTHWEST;
-		gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		gridBagConstraints4.anchor = java.awt.GridBagConstraints.NORTHEAST;
 		gridBagConstraints4.weightx = 1.0;
 		gridBagConstraints4.weighty = 1.0;
 		gridBagConstraints4.gridy = 0;
@@ -143,18 +149,17 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 		gridBagConstraints2.weighty = 1.0;
 		gridBagConstraints2.gridx = 1;
 		GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-		gridBagConstraints1.gridx = 1;
+		gridBagConstraints1.gridx = 3;
 		gridBagConstraints1.gridheight = 1;
-		gridBagConstraints1.insets = new java.awt.Insets(10, 10, 10, 0);
-		gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
-		gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		gridBagConstraints1.insets = new java.awt.Insets(5, 10, 0, 10);
+		gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHEAST;
 		gridBagConstraints1.weightx = 1.0;
 		gridBagConstraints1.weighty = 1.0;
 		gridBagConstraints1.gridwidth = 2;
-		gridBagConstraints1.gridy = 1;
+		gridBagConstraints1.gridy = 2;
 		GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 		gridBagConstraints3.fill = java.awt.GridBagConstraints.HORIZONTAL;
-		gridBagConstraints3.gridy = 3;
+		gridBagConstraints3.gridy = 4;
 		gridBagConstraints3.weightx = 0.0;
 		gridBagConstraints3.anchor = java.awt.GridBagConstraints.NORTHWEST;
 		gridBagConstraints3.insets = new java.awt.Insets(15, 10, 10, 0);
@@ -162,20 +167,35 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 		gridBagConstraints3.gridwidth = 4;
 		GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 		gridBagConstraints5.fill = java.awt.GridBagConstraints.HORIZONTAL;
-		gridBagConstraints5.gridy = 2;
-		gridBagConstraints5.weightx = 0.0;
+		gridBagConstraints5.gridy = 3;
+		gridBagConstraints5.weightx = 1.0;
 		gridBagConstraints5.anchor = java.awt.GridBagConstraints.NORTHWEST;
 		gridBagConstraints5.insets = new java.awt.Insets(0, 0, 0, 0);
 		gridBagConstraints5.gridx = 0;
-		gridBagConstraints5.gridwidth = 4;
+		gridBagConstraints5.gridwidth = 3;
+
+		lstRealms.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) return;
+				boolean mayEdit = true;
+				getBtnManageRealm().setEnabled(mayEdit);
+				getBtnDeleteRealm().setEnabled(mayEdit);
+
+			}
+		});
+		JScrollPane scrollPane = new NoResizeScrollPane(lstRealms);
+		scrollPane.setPreferredSize(new Dimension(300, 100));
+		scrollPane.setMinimumSize(new Dimension(300, 100));
+		scrollPane.setLayout(new ScrollPaneLayout());
+
 		this.setLayout(new GridBagLayout());
 		this.add(lblChooseRealm, gridBagConstraints);
-		this.add(getJComboBoxRealms(), gridBagConstraints2);
-		this.add(getBtnManageRealm(), gridBagConstraints4);
-		this.add(getBtnDeleteRealm(), gridBagConstraints11);
-		this.add(getBtnAddSimpleRealm(), gridBagConstraints1);
-		this.add(panChooseLoginPage, gridBagConstraints3);
+		this.add(getBtnManageRealm(), gridBagConstraints11);
+		this.add(getBtnDeleteRealm(), gridBagConstraints1);
+		this.add(getBtnAddSimpleRealm(), gridBagConstraints4);
+		//this.add(panChooseLoginPage, gridBagConstraints3);
 		this.add(this.panRequiredRole, gridBagConstraints5);
+		this.add(scrollPane, new GridBagConstraints(1, 0, 2, 3, 6.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		this.setSize(new java.awt.Dimension(440, 223));
 	}
 
@@ -188,7 +208,7 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 		if (btnAddSimpleRealm == null) {
 			btnAddSimpleRealm = new JButton();
 			btnAddSimpleRealm.setText(rb.getString("panel.panelSafeguard.realm.createnew"));
-			btnAddSimpleRealm.setPreferredSize(new java.awt.Dimension(120, 23));
+			btnAddSimpleRealm.setPreferredSize(new java.awt.Dimension(120, 22));
 			btnAddSimpleRealm.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					CreateNewSimplePwRealmDlg dlg = new CreateNewSimplePwRealmDlg();
@@ -200,12 +220,10 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 						String loginpage = dlg.getLoginpage();
 						int siteid = comm.getSiteId();
 						int pk = comm.addSimpleRealmToSite(name, siteid, loginpage);
-						DefaultComboBoxModel model = (DefaultComboBoxModel) jComboBoxRealms.getModel();
 						RealmSimplePwValue val = new RealmSimplePwValue(name, pk, loginpage);
-						//model.addElement(new DropDownHolder(val, val.getRealmName() + " (" + val.getOwner() + ")"));
 						if (pk != -1) {
-							model.addElement(new DropDownHolder(val, val.getRealmName()));
-							jComboBoxRealms.updateUI();
+							dlmRealms.addElement(new DropDownHolder(val, val.getRealmName()));
+							lstRealms.updateUI();
 							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelSafeguard.realm.created"));
 						} else {
 							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelSafeguard.realm.createFailed"));
@@ -219,33 +237,6 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 	}
 
 	/**
-	 * This method initializes jComboBoxRealms	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */
-	private JComboBox getJComboBoxRealms() {
-		if (jComboBoxRealms == null) {
-			jComboBoxRealms = new JComboBox();
-			jComboBoxRealms.setMaximumSize(new java.awt.Dimension(200, 20));
-			jComboBoxRealms.setPreferredSize(new java.awt.Dimension(100, 23));
-			jComboBoxRealms.setEditable(false);
-			jComboBoxRealms.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						DropDownHolder val = (DropDownHolder) jComboBoxRealms.getSelectedItem();
-						//String owner = ((RealmSimplePwValue) val.getObject()).getOwner();
-						//boolean mayEdit = (owner != null && owner.equalsIgnoreCase(comm.getUser().getUserName()) || comm.getUser().isMasterRoot());
-						boolean mayEdit = true;
-						getBtnManageRealm().setEnabled(mayEdit);
-						getBtnDeleteRealm().setEnabled(mayEdit);
-					}
-				}
-			});
-		}
-		return jComboBoxRealms;
-	}
-
-	/**
 	 * This method initializes btnManageRealm	
 	 * 	
 	 * @return javax.swing.JButton	
@@ -253,10 +244,11 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 	private JButton getBtnManageRealm() {
 		if (btnManageRealm == null) {
 			btnManageRealm = new JButton();
+			btnManageRealm.setPreferredSize(new java.awt.Dimension(120, 22));
 			btnManageRealm.setText(rb.getString("panel.panelSafeguard.realm.manage"));
 			btnManageRealm.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					DropDownHolder currentElement = (DropDownHolder) jComboBoxRealms.getSelectedItem();
+					DropDownHolder currentElement = (DropDownHolder) lstRealms.getSelectedValue();
 					if (currentElement != null) {
 						RealmSimplePwValue val = (RealmSimplePwValue) currentElement.getObject();
 						EditSimplePwRealmDlg dlg = new EditSimplePwRealmDlg(val);
@@ -284,18 +276,19 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 	private JButton getBtnDeleteRealm() {
 		if (btnDeleteRealm == null) {
 			btnDeleteRealm = new JButton();
+			btnDeleteRealm.setPreferredSize(new java.awt.Dimension(120, 22));
 			btnDeleteRealm.setText(rb.getString("panel.panelSafeguard.btn.deleterealm"));
 			btnDeleteRealm.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					DropDownHolder currentElement = (DropDownHolder) jComboBoxRealms.getSelectedItem();
+					//DropDownHolder currentElement = (DropDownHolder) jComboBoxRealms.getSelectedItem();
+					DropDownHolder currentElement = (DropDownHolder) lstRealms.getSelectedValue();
 					if (currentElement != null) {
 						RealmSimplePwValue val = (RealmSimplePwValue) currentElement.getObject();
 						String name = val.getRealmName();
 						int ret = JOptionPane.showConfirmDialog(UIConstants.getMainFrame(), rb.getString("panel.panelSafeguard.realm.reallydelete") + " " + name, rb.getString("panel.panelSafeguard.realm.reallydelete"), JOptionPane.YES_NO_OPTION);
 						if (ret == JOptionPane.YES_OPTION) {
 							val.getSimplePwRealmId();
-							DefaultComboBoxModel model = (DefaultComboBoxModel) jComboBoxRealms.getModel();
-							model.removeElement(currentElement);
+							dlmRealms.removeElement(currentElement);
 							comm.deleteSimplePwRealm(val.getSimplePwRealmId());
 						}
 					}
