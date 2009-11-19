@@ -64,7 +64,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	public static final String CMS_LANG_EN = "cmslanguageenglish";
 
 	JCommandButton newContentButton;
-	JCommandButton refreshTreeButton;
 	private JCommandButton moveButton = null;
 	private final Communication comm;
 
@@ -186,13 +185,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 				ActionHub.fireViewComponentPerformed(new ViewComponentEvent(ViewComponentEvent.DELETE));
 			}
 		});
-
-		refreshTreeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ActionHub.fireActionPerformed(new ActionEvent(refreshTreeButton, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_REFRESH));
-			}
-		});
-
 	}
 
 	private void addButton(JCommandButton component, int index, JRibbonBand band) {
@@ -213,11 +205,10 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		editBand.startGroup();
 		this.addButton(newContentButton, 0, editBand);
 		this.addButton(moveButton, 1, editBand);
-		this.addButton(refreshTreeButton, 2, editBand);
-		this.addButton(deleteNodeButton, 3, editBand);
+		this.addButton(deleteNodeButton, 2, editBand);
 		editBand.startGroup();
-		this.addButton(checkOutButton, 5, editBand);
-		this.addButton(checkInButton, 6, editBand);
+		this.addButton(checkOutButton, 4, editBand);
+		this.addButton(checkInButton, 5, editBand);
 
 		this.addButton(reviseSiteButton, 1, publishBand);
 		this.addButton(releaseSiteButton, 2, publishBand);
@@ -285,7 +276,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 
 	private void initButtons() {
 		newContentButton = createButton(rb.getString("ribbon.new"), UIConstants.RIBBON_NEW);
-		refreshTreeButton = createButton(rb.getString("ribbon.ACTION_TREE_REFRESH"), UIConstants.RIBBON_ACTION_TREE_REFRESH);
 		deleteNodeButton = createButton(rb.getString("ribbon.delete"), UIConstants.RIBBON_TREE_NODE_DELETE);
 		releaseSiteButton = createButton(rb.getString("ribbon.publish.release"), UIConstants.RIBBON_RELEASE_SITE);
 		reviseSiteButton = createButton(rb.getString("ribbon.publish.revise"), UIConstants.RIBBON_REVISE_SITE);
@@ -686,7 +676,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 		rightItem.setEnabled(false);
 
 		deleteNodeButton.setEnabled(false);
-		refreshTreeButton.setEnabled(true);
 		deployButton.setEnabled(true);
 	}
 
@@ -786,7 +775,6 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 	private void setEnableEditPublishButtons(boolean state) {
 		newContentButton.setEnabled(state);
 		moveButton.setEnabled(state);
-		refreshTreeButton.setEnabled(state);
 		deleteNodeButton.setEnabled(state);
 		releaseSiteButton.setEnabled(state);
 		reviseSiteButton.setEnabled(state);
