@@ -1275,8 +1275,8 @@ public class Communication implements ExitListener, ActionListener {
 			checkOutPages.add(Integer.valueOf(contentId));
 			return cdao;
 		} catch (Exception exception) {
-			if (exception instanceof AlreadyCheckedOutException) {
-				throw (AlreadyCheckedOutException) exception;
+			if (exception != null && ((exception.getCause()).getCause() instanceof AlreadyCheckedOutException)) {
+				throw (AlreadyCheckedOutException) exception.getCause().getCause();
 			}
 			if (exception.getCause() != null && exception.getCause() instanceof AlreadyCheckedOutException) {
 				throw (AlreadyCheckedOutException) exception.getCause();

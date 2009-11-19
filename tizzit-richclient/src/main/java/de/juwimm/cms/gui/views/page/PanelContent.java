@@ -231,7 +231,9 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 
 				try {
 					newContent = contentManager.getContent(txtHeadline.getText());
-					if (newContent == null || "".equalsIgnoreCase(newContent)) { throw new Exception("Content is Empty"); }
+					if (newContent == null || "".equalsIgnoreCase(newContent)) {
+						throw new Exception("Content is Empty");
+					}
 				} catch (Exception exe) {
 					log.error("Content was not valid: " + newContent, exe);
 					// set focus on txtHeadline?
@@ -435,8 +437,6 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 				contentManager.setEnabled(true);
 				txtHeadline.setEditable(true);
 				isCheckedOut = true;
-			} catch (UserException ex) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			} catch (AlreadyCheckedOutException ae) {
 				if (comm.isUserInRole(UserRights.UNIT_ADMIN)) {
 					String lockOwner = ae.getMessage();
@@ -462,6 +462,8 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 				} else {
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("panel.panelContent.checkedOut", ae.getMessage()), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
+			} catch (UserException ex) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		} else if (e.getActionCommand().equals(Constants.ACTION_CHECKIN)) {
 			Constants.EDIT_CONTENT = false;
@@ -635,7 +637,9 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 
 		@Override
 		public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
-			if (str == null) { return; }
+			if (str == null) {
+				return;
+			}
 			if ((getLength() + str.length()) <= this.max) {
 				super.insertString(offset, str, attr);
 			}

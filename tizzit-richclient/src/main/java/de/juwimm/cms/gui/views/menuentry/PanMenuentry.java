@@ -305,7 +305,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		boolean edited = false;
 		Date onlineStart = txtOnlineStart.getDate();
 		Date onlineStop = txtOnlineStop.getDate();
-
+		viewComponent = communication.getViewComponent(viewComponent.getViewComponentId());
 		if (!txtDisplayedLinkName.getText().equals(viewComponent.getDisplayLinkName()) || !txtLinkDescription.getText().equals(viewComponent.getLinkDescription()) || !txtUrlLinkName.getText().equals(viewComponent.getUrlLinkName())) {
 			edited = true;
 		}

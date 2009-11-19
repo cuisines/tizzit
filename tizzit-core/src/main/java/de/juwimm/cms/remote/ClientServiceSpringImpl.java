@@ -179,10 +179,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 			// will be only called, if the content was been successfully
 			// checkedOut!
 			return cdao;
+		} catch (AlreadyCheckedOutException ex) {
+			throw (AlreadyCheckedOutException) ex;
 		} catch (Exception exception) {
-			if (exception instanceof AlreadyCheckedOutException) {
-				throw (AlreadyCheckedOutException) exception;
-			}
 			UserException ue = new UserException("Error checking out: " + exception.getMessage());
 			log.error("Error checking out ", exception);
 			throw ue;
