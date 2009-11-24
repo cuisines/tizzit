@@ -248,7 +248,9 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	public Collection getAllChildrenOrderedAsDao(int depth) throws UserException {
 		int currentDepth = depth - 1;
 		if (log.isDebugEnabled()) log.debug("begin getViewComponentChildrenOrdered() depth " + depth);
-		if (isLeaf()) { throw new UserException("node is a leaf."); }
+		if (isLeaf()) {
+			throw new UserException("node is a leaf.");
+		}
 		Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
 		ViewComponentHbm temp = getFirstChild();
 		if (currentDepth >= 0) {
@@ -337,10 +339,14 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	public boolean hasSiblingsWithLinkName(String testName) {
 		if (this.getParent() != null) {
 			Collection siblings = this.getParent().getChildren();
-			Iterator it = siblings.iterator();
-			while (it.hasNext()) {
-				ViewComponentHbm vc = (ViewComponentHbm) it.next();
-				if (vc.getUrlLinkName().equalsIgnoreCase(this.getUrlLinkName()) && !this.equals(vc)) { return true; }
+			if (siblings != null) {
+				Iterator it = siblings.iterator();
+				while (it.hasNext()) {
+					ViewComponentHbm vc = (ViewComponentHbm) it.next();
+					if (vc.getUrlLinkName().equalsIgnoreCase(this.getUrlLinkName()) && !this.equals(vc)) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -352,13 +358,17 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	@Override
 	public ViewComponentHbm getNavigationRoot() {
 		if (log.isDebugEnabled()) log.debug("getNavigationRoot start");
-		if ((getViewIndex() != null && "2".equals(getViewIndex())) || isRoot()) { return this; }
+		if ((getViewIndex() != null && "2".equals(getViewIndex())) || isRoot()) {
+			return this;
+		}
 		ViewComponentHbm parent = null;
 		parent = getParent();
 		if (parent != null && !parent.isRoot()) {
 			while (!(getViewIndex() != null && "2".equals(parent.getViewIndex())) && !parent.isRoot()) {
 				parent = parent.getParent();
-				if (parent == null) { return null; }
+				if (parent == null) {
+					return null;
+				}
 			}
 		}
 		if (log.isDebugEnabled()) log.debug("getNavigationRoot end");
@@ -370,13 +380,17 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public int getNavigationRootDistance() {
-		if ((getViewIndex() != null && "2".equals(getViewIndex())) || isRoot()) { return 0; }
+		if ((getViewIndex() != null && "2".equals(getViewIndex())) || isRoot()) {
+			return 0;
+		}
 		ViewComponentHbm parent = getParent();
 		int parentCount = 1;
 		if (parent != null && !parent.isRoot()) {
 			while (!(getViewIndex() != null && "2".equals(parent.getViewIndex())) && !parent.isRoot()) {
 				parent = parent.getParent();
-				if (parent == null) { return -1; }
+				if (parent == null) {
+					return -1;
+				}
 				parentCount++;
 			}
 		}
@@ -480,7 +494,9 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	private String buildTreePath(ViewComponentHbm viewComponent, String concPath) {
 		// if (log.isTraceEnabled()) log.trace("buildTreePath start");
-		if (viewComponent.isRoot()) { return concPath; }
+		if (viewComponent.isRoot()) {
+			return concPath;
+		}
 		String newPath = "";
 		newPath = viewComponent.getUrlLinkName();
 
