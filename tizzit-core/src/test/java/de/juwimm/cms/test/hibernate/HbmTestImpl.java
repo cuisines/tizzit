@@ -29,30 +29,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 
 import de.juwimm.cms.authorization.SimpleCallbackHandler;
-import de.juwimm.cms.authorization.model.GroupHbmDao;
-import de.juwimm.cms.authorization.model.UserHbmDao;
-import de.juwimm.cms.components.model.AddressHbmDao;
-import de.juwimm.cms.components.model.DepartmentHbmDao;
-import de.juwimm.cms.components.model.PersonHbmDao;
-import de.juwimm.cms.components.model.TalktimeHbmDao;
-import de.juwimm.cms.model.ContentHbmDao;
-import de.juwimm.cms.model.ContentVersionHbmDao;
-import de.juwimm.cms.model.DocumentHbmDao;
-import de.juwimm.cms.model.EditionHbmDao;
-import de.juwimm.cms.model.HostHbmDao;
-import de.juwimm.cms.model.LockHbmDao;
-import de.juwimm.cms.model.PictureHbmDao;
-import de.juwimm.cms.model.SiteHbmDao;
-import de.juwimm.cms.model.TaskHbmDao;
-import de.juwimm.cms.model.UnitHbmDao;
-import de.juwimm.cms.model.ViewComponentHbmDao;
-import de.juwimm.cms.model.ViewDocumentHbmDao;
-import de.juwimm.cms.model.SequenceHbmDao;
-import de.juwimm.cms.safeguard.model.RealmJaasHbmDao;
-import de.juwimm.cms.safeguard.model.RealmJdbcHbmDao;
-import de.juwimm.cms.safeguard.model.RealmLdapHbmDao;
-import de.juwimm.cms.safeguard.model.RealmSimplePwHbmDao;
-import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDao;
+import de.juwimm.cms.test.hibernate.HbmTest;
 
 /**
  * Abstract test class inherited from
@@ -66,39 +43,36 @@ import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDao;
  */
 public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringContextTests implements HbmTest {
 
-	private static Log log = LogFactory.getLog( HbmTestImpl.class );
+	private static Log log = LogFactory.getLog(HbmTestImpl.class);
 	private static final String DATA_SOURCE = "classpath:beans-test.xml";
 	private static final String APPLICATION_CONTEXT = "applicationContext.xml";
 	private static final String TIZZIT_BEANS = "classpath:applicationContext-tizzitBeans-test.xml";
 	private static final String TIZZIT_COMPASS = "classpath:applicationContext-compass-test.xml";
 	private LoginContext loginContext = null;
 	public static final String SYSTEM_USER = "system";
-		
-	
+
 	public HbmTestImpl() {
-		super();		
-		setAutowireMode( AUTOWIRE_BY_NAME );		
+		super();
+		setAutowireMode(AUTOWIRE_BY_NAME);
 	}
-	
-	
+
 	/**
 	 * Supply the spring configuration files
 	 */
 	@Override
 	protected String[] getConfigLocations() {
 		//String[] springConfig = { TEST_APPLICATION_CONTEXT, TEST_DATA_SOURCE };
-		String[] springConfig = {DATA_SOURCE, APPLICATION_CONTEXT,TIZZIT_COMPASS,TIZZIT_BEANS};
+		String[] springConfig = {DATA_SOURCE, APPLICATION_CONTEXT, TIZZIT_COMPASS, TIZZIT_BEANS};
 		return springConfig;
 	}
-	
-	
+
 	/**
 	 * Returns the used hibernate session factory
 	 * 
 	 * @return A a session factory object
 	 */
 	protected SessionFactory getSessionFactory() {
-		return (SessionFactory) applicationContext.getBean( "sessionFactory" );
+		return (SessionFactory) applicationContext.getBean("sessionFactory");
 	}
 
 	/**
@@ -110,7 +84,6 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 		return getSessionFactory().openSession();
 	}
 
-	
 	/**
 	 * List all mapped classes using log4j 
 	 * 
@@ -118,80 +91,78 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 	protected void listMappedClasses() {
 		String[] classes = getApplicationContext().getBeanDefinitionNames();
 		logSeperator();
-		for( int i=0; i<classes.length; i++ ) {
-			log.info( classes[i] );
+		for (int i = 0; i < classes.length; i++) {
+			log.info(classes[i]);
 		}
 		logSeperator();
 	}
-	
+
 	protected void logSeperator() {
-		log.info(  "\n##############################\n" );
+		log.info("\n##############################\n");
 	}
-	
-	public void loginUser( String username, String password ) {
+
+	public void loginUser(String username, String password) {
 		Principal p = null;
-		if( loginContext == null ) {			
-			SimpleCallbackHandler simpleCallbackHandler = new SimpleCallbackHandler( username, password );
+		if (loginContext == null) {
+			SimpleCallbackHandler simpleCallbackHandler = new SimpleCallbackHandler(username, password);
 			try {
-				loginContext = new LoginContext( "juwimm-cms-security-domain", simpleCallbackHandler );
+				loginContext = new LoginContext("juwimm-cms-security-domain", simpleCallbackHandler);
 				loginContext.login();
 				Subject s = loginContext.getSubject();
 				Iterator it = s.getPrincipals().iterator();
-				if( !s.getPrincipals().isEmpty() ) {
-					while( it.hasNext() ) {
+				if (!s.getPrincipals().isEmpty()) {
+					while (it.hasNext()) {
 						p = (Principal) it.next();
-						if( !p.getName().equalsIgnoreCase( SYSTEM_USER ) ) { 
-							org.andromda.spring.PrincipalStore.set( p );
+						if (!p.getName().equalsIgnoreCase(SYSTEM_USER)) {
+							org.andromda.spring.PrincipalStore.set(p);
 							break;
 						}
 					}
 				}
-			} catch ( LoginException e ) {
-				if( log.isErrorEnabled() ) {
-					log.error( "Could not login: " + e.getMessage(), e );
+			} catch (LoginException e) {
+				if (log.isErrorEnabled()) {
+					log.error("Could not login: " + e.getMessage(), e);
 				}
 			}
-		}		
+		}
 	}
-	
-	
-	
+
 	public Principal loginSystemUser() {
 		Principal p = null;
-		if( loginContext == null ) {
-			log.info( "Setting principal..." );
-//TODO login			
-//			System.setProperty( "java.security.auth.login.config", "C:\\svnroot\\juwimm-cms\\core\\src\\test\\jaas.conf" );
+		if (loginContext == null) {
+			log.info("Setting principal...");
+			//TODO login			
+			//			System.setProperty( "java.security.auth.login.config", "C:\\svnroot\\juwimm-cms\\core\\src\\test\\jaas.conf" );
 			String encoded = "e";
-			SimpleCallbackHandler simpleCallbackHandler = new SimpleCallbackHandler( SYSTEM_USER, encoded );
+			SimpleCallbackHandler simpleCallbackHandler = new SimpleCallbackHandler(SYSTEM_USER, encoded);
 			try {
-				loginContext = new LoginContext( "juwimm-cms-security-domain", simpleCallbackHandler );
+				loginContext = new LoginContext("juwimm-cms-security-domain", simpleCallbackHandler);
 				loginContext.login();
 				Subject s = loginContext.getSubject();
 				Iterator it = s.getPrincipals().iterator();
-				if( !s.getPrincipals().isEmpty() ) {
+				if (!s.getPrincipals().isEmpty()) {
 					p = (Principal) it.next();
-					org.andromda.spring.PrincipalStore.set( p );
+					org.andromda.spring.PrincipalStore.set(p);
 				}
-			} catch ( LoginException e ) {
-				
-				if( log.isErrorEnabled() ) {
-					log.error( "Could not login: " + e.getMessage(), e );
+			} catch (LoginException e) {
+
+				if (log.isErrorEnabled()) {
+					log.error("Could not login: " + e.getMessage(), e);
 				}
 			}
 		}
 		return p;
 	}
-	
-	public Object getBean( String mappedName ) {
+
+	public Object getBean(String mappedName) {
 		loginSystemUser();
-		return applicationContext.getBean( mappedName );
+		return applicationContext.getBean(mappedName);
 	}
-	
+
 	public Subject getSubject() {
-		if( loginContext != null ) {
+		if (loginContext != null) {
 			return loginContext.getSubject();
 		}
 		return null;
-	}		
+	}
 }
