@@ -426,4 +426,92 @@ public class ViewServiceTest extends TestCase {
 		EasyMock.verify(unitDaoMock);
 		EasyMock.verify(contentDaoMock);
 	}
+
+	/**
+	 * Test saveViewComponent
+	 * expect: modifications made to be saved
+	 */
+	public void testSaveViewComponent() {
+		ViewComponentValue viewComponentValue = new ViewComponentValue();
+		viewComponentValue.setViewComponentId(1);
+		viewComponentValue.setDisplayLinkName("testDisplayLinkName");
+		viewComponentValue.setLinkDescription("testLinkDescription");
+		viewComponentValue.setUrlLinkName("testUrlLinkName");
+		viewComponentValue.setApprovedLinkName("testApprovedLinkName");
+		viewComponentValue.setMetaData("testMetaData");
+		viewComponentValue.setMetaDescription("testMetaDescription");
+		viewComponentValue.setReference("0");
+		viewComponentValue.setCreateDate(0);
+		viewComponentValue.setDisplaySettings((byte) 0);
+		viewComponentValue.setLastModifiedDate(0);
+		viewComponentValue.setOnline((byte) 0);
+		viewComponentValue.setOnlineStart(0);
+		viewComponentValue.setOnlineStop(0);
+		viewComponentValue.setSearchIndexed(true);
+		viewComponentValue.setShowType((byte) 0);
+		viewComponentValue.setStatus(0);
+		viewComponentValue.setUserLastModifiedDate(0);
+		viewComponentValue.setViewIndex("0");
+		viewComponentValue.setViewLevel("0");
+		viewComponentValue.setViewType((byte) 0);
+		viewComponentValue.setVisible(true);
+
+		ViewComponentHbm viewComponentHbm = new ViewComponentHbmImpl();
+		viewComponentHbm.setViewComponentId(1);
+		viewComponentHbm.setDisplayLinkName("initialDisplayLinkName");
+		viewComponentHbm.setLinkDescription("initialLinkDescription");
+		viewComponentHbm.setUrlLinkName("initialUrlLinkName");
+		viewComponentHbm.setApprovedLinkName("initialApprovedLinkName");
+		viewComponentHbm.setMetaData("initialMetaData");
+		viewComponentHbm.setMetaDescription("initialMetaDescription");
+		viewComponentHbm.setReference("1");
+		viewComponentHbm.setCreateDate(1);
+		viewComponentHbm.setDisplaySettings((byte) 1);
+		viewComponentHbm.setLastModifiedDate(1);
+		viewComponentHbm.setOnline((byte) 0);
+		viewComponentHbm.setOnlineStart(1);
+		viewComponentHbm.setOnlineStop(1);
+		viewComponentHbm.setSearchIndexed(false);
+		viewComponentHbm.setShowType((byte) 1);
+		viewComponentHbm.setStatus(0);
+		viewComponentHbm.setUserLastModifiedDate(0);
+		viewComponentHbm.setViewIndex("1");
+		viewComponentHbm.setViewLevel("1");
+		viewComponentHbm.setViewType((byte) 0);
+		viewComponentHbm.setVisible(false);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponentHbm);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			ViewComponentValue viewComponentValueTest = viewService.saveViewComponent(viewComponentValue);
+			Assert.assertNotNull(viewComponentValueTest);
+			Assert.assertEquals(viewComponentValueTest.getDisplayLinkName(), viewComponentValue.getDisplayLinkName());
+			Assert.assertEquals(viewComponentValueTest.getLinkDescription(), viewComponentValue.getLinkDescription());
+			Assert.assertEquals(viewComponentValueTest.getDeployCommand(), viewComponentValue.getDeployCommand());
+			Assert.assertEquals(viewComponentValueTest.getDisplaySettings(), viewComponentValue.getDisplaySettings());
+			Assert.assertNotSame(viewComponentValueTest.getLastModifiedDate(), viewComponentValue.getLastModifiedDate());
+			Assert.assertEquals(viewComponentValueTest.getMetaData(), viewComponentValue.getMetaData());
+			Assert.assertEquals(viewComponentValueTest.getMetaDescription(), viewComponentValue.getMetaDescription());
+			Assert.assertEquals(viewComponentValueTest.getOnline(), viewComponentValue.getOnline());
+			Assert.assertEquals(viewComponentValueTest.getOnlineStart(), viewComponentValue.getOnlineStart());
+			Assert.assertEquals(viewComponentValueTest.getOnlineStop(), viewComponentValue.getOnlineStop());
+			Assert.assertEquals(viewComponentValueTest.getOnline(), viewComponentValue.getOnline());
+			Assert.assertEquals(viewComponentValueTest.getReference(), viewComponentValue.getReference());
+			Assert.assertEquals(viewComponentValueTest.getShowType(), viewComponentValue.getShowType());
+			Assert.assertEquals(viewComponentValueTest.getStatus(), viewComponentValue.getStatus());
+			Assert.assertEquals(viewComponentValueTest.getUrlLinkName(), viewComponentValue.getUrlLinkName());
+			Assert.assertEquals(viewComponentValueTest.getUserLastModifiedDate(), viewComponentValue.getUserLastModifiedDate());
+			Assert.assertEquals(viewComponentValueTest.getViewIndex(), viewComponentValue.getViewIndex());
+			Assert.assertEquals(viewComponentValueTest.getViewLevel(), viewComponentValue.getViewLevel());
+			Assert.assertEquals(viewComponentValueTest.getViewType(), viewComponentValue.getViewType());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(viewComponentDaoMock);
+	}
 }

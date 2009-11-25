@@ -16,6 +16,7 @@ import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.UnitHbmImpl;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewComponentHbmDao;
+import de.juwimm.cms.model.ViewComponentHbmDaoImpl;
 import de.juwimm.cms.model.ViewComponentHbmImpl;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.model.ViewDocumentHbmImpl;
@@ -146,11 +147,9 @@ public class ViewComponentDaoTest extends HbmTestImpl {
 
 		ContentHbm content = new ContentHbmImpl();
 		content.setContentId(1);
-		//insertContent(content);
 
 		ContentHbm clonedContent = new ContentHbmImpl();
 		clonedContent.setContentId(2);
-		//insertContent(clonedContent);
 
 		viewDocument.setViewDocumentId(1);
 		original.setViewComponentId(1);
@@ -178,25 +177,46 @@ public class ViewComponentDaoTest extends HbmTestImpl {
 		original.setVisible(true);
 
 		contentDaoMock = EasyMock.createMock(ContentHbmDao.class);
+		((ViewComponentHbmDaoImpl) viewComponentDao).setContentHbmDao(contentDaoMock);
 
 		Map picturesIds = null;
 		Map documentsIds = null;
 		Map personsIds = null;
 		Integer unitId = 1;
-		//		try {
-		//			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
-		//			EasyMock.expect(contentDaoMock.cloneContent(content, picturesIds, documentsIds, personsIds, unitId)).andReturn(clonedContent);
-		//		} catch (Exception e) {
-		//			Assert.assertTrue(false);
-		//		}
-		//		EasyMock.replay(contentDaoMock);
+		try {
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+			EasyMock.expect(contentDaoMock.cloneContent(content, picturesIds, documentsIds, personsIds, unitId)).andReturn(clonedContent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.replay(contentDaoMock);
 
-		//		try {
-		//			ViewComponentHbm copiedValue = viewComponentDao.cloneViewComponent(original, picturesIds, documentsIds, personsIds, 1);
-		//		} catch (Exception e) {
-		//			Assert.assertTrue(false);
-		//		}
-		//EasyMock.verify(contentDaoMock);
+		try {
+			ViewComponentHbm copiedValue = viewComponentDao.cloneViewComponent(original, picturesIds, documentsIds, personsIds, 1);
+			Assert.assertEquals(copiedValue.getDisplayLinkName(), "copy_" + original.getDisplayLinkName());
+			Assert.assertEquals(copiedValue.getLinkDescription(), original.getLinkDescription());
+			Assert.assertEquals(copiedValue.getDeployCommand(), original.getDeployCommand());
+			Assert.assertEquals(copiedValue.getDisplaySettings(), original.getDisplaySettings());
+			Assert.assertEquals(copiedValue.getLastModifiedDate(), original.getLastModifiedDate());
+			Assert.assertEquals(copiedValue.getMetaData(), original.getMetaData());
+			Assert.assertEquals(copiedValue.getMetaDescription(), original.getMetaDescription());
+			Assert.assertEquals(copiedValue.getOnline(), original.getOnline());
+			Assert.assertEquals(copiedValue.getOnlineStart(), original.getOnlineStart());
+			Assert.assertEquals(copiedValue.getOnlineStop(), original.getOnlineStop());
+			Assert.assertEquals(copiedValue.getOnline(), original.getOnline());
+			Assert.assertEquals(copiedValue.getReference(), "2");
+			Assert.assertEquals(copiedValue.getShowType(), original.getShowType());
+			Assert.assertEquals(copiedValue.getStatus(), original.getStatus());
+			Assert.assertEquals(copiedValue.getUrlLinkName(), "copy_" + original.getUrlLinkName());
+			Assert.assertEquals(copiedValue.getUserLastModifiedDate(), original.getUserLastModifiedDate());
+			Assert.assertEquals(copiedValue.getViewIndex(), original.getViewIndex());
+			Assert.assertEquals(copiedValue.getViewLevel(), original.getViewLevel());
+			Assert.assertEquals(copiedValue.getViewType(), original.getViewType());
+			Assert.assertEquals(copiedValue.getViewDocument(), original.getViewDocument());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(contentDaoMock);
 	}
 
 }
