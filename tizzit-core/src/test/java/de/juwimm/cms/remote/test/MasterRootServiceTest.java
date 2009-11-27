@@ -25,24 +25,6 @@ public class MasterRootServiceTest extends TestCase {
 
 	}
 
-	public void testCreateSite() {
-		SiteValue site = new SiteValue();
-		site.setSiteId(1);
-		site.setName("testSite");
-		site.setDcfUrl("testDcfUrl");
-		site.setConfigXML("testConfigXml");
-		site.setHelpUrl("testHelpUrl");
-		site.setCacheExpire(1);
-		site.setLastModifiedDate(0);
-		site.setMandatorDir("testMandatorDirectory");
-		site.setPageNameContent("testPageNameContent");
-		site.setPageNameFull("testPageNameFull");
-		site.setPageNameSearch("testPageNameSearch");
-		site.setPreviewUrl("testPreviewUrl");
-		site.setShortName("testShortName");
-
-	}
-
 	/**
 	 * Test changeSite
 	 * expect: replace old siteValue with new one
