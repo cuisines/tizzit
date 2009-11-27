@@ -514,4 +514,5 @@ public class ViewServiceTest extends TestCase {
 		}
 		EasyMock.verify(viewComponentDaoMock);
 	}
+
 }
