@@ -45,7 +45,7 @@
 		<li class="footer_item">
 			<a href="http://www.digg.com/submit?phase=2&amp;url=http://{$serverName}/{$language}/{$url}/page.html" target="_blank">
 				<img src="/httpd/img/footer/digg.gif" alt="DIGG IT!" borer="0"/>
-				<span>IGG IT!</span>
+				<span>DIGG IT!</span>
 			</a>
 		</li>
 	</xsl:template>

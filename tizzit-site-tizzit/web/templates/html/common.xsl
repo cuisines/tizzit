@@ -26,7 +26,7 @@
 	
 	<!-- Name of the template without teaser -->
 	<xsl:param name="cfg-templateNameWithoutTeaser" select="'standard-without-teaser'"/>
-	
+	 
 	<!-- Enable content table scaling -->
 	<xsl:param name="cfg-enableMaxContentTableWidth" select="'true'"/>
 	<xsl:param name="cfg-maxContentTableWidth" select="'500'"/>
