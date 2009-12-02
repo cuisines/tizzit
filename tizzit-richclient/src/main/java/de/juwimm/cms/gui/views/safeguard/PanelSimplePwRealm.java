@@ -81,8 +81,9 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 	}
 
 	public Integer getSelectedRealm() throws Exception {
-		RealmSimplePwValue val = (RealmSimplePwValue) (lstRealms.getSelectedValue());
-		return Integer.valueOf(val.getSimplePwRealmId());
+		DropDownHolder currentElement = (DropDownHolder) lstRealms.getSelectedValue();
+		RealmSimplePwValue val = (RealmSimplePwValue) currentElement.getObject();
+		return val.getSimplePwRealmId();
 	}
 
 	public void setExistingRealm(Integer realmId) {
@@ -207,6 +208,7 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 	private JButton getBtnAddSimpleRealm() {
 		if (btnAddSimpleRealm == null) {
 			btnAddSimpleRealm = new JButton();
+			btnAddSimpleRealm.setMinimumSize(new Dimension(120, 22));
 			btnAddSimpleRealm.setText(rb.getString("panel.panelSafeguard.realm.createnew"));
 			btnAddSimpleRealm.setPreferredSize(new java.awt.Dimension(120, 22));
 			btnAddSimpleRealm.addActionListener(new java.awt.event.ActionListener() {
@@ -245,6 +247,7 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 		if (btnManageRealm == null) {
 			btnManageRealm = new JButton();
 			btnManageRealm.setPreferredSize(new java.awt.Dimension(120, 22));
+			btnManageRealm.setMinimumSize(new Dimension(120, 22));
 			btnManageRealm.setText(rb.getString("panel.panelSafeguard.realm.manage"));
 			btnManageRealm.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -277,6 +280,7 @@ public class PanelSimplePwRealm extends JPanel implements ConfigurationInterface
 		if (btnDeleteRealm == null) {
 			btnDeleteRealm = new JButton();
 			btnDeleteRealm.setPreferredSize(new java.awt.Dimension(120, 22));
+			btnDeleteRealm.setMinimumSize(new Dimension(120, 22));
 			btnDeleteRealm.setText(rb.getString("panel.panelSafeguard.btn.deleterealm"));
 			btnDeleteRealm.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {

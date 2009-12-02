@@ -116,6 +116,11 @@ public class PanelMetaData extends JPanel implements LoadableViewComponentPanel 
 		}
 		this.vcd.setMetaData(this.txtMetaData.getText());
 		this.vcd.setMetaDescription(this.txtDescription.getText());
+
+	}
+
+	public ViewComponentValue getViewComponent() {
+		return this.vcd;
 	}
 
 	public void load(ViewComponentValue value) {

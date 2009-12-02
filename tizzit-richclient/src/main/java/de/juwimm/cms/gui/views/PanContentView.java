@@ -254,10 +254,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																																									 panMenuentry.unload();
-																																																																																																																																									 } else if (lastIndex == 2) {
-																																																																																																																																									 panMetaData.unload();
-																																																																																																																																									 }*/
+																																																																																																																																											 panMenuentry.unload();
+																																																																																																																																											 } else if (lastIndex == 2) {
+																																																																																																																																											 panMetaData.unload();
+																																																																																																																																											 }*/
 
 			String strTabName = "";
 			try {
@@ -303,6 +303,11 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			// Metadata
 			if (comm.isUserInRole(UserRights.PAGE_VIEW_METADATA)) {
 				panMetaData.save();
+				ViewComponentValue vc = panMetaData.getViewComponent();
+				if (vc != null) {
+					viewComponent.setMetaData(vc.getMetaData());
+					viewComponent.setMetaDescription(vc.getMetaDescription());
+				}
 			}
 
 			if (panTab.getSelectedIndex() == 0) {

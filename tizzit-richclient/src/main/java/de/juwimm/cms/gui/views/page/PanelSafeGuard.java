@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.gui.views.page;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -33,7 +33,6 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 
-import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
@@ -102,6 +101,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 			if (this.activeRealm.getLoginPageId() != null) this.loginPageId = this.activeRealm.getLoginPageId().toString();
 			if (this.activeRealm.isRealmNone()) {
 				this.rbNoRealm.setSelected(true);
+				this.panSimplePwRealm.setRequiredRole("");
 			} else if (this.activeRealm.isRealmSimplePw()) {
 				this.rbSimplePw.setSelected(true);
 				this.selectedRealm = REALM_SIMPLE_PW;
@@ -308,7 +308,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 
 	public void load(ViewComponentValue viewComponent) {
 		if (log.isDebugEnabled()) log.debug("load");
-		if(viewComponent == null) {
+		if (viewComponent == null) {
 			viewComponentId = -1;
 		} else {
 			this.viewComponentId = viewComponent.getViewComponentId();
