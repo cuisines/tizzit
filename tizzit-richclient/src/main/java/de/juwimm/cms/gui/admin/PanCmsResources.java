@@ -26,6 +26,8 @@ import java.util.Vector;
 import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -50,6 +52,7 @@ import javax.swing.tree.TreePath;
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants.ResourceUsageState;
+import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
 import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel;
@@ -86,6 +89,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 	private JLabel typeLabel;
 	private JLabel createdLabel;
 	private JLabel resourceStateLabel;
+	JButton resourcePreview;
 
 	private JLabel nameValueLabel;
 	private JLabel typeValueLabel;
@@ -94,6 +98,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 	private JTable viewComponentsTable;
 
 	private JPanel treeControlPanel;
+	private JPanel resourcePreviewPanel;
 	private JButton deleteResource;
 	private MultiComboBox filterMultiComboBox;
 	private ViewComponentsTableModel viewComponentsTableModel = new ViewComponentsTableModel();
@@ -118,6 +123,8 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		treeControlPanel = new JPanel();
 		deleteResource = new JButton();
 		viewComponentsTable = new JTable();
+		resourcePreviewPanel = new JPanel();
+		resourcePreview = new JButton();
 		this.communication = communication;
 		initLayout();
 		initListeners();
@@ -280,22 +287,47 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		} else {
 			this.viewComponentsTable.setVisible(false);
 		}
+
+		ImageIcon ico = Utils.getIcon4Extension(Utils.getExtension(value.getDocumentName()));
+		resourcePreview.setIcon(ico);
+		resourcePreview.setVisible(true);
 	}
 
-	public void updatePictureDetails(PictureTreeNode entry) {
-		PictureSlimstValue value = entry.getValue();
-		nameValueLabel.setText(value.getPictureName());
-		typeValueLabel.setText(value.getMimeType());
-		createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));
-		resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
-		if (entry.getState() != ResourceUsageState.Unsused) {
-			Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>) communication.getPictureUsage(value.getPictureId());
-			this.viewComponentsTableModel.setRows(viewComponentValues);
-			this.viewComponentsTable.setModel(new TableSorter(viewComponentsTableModel, this.viewComponentsTable.getTableHeader()));
-			this.viewComponentsTable.setVisible(true);
-		} else {
-			this.viewComponentsTable.setVisible(false);
-		}
+	public void updatePictureDetails(final PictureTreeNode entry) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				UIConstants.setWorker(true);
+				PictureSlimstValue value = entry.getValue();
+				nameValueLabel.setText(value.getPictureName());
+				typeValueLabel.setText(value.getMimeType());
+				createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));
+				resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
+				if (entry.getState() != ResourceUsageState.Unsused) {
+					Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>) communication.getPictureUsage(value.getPictureId());
+					viewComponentsTableModel.setRows(viewComponentValues);
+					viewComponentsTable.setModel(new TableSorter(viewComponentsTableModel, viewComponentsTable.getTableHeader()));
+					viewComponentsTable.setVisible(true);
+				} else {
+					viewComponentsTable.setVisible(false);
+				}
+
+				try {
+
+					Icon ico;
+					ico = new ImageIcon(communication.getThumbnail(value.getPictureId()));
+					resourcePreview.setIcon(ico);
+					resourcePreview.setVisible(true);
+
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) {
+						log.debug("PanCmsResources: image preview could not be loaded");
+					}
+					resourcePreview.setVisible(false);
+				} finally {
+					UIConstants.setWorker(false);
+				}
+			}
+		});
 	}
 
 	public void emptyDetails() {
@@ -303,6 +335,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		typeValueLabel.setText("");
 		createdValueLabel.setText("");
 		resourceStateValueLabel.setText("");
+		resourcePreview.setVisible(false);
 	}
 
 	private void initLayout() {
@@ -323,9 +356,13 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		resourcePanel.setBorder(new TitledBorder(rb.getString("panCmsResources.resourceDetails")));
 		detailsPane.add(resourcePanel, BorderLayout.NORTH);
 		resourcePanel.setLayout(new GridBagLayout());
+		resourcePreview.setPreferredSize(new Dimension(100, 100));
+		resourcePreview.setVisible(false);
+		resourcePreviewPanel.add(resourcePreview);
 
 		resourcePanel.add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(nameValueLabel, new GridBagConstraints(1, 0, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
+		resourcePanel.add(resourcePreviewPanel, new GridBagConstraints(2, 0, 1, 5, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 
 		resourcePanel.add(resourceStateLabel, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(resourceStateValueLabel, new GridBagConstraints(1, 1, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
@@ -336,7 +373,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		resourcePanel.add(createdLabel, new GridBagConstraints(0, 3, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(createdValueLabel, new GridBagConstraints(1, 3, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 		resourcePanel.add(new JLabel(rb.getString("panCmsResources.usingViewComponents.label")), new GridBagConstraints(0, 4, 1, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
-		resourcePanel.add(tableScrollPane, new GridBagConstraints(0, 5, 2, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
+		resourcePanel.add(tableScrollPane, new GridBagConstraints(0, 5, 3, 1, 0.5, 0.0, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 0), 0, 0));
 
 		nameLabel.setText(rb.getString("panCmsResources.details.name"));
 		typeLabel.setText(rb.getString("panCmsResources.details.type"));
@@ -371,7 +408,6 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		this.add(splitPane);
 
 	}
-
 	private static class ViewComponentsTableModel extends DefaultTableModel {
 		public ViewComponentsTableModel() {
 			super();
