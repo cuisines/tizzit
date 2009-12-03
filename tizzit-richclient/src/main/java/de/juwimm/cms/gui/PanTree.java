@@ -588,7 +588,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 		JPanel unitCBBPanel = new JPanel();
 		unitCBBPanel.add(cbxUnits, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 20), 0, 0));
-		unitCBBPanel.add(cbxUnits);
 		unitCBBPanel.setBackground(new Color(128, 128, 128));
 		unitCBBPanel.setPreferredSize(new Dimension(130, 30));
 
@@ -744,18 +743,26 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		});
 
 		this.selectDefaultViewDocument();
-		if (!comm.isUserInRole(UserRights.SITE_ROOT)) {
-			UnitValue[] uv = comm.getUnits();
-			if (uv == null || uv.length == 0) {
-				throw new UserHasNoUnitsException("Ihnen sind keine Einrichtungen zur Bearbeitung zugeordnet.\nBitte wenden Sie sich an Ihren Administrator.");
-			}
-			cbxUnits.removeAllItems();
-			for (int i = 0; i < uv.length; i++) {
-				cbxUnits.addItem(new DropDownHolder(uv[i], uv[i].getName()));
-			}
-		} else {
+		UnitValue[] uv = comm.getUnits();
+		if (uv == null || uv.length == 0) {
+			throw new UserHasNoUnitsException("Ihnen sind keine Einrichtungen zur Bearbeitung zugeordnet.\nBitte wenden Sie sich an Ihren Administrator.");
+		}
+		cbxUnits.removeAllItems();
+
+		for (int i = 0; i < uv.length; i++) {
+			cbxUnits.addItem(new DropDownHolder(uv[i], uv[i].getName()));
+		}
+
+		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			if (cbxViewDocuments.getSelectedItem() == null) {
 				PanTree.tree.setModel(new CmsTreeModel(new TreeNode(rb.getString("exception.SiteTreeIsEmpty"))));
+			}
+			UnitValue rootUnit = comm.getRootUnit4Site(comm.getSiteId());
+			for (int i = 0; i < cbxUnits.getItemCount(); i++) {
+				if (((UnitValue) ((DropDownHolder) cbxUnits.getItemAt(i)).getObject()).getUnitId().equals(rootUnit.getUnitId())) {
+					cbxUnits.setSelectedIndex(i);
+					comm.setSelectedUnitId(rootUnit.getUnitId());
+				}
 			}
 			loadView4ViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
 		}
@@ -770,12 +777,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		ViewComponentValue viewComponent = null;
 		try {
 			comm.setViewDocument(((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject()));
+			if (cbxUnits.getSelectedItem() == null) {
+				return;
+			}
+			int unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId().intValue();
+			comm.setSelectedUnitId(unitId);
+			ViewComponentValue rootComponentValue = null;
 			if (!comm.isUserInRole(UserRights.SITE_ROOT)) {
-				if (cbxUnits.getSelectedItem() == null) {
-					return;
-				}
-				int unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId().intValue();
-				comm.setSelectedUnitId(unitId);
 				try {
 					viewComponent = comm.getViewComponent4Unit(unitId, -1);
 				} catch (Exception exe) {
@@ -787,17 +795,25 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				try {
 					if (log.isDebugEnabled()) log.debug("Loading " + viewDocument.getViewId());
 					viewComponent = comm.getViewComponent(viewDocument.getViewId().intValue(), -1);
+					rootComponentValue = comm.getViewComponent4Unit(unitId);
 				} catch (Exception exe) {
-					log.error("Error getting vc", exe);
+					if (log.isDebugEnabled()) {
+						log.debug(String.format("load views: Unit %d and view document %d does not contain views", unitId, comm.getViewDocumentId()));
+					}
 				}
 			}
 			if (viewComponent != null) {
 				treeModel = new CmsTreeModel(new PageContentNode(viewComponent));
-				//tree.setTransferHandler(new TreeTransferHandler(treeModel));
 				comm.setTreeModel(treeModel);
 				tree.setModel(treeModel);
-				TreeNode root = (TreeNode) treeModel.getRoot();
-				TreePath rootPath = new TreePath(treeModel.getPathToRoot(root));
+				TreePath rootPath = null;
+				if (!comm.isUserInRole(UserRights.SITE_ROOT) || rootComponentValue == null) {
+					TreeNode root = (TreeNode) treeModel.getRoot();
+					rootPath = new TreePath(treeModel.getPathToRoot(root));
+				} else if (comm.isUserInRole(UserRights.SITE_ROOT)) {
+					PageNode rootPage = treeModel.findEntry4Id((TreeNode) treeModel.getRoot(), rootComponentValue.getViewComponentId());
+					rootPath = new TreePath(treeModel.getPathToRoot(rootPage));
+				}
 				tree.setSelectionPath(rootPath);
 				tree.expandPath(rootPath);
 			} else {

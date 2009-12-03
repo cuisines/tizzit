@@ -2674,4 +2674,7 @@ public class Communication implements ExitListener, ActionListener {
 		return (List<EditionValue>) getClientService().getEditions();
 	}
 
+	public UnitValue getRootUnit4Site(Integer siteId) {
+		return getClientService().getRootUnit4Site(siteId);
+	}
 }
