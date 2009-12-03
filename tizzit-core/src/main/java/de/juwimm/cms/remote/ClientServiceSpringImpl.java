@@ -1943,4 +1943,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		return getEditionServiceSpring().getDeployStatus(editions);
 	}
 
+	@Override
+	protected UnitValue handleGetRootUnit4Site(Integer siteId) throws Exception {
+		return getUnitServiceSpring().getRootUnit4Site(siteId);
+	}
+
 }

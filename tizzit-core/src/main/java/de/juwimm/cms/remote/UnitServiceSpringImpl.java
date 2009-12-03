@@ -51,7 +51,9 @@ public class UnitServiceSpringImpl extends de.juwimm.cms.remote.UnitServiceSprin
 		try {
 			UserHbm user = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
 			Collection units = super.getUnitHbmDao().findByName(user.getActiveSite().getSiteId(), unitName);
-			if (units.size() > 0) { throw new UserException("UnitnameIsAlreadyUsedException"); }
+			if (units.size() > 0) {
+				throw new UserException("UnitnameIsAlreadyUsedException");
+			}
 			UnitHbm unitHbm = new UnitHbmImpl();
 			unitHbm.setSite(user.getActiveSite());
 			unitHbm.setName(unitName);
@@ -158,4 +160,11 @@ public class UnitServiceSpringImpl extends de.juwimm.cms.remote.UnitServiceSprin
 		}
 
 	}
+
+	@Override
+	protected UnitValue handleGetRootUnit4Site(Integer siteId) throws Exception {
+		UnitHbm rootUnit = getSiteHbmDao().load(siteId).getRootUnit();
+		return getUnitHbmDao().getDao(rootUnit);
+	}
+
 }
