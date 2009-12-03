@@ -343,6 +343,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		this.setSize(636, 271);
 
 		viewComponentsTable.setModel(viewComponentsTableModel);
+
 		JScrollPane tableScrollPane = new JScrollPane(viewComponentsTable);
 		viewComponentsTable.setFillsViewportHeight(true);
 
@@ -432,6 +433,11 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 				}
 			}
 			fireTableRowsInserted(getRowCount(), getRowCount());
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
 		}
 	}
 
