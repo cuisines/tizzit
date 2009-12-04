@@ -346,7 +346,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	public PanTree() {
 
 		ActionHub.addViewComponentListener(this);
-
 		intLink.addEditpaneFiredListener(this);
 		cbxUnits.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -518,6 +517,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 	public JPanel createParameterPanel() {
 		panelParameters = treeParametersPanel();
+		panelParameters.setPreferredSize(new Dimension(250, 90));
+		panelParameters.setMinimumSize(new Dimension(250, 90));
 		return panelParameters;
 	}
 
@@ -541,6 +542,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		allOpen.setUI(new CommandMenuButtonUI());
 		allOpen.setHorizontalAlignment(SwingUtilities.LEFT);
 		allOpen.setPreferredSize(new Dimension(15, 20));
+		allOpen.setMinimumSize(new Dimension(15, 20));
 		allOpen.setMaximumSize(new Dimension(15, 20));
 		allOpen.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -552,8 +554,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		refresh.setDisplayState(CommandButtonDisplayState.MEDIUM);
 		refresh.setHorizontalAlignment(SwingUtilities.LEFT);
 		refresh.setUI(new CommandMenuButtonUI());
-		refresh.setPreferredSize(new Dimension(30, 20));
-		refresh.setMaximumSize(new Dimension(30, 20));
+		refresh.setPreferredSize(new Dimension(90, 20));
+		refresh.setMaximumSize(new Dimension(90, 20));
+		refresh.setMinimumSize(new Dimension(90, 20));
 		refresh.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ActionHub.fireActionPerformed(new ActionEvent(refresh, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_REFRESH));
@@ -571,11 +574,12 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		allClosed.setHorizontalAlignment(SwingUtilities.LEFT);
 		allClosed.setPreferredSize(new Dimension(15, 20));
 		allClosed.setMaximumSize(new Dimension(15, 20));
+		allClosed.setMinimumSize(new Dimension(15, 20));
 
 		JLabel lblMenu = new JLabel(rb.getString("panel.tree.parameters.lblMenu"));
 		JLabel lblNavigationLanguage = new JLabel(rb.getString("panel.tree.parameters.lblNavigation"));
-		cbxUnits.setPreferredSize(new Dimension(190, 21));
-		cbxUnits.setMinimumSize(new Dimension(190, 21));
+		lblNavigationLanguage.setPreferredSize(new Dimension(90, 21));
+		lblNavigationLanguage.setMinimumSize(new Dimension(90, 21));
 
 		JPanel unitLblPanel = new JPanel();
 		unitLblPanel.setLayout(new GridBagLayout());
@@ -585,27 +589,26 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		lblMenu.setMinimumSize(new Dimension(90, 30));
 		unitLblPanel.setBackground(new Color(128, 128, 128));
 		unitLblPanel.setPreferredSize(new Dimension(100, 30));
+		unitLblPanel.setMinimumSize(new Dimension(100, 30));
 
-		JPanel unitCBBPanel = new JPanel();
-		unitCBBPanel.add(cbxUnits, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 20), 0, 0));
+		final JPanel unitCBBPanel = new JPanel();
+		unitCBBPanel.setLayout(new GridBagLayout());
+		unitCBBPanel.add(cbxUnits, new GridBagConstraints(0, 0, 0, 0, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 10), 0, 0));
 		unitCBBPanel.setBackground(new Color(128, 128, 128));
-		unitCBBPanel.setPreferredSize(new Dimension(130, 30));
+		unitCBBPanel.setPreferredSize(new Dimension(200, 30));
+		unitCBBPanel.setMinimumSize(new Dimension(200, 30));
 
 		ComboBoxRenderer renderer = new ComboBoxRenderer();
 		cbxViewDocuments.setRenderer(renderer);
-		cbxViewDocuments.setMaximumSize(new Dimension(32767, 25));
-		cbxViewDocuments.setMinimumSize(new Dimension(126, 25));
-		cbxViewDocuments.setPreferredSize(new Dimension(130, 21));
 		cbxViewDocuments.setMaximumRowCount(20);
 
 		panel.add(lblNavigationLanguage, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
 		panel.add(cbxViewDocuments, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 100, 0, 10), 0, 0));
 		panel.add(unitLblPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 170), 0, 0));
-		panel.add(unitCBBPanel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 90, 0, 0), 0, 0));
+		panel.add(unitCBBPanel, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 100, 0, 0), 0, 0));
 		panel.add(allOpen, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 190), 0, 0));
 		panel.add(allClosed, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 75, 0, 120), 0, 0));
-		panel.add(refresh, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 190, 0, 10), 0, 0));
-
+		panel.add(refresh, new GridBagConstraints(0, 3, 2, 1, 0, 0.0, GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE, new Insets(5, 0, 0, 10), 0, 0));
 		return panel;
 	}
 	/**
@@ -715,7 +718,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		popup.addSeparator();
 
 		cbxUnits.removeAllItems();
-		cbxUnits.setMinimumSize(new Dimension(126, 21));
 		cbxViewDocuments.removeAllItems();
 
 		ItemListener[] il = cbxViewDocuments.getItemListeners();
