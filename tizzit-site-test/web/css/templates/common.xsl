@@ -82,6 +82,7 @@
 			font-size:24px;
 			padding-bottom:20px;
 			font-family:Trebuchet MS, Arial;
+			color:#254559;
 		}
 		h2 {
 			font-size:18px;
@@ -129,6 +130,8 @@
 			background-image:url('/httpd/img/white_wave.png');
 			background-repeat: repeat-x;
 			background-position: 0 188px;
+			<!--filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/httpd/img/white_wave.png',sizingMethod='crop');
+			_background:none;-->
 		}
 		#underwaterrepeat {
 			background-image:url('/httpd/img/underwater_repeat.png');
@@ -202,6 +205,8 @@
 			line-height:0px;
 			color:#fff;
 			font-size:0px;
+			top:0px;
+			z-index:255;
 		}
 		#f_content {
 			color: #aeb9bf;
@@ -269,7 +274,7 @@
 			float:left;
 		}
 		.footer_item {
-			padding-left:25px;
+			padding-left:15px;
 		}
 		.firstlevel2 {
 			margin: 49px 0 0 302px;
@@ -301,12 +306,16 @@
 			text-decoration:none;
 			font-size:17px;
 			display:block;
-			padding:5px 8px 13px 8px;
+			padding:5px 8px 16px 8px;
 			font-weight:bold;
 		}
-		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover,
-		.firstlevel2 .firstlink .clicked a:hover, .firstlevel2 .last-of-firstlink .clicked a:hover {
-			color:#96CF48;
+		.firstlevel2 .secondlink a, .firstlevel2 .last-of-secondlink a {
+			color: #fff;
+			text-decoration:none;
+			font-size:14px;
+			display:block;
+			padding:5px 8px 5px 13px;
+			font-weight:bold;
 		}
 		.firstlevel2 .firstlink .fl_bg_l, .firstlevel2 .last-of-firstlink .fl_bg_l {
 			background-image:url('/httpd/img/navi/nav_bg_left.gif');
@@ -328,6 +337,16 @@
 			background-repeat:no-repeat;
 			background-position:center 29px;
 			color:#fff;
+		}
+		.firstlevel2 .firstlink a:hover, .firstlevel2 .last-of-firstlink a:hover,
+		.firstlevel2 .firstlink .clicked a:hover, .firstlevel2 .last-of-firstlink .clicked a:hover,
+		.firstlevel2 .secondlink .actualClicked a, .firstlevel2 .secondlink .clicked a,
+		.firstlevel2 .last-of-secondlink .actualClicked a, .firstlevel2 .last-of-secondlink .clicked a {
+			color:#96CF48;
+		}
+		.firstlevel2 .secondlink .actualClicked a, .firstlevel2 .secondlink .clicked a,
+		.firstlevel2 .last-of-secondlink .actualClicked a, .firstlevel2 .last-of-secondlink .clicked a {
+			background-image:none;
 		}
 		.leftmenue .firstlink a {
 			font-size:13px;
@@ -373,9 +392,13 @@
 			margin:0 auto;
 		}
 		#information_2 .teaseritem {
-			width:450px;
+			width:445px;
 			float:left;
-			padding-right:20px;
+		}
+		#information_2 .right {
+			width:430px;
+			float:left;
+			padding-left:22px;
 		}
 		#information_2 h1.teaserheadline {
 			font-weight:normal;
@@ -415,6 +438,445 @@
 			height:13px;
 		}
 		.languageFlags a {
+		}
+		<!--
+			mainmenu
+		-->
+		.sf-menu, .sf-menu * {
+			margin:0;
+			padding:0;
+			list-style:none;
+			z-index:255;
+		}
+		.sf-menu {
+			line-height:1.0;
+		}
+		.sf-menu ul {
+			position:absolute;
+			top:-999em;
+			width:162px; /* left offset of submenus need to match (see below) */
+		}
+		.sf-menu ul li {
+			width:100%;
+		}
+		.sf-menu li:hover {
+			visibility:	inherit; /* fixes IE7 'sticky bug' */
+		}
+		.sf-menu li {
+			float:left;
+			position:relative;
+		}
+		.sf-menu a {
+			display:block;
+			position:relative;
+		}
+		.sf-menu li:hover ul,
+		.sf-menu li.sfHover ul {
+			left:0;
+			top:2.5em; /* match top ul list item height */
+			z-index:255;
+		}
+		ul.sf-menu li:hover li ul,
+		ul.sf-menu li.sfHover li ul {
+			top:-999em;
+		}
+		ul.sf-menu li li:hover ul,
+		ul.sf-menu li li.sfHover ul {
+			left:10em; /* match ul width */
+			top:0;
+		}
+		ul.sf-menu li li:hover li ul,
+		ul.sf-menu li li.sfHover li ul {
+			top:-999em;
+		}
+		ul.sf-menu li li li:hover ul,
+		ul.sf-menu li li li.sfHover ul {
+			left:10em; /* match ul width */
+			top:0;
+		}
+		.sf-menu {
+			float:left;
+			margin-bottom:1em;
+		}
+		.sf-menu a {
+			<!--padding:.75em 1em;-->
+			text-decoration:none;
+		}
+		.secondlinks {
+			background-image:url('/httpd/img/navi/secondlinks_bg_top.gif');
+			background-repeat:no-repeat;
+			padding:3px 0 0 0;
+			background-color:transparent;
+		}
+		.last-item {
+			background-image:url('/httpd/img/navi/secondlinks_bg_bottom.png');
+			background-repeat:no-repeat;
+			filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/httpd/img/navi/secondlinks_bg_bottom.png',sizingMethod='crop');
+			_background:none;
+			line-height:0px;
+			font-size:0px;
+			height:4px;
+			clear:both;
+		}
+		<!--.sf-menu a, .sf-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+			color:#13a;
+		}
+		.sf-menu li {
+			background:		#BDD2FF;
+		}-->
+		.sf-menu li li {
+			background:#254559;
+		}
+		<!--.sf-menu li li li {
+			background:		#9AAEDB;
+		}-->
+		.sf-menu li:hover, .sf-menu li.sfHover,
+		.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
+			<!--background:		#CFDEFF;-->
+			outline:0;
+		}
+		<!--/*** arrows **/
+		.sf-menu a.sf-with-ul {
+			padding-right: 	2.25em;
+			min-width:		1px; /* trigger IE7 hasLayout so spans position accurately */
+		}
+		.sf-sub-indicator {
+			position:		absolute;
+			display:		block;
+			right:			.75em;
+			top:			1.05em; /* IE6 only */
+			width:			10px;
+			height:			10px;
+			text-indent: 	-999em;
+			overflow:		hidden;
+			<!-\-background:		url('../images/arrows-ffffff.png') no-repeat -10px -100px; /* 8-bit indexed alpha png. IE6 gets solid image only */-\->
+		}
+		a > .sf-sub-indicator {  /* give all except IE6 the correct values */
+			top:			.8em;
+			background-position: 0 -100px; /* use translucent arrow for modern browsers*/
+		}-->
+		<!--/* apply hovers to modern browsers */
+			a:focus > .sf-sub-indicator,
+			a:hover > .sf-sub-indicator,
+			a:active > .sf-sub-indicator,
+			li:hover > a > .sf-sub-indicator,
+			li.sfHover > a > .sf-sub-indicator {
+				background-position: -10px -100px; /* arrow hovers for modern browsers*/
+		}
+		/* point right for anchors in subs */
+			.sf-menu ul .sf-sub-indicator { background-position:  -10px 0; }
+			.sf-menu ul a > .sf-sub-indicator { background-position:  0 0; }
+			/* apply hovers to modern browsers */
+			.sf-menu ul a:focus > .sf-sub-indicator,
+			.sf-menu ul a:hover > .sf-sub-indicator,
+			.sf-menu ul a:active > .sf-sub-indicator,
+			.sf-menu ul li:hover > a > .sf-sub-indicator,
+			.sf-menu ul li.sfHover > a > .sf-sub-indicator {
+				background-position: -10px 0; /* arrow hovers for modern browsers*/
+		}
+		/*** shadows for all but IE6 ***/
+			.sf-shadow ul {
+			background:	url('/httpd/img/navi/shadow.png') no-repeat bottom right;
+			padding: 0 8px 9px 0;
+			-moz-border-radius-bottomleft: 17px;
+			-moz-border-radius-topright: 17px;
+			-webkit-border-top-right-radius: 17px;
+			-webkit-border-bottom-left-radius: 17px;
+		}
+		.sf-shadow ul.sf-shadow-off {
+			background: transparent;
+			}-->
+		
+		<!--footer-->
+		#sn_footer li	{
+			position:relative;
+			overflow:hidden;
+		}
+		#sn_footer a {
+			text-decoration: none;
+			outline: none;
+			color:#fff;
+			display: block;
+			width: 24px;
+			cursor:pointer;
+		}
+		#sn_footer span {
+			width: 120px;
+			height: 35px;
+			position: absolute;
+			display: none;
+			color:#fff;
+			padding-left: 5px;
+		}
+		<!--FancyBox-->
+		div#fancy_overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #666;
+			display: none;
+			z-index: 30;
+		}
+		* html div#fancy_overlay {
+			position: absolute;
+			height: expression(document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + 'px');
+		}
+		div#fancy_wrap {
+			text-align: left;
+		}
+		div#fancy_loading {
+			position: absolute;
+			height: 40px;
+			width: 40px;
+			cursor: pointer;
+			display: none;
+			overflow: hidden;
+			background: transparent;
+			z-index: 100;
+		}
+		div#fancy_loading div {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 40px;
+			height: 480px;
+			background: transparent url('/httpd/img/fancyBox/fancy_progress.png') no-repeat;
+		}
+		div#fancy_loading_overlay {
+			position: absolute;
+			background-color: #FFF;
+			z-index: 30;
+		}
+		div#fancy_loading_icon {
+			position: absolute;
+			background: url('/httpd/img/fancyBox/fancy_loading.gif') no-repeat;
+			z-index: 35;
+			width: 16px;
+			height: 16px;
+		}
+		div#fancy_outer {
+			position: absolute;
+		    top: 0;
+		    left: 0;
+		    z-index: 90;
+		    padding: 18px 18px 33px 18px;
+		    margin: 0;
+		    overflow: hidden;
+		    background: transparent;
+		    display: none;
+		}
+		div#fancy_inner {
+			position: relative;
+			width:100%;
+			height:100%;
+			border: 1px solid #BBB;
+			background: #FFF;
+		}
+		div#fancy_content {
+			margin: 0;
+			z-index: 100;
+			position: absolute;
+		}
+		div#fancy_div {
+			background: #000;
+			color: #FFF;
+			height: 100%;
+			width: 100%;
+			z-index: 100;
+		}
+		img#fancy_img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			border:0; 
+			padding: 0; 
+			margin: 0;
+			z-index: 100;
+			width: 100%;
+			height: 100%;
+		}
+		div#fancy_close {
+			position: absolute;
+			top: -12px;
+			right: -15px;
+			height: 30px;
+			width: 30px;
+			background: url('/httpd/img/fancyBox/fancy_closebox.png') top left no-repeat;
+			cursor: pointer;
+			z-index: 181;
+			display: none;
+		}
+		#fancy_frame {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			display: none;
+		}
+		#fancy_ajax {
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+		}
+		a#fancy_left, a#fancy_right {
+			position: absolute; 
+			bottom: 0px; 
+			height: 100%; 
+			width: 35%; 
+			cursor: pointer;
+			z-index: 111; 
+			display: none;
+			background-image: url(data:image/gif;base64,AAAA);
+			outline: none;
+		}
+		a#fancy_left {
+			left: 0px; 
+		}
+		a#fancy_right {
+			right: 0px; 
+		}
+		span.fancy_ico {
+			position: absolute; 
+			top: 50%;
+			margin-top: -15px;
+			width: 30px;
+			height: 30px;
+			z-index: 112; 
+			cursor: pointer;
+			display: block;
+		}
+		span#fancy_left_ico {
+			left: -9999px;
+			background: transparent url('/httpd/img/fancyBox/fancy_left.png') no-repeat;
+		}
+		span#fancy_right_ico {
+			right: -9999px;
+			background: transparent url('/httpd/img/fancyBox/fancy_right.png') no-repeat;
+		}
+		a#fancy_left:hover {
+		  visibility: visible;
+		}
+		a#fancy_right:hover {
+		  visibility: visible;
+		}
+		a#fancy_left:hover span {
+			left: 20px; 
+		}
+		a#fancy_right:hover span {
+			right: 20px; 
+		}
+		.fancy_bigIframe {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: transparent;
+		}
+		div#fancy_bg {
+			position: absolute;
+			top: 0; left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 70;
+			border: 0;
+			padding: 0;
+			margin: 0;
+		}
+		div.fancy_bg {
+			position: absolute;
+			display: block;
+			z-index: 70;
+			border: 0;
+			padding: 0;
+			margin: 0;
+		}
+		div.fancy_bg_n {
+			top: -18px;
+			width: 100%;
+			height: 18px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_n.png') repeat-x;
+		}
+		div.fancy_bg_ne {
+			top: -18px;
+			right: -13px;
+			width: 13px;
+			height: 18px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_ne.png') no-repeat;
+		}
+		div.fancy_bg_e {
+			right: -13px;
+			height: 100%;
+			width: 13px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_e.png') repeat-y;
+		}
+		div.fancy_bg_se {
+			bottom: -18px;
+			right: -13px;
+			width: 13px;
+			height: 18px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_se.png') no-repeat;
+		}
+		div.fancy_bg_s {
+			bottom: -18px;
+			width: 100%;
+			height: 18px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_s.png') repeat-x;
+		}
+		div.fancy_bg_sw {
+			bottom: -18px;
+			left: -13px;
+			width: 13px;
+			height: 18px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_sw.png') no-repeat;
+		}
+		div.fancy_bg_w {
+			left: -13px;
+			height: 100%;
+			width: 13px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_w.png') repeat-y;
+		}
+		div.fancy_bg_nw {
+			top: -18px;
+			left: -13px;
+			width: 13px;
+			height: 18px;
+			background: transparent url('/httpd/img/fancyBox/fancy_shadow_nw.png') no-repeat;
+		}
+		div#fancy_title {
+			position: absolute;
+			bottom: -33px;
+			left: 0;
+			width: 100%;
+			z-index: 100;
+			display: none;
+		}
+		div#fancy_title div {
+			color: #FFF;
+			font: bold 12px Arial;
+			padding-bottom: 3px;
+		}
+		div#fancy_title table {
+			margin: 0 auto;
+		}
+		div#fancy_title table td {
+			padding: 0;
+			vertical-align: middle;
+		}
+		td#fancy_title_left {
+			height: 32px;
+			width: 15px;
+			background: transparent url(/httpd/img/fancyBox/fancy_title_left.png) repeat-x;
+		}
+		td#fancy_title_main {
+			height: 32px;
+			background: transparent url(/httpd/img/fancyBox/fancy_title_main.png) repeat-x;
+		}
+		td#fancy_title_right {
+			height: 32px;
+			width: 15px;
+			background: transparent url(/httpd/img/fancyBox/fancy_title_right.png) repeat-x;
 		}
 
 		<xsl:if test="$media = 'print'"></xsl:if>

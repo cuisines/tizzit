@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<source>
+    <head/>
+    <all>
+        <stickyPad/>
+        <textfield name="content" label="Text über dem Wiki"/>
+        <getPage xmlns="http://plugins.tizzit.org/ConfluenceContentPlugin">
+            <simpletextfield label="Page Id" name="pageId" />
+            <confluenceURLs dcfname="confluenceURLs" label="Confluence URLs">
+                <dcfConfig>
+                    <classname>de.juwimm.cms.content.modules.SimpleDropDown</classname>
+                    <mandatory>true</mandatory>
+                    <property name="dropdownValues">
+                        <name>Tizzit Wiki</name>
+                        <value>http://wiki.tizzit.org</value>
+                    </property>
+                </dcfConfig>
+                <dcfInitial />
+            </confluenceURLs>
+            <checkBox label="Wikicontent inkl. Styles einbinden?" name="useStyles">
+                <box elementname="value" label="Yes" selected="false">true</box>
+            </checkBox>
+        </getPage>
+        <web20/>
+        <sn_footer>
+            <delicious/>
+            <facebook/>
+            <twitter/>
+            <digg/>
+            <stumble/>
+            <rrs/>
+        </sn_footer>
+    </all>
+</source>

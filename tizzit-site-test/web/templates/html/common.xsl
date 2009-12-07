@@ -12,7 +12,7 @@
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format_xhtml.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/standard.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/date.lib.xsl"/>
-
+	
 	<xsl:include href="include/footer.xsl"/>
 	<xsl:include href="include/teaser.xsl"/>
 	<xsl:include href="include/image_div.xsl"/> 
@@ -26,7 +26,7 @@
 	
 	<!-- Name of the template without teaser -->
 	<xsl:param name="cfg-templateNameWithoutTeaser" select="'standard-without-teaser'"/>
-	
+	 
 	<!-- Enable content table scaling -->
 	<xsl:param name="cfg-enableMaxContentTableWidth" select="'true'"/>
 	<xsl:param name="cfg-maxContentTableWidth" select="'500'"/>

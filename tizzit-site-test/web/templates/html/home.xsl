@@ -3,7 +3,7 @@
 
 	<xsl:include href="common.xsl"/>
 
-    <xsl:template match="content" mode="include-after" priority="2">
+    <xsl:template match="content" mode="include-before" priority="2">
         <div id="loopedSlider">	
             <div class="container">
                 <div class="slides">
@@ -12,8 +12,8 @@
                     <div><xsl:call-template name="content3"/></div>
                 </div>
             </div>
-            <a href="#" class="previous"><img src="/httpd/img/home/arrow_l.png" alt="Previous" border="0"/></a>
-            <a href="#" class="next"><img src="/httpd/img/home/arrow_r.png" alt="Next" border="0"/></a>
+            <a href="#" class="previous"><img src="/httpd/img/spacer.gif" alt=""/></a>
+            <a href="#" class="next"><img src="/httpd/img/spacer.gif" alt=""/></a>
             <ul class="pagination">
                 <li><a href="#">1</a></li>
                 <li><a href="#">2</a></li>
@@ -28,6 +28,15 @@
             ]]>
         </script>
         <div class="clear">&#160;</div>
+    </xsl:template>
+    
+    <xsl:template match="content[@dcfname='homeContent']" mode="format" priority="1">
+        <div class="homeContent">
+            <xsl:if test="//source/head/title!=''">
+                <h1><xsl:value-of select="//source/head/title"/></h1>
+            </xsl:if>
+            <xsl:apply-templates mode="format"/>
+        </div>
     </xsl:template>
     
     <xsl:template name="content1">
@@ -78,9 +87,9 @@
     </xsl:template>
     
     <xsl:template name="content3">
-        <div id="video_container">
+        <span id="video_container">
             <a href="http://www.macromedia.com/go/getflashplayer">Get the Flash Player</a> to see this player.
-        </div>
+        </span>
         <script language="JavaScript" type="text/JavaScript" src="/httpd/js/swfobject.js">&#160;</script>
         <script language="JavaScript" type="text/JavaScript">
             <xsl:variable name="autostart">
@@ -114,6 +123,13 @@
         <xsl:text>?id=</xsl:text>
         <xsl:value-of select="../picture[@dcfname=$bg]/image/@src"/>
         <xsl:text>');</xsl:text>
+        
+        <xsl:text>filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/img/ejbimage/</xsl:text>
+        <xsl:value-of select="../picture[@dcfname=$bg]/image/filename"/>
+        <xsl:text>?id=</xsl:text>
+        <xsl:value-of select="../picture[@dcfname=$bg]/image/@src"/>
+        <xsl:text>',sizingMethod='crop');</xsl:text>
+        <xsl:text>_background:none;</xsl:text>
     </xsl:template>
     
     <xsl:template name="writeLink">
@@ -137,13 +153,18 @@
     </xsl:template>
     
     <xsl:template match="information_1">
-        <ctmpl:module name="information_1"> 
+        <ctmpl:module name="information_1">
             <xsl:choose>
                 <xsl:when test="//newslist != ''">
                     <div class="latestNews">
-                        <h1>Latest News</h1>
+                        <h2>Latest News</h2>
                         <xsl:apply-templates select="//newslist" mode="latestnews"/>
                         <div class="clear">&#160;</div>
+                        <xsl:if test="//internalLink[@dcfname='linkToNews']/internalLink!=''">
+                            <div class="allNews">
+                                <xsl:call-template name="allNews"/>
+                            </div>
+                        </xsl:if>
                     </div>  
                 </xsl:when>
                 <xsl:otherwise>
@@ -196,6 +217,9 @@
                             <xsl:text>/</xsl:text>
                             <xsl:value-of select="newsdate/year"/>
                         </div>
+                        <xsl:if test="picture/image/@src!=''">
+                            <img src="/img/ejbimage/{picture/image/filename}?id={picture/image/@src}" class="newsImg" alt="{picture/image/alttext}" align="left" width="35" height="35"/>
+                        </xsl:if>
                         <h2 class="newsHeadline">
                             <a>
                                 <xsl:attribute name="href">
@@ -209,9 +233,10 @@
                                 <xsl:value-of select="newsname"/>
                             </a>
                         </h2>
+                        <div class="clear">&#160;</div>
                         <div class="newsContent">
-                            <xsl:value-of select="substring(text, 0, 300)"/>
-                            <xsl:if test="string-length(text)&gt;300">
+                            <xsl:value-of select="substring(text, 0, 150)"/>
+                            <xsl:if test="string-length(text)&gt;150">
                                 &#160;
                                 <a class="moreLink">
                                     <xsl:attribute name="href">
@@ -239,6 +264,9 @@
                             <xsl:text>/</xsl:text>
                             <xsl:value-of select="newsdate/year"/>
                         </div>
+                        <xsl:if test="picture/image/@src!=''">
+                            <img src="/img/ejbimage/{picture/image/filename}?id={picture/image/@src}" class="newsImg" alt="{picture/image/alttext}" align="left" width="35" height="35"/>
+                        </xsl:if>
                         <h2 class="newsHeadline">
                             <a>
                                 <xsl:attribute name="href">
@@ -252,9 +280,10 @@
                                 <xsl:value-of select="newsname"/>
                             </a>
                         </h2>
+                        <div class="clear">&#160;</div>
                         <div class="newsContent">
-                            <xsl:value-of select="substring(text, 0, 300)"/>
-                            <xsl:if test="string-length(text)&gt;300">
+                            <xsl:value-of select="substring(text, 0, 150)"/>
+                            <xsl:if test="string-length(text)&gt;150">
                                 &#160;
                                 <a class="moreLink">
                                     <xsl:attribute name="href">
@@ -273,6 +302,11 @@
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template name="allNews">
+        <xsl:apply-templates select="//internalLink[@dcfname='linkToNews']/internalLink" mode="format"/>
+        <div class="clear">&#160;</div>
     </xsl:template>
     
 </xsl:stylesheet>

@@ -24,7 +24,7 @@ function CRegister(logname) {
 	this.createRegisterService = function(){
     	try {
     		this.cfh = new Packages.de.juwimm.cms.cocoon.CformHelper("register", getJars("juwimm-registry"));
-    		this.utl = this.cfh.instanciateClass("de.juwimm.registry.remote.RegistryServiceUtil");
+    		this.utl = cfh.instanciateClass("de.juwimm.registry.remote.RegistryServiceUtil");
     		
     		this.registerService = this.utl.getHome().create();
     	} catch(e){
@@ -240,7 +240,6 @@ function CRegister(logname) {
     
     this.closeCRegister = function(){
         this.registerService = null;
-        this.cfh.retireBorderline();
     }
     
     /*Alle Methoden aus der Klasse RegistryService*/

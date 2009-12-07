@@ -1,7 +1,7 @@
 importPackage(java.lang);
 importPackage(java.util);
 importPackage(java.text);
-importClass(Packages.de.juwimm.util.XercesHelper);
+importClass(Packages.org.tizzit.util.XercesHelper);
 importClass(org.jaxen.dom.DOMXPath);
 
 function getDocument() {

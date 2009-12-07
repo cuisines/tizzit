@@ -1,5 +1,5 @@
 importClass(java.lang.String);
-importClass(Packages.de.juwimm.util.XercesHelper);
+importClass(Packages.org.tizzit.util.XercesHelper);
 
 cocoon.load("flow/include.js");
 
@@ -44,7 +44,6 @@ function userChangeData() {
     setDocumentValue("stadt", registerService.getExtraValue(userVo, "stadt"));	
     setDocumentValue("abbrobationsnummer", registerService.getExtraValue(userVo, "abbrobationsnummer"));	
     
-    cfh.retireBorderline(); 
 	var error = false;
 	var false_str = new java.lang.String("false");
 	var errorType = "";
@@ -56,7 +55,6 @@ function userChangeData() {
 	   	var userModel = userForm.getModel();	
 	} while(error);
     
-    cfh.reuseClassloader();
 	userVo.setEmail(getDocumentValue("email"));
 	userVo.setPassword(getDocumentValue("passwd"));
 	userVo = registerService.changeExtraValue(userVo, "name", getDocumentValue("lastname"));
@@ -67,15 +65,12 @@ function userChangeData() {
 	userVo = registerService.changeExtraValue(userVo, "abbrobationsnummer", getDocumentValue("abbrobationsnummer"));
    	var test = false;
    	test = registerService.updateUser(userVo);
-   	cfh.retireBorderline();
-   	cfh.reuseClassloader();
    	userVo = registerService.getUserByMandantAndLoginname(mandant, cqUserName);
    	loginname = userVo.getLoginname();
    	test = false;
    	test = registerService.updateUser(userVo);
 
     if (registerService != null) registerService.remove();
-    cfh.retireBorderline();    
 
 	cocoon.sendPage("de/register-changeuserdata_completed-pipeline.jx");
 

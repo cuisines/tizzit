@@ -80,11 +80,8 @@
             <xsl:choose>
                 <xsl:when test="$cfg-enableShadowboxContentThumbnails = 'true'">
                     <a>
-                        <xsl:attribute name="rel">
-                            <xsl:text>shadowbox;width=</xsl:text>
-                            <xsl:value-of select="@width"/>
-                            <xsl:text>;height=</xsl:text>
-                            <xsl:value-of select="@height"/>
+                        <xsl:attribute name="id">
+                            <xsl:text>single_3</xsl:text>
                         </xsl:attribute>
                         <xsl:attribute name="href">
                             <xsl:text>/img/ejbimage</xsl:text>

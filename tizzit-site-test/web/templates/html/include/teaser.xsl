@@ -38,7 +38,13 @@
     </xsl:template>
     
     <xsl:template match="teaser" mode="teaser">
-        <div class="teaseritem">
+        <div>
+            <xsl:attribute name="class">
+                <xsl:text>teaseritem</xsl:text>
+                <xsl:if test="position() mod 2 = 0">
+                    <xsl:text> right</xsl:text>
+                </xsl:if>
+            </xsl:attribute>
             <xsl:apply-templates select="teaser" mode="teasercontent"/>
         </div>
         <xsl:if test="position() mod 2 = 0">

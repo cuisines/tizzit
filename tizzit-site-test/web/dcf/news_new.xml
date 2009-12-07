@@ -10,7 +10,8 @@
     				<simpleDate name="newsdate" dcfname="newsdate" label="Datum/Starttermin"/>
                     <simpleDate name="newsEndDate" dcfname="newsEndDate" label="Endtermin (optional)"/>
                     <simpleDate name="newsArchivDate" dcfname="newsArchivDate" label="News anzeigen bis"/>
-    				<simpletextfield name="newsdate-info" label="Zeitpunkt (optional)"/>							
+    				<simpletextfield name="newsdate-info" label="Zeitpunkt (optional)"/>
+    				<picture label="News Icon" />
     				<textfield name="text" label="Beschreibung"/>	
     			</iteration>
     		</news>

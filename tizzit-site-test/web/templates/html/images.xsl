@@ -6,15 +6,23 @@
     <xsl:template match="content" mode="format" priority="3">
         <xsl:apply-templates mode="format"/>
         <xsl:if test="../images/item/image-name">
-            <script language="JavaScript" src="/httpd/js/imageflow.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
             <div id="myImageFlow" class="imageflow">
                 <xsl:apply-templates select="../images/item/image-name"/>
             </div>
+            <div class="clear">&#160;</div>
         </xsl:if>
     </xsl:template>
     
     <xsl:template match="image-name">
-        <img src="/img/ejbimage/{image/filename}?id={image/@src}" alt="{image/alttext}" longdesc="/img/ejbimage/{image/filename}?id={image/@src}" />
+        <div class="image">
+            <a href="/img/ejbimage/{image/filename}?id={image/@src}" rel="group" id="single_3" title="{image/alttext}">
+                <img src="/img/ejbimage/{image/filename}?id={image/@src}" width="130" alt="{image/alttext}" align="left"/>
+            </a>
+            <div class="clear">&#160;</div>
+            <xsl:if test="image/alttext!=''">
+                <div class="imgTxt"><xsl:value-of select="image/alttext"/></div>
+            </xsl:if>
+        </div>
     </xsl:template>
 	
 </xsl:stylesheet>

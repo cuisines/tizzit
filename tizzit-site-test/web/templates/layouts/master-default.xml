@@ -5,19 +5,23 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<ctmpl:include name="css"/>
 		<link rel="alternate" type="application/rss+xml" title="RSS-Feed" href="content.rss" />
-        <script language="JavaScript" src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
-		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/adapter/shadowbox-base.js"><![CDATA[ ]]></script>
-		<script language="JavaScript" type="text/JavaScript" src="/httpd/js/shadowbox.js"><![CDATA[ ]]></script>
-		<script language="JavaScript" type="text/javaScript">
+		<link rel="shortcut icon" type="image/x-icon" href="/httpd/img/favicon.ico" /> 
+		<link rel="icon" type="image/x-icon" href="/httpd/img/favicon.ico" />
+        <script src="/jscript/scripts.js" type="text/JavaScript"><![CDATA[&#160;]]></script>
+		<script src="/httpd/js/jquery-1.3.2.js" type="text/javascript"><![CDATA[&#160;]]></script>
+		<script type="text/javascript" src="/httpd/js/general.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/hoverIntent.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/superfish.js"><![CDATA[ ]]></script>
+		<script type="text/javascript">
 			<![CDATA[
-				Shadowbox.loadSkin('classic', '/httpd/js/skin');
-				Shadowbox.loadLanguage('de-DE', '/httpd/js/lang');
-				Shadowbox.loadPlayer(['flv','html','iframe','img','swf'], '/httpd/js/player');
-				window.onload = function(){
-					Shadowbox.init();
-				};
+				jQuery(function(){
+				jQuery('ul.sf-menu').superfish();
+				});
 			]]>
 		</script>
+		<script type="text/javascript" src="/httpd/js/custom.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/jquery.easing.1.3.js"><![CDATA[ ]]></script>
+		<script type="text/javascript" src="/httpd/js/jquery.fancybox-1.2.1.pack.js"><![CDATA[ ]]></script>
 	</head>
 	<body>
 		<div id="cloudsrepeat">
@@ -30,7 +34,7 @@
 								<div id="toparea">
 									<ctmpl:include name="secondlevel"/>
 									<ctmpl:include name="language"/>
-									<!--<ctmpl:include name="search"/>-->
+									<ctmpl:include name="search"/>
 								</div>
 								<div class="clear">&#160;</div>
 								<ctmpl:include name="firstlevel2"/>
@@ -72,21 +76,15 @@
 		</div>
 		<!-- Piwik -->
 		<script type="text/javascript">
-			<![CDATA[
-				var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.juwimm.info/" (https://piwik.juwimm.info/) : "http://piwik.juwimm.info/" (http://piwik.juwimm.info/));
-				document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-			]]>
-		</script>
-		<script type="text/javascript">
-			<![CDATA[
-				try {
-				var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 7);
-				piwikTracker.trackPageView();
-				piwikTracker.enableLinkTracking();
-				} catch( err ) {}
-			]]>
-		</script>
-		<noscript><p><img src="http://piwik.juwimm.info/piwik.php?idsite=7" style="border:0" alt=""/></p></noscript>
-		<!-- End Piwik Tag --> 
+			var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.juwimm.info/" : "http://piwik.juwimm.info/");
+			document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+		</script><script type="text/javascript">
+			try {
+			var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 7);
+			piwikTracker.trackPageView();
+			piwikTracker.enableLinkTracking();
+			} catch( err ) {}
+		</script><noscript><p><img src="http://piwik.juwimm.info/piwik.php?idsite=7" style="border:0" alt=""/></p></noscript>
+		<!-- End Piwik Tag -->
 	</body>
 </html>

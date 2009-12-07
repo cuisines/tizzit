@@ -47,7 +47,7 @@
 		autoStart: 0, // Set to positive number for auto start and interval time
 		restart: 0, // Set to positive number for restart and restart time
 		slidespeed: 300, // Speed of slide animation
-		fadespeed: 300, // Speed of fade animation
+		fadespeed: 0, // Speed of fade animation
 		autoHeight: false // Set to positive number for auto height and animation speed
 	};
 		
