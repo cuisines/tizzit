@@ -89,6 +89,7 @@ import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.GetContentHandler;
 import de.juwimm.cms.content.event.EditpaneFiredEvent;
 import de.juwimm.cms.content.event.EditpaneFiredListener;
+import de.juwimm.cms.content.event.TreeSelectionEventData;
 import de.juwimm.cms.content.modules.InternalLink;
 import de.juwimm.cms.content.modules.Module;
 import de.juwimm.cms.content.panel.PanInternalLink;
@@ -441,7 +442,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					try {
 						TreePath path = event.getPath();
 						PageNode entry = (PageNode) path.getLastPathComponent();
-						updateTreeAfterClick(entry, false, false);
+						updateTreeAfterClick(entry, false, true);
 					} catch (Exception ex) {
 					}
 				}
@@ -646,7 +647,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		}
 	}
 
-	public void reload() throws Exception {
+	private void reloadTreeView() throws Exception {
 		popup.removeAll();
 		//JMenuItem menuItem = new JMenuItem(ACTION_RELOAD_SUBTREE);
 		//menuItem.addActionListener(this);
@@ -754,11 +755,14 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		for (int i = 0; i < uv.length; i++) {
 			cbxUnits.addItem(new DropDownHolder(uv[i], uv[i].getName()));
 		}
+		if (cbxViewDocuments.getSelectedItem() == null) {
+			PanTree.tree.setModel(new CmsTreeModel(new TreeNode(rb.getString("exception.SiteTreeIsEmpty"))));
+		}
+	}
 
+	public void reload() throws Exception {
+		reloadTreeView();
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
-			if (cbxViewDocuments.getSelectedItem() == null) {
-				PanTree.tree.setModel(new CmsTreeModel(new TreeNode(rb.getString("exception.SiteTreeIsEmpty"))));
-			}
 			UnitValue rootUnit = comm.getRootUnit4Site(comm.getSiteId());
 			for (int i = 0; i < cbxUnits.getItemCount(); i++) {
 				if (((UnitValue) ((DropDownHolder) cbxUnits.getItemAt(i)).getObject()).getUnitId().equals(rootUnit.getUnitId())) {
@@ -769,6 +773,69 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			loadView4ViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
 		}
 		comm.setViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
+	}
+
+	public void reloadWithSelection(TreeSelectionEventData treeSelectionEventData) throws Exception {
+		reloadTreeView();
+		boolean foundViewDocument = false;
+		for (int i = 0; i < cbxViewDocuments.getItemCount(); i++) {
+			if (((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getItemAt(i)).getObject()).getViewDocumentId().equals(treeSelectionEventData.getViewDocument().getViewDocumentId())) {
+				foundViewDocument = true;
+				comm.setViewDocument(((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject()));
+				break;
+			}
+		}
+		//view document was not found in current site
+		if (!foundViewDocument) {
+			loadView4ViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
+			return;
+		}
+
+		boolean foundUnit = false;
+		for (int i = 0; i < cbxUnits.getItemCount(); i++) {
+			if (((UnitValue) ((DropDownHolder) cbxUnits.getItemAt(i)).getObject()).getUnitId().equals(treeSelectionEventData.getUnitId())) {
+				foundUnit = true;
+				comm.setSelectedUnitId(treeSelectionEventData.getUnitId());
+				break;
+			}
+		}
+
+		//unit not found in the current site
+		if (!foundUnit) {
+			loadView4ViewDocument((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject());
+			return;
+		}
+
+		ViewComponentValue viewComponent = null;
+
+		if (!comm.isUserInRole(UserRights.SITE_ROOT)) {
+			viewComponent = comm.getViewComponent4Unit(treeSelectionEventData.getUnitId(), -1);
+		} else {
+			viewComponent = comm.getViewComponent(treeSelectionEventData.getViewDocument().getViewId().intValue(), -1);
+		}
+
+		if (viewComponent != null) {
+			treeModel = new CmsTreeModel(new PageContentNode(viewComponent), treeSelectionEventData.getViewComponentId());
+			comm.setTreeModel(treeModel);
+			tree.setModel(treeModel);
+			TreePath selectedPath = null;
+			PageNode selectedPage = treeModel.findEntry4Id((TreeNode) treeModel.getRoot(), treeSelectionEventData.getViewComponentId());
+			if (selectedPage != null) {
+				selectedPath = new TreePath(treeModel.getPathToRoot(selectedPage));
+				tree.setSelectionPath(selectedPath);
+			}
+		} else {
+			viewComponent = new ViewComponentValue();
+			viewComponent.setRoot(true);
+			treeModel = new CmsTreeModel(new TreeNode());
+			comm.setTreeModel(treeModel);
+			tree.setModel(treeModel);
+			TreeNode root = (TreeNode) treeModel.getRoot();
+			TreePath rootPath = new TreePath(treeModel.getPathToRoot(root));
+			tree.setSelectionPath(rootPath);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.UnitIsNotAssigned"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
 	public void setTreeToEmpty() {

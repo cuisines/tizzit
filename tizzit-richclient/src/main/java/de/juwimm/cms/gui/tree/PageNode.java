@@ -21,7 +21,9 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -74,7 +76,9 @@ public class PageNode extends TreeNode implements Transferable {
 
 	@Override
 	public String toString() {
-		if (getViewComponent() == null || getViewComponent().isRoot()) { return rb.getString("panel.tree.rootHeading"); }
+		if (getViewComponent() == null || getViewComponent().isRoot()) {
+			return rb.getString("panel.tree.rootHeading");
+		}
 		return getViewComponent().getDisplayLinkName();
 	}
 
@@ -130,7 +134,9 @@ public class PageNode extends TreeNode implements Transferable {
 
 	/** implements Transferable interface */
 	public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
-		if (df.equals(DATA_FLAVOUR_PAGE_NODE)) { return this; }
+		if (df.equals(DATA_FLAVOUR_PAGE_NODE)) {
+			return this;
+		}
 		throw new UnsupportedFlavorException(df);
 	}
 
@@ -208,9 +214,9 @@ public class PageNode extends TreeNode implements Transferable {
 		return retVal;
 	}
 
-	private void buildNodes(PageNode pageNode, ViewComponentValue vcDao) {
+	private PageNode buildNodes(PageNode pageNode, ViewComponentValue vcDao) {
 		try {
-			TreeNode entry = null;
+			PageNode entry = null;
 			switch (vcDao.getViewType()) {
 				case Constants.VIEW_TYPE_INTERNAL_LINK:
 					entry = new PageInternallinkNode(vcDao, getTreeModel());
@@ -247,9 +253,63 @@ public class PageNode extends TreeNode implements Transferable {
 			if (entry != null) {
 				pageNode.add(entry);
 			}
+			return entry;
 		} catch (Exception exe) {
 			log.error("Error building nodes", exe);
+			return null;
 		}
+
+	}
+
+	@Override
+	public boolean loadChildrenWithViewComponent(Integer viewComponentId) {
+		try {
+			//load particular view component route
+			ViewComponentValue viewComponent = comm.getViewComponent(viewComponentId, -1);
+			PageNode mergeNode = null;
+			int matchIndex = 0;
+			boolean match = false;
+			List<ViewComponentValue> viewsToViewComponent = new ArrayList<ViewComponentValue>();
+			viewsToViewComponent.add(viewComponent);
+			while (viewComponent.getParentId() != null) {
+				viewComponent = comm.getViewComponent(viewComponent.getParentId(), -1);
+				viewsToViewComponent.add(viewComponent);
+			}
+
+			//load from root
+			ViewComponentValue rootViewComponent = comm.getViewComponent(getViewId(), 1);
+			ViewComponentValue[] firstChildren = rootViewComponent.getChildren();
+
+			//find merge point between viewsToViewComponent and firstChildren views
+			if (viewsToViewComponent.size() > 0) {
+				for (ViewComponentValue firstMatchView : viewsToViewComponent) {
+					if (rootViewComponent.getViewComponentId().equals(firstMatchView.getViewComponentId())) {
+						match = true;
+						break;
+					}
+					matchIndex++;
+				}
+			}
+			removeAllChildren();
+			for (int i = 0; i < firstChildren.length; i++) {
+				PageNode firstChildNode = buildNodes(this, firstChildren[i]);
+				if (match && firstChildren[i].getViewComponentId().equals(viewsToViewComponent.get(matchIndex - 1).getViewComponentId())) {
+					mergeNode = firstChildNode;
+				}
+			}
+			if (match && matchIndex >= 2 && mergeNode != null) {
+				for (int j = matchIndex - 2; j >= 0; j--) {
+					mergeNode.removeAllChildren();
+					mergeNode = buildNodes(mergeNode, viewsToViewComponent.get(j));
+				}
+			}
+
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug("PageNode.loadChildrenWithViewComponent error" + e.getMessage());
+			}
+		}
+		return true;
 	}
 
 	@Override

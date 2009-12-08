@@ -3,6 +3,8 @@ package de.juwimm.cms.gui.admin;
 import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -44,17 +46,25 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 
 import org.apache.log4j.Logger;
+import org.jvnet.flamingo.common.CommandButtonDisplayState;
+import org.jvnet.flamingo.common.JCommandMenuButton;
+import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
+import de.juwimm.cms.Messages;
+import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.Constants.ResourceUsageState;
+import de.juwimm.cms.content.event.TreeSelectionEventData;
 import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
-import de.juwimm.cms.gui.table.TableSorter;
+import de.juwimm.cms.gui.ribbon.CommandMenuButton;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.CmsResourcesCellRenderer;
@@ -64,6 +74,7 @@ import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.DocumentTreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.PictureTreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.SiteTreeNode;
 import de.juwimm.cms.gui.tree.CmsResourcesTreeModel.UnitTreeNode;
+import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -71,6 +82,7 @@ import de.juwimm.cms.vo.PictureSlimstValue;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 import de.juwimm.swing.NoResizeScrollPane;
 
 /**
@@ -103,6 +115,8 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 	private MultiComboBox filterMultiComboBox;
 	private ViewComponentsTableModel viewComponentsTableModel = new ViewComponentsTableModel();
 
+	private boolean isLoading = false;
+
 	public static final String TitleKey = "panCmsResources.title";
 
 	private static final long serialVersionUID = 1L;
@@ -126,6 +140,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		resourcePreviewPanel = new JPanel();
 		resourcePreview = new JButton();
 		this.communication = communication;
+
 		initLayout();
 		initListeners();
 	}
@@ -145,13 +160,18 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		treeResources.addTreeSelectionListener(new TreeSelectionListener() {
 
 			public void valueChanged(TreeSelectionEvent e) {
+				if (isLoading) {
+					return;
+				}
 				TreePath path = e.getPath();
 				Object entry = path.getLastPathComponent();
-
-				if (entry instanceof DocumentTreeNode) {
-					updateDocumentDetails((DocumentTreeNode) entry);
-				} else if (entry instanceof PictureTreeNode) {
-					updatePictureDetails((PictureTreeNode) entry);
+				if (entry instanceof CmsStateResourceTreeNode) {
+					resourcePreviewPanel.setVisible(true);
+					if (entry instanceof DocumentTreeNode) {
+						updateDocumentDetails((DocumentTreeNode) entry);
+					} else if (entry instanceof PictureTreeNode) {
+						updatePictureDetails((PictureTreeNode) entry);
+					}
 				} else {
 					emptyDetails();
 				}
@@ -282,12 +302,11 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		if (entry.getState() != ResourceUsageState.Unsused) {
 			Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>) communication.getDocumentUsage(value.getDocumentId());
 			this.viewComponentsTableModel.setRows(viewComponentValues);
-			this.viewComponentsTable.setModel(viewComponentsTableModel);
+			//this.viewComponentsTable.setModel(viewComponentsTableModel);
 			this.viewComponentsTable.setVisible(true);
 		} else {
 			this.viewComponentsTable.setVisible(false);
 		}
-
 		ImageIcon ico = Utils.getIcon4Extension(Utils.getExtension(value.getDocumentName()));
 		resourcePreview.setIcon(ico);
 		resourcePreview.setVisible(true);
@@ -305,7 +324,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 				if (entry.getState() != ResourceUsageState.Unsused) {
 					Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>) communication.getPictureUsage(value.getPictureId());
 					viewComponentsTableModel.setRows(viewComponentValues);
-					viewComponentsTable.setModel(new TableSorter(viewComponentsTableModel, viewComponentsTable.getTableHeader()));
+					//viewComponentsTable.setModel(new TableSorter(viewComponentsTableModel, viewComponentsTable.getTableHeader()));
 					viewComponentsTable.setVisible(true);
 				} else {
 					viewComponentsTable.setVisible(false);
@@ -335,7 +354,12 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		typeValueLabel.setText("");
 		createdValueLabel.setText("");
 		resourceStateValueLabel.setText("");
-		resourcePreview.setVisible(false);
+		viewComponentsTableModel.removeData();
+		viewComponentsTable.setVisible(false);
+		resourcePreviewPanel.setVisible(false);
+		//resourcePreview.setVisible(false);
+		//resourcePanel.setVisible(false);
+		viewComponentsTable.repaint();
 	}
 
 	private void initLayout() {
@@ -344,6 +368,18 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 
 		viewComponentsTable.setModel(viewComponentsTableModel);
 
+		viewComponentsTable.addMouseListener(new CellListener(viewComponentsTable, 1));
+		viewComponentsTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Component getTableCellRendererComponent(JTable table, final Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				this.setText((String) value);
+				this.setForeground(Color.blue);
+				return this;
+			}
+
+		});
 		JScrollPane tableScrollPane = new JScrollPane(viewComponentsTable);
 		viewComponentsTable.setFillsViewportHeight(true);
 
@@ -391,10 +427,10 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		JPanel treeContainer = new JPanel(new BorderLayout());
 		filterMultiComboBox = new MultiComboBox(this);
 		filterMultiComboBox.addSeparator(rb.getString("panCmsResources.documents"));
-		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"));
+		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"), true);
 		filterMultiComboBox.addItem(rb.getString("panCmsResources.unused"), true);
 		filterMultiComboBox.addSeparator(rb.getString("panCmsResources.pictures"));
-		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"));
+		filterMultiComboBox.addItem(rb.getString("panCmsResources.used"), true);
 		filterMultiComboBox.addItem(rb.getString("panCmsResources.unused"), true);
 
 		treeContainer.add(filterMultiComboBox, BorderLayout.NORTH);
@@ -410,6 +446,10 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 
 	}
 	private static class ViewComponentsTableModel extends DefaultTableModel {
+
+		private static final long serialVersionUID = -2736913744647681753L;
+
+		@SuppressWarnings("unchecked")
 		public ViewComponentsTableModel() {
 			super();
 			columnIdentifiers.add(rb.getString("panCmsResources.viewComponent.viewComponentId"));
@@ -417,11 +457,14 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 			columnIdentifiers.add(rb.getString("panCmsResources.viewComponent.displayLinkName"));
 		}
 
+		@SuppressWarnings("unchecked")
 		private void addRow(ViewComponentValue value) {
 			Vector rowDate = new Vector();
 			rowDate.add(value.getViewComponentId());
 			rowDate.add(value.getUrlLinkName());
 			rowDate.add(value.getDisplayLinkName());
+			//in this column it will be a link 
+			rowDate.add("");
 			super.addRow(rowDate);
 		}
 
@@ -439,6 +482,11 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		public boolean isCellEditable(int row, int column) {
 			return false;
 		}
+
+		public void removeData() {
+			this.dataVector.removeAllElements();
+			fireTableRowsInserted(getRowCount(), getRowCount());
+		}
 	}
 
 	public void unload() {
@@ -449,7 +497,10 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				UIConstants.setWorker(true);
+				isLoading = true;
 				loadTree();
+				emptyDetails();
+				isLoading = false;
 				UIConstants.setWorker(false);
 			}
 		});
@@ -520,6 +571,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		private JPopupMenu popup;
 		private PanCmsResources panelResources;
 		private int itemIndex = 0;
+		private MouseAdapter exitMouseAdapter;
 
 		public MultiComboBox(PanCmsResources panel) {
 			this.panelResources = panel;
@@ -528,11 +580,34 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 			values = new ArrayList<JCheckBox>();
 			popup = new JPopupMenu();
 			popup.setLayout(new GridBagLayout());
+			exitMouseAdapter = new MouseAdapter() {
+				@Override
+				public void mouseExited(MouseEvent e) {
+					Point p = e.getPoint();
+					p.x += e.getComponent().getParent().getX();
+					p.y += e.getComponent().getParent().getY();
+					if (!popup.contains(p)) {
+						setVisiblePopup(false, e);
+						panelResources.refreshTree();
+					}
+				}
+			};
 			dropButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					setVisiblePopup(!popup.isVisible(), e);
 					if (!popup.isVisible()) {
+						panelResources.refreshTree();
+					}
+				}
+			});
+
+			popup.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseExited(MouseEvent e) {
+					Point p = e.getPoint();
+					if (!popup.contains(p)) {
+						setVisiblePopup(false, e);
 						panelResources.refreshTree();
 					}
 				}
@@ -570,6 +645,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		private void addItem(String item, boolean state) {
 			items.add(item);
 			JCheckBox checkBox = new JCheckBox();
+			checkBox.addMouseListener(exitMouseAdapter);
 			values.add(checkBox);
 			checkBox.setSelected(state);
 			GridBagConstraints gridBagConstraint = new GridBagConstraints();
@@ -580,6 +656,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 			itemPanel.add(checkBox, BorderLayout.WEST);
 			itemPanel.add(new JLabel(item), BorderLayout.CENTER);
 			popup.add(itemPanel, gridBagConstraint);
+
 			itemIndex++;
 		}
 
@@ -606,6 +683,52 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 				}
 			}
 			return booleanValues;
+		}
+
+		private JCommandMenuButton createOption(String txt) {
+			JCommandMenuButton item = new CommandMenuButton(txt, ImageWrapperResizableIcon.getIcon(UIConstants.EMPTY.getImage(), new Dimension(16, 16)));
+			item.setDisplayState(CommandButtonDisplayState.MEDIUM);
+			item.setHorizontalAlignment(SwingUtilities.LEFT);
+			return item;
+		}
+	}
+
+	private class CellListener extends MouseAdapter {
+		private JTable table;
+		private int columnIndexToListen;
+
+		public CellListener(JTable table, int index) {
+			this.table = table;
+			columnIndexToListen = index;
+		}
+
+		public void forwardEvent(MouseEvent e) {
+			TableColumnModel columnModel = table.getColumnModel();
+			int column = columnModel.getColumnIndexAtX(e.getX());
+			int row = e.getY() / table.getRowHeight();
+
+			if (row >= table.getRowCount() || row < 0 || column >= table.getColumnCount() || column < 0 || column != columnIndexToListen) {
+				return;
+			}
+			Integer viewComponentId = (Integer) table.getModel().getValueAt(row, 0);
+			ViewDocumentValue viewDocument = communication.getViewDocument4ViewComponent(viewComponentId);
+			//selected view compoment is not contained in the active site 
+			if (!viewDocument.getSiteId().equals(communication.getSiteId())) {
+				JOptionPane.showConfirmDialog(splitPane, Messages.getString("panCmsResources.goto.error", communication.getSiteName()), rb.getString("dialog.title"), JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+			UnitTreeNode unitNode = (UnitTreeNode) treeResources.getSelectionModel().getLeadSelectionPath().getParentPath().getLastPathComponent();
+			TreeSelectionEventData treeSelectionData = new TreeSelectionEventData();
+			treeSelectionData.setViewDocument(viewDocument);
+			treeSelectionData.setViewComponentId(viewComponentId);
+			treeSelectionData.setUnitId(unitNode.getValue().getUnitId());
+
+			ActionHub.fireActionPerformed(new ActionEvent(treeSelectionData, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR_WITH_SELECTION));
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			forwardEvent(e);
 		}
 	}
 }

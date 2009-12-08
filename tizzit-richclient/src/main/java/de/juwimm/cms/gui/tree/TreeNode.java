@@ -64,6 +64,15 @@ public class TreeNode extends DefaultMutableTreeNode {
 		return false;
 	}
 
+	/**
+	 * returns children of this and loads also an additional the path to a certain selection
+	 * @param viewComponentId to this node will be constructed the extra path
+	 * @return
+	 */
+	public boolean loadChildrenWithViewComponent(Integer viewComponentId) {
+		return false;
+	}
+
 	public void update(Object daoObject) {
 
 	}

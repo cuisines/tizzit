@@ -385,12 +385,12 @@ public class Main extends JFrame implements ActionListener {
 		}
 	}
 
-	private void showToolPanel() throws Exception {
+	private void showToolPanel(boolean withSelection, ActionEvent e) throws Exception {
 		if (Constants.CMS_CLIENT_VIEW != Constants.CLIENT_VIEW_CONTENT) {
 			panRibbon.setView(true);
 			try {
 				panTool = PanTool.getInstance();
-				panTool.reload();
+				panTool.reload(withSelection, e.getSource());
 			} catch (UserHasNoUnitsException ex) {
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_LOGOFF));
@@ -466,7 +466,11 @@ public class Main extends JFrame implements ActionListener {
 					panLogin.init();
 				}
 			} else if (action.equals(Constants.ACTION_VIEW_EDITOR)) {
-				showToolPanel();
+				showToolPanel(false, e);
+				panTool = PanTool.getInstance();
+				Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_CONTENT;
+			} else if (action.equals(Constants.ACTION_VIEW_EDITOR_WITH_SELECTION)) {
+				showToolPanel(true, e);
 				panTool = PanTool.getInstance();
 				Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_CONTENT;
 			} else if (action.equals(Constants.ACTION_VIEW_ADMIN) || action.equals(Constants.ACTION_VIEW_ROOT)) {

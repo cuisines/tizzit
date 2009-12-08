@@ -27,6 +27,7 @@ import javax.swing.JSplitPane;
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.content.event.TreeSelectionEventData;
 import de.juwimm.cms.deploy.panel.PanTaskDetails;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
@@ -117,11 +118,15 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 		this.add(splitPane, BorderLayout.CENTER);
 	}
 
-	public void reload() throws Exception {
+	public void reload(boolean withSelection, Object source) throws Exception {
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		try {
 			panContent.reload();
-			panTree.reload();
+			if (!withSelection) {
+				panTree.reload();
+			} else {
+				panTree.reloadWithSelection((TreeSelectionEventData) source);
+			}
 			panTree.setCursor(Cursor.getDefaultCursor());
 			panTree.getParametersPanel().setCursor(Cursor.getDefaultCursor());
 			panContent.setCursor(Cursor.getDefaultCursor());

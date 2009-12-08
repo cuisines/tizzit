@@ -628,6 +628,10 @@ public class PanRibbon extends Ribbon implements ActionListener, FinishedActionL
 			adminViewButton.doActionClick();
 		} else if (e.getActionCommand().equals(Constants.ACTION_MAKE_VIEW_OFFLINE)) {
 			offlineButton.setEnabled(false);
+		} else if (e.getActionCommand().equals(Constants.ACTION_VIEW_EDITOR_WITH_SELECTION)) {
+			taskViewButton.getActionModel().setSelected(false);
+			editViewButton.getActionModel().setSelected(true);
+			adminViewButton.getActionModel().setSelected(false);
 		}
 	}
 

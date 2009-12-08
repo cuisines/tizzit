@@ -53,20 +53,30 @@ public class PageContentNode extends PageNode {
 		switch (getViewComponent().getStatus()) {
 			case Constants.DEPLOY_STATUS_EDITED:
 				if (getViewComponent().getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE || getViewComponent().getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
-					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.CONTENT_DELETE_LIVE; }
+					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+						return UIConstants.CONTENT_DELETE_LIVE;
+					}
 					return UIConstants.CONTENT_DELETE;
 				}
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.CONTENT_EDITED_LIVE; }
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+					return UIConstants.CONTENT_EDITED_LIVE;
+				}
 				return UIConstants.CONTENT_EDITED;
 			case Constants.DEPLOY_STATUS_FOR_APPROVAL:
 				if (getViewComponent().getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE || getViewComponent().getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
-					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.CONTENT_APPROVAL_DELETE_LIVE; }
+					if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+						return UIConstants.CONTENT_APPROVAL_DELETE_LIVE;
+					}
 					return UIConstants.CONTENT_DELETE;
 				}
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.CONTENT_APPROVAL_LIVE; }
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+					return UIConstants.CONTENT_APPROVAL_LIVE;
+				}
 				return UIConstants.CONTENT_APPROVAL;
 			case Constants.DEPLOY_STATUS_APPROVED:
-				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) { return UIConstants.CONTENT_APPROVED_LIVE; }
+				if (getViewComponent().getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+					return UIConstants.CONTENT_APPROVED_LIVE;
+				}
 				return UIConstants.CONTENT_APPROVED;
 			default:
 				return UIConstants.CONTENT_DEPLOYED_LIVE;

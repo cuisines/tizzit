@@ -36,8 +36,21 @@ public class CmsTreeModel extends DefaultTreeModel {
 		treeNode.loadChildren();
 	}
 
+	/**
+	 * 
+	 * @param treeNode - root of the tree
+	 * @param viewComponentId which will be loaded in the tree model
+	 */
+	public CmsTreeModel(PageContentNode treeNode, Integer viewComponentId) {
+		super(treeNode);
+		treeNode.setModel(this);
+		treeNode.loadChildrenWithViewComponent(viewComponentId);
+	}
+
 	public PageNode findEntry4Id(TreeNode treeNode, int viewComponentId) {
-		if (treeNode instanceof PageNode && ((PageNode) treeNode).getViewId() == viewComponentId) { return (PageNode) treeNode; }
+		if (treeNode instanceof PageNode && ((PageNode) treeNode).getViewId() == viewComponentId) {
+			return (PageNode) treeNode;
+		}
 		if (!treeNode.isLeaf()) {
 			Enumeration enume = treeNode.children();
 			PageNode temp;
@@ -48,7 +61,9 @@ public class CmsTreeModel extends DefaultTreeModel {
 				} catch (ClassCastException ex) {
 					break;
 				}
-				if (temp != null) { return temp; }
+				if (temp != null) {
+					return temp;
+				}
 			}
 		}
 		return null;
