@@ -201,6 +201,7 @@ public final class Constants {
 	public static final String ACTION_VIEW_ADMIN = "ADMIN_VIEW";
 	public static final String ACTION_VIEW_ROOT = "ROOT_VIEW";
 	public static final String ACTION_VIEW_EDITOR = "EDITOR_VIEW";
+	public static final String ACTION_VIEW_EDITOR_WITH_SELECTION = "EDITOR_VIEW_WITH_SELECTION";
 
 	public static final String ACTION_STATUSBAR_COUNT = "asbc";
 	public static final String ACTION_SHOW_VERSION = "version";
