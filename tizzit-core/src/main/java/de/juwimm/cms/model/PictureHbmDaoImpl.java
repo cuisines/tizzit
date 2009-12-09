@@ -44,17 +44,19 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 			} catch (Exception e) {
 				log.error("Error creating primary key", e);
 			}
-			pictureHbm = super.create(pictureHbm);
-			pictureHbm.setTimeStamp(System.currentTimeMillis());
 		}
+		pictureHbm = super.create(pictureHbm);
+		pictureHbm.setTimeStamp(System.currentTimeMillis());
 		return pictureHbm;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllPerSite(final int transform, final java.lang.Integer siteId) {
 		return this.findAllPerSite(transform, "from de.juwimm.cms.model.PictureHbm as p where p.unit.site.siteId = ?", siteId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllPerUnit(final int transform, final java.lang.Integer unitId) {
 		return this.findAllPerUnit(transform, "from de.juwimm.cms.model.PictureHbm as p where p.unit.unitId = ?", unitId);

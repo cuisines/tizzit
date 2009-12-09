@@ -231,7 +231,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleCheckIn4ContentId(Integer contentId) throws Exception {
 		try {
-			ContentHbm content = super.getContentHbmDao().load(contentId);
+			ContentHbm content = getContentHbmDao().load(contentId);
 			ContentVersionHbm latest = content.getLastContentVersion();
 			LockHbm lock = latest.getLock();
 			if (lock != null) {
@@ -251,7 +251,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected ContentValue handleCheckOut(Integer contentId, boolean force) throws Exception {
 		try {
 			String caller = AuthenticationHelper.getUserName();
-			ContentHbm content = super.getContentHbmDao().load(contentId);
+			ContentHbm content = getContentHbmDao().load(contentId);
 			ContentVersionHbm contentVersion = content.getLastContentVersion();
 			if (contentVersion == null) {
 				//if does not have a content version
@@ -261,7 +261,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				content.getContentVersions().add(contentVersion);
 			}
 			LockHbm lock = content.getLastContentVersion().getLock();
-			UserHbm user = super.getUserHbmDao().load(caller);
+			UserHbm user = getUserHbmDao().load(caller);
 			if (lock == null || force || lock.getOwner() == null) {
 				this.checkOut(content, force, user);
 				return content.getDao();
@@ -307,7 +307,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				LockHbm newLock = LockHbm.Factory.newInstance();
 				newLock.setOwner(user);
 				newLock.setCreateDate(System.currentTimeMillis());
-				newLock = super.getLockHbmDao().create(newLock);
+				newLock = getLockHbmDao().create(newLock);
 				latest.setLock(newLock);
 			} catch (Exception exe) {
 				log.error("Error occured", exe);
@@ -317,7 +317,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				LockHbm newLock = LockHbm.Factory.newInstance();
 				newLock.setOwner(user);
 				newLock.setCreateDate(System.currentTimeMillis());
-				newLock = super.getLockHbmDao().create(newLock);
+				newLock = getLockHbmDao().create(newLock);
 				latest.setLock(newLock);
 				if (log.isDebugEnabled()) {
 					log.debug("Setting lock for checkout " + user.getUserId());
@@ -337,7 +337,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected ContentValue handleCreateContent(ContentValue contentValue) throws Exception {
-		ContentHbm contentHbm = super.getContentHbmDao().create(contentValue, AuthenticationHelper.getUserName());
+		ContentHbm contentHbm = getContentHbmDao().create(contentValue, AuthenticationHelper.getUserName());
 
 		ContentVersionHbm cv = ContentVersionHbm.Factory.newInstance();
 		cv.setVersion("1");
@@ -355,33 +355,19 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected void handleCreateEdition(String commentText, Integer rootViewComponentId, boolean deploy, boolean succMessage) throws Exception {
 		if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event " + AuthenticationHelper.getUserName() + " rootVCID " + rootViewComponentId);
 		SiteHbm site = null;
-		ViewComponentHbm rootVc = null;
 		try {
-			site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
-			rootVc = super.getViewComponentHbmDao().load(rootViewComponentId);
+			site = getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
+			getViewComponentHbmDao().load(rootViewComponentId);
 		} catch (Exception exe) {
 			log.error("Havent found either site or viewcomponent: (rootVc)" + rootViewComponentId + " " + exe.getMessage());
 		}
-		if (rootVc != null && site != null && rootVc.getViewDocument().getSite().equals(site)) {
+		if (site != null) {
+			if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for viewComponentId: " + rootViewComponentId);
 			try {
-				if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for " + rootViewComponentId + ": " + rootVc.getAssignedUnit().getName().trim());
-			} catch (Exception e) {
-				// logging should not endanger the normal process
-			}
-			try {
-				//				Properties prop = new Properties();
-				//				prop.setProperty("userName", AuthenticationHelper.getUserName());
-				//				prop.setProperty("comment", commentText);
-				//				prop.setProperty("rootViewComponentId", rootViewComponentId.toString());
-				//				prop.setProperty("siteId", site.getSiteId().toString());
-				//				prop.setProperty("deploy", Boolean.toString(deploy));
-				//				prop.setProperty("showMessage", Boolean.toString(succMessage));
-				//TODO:	getMessagingHubInvoker().invokeQueue(MessageConstants.QUEUE_NAME_DEPLOY, MessageConstants.MESSAGE_TYPE_LIVE_DEPLOY, prop);
 				boolean needsDeploy = true;
-				//FIXME: get right viewDocument
-				EditionHbm newEedition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, site.getRootUnit().getUnitId(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
-				newEedition.setStartActionTimestamp(System.currentTimeMillis());
-				newEedition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
+				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, site.getRootUnit().getUnitId(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+				newEdition.setStartActionTimestamp(System.currentTimeMillis());
+				newEdition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
 				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
 			} catch (Exception e) {
 				throw new UserException(e.getMessage());
@@ -397,7 +383,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Integer handleCreatePicture(byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
 		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, null);
-		pictureHbm = super.getPictureHbmDao().create(pictureHbm);
+		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
 	}
 
@@ -688,7 +674,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 					log.debug("content: " + content.getTemplate());
 				}
 			}
-			return content.getTemplate();
+			if (content != null) return content.getTemplate();
+			return null;
 		} catch (Exception e) {
 			throw new UserException("Could not find referenced ContentVersion with Id: " + view.getReference() + " vcid:" + viewComponentId + "\n" + e.getMessage());
 		}
@@ -1016,30 +1003,26 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			String tmpFileName = "";
 			try {
 				tmpFileName = this.storeEditionFile(in);
-				if (log.isInfoEnabled()) log.info("-------------->importFile saved.");
 			} catch (IOException e) {
 				log.warn("Unable to copy received inputstream: " + e.getMessage(), e);
 			}
-			EditionHbm edition = EditionHbm.Factory.newInstance();
-			if (log.isInfoEnabled()) log.info("-------------->got a new edition...");
-			edition.setComment("Edition to import on local server");
-			if (log.isInfoEnabled()) log.info("-------------->loading user");
-			UserHbm user = getUserHbmDao().load(AuthenticationHelper.getUserName());
-			edition.setViewComponentId(viewComponentId); // might be null if the import should be for the complete site
-			edition.setCreator(user);
-			edition.setNeedsImport(true);
-			edition.setCreationDate(new Date().getTime());
-			edition.setWorkServerEditionId(workServerEditionId);
-			if (log.isInfoEnabled()) log.info("-------------->setting unit id");
-			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
-			edition.setEditionFileName(tmpFileName);
-			edition.setSiteId(user.getActiveSite().getSiteId());
-			edition.setStartActionTimestamp(System.currentTimeMillis());
-			edition.setEndActionTimestamp(null);
-			edition.setDeployStatus(LiveserverDeployStatus.FileDeployedOnLiveServer.name().getBytes());
-			edition.setUseNewIds(useNewIds);
-			if (log.isInfoEnabled()) log.info("-------------->saving edition");
-			getEditionHbmDao().create(edition);
+			//			EditionHbm edition = EditionHbm.Factory.newInstance();
+			//			edition.setComment("Edition to import on local server");
+			//			UserHbm user = getUserHbmDao().load(AuthenticationHelper.getUserName());
+			//			edition.setViewComponentId(viewComponentId); // might be null if the import should be for the complete site
+			//			edition.setCreator(user);
+			//			edition.setNeedsImport(true);
+			//			edition.setCreationDate(new Date().getTime());
+			//			edition.setWorkServerEditionId(workServerEditionId);
+			//			if (log.isInfoEnabled()) log.info("-------------->setting unit id");
+			//			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
+			//			edition.setEditionFileName(tmpFileName);
+			//			edition.setSiteId(user.getActiveSite().getSiteId());
+			//			edition.setStartActionTimestamp(System.currentTimeMillis());
+			//			edition.setEndActionTimestamp(null);
+			//			edition.setDeployStatus(LiveserverDeployStatus.FileDeployedOnLiveServer.name().getBytes());
+			//			edition.setUseNewIds(useNewIds);
+			//			getEditionHbmDao().create(edition);
 			if (log.isInfoEnabled()) log.info("end importEdition - please wait for cronjob to pick up!");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -1263,10 +1246,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	private String storeEditionFile(InputStream in) throws IOException {
-		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "editions";
+		String dir = getTizzitPropertiesBeanSpring().getDeployDir();
 		File fDir = new File(dir);
 		fDir.mkdirs();
-		File storedEditionFile = File.createTempFile("edition_import_", ".xml.gz", fDir);
+		File storedEditionFile = File.createTempFile("edition_import_" + new Date().getTime(), ".xml.gz", fDir);
 		FileOutputStream out = new FileOutputStream(storedEditionFile);
 		IOUtils.copyLarge(in, out);
 		IOUtils.closeQuietly(out);
@@ -1674,6 +1657,13 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			//if (log.isDebugEnabled()) log.debug("Invoker is: " + edition.getCreator() + " within Site " + site.getName());
 			if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
 			out.println("<edition>");
+			if (log.isDebugEnabled()) log.debug("editionToXml");
+			out.println(edition.toXml());
+			System.gc();
+			//
+			if (log.isDebugEnabled()) log.debug("siteToXml");
+			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
+			System.gc();
 			if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
 			getEditionHbmDao().picturesToXmlRecursive(null, edition.getSiteId(), out, edition);
 			System.gc();

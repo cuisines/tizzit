@@ -382,6 +382,16 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 
 	}
 
+	@Override
+	protected void handleSiteToXml(Integer siteId, PrintStream out, EditionHbm edition) throws Exception {
+		try {
+			SiteHbm site = getSiteHbmDao().load(siteId);
+			out.print(site.toXML(0));
+		} catch (Exception exe) {
+			log.error("Error occured", exe);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void handlePicturesToXmlRecursive(Integer unitId, Integer siteId, PrintStream out, EditionHbm edition) throws Exception {

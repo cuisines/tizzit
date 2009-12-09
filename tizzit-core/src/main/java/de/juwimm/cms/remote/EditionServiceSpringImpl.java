@@ -159,7 +159,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		if (log.isInfoEnabled()) log.info("Deleting edition and attachments: " + edition.getEditionId());
 		if (edition.getEditionFileName() != null) {
 			File f = new File(edition.getEditionFileName());
-			f.delete();
+			try {
+				f.delete();
+			} catch (SecurityException se) {
+				log.warn("Could not delete file: " + f.getAbsolutePath() + " " + se.getStackTrace());
+			}
 		}
 		getEditionHbmDao().remove(edition);
 	}
@@ -243,6 +247,60 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * DOMParser parser = new DOMParser(); parser.parse(domIn); org.w3c.dom.Document doc = parser.getDocument();
 			 */
 
+			/*
+			 * #################################################################################### 
+			 * S T E P 0.5 create/update Site 
+			 * ####################################################################################
+			 */
+			SiteHbm importSite = getSiteHbmDao().load(siteId);
+			boolean siteIsNew = false;
+			if (importSite == null) {
+				if (log.isDebugEnabled()) log.debug("Site with id: " + siteId + " cound not be found - creating it now");
+				importSite = SiteHbm.Factory.newInstance();
+				siteIsNew = true;
+				importSite.setSiteId(siteId);
+			} else {
+				if (log.isDebugEnabled()) log.debug("Site with id: " + siteId + " found - updating it now");
+			}
+			try {
+				Element node = (Element) XercesHelper.findNode(doc, "/edition/site");
+				importSite.setName(getNValNotNull(node, "name"));
+				importSite.setShortName(getNValNotNull(node, "shortName"));
+				importSite.setConfigXML(getNValNotNull(node, "siteConfig"));
+				importSite.setMandatorDir(getNValNotNull(node, "mandatorDir"));
+				importSite.setCacheExpire(new Integer(getNVal(node, "cacheExpire")));
+				importSite.setWysiwygImageUrl(getNValNotNull(node, "wysiwygImageUrl"));
+				importSite.setHelpUrl(getNValNotNull(node, "helpUrl"));
+				importSite.setDcfUrl(getNValNotNull(node, "dcfUrl"));
+				importSite.setPreviewUrl(getNValNotNull(node, "previewUrl"));
+				importSite.setPageNameFull(getNValNotNull(node, "pageNameFull"));
+				importSite.setPageNameContent(getNValNotNull(node, "pageNameContent"));
+				importSite.setPageNameSearch(getNValNotNull(node, "pageNameSearch"));
+				importSite.setLastModifiedDate(new Long(getNVal(node, "lastModifiedDate")));
+
+				String str = getNVal(node, "rootUnitId");
+				Integer rootUnitId_import;
+				Integer defaultViewDocumentId_import;
+				Integer siteGroupId_import;
+				if (str != null) {
+					rootUnitId_import = new Integer(str);
+				}
+				str = getNVal(node, "defaultViewDocumentId");
+				if (str != null) {
+					defaultViewDocumentId_import = new Integer(str);
+				}
+				str = getNVal(node, "siteGroupId");
+				if (str != null) {
+					siteGroupId_import = new Integer(str);
+				}
+			} catch (Exception e) {
+				log.error("Error in Import while creating/updating site: " + siteId, e);
+				throw new UserException("Error in Import while creating/updating site: " + siteId);
+			}
+			if (siteIsNew) {
+				getSiteHbmDao().create(importSite);
+			}
+
 			if (rootVcId != null) {
 				// if provided a unit import, we will fillup the mapping for this unit
 				Integer newUnitId = rootUnit.getUnitId();
@@ -252,6 +310,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				mappingUnits.put(oldUnitId, newUnitId);
 				mappingUnitsReverse.put(newUnitId, oldUnitId);
 			}
+
+			//---------------------------------------------------------------
+			//create site if necessary
+			//---------------------------------------------------------------
 
 			/*
 			 * #################################################################################### 
@@ -832,10 +894,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			person.setSex(new Byte(getNVal(ael, "sex")).byteValue());
 			person.setTitle(getNVal(ael, "title"));
 			if (!useNewIds) {
-				log.info("personId: " + ael.getAttribute("id") + " als String");
-				long pid = Integer.getInteger(ael.getAttribute("id")).longValue();
-				log.info("personId: " + pid);
-				person.setPersonId(pid);
+				person.setPersonId(new Integer(ael.getAttribute("id")).longValue());
 			}
 			person.getUnits().add(unit);
 			person = getPersonHbmDao().create(person);
@@ -907,6 +966,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		return tmp;
 	}
 
+	private String getNValNotNull(Element ael, String nodeName) {
+		String tmp = XercesHelper.getNodeValue(ael, "./" + nodeName);
+		if (tmp.equals("null")) {
+			return null;
+		}
+		return tmp;
+	}
+
 	/**
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#importDocumentsAndPictures(org.w3c.dom.Document, de.juwimm.cms.model.UnitHbm, boolean, java.io.File)
 	 */
@@ -960,7 +1027,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						if (ul == null) {
 							ul = getUnitHbmDao().load(unitId);
 						}
-						DocumentHbm document = getDocumentHbmDao().create(createDocumentHbm(file, strDocName, strMimeType, id, ul));
+						getDocumentHbmDao().create(createDocumentHbm(file, strDocName, strMimeType, id, ul));
 					}
 				}
 			}
@@ -1015,9 +1082,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						if (log.isDebugEnabled()) log.debug("mappingPics OLD " + id + " NEW " + pic.getPictureId());
 						mappingPics.put(id, pic.getPictureId());
 					} else {
-						PictureHbm pic = createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, strPictureName, id, ul);
-						//						pic.setPictureId(id);
-						//						pic = getPictureHbmDao().create(pic);
+						createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, strPictureName, id, ul);
 					}
 				}
 			}
@@ -1032,7 +1097,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 	private PictureHbm createPictureHbm(byte[] thumbnail, byte[] file, byte[] preview, String strMimeType, String strAltText, String strPictureName, Integer id, UnitHbm unit) {
 		PictureHbm picture;
-		boolean newPicture = (id == 0) ? true : false;
+		boolean newPicture = (id != null && id == 0) ? true : false;
 		if (id == null) {
 			picture = PictureHbm.Factory.newInstance();
 		} else {
@@ -1584,9 +1649,6 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	/**
 	 * Publishs the Edition to the named Liveserver IP Address. <br>
 	 * 
-	 * @todo Asynchronus SOAP Call (EJB 2.1)
-	 * @todo Change delete of the Attachment-File to "dispose" when updating to Axis 1.2, Attachments as Parameters of the Method Call
-	 * 
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#publishEditionToLiveserver(java.lang.Integer)
 	 */
 	@Override
@@ -1639,7 +1701,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
 				if (log.isInfoEnabled()) log.info("Logging in on Liveserver...");
-				autoSpring.login(liveUserName, livePassword, site.getSiteId().intValue());
+				// using remoteLogin in order to not have the site created before the deploy on a site
+				autoSpring.remoteLoginLive(liveUserName, livePassword);
 				if (log.isInfoEnabled()) log.info("Successfully logged in!");
 
 				if (log.isDebugEnabled()) log.debug("Adding Attachment to Message Call");
@@ -2713,6 +2776,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	/**
 	 * It runs on the workserver only
 	 */
+	@Override
 	protected void handleUpdateDeployStatus(List editions) throws Exception {
 		if (editions != null && editions.size() > 0) {
 
@@ -2772,7 +2836,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 	private List<EditionValue> getDeployStatusFromLiveServer(List<EditionHbm> editions, LiveServerCredentials credentials) throws UserException {
 		List<EditionValue> editionsStatus = new ArrayList<EditionValue>();
-		if (editions != null || editions.size() > 0) {
+		if (editions != null && editions.size() > 0) {
 			try {
 				EditionHbm edition = editions.get(0);
 
@@ -2795,7 +2859,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				AuthorizationServiceSpring autoSpring = (AuthorizationServiceSpring) ctx.getBean("authorizationServiceDeploySpring");
 				if (log.isInfoEnabled()) log.info("Logging in on Liveserver...");
-				autoSpring.remoteLogin(credentials.liveServerUserName, credentials.liveServerPass);
+				autoSpring.remoteLoginLive(credentials.liveServerUserName, credentials.liveServerPass);
 				if (log.isInfoEnabled()) log.info("Successfully logged in!");
 
 				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceDeploySpring");

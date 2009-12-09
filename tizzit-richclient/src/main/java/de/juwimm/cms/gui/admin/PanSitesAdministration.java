@@ -139,6 +139,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private final JComboBox cbxLanguage = new JComboBox();
 	private final JComboBox cbxViewType = new JComboBox();
 
+	private final JCheckBox cbxSearchOnly = new JCheckBox();
+	private final JButton btnSearchSettings = new JButton();
+	private final JLabel lblSearchSite = new JLabel();
+
 	private final Color backgroundTextFieldError = new Color(0xed4044);
 	private JLabel jViewTypeLabel = null;
 	private JLabel jLanguageLabel = null;
@@ -182,6 +186,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword"));
 			lblSiteId.setText(rb.getString("panel.sitesAdministration.lblSiteId"));
 			btnParametrize.setText(rb.getString("panel.sitesAdministration.btnParametrize"));
+			btnSearchSettings.setText(rb.getString("panel.sitesAdministration.btnSearchSettings"));
+			lblSearchSite.setText(rb.getString("panel.sitesAdministration.lblSearchSite"));
+			cbxSearchOnly.setText(rb.getString("panel.sitesAdministration.cbxSearchOnly"));
 			cbxLanguage.addItem("en");
 			cbxLanguage.addItem("de");
 			cbxLanguage.addItem("es");
@@ -387,6 +394,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		txtPageNameContent.setText("");
 		lblPageNameSearch.setText("nur Suchmaschine");
 		txtPageNameSearch.setText("");
+		btnSearchSettings.setText("Suche Einstellungen");
+		lblSearchSite.setText("Suchseite");
+		cbxSearchOnly.setText("nur zur Indizierung externer Internetseiten");
 		gridBagConstraints9.gridx = 0;
 		gridBagConstraints9.gridy = 8;
 		gridBagConstraints9.anchor = java.awt.GridBagConstraints.WEST;
@@ -406,7 +416,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints16.gridy = 12;
 		gridBagConstraints12.gridy = 13;
 		gridBagConstraints13.gridy = 13;
-		gridBagConstraints11.gridy = 16;
+		gridBagConstraints11.gridy = 17;
 		gridBagConstraints19.gridx = 1;
 		gridBagConstraints19.gridy = 8;
 		gridBagConstraints19.weightx = 1.0;
@@ -428,6 +438,13 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			}
 		});
 		btnParametrize.setEnabled(false);
+		btnSearchSettings.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnSearchSettingsActionPerformed(e);
+			}
+		});
+		btnSearchSettings.setEnabled(false);
+		cbxSearchOnly.setEnabled(false);
 		panDetails.add(panel, gridBagConstraints_2);
 		panDetails.add(txtSiteName, new GridBagConstraints(1, 1, 3, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
 		panDetails.add(txtSiteShort, new GridBagConstraints(1, 2, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 100), 0, 0));
@@ -470,6 +487,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		panDetails.add(jLabelCacheExpire, gridBagConstraints10);
 		panDetails.add(getSpCacheExpire(), gridBagConstraints20);
 		panDetails.add(btnParametrize, gridBagConstraints11);
+		panDetails.add(btnSearchSettings, new GridBagConstraints(1, 18, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 10, 0, 0), 0, 0));
+		panDetails.add(cbxSearchOnly, new GridBagConstraints(1, 16, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 10, 0, 0), 0, 0));
+		panDetails.add(lblSearchSite, new GridBagConstraints(0, 10, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0));
 		panDetails.add(panConnectedUsers, new GridBagConstraints(4, 0, 1, 17, 0.4, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 10, 10), 150, 0));
 		panDetails.add(jViewTypeLabel, gridBagConstraints24);
 		panDetails.add(jLanguageLabel, gridBagConstraints25);
@@ -512,6 +532,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		btnDuplicate.setEnabled(enabled);
 		btnParametrize.setEnabled(enabled);
 		btnReindexSite.setEnabled(enabled);
+		btnSearchSettings.setEnabled(enabled);
+		cbxSearchOnly.setEnabled(enabled);
 	}
 
 	private void reloadUsers() {
@@ -926,6 +948,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		dlgSiteparams.setLocationRelativeTo(UIConstants.getMainFrame());
 		dlgSiteparams.setTitle(rb.getString("dialog.title"));
 		dlgSiteparams.setVisible(true);
+	}
+
+	private void btnSearchSettingsActionPerformed(ActionEvent e) {
 
 	}
 
@@ -1068,7 +1093,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		initDirtyInputListeners(txtPreviewUrl);
 		initDirtyInputListeners(txtSiteName);
 		initDirtyInputListeners(txtSiteShort);
-
+		initDirtyInputListeners(cbxSearchOnly);
 	}
 
 	private void initDirtyInputListeners(JComponent component) {

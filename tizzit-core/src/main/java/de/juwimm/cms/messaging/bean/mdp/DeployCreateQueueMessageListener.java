@@ -102,92 +102,11 @@ public class DeployCreateQueueMessageListener implements MessageListener {
 			Integer rootViewComponentId = new Integer(message.getStringProperty("rootViewComponentId"));
 			boolean deploy = message.getBooleanProperty("deploy");
 			boolean showMessage = Boolean.parseBoolean(message.getStringProperty("showMessage"));
-			Integer siteId = new Integer(message.getStringProperty("siteId"));
 
 			editionService.createLiveDeploy(userName, comment, rootViewComponentId, deploy, showMessage);
-			//createLiveDeploy(userName, comment, rootViewComponentId, deploy, showMessage);
-			//restoreUserState();
+
 		} catch (Exception exe) {
 			log.error("Error occured in CreateLiveEditionPrivilegedAction: ", exe);
 		}
 	}
-
-	/*
-	private void createLiveDeploy(String userName, String comment, Integer rootViewComponentId, boolean deploy, boolean showMessage) throws Exception {
-		if (rootViewComponentId != null) {
-			EditionHbm edition = null;
-			try {
-				if (log.isInfoEnabled())log.info("Start creating Edition for ViewComponent " + rootViewComponentId);
-				edition = EditionHbm.Factory.newInstance();
-				edition.create(comment, rootViewComponentId, null, !deploy);
-				this.editionHbmDao.create(edition);
-				if (log.isInfoEnabled())log.info("Finished creating Edition for ViewComponent " + rootViewComponentId);
-				Collection coll = this.editionHbmDao.findByUnitAndOnline(new Integer(edition.getUnitId()));
-				log.debug("Finished findByUnitAndOnline");
-				Iterator it = coll.iterator();
-				while (it.hasNext()) {
-					log.debug("Starting to disable old Edition");
-					EditionHbm eded = (EditionHbm) it.next();
-					eded.setStatus((byte) 0);
-					log.debug("setStatus " + eded.getEditionId());
-				}
-
-				log.debug("setting status = 1");
-				edition.setStatus((byte) 1);
-				log.debug("finished setting status = 1");
-			} catch (Exception exe) {
-				if (edition == null) {
-					log.error("Unknown Error while creating the Edition");
-				} else {
-					createTask(userName, exe.toString(), rootViewComponentId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
-				}
-				log.error("Error occured in createLiveDeploy: ", exe);
-				return;
-			}
-			if (deploy) {
-				try {
-					log.debug("Starting call to EditionService regarding publishEditionToLiveserver");
-					this.editionService.publishEditionToLiveserver(edition.getEditionId());
-					log.debug("Publish to liveServer sucessfully called!");
-					createTask(userName, "CreateEditionAndDeploy", rootViewComponentId,
-							Constants.TASK_SYSTEMMESSAGE_INFORMATION, showMessage);
-				} catch (Exception re) {
-					log.error("Error occured in createLiveDeploy: ", re);
-					String errMsg = "";
-					errMsg = re.getMessage();
-					if (re instanceof AxisFault && ((AxisFault) re).getFaultActor() != null) {
-						// currently we only can throw AxisFaults, because of the limited serialization
-						// of Axis. So we have to map this Exception on client-side manually.
-						errMsg = ((AxisFault) re).getFaultActor();
-					}
-					createTask(userName, errMsg, rootViewComponentId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
-					//ctx.setRollbackOnly();
-				}
-			} else {
-				createTask(userName, "CreateEdition", rootViewComponentId, Constants.TASK_SYSTEMMESSAGE_INFORMATION,
-						showMessage);
-			}
-		} else {
-			log.error("Submitted rootViewComponentId has not been found while creating the Edition");
-		}
-	}
-
-	private void createTask(String user, String why, Integer rootViewComponentId, byte taskType, boolean showMessage) {
-		if (log.isDebugEnabled())
-			log.debug("createTask: User " + user + " Message " + why + " rootViewComponent " + rootViewComponentId
-					+ " taskType " + taskType + " showMessage " + Boolean.toString(showMessage));
-		if (showMessage) {
-			if (user != null && !user.equals("")) {
-				try {
-					Integer unitId = this.viewService.getUnit4ViewComponent(rootViewComponentId);
-					this.userService.createTask(user, null, unitId, why, taskType);
-					log.debug("Send the information-task to the user " + user);
-				} catch (Exception exe) {
-					log.error("Error occured creating task for user " + user, exe);
-				}
-			}
-		}
-	}
-	*/
-
 }

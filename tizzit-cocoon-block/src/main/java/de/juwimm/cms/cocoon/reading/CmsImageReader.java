@@ -134,7 +134,7 @@ public class CmsImageReader extends AbstractReader implements Poolable, Cacheabl
 			Request request = ObjectModelHelper.getRequest(objectModel);
 
 			if (par.isParameter("id")) {
-				primaryKey = new Integer(par.getParameterAsInteger("id"));
+				primaryKey = Integer.valueOf(par.getParameterAsInteger("id"));
 				strBez = (par.isParameter("typ")) ? par.getParameter("typ") : null;
 			} else {
 				primaryKey = new Integer(request.getParameter("id"));
@@ -163,7 +163,9 @@ public class CmsImageReader extends AbstractReader implements Poolable, Cacheabl
 				this.ressource = getWebServiceSpring().getPicture(this.primaryKey);
 			}
 
-			if (this.ressource == null) { throw new ResourceNotFoundException("The Blob is empty!"); }
+			if (this.ressource == null) {
+				throw new ResourceNotFoundException("The Blob is empty!");
+			}
 			//response.setHeader("Content-disposition", "inline;filename=" + this.filename);
 			out.write(ressource);
 			out.flush();
@@ -176,8 +178,12 @@ public class CmsImageReader extends AbstractReader implements Poolable, Cacheabl
 	}
 
 	public Serializable getKey() {
-		if (strBez.equals("t")) { return "t" + this.primaryKey; }
-		if (strBez.equals("p")) { return "p" + this.primaryKey; }
+		if (strBez.equals("t")) {
+			return "t" + this.primaryKey;
+		}
+		if (strBez.equals("p")) {
+			return "p" + this.primaryKey;
+		}
 		return "s" + this.primaryKey;
 	}
 
@@ -187,7 +193,9 @@ public class CmsImageReader extends AbstractReader implements Poolable, Cacheabl
 			chgDate = getWebServiceSpring().getTimestamp4Picture(this.primaryKey).longValue();
 		} catch (Exception exe) {
 		}
-		if (chgDate != 0) { return new TimeStampValidity(chgDate); }
+		if (chgDate != 0) {
+			return new TimeStampValidity(chgDate);
+		}
 		return null;
 	}
 

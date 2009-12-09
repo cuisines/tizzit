@@ -525,7 +525,9 @@ public class PanIteration extends JPanel {
 
 		@Override
 		public String toString() {
-			if (label.equals("")) { return "UNBENANNT"; }
+			if (label.equals("")) {
+				return "UNBENANNT";
+			}
 			return label;
 		}
 
@@ -547,10 +549,17 @@ public class PanIteration extends JPanel {
 
 		@Override
 		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (!(obj instanceof PanIteration)) return false;
 			boolean retVal = true;
+			if (!(obj instanceof IterationItem)) return false;
 			IterationItem mo = (IterationItem) obj;
-			if (!mo.getLabel().equals(label)) { return false; }
-			if (mo.getTimestamp() != timestamp) { return false; }
+			if (!mo.getLabel().equals(label)) {
+				return false;
+			}
+			if (mo.getTimestamp() != timestamp) {
+				return false;
+			}
 			if (mo.getItem() != null && item != null) {
 				if (!mo.getItem().equals(item)) {
 					retVal = false;

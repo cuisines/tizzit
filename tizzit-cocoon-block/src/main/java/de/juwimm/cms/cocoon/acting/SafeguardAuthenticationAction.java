@@ -74,12 +74,12 @@ public final class SafeguardAuthenticationAction extends AbstractAction {
 				Map cookiemap = (Map) session.getAttribute("safeguard");
 				cookiemap.put(realmkey, new Boolean(true));
 				if (log.isDebugEnabled()) log.debug("SET COOKIE FOR USER");
-				map.put(new String("viewComponentId"), viewComponentId.toString());
+				map.put("viewComponentId", viewComponentId.toString());
 			}
 
-			map.put(new String("login"), Byte.toString(login));
-			map.put(new String("path"), path);
-			map.put(new String("language"), language);
+			map.put("login", Byte.toString(login));
+			map.put("path", path);
+			map.put("language", language);
 
 		} catch (Exception ex) {
 			log.error("SAFEGUARD " + ex.getMessage());

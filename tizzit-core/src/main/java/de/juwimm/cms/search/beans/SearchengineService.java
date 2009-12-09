@@ -352,7 +352,7 @@ public class SearchengineService {
 			for (int i = 0; i < hits.length; i++) {
 				retArr[i] = new SearchResultValue();
 				Resource resource = hits[i].getResource();
-				retArr[i].setScore(Integer.valueOf(new Float(hits[i].getScore() * 100.0f).intValue()));
+				retArr[i].setScore((int) (hits[i].getScore() * 100.0f));
 				//CompassHighlightedText text = hits[i].getHighlightedText();
 				retArr[i].setSummary(stripNonValidXMLCharacters(hits[i].getHighlightedText().getHighlightedText("contents")));
 				retArr[i].setUnitId(new Integer(resource.getProperty("unitId").getStringValue()));
@@ -523,7 +523,6 @@ public class SearchengineService {
 	private void indexPage4Lucene(ViewComponentHbm viewComponent, String contentText) {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index create / update for VC " + viewComponent.getViewComponentId());
 		ViewDocumentHbm vdl = viewComponent.getViewDocument();
-		SiteHbm site = vdl.getSite();
 		CompassSession session = null;
 		CompassTransaction tx = null;
 		File file = null;
@@ -676,7 +675,7 @@ public class SearchengineService {
 			session.save(resource);
 			tx.commit();
 			session.close();
-			session = null;			
+			session = null;
 		} catch (Exception e) {
 			log.warn("Error indexDocument " + document.getDocumentId().toString() + ": " + e.getMessage());
 			if (tx != null) tx.rollback();

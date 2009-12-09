@@ -1002,11 +1002,11 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			}
 			prev = view.getPrevNode();
 			next = view.getNextNode();
-			firstChild = prev.getFirstChild();
-			parent = view.getParent();
 			if (prev == null) {
 				throw new UserException("previous node cannot be null.");
 			}
+			firstChild = prev.getFirstChild();
+			parent = view.getParent();
 			prev.setNextNode(next);
 			if (next != null) {
 				next.setPrevNode(prev);
@@ -2424,7 +2424,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	private Hashtable<Integer, Integer> importPictures(Integer unitId, Document doc, File directory, boolean useNewIds) {
 		Iterator itPictures = XercesHelper.findNodes(doc, "//picture");
-		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
 		while (itPictures.hasNext()) {
 			Element el = (Element) itPictures.next();
@@ -2479,7 +2478,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	private Hashtable<Integer, Integer> importDocuments(Integer unitId, Document doc, File directory, boolean useNewIds) {
 		Iterator itDocs = XercesHelper.findNodes(doc, "//document");
-		SiteHbm site = super.getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 		Hashtable<Integer, Integer> docIds = new Hashtable<Integer, Integer>();
 		while (itDocs.hasNext()) {
 			try {

@@ -163,6 +163,16 @@
 		</property>
 		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.updateDeployStatusCronExpression%%%" />
 	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="createEditionFromDeployFileTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="editionCronService" />
+				<property name="targetMethod" value="cronCreateEditionFromDeployFile" />
+			</bean>
+		</property>
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
+	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
@@ -171,6 +181,7 @@
 				<ref bean="searchengineIndexerCronTrigger" />
 				<ref bean="editionCronDeployTrigger" />
 				<ref bean="editionCronImportTrigger" />
+				<ref bean="createEditionFromDeployFileTrigger" />
 				<!-- if it a liverserver this cron is not needed -->
 				<ref bean="deployStatusUpdaterTrigger"/>
 			</list>

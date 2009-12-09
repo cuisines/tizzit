@@ -106,6 +106,7 @@ public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFi
 		} catch (Exception ex) {
 		}
 
+		//FIXME: ???
 		this.cbReferrToCompleteDir.setVisible(false); // CURRENTLY NOT IMPLEMENTED
 	}
 

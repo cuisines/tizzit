@@ -140,15 +140,17 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 		try {
 			value.setUser(user.getUserValue());
 			value.setSiteConfigXML(user.getConfigXML());
-			value.setSiteName(user.getActiveSite().getName());
-			Collection<UnitHbm> units = getUnits4ActiveSite(user);
-			if (units != null) {
-				UnitValue[] uv = new UnitValue[units.size()];
-				int i = 0;
-				for (UnitHbm unit : units) {
-					uv[i++] = getUnitHbmDao().getDao(unit);
+			if (user.getActiveSite() != null) {
+				value.setSiteName(user.getActiveSite().getName());
+				Collection<UnitHbm> units = getUnits4ActiveSite(user);
+				if (units != null) {
+					UnitValue[] uv = new UnitValue[units.size()];
+					int i = 0;
+					for (UnitHbm unit : units) {
+						uv[i++] = getUnitHbmDao().getDao(unit);
+					}
+					value.setUnits(uv);
 				}
-				value.setUnits(uv);
 			}
 		} catch (Exception e) {
 			throw new EJBException(e);
@@ -186,11 +188,15 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 
 	@Override
 	protected boolean handleIsInRole(UserHbm user, String role, SiteHbm site) throws Exception {
-		if (user.isMasterRoot()) { return true; }
+		if (user.isMasterRoot()) {
+			return true;
+		}
 		Iterator it = getRoles(user, site).iterator();
 		while (it.hasNext()) {
 			RoleHbm roleHbm = (RoleHbm) it.next();
-			if (roleHbm.getRoleId().equals(role)) { return true; }
+			if (roleHbm.getRoleId().equals(role)) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -222,7 +228,9 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 
 	@Override
 	protected boolean handleIsInUnit(Integer unitId, UserHbm user) throws Exception {
-		if (user.isMasterRoot()) { return true; }
+		if (user.isMasterRoot()) {
+			return true;
+		}
 		boolean retVal = false;
 		if (isInRole(user, UserRights.SITE_ROOT, user.getActiveSite())) {
 			retVal = true;
@@ -272,7 +280,9 @@ public class UserHbmDaoImpl extends de.juwimm.cms.authorization.model.UserHbmDao
 	@Override
 	@SuppressWarnings("unchecked")
 	public void remove(de.juwimm.cms.authorization.model.UserHbm userHbm) {
-		if (userHbm == null) { throw new IllegalArgumentException("UserHbm.remove - 'userHbm' can not be null"); }
+		if (userHbm == null) {
+			throw new IllegalArgumentException("UserHbm.remove - 'userHbm' can not be null");
+		}
 		// TODO could that be made different?
 		Collection<de.juwimm.cms.authorization.model.GroupHbm> groups = userHbm.getGroups();
 		int[] groupIds = new int[groups.size()];

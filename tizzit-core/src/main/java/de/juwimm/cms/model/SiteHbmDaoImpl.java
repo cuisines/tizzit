@@ -36,22 +36,30 @@ public class SiteHbmDaoImpl extends SiteHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	public SiteHbm create(SiteHbm siteHbm) {
 		try {
+			UnitHbm unitHbm = null;
 			if (siteHbm.getSiteId() == null || siteHbm.getSiteId().intValue() == 0) {
 				Integer id = sequenceHbmDao.getNextSequenceNumber("site.site_id");
 				siteHbm.setSiteId(id);
 			}
-			UnitHbm unitHbm = UnitHbm.Factory.newInstance();
-			unitHbm.setName("rootUnit " + siteHbm.getShortName());
-			unitHbm = getUnitHbmDao().create(unitHbm);
-			siteHbm.setRootUnit(unitHbm);
-			siteHbm.setLastModifiedDate(System.currentTimeMillis());
+			if (siteHbm.getRootUnit() == null) {
+				unitHbm = UnitHbm.Factory.newInstance();
+				unitHbm.setName("rootUnit " + siteHbm.getShortName());
+				unitHbm = getUnitHbmDao().create(unitHbm);
+				siteHbm.setRootUnit(unitHbm);
+				siteHbm.setLastModifiedDate(System.currentTimeMillis());
+			}
+			if (siteHbm.getLastModifiedDate() == 0) {
+				siteHbm.setLastModifiedDate(System.currentTimeMillis());
+			}
 			siteHbm = super.create(siteHbm);
-			unitHbm.setSite(siteHbm);
-			getUnitHbmDao().update(unitHbm);
+			if (siteHbm.getRootUnit().getSite() == null && unitHbm != null) {
+				unitHbm.setSite(siteHbm);
+				getUnitHbmDao().update(unitHbm);
+			}
 			return siteHbm;
 		} catch (Exception e) {
 			log.error("Error creating site: " + e.getMessage(), e);
@@ -63,8 +71,7 @@ public class SiteHbmDaoImpl extends SiteHbmDaoBase {
 	protected void handleResetDocumentUseCount(Integer siteId) throws Exception {
 		try {
 			Session session = getSessionFactory().getCurrentSession();
-			Query query = session.createQuery("UPDATE de.juwimm.cms.model.DocumentHbm d SET d.useCountPublishVersion = 0, d.useCountLastVersion = 0 "
-					+ "WHERE d.unit.unitId IN (SELECT u.unitId FROM de.juwimm.cms.model.UnitHbm u WHERE u.site.siteId = ?)");
+			Query query = session.createQuery("UPDATE de.juwimm.cms.model.DocumentHbm d SET d.useCountPublishVersion = 0, d.useCountLastVersion = 0 " + "WHERE d.unit.unitId IN (SELECT u.unitId FROM de.juwimm.cms.model.UnitHbm u WHERE u.site.siteId = ?)");
 			query.setInteger(0, siteId.intValue());
 			query.executeUpdate();
 		} catch (Exception e) {
@@ -84,29 +91,35 @@ public class SiteHbmDaoImpl extends SiteHbmDaoBase {
 		return 0L;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform) {
 		return this.findAll(transform, "from de.juwimm.cms.model.SiteHbm as siteHbm");
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll4User(final int transform, final java.lang.String userId) {
 		return this.findAll4User(transform, "select s from de.juwimm.cms.model.SiteHbm s inner join s.users u where u.userId = ?", userId);
 	}
 
+	@Override
 	public java.lang.Object findByName(final int transform, final java.lang.String name) {
 		return this.findByName(transform, "from de.juwimm.cms.model.SiteHbm as s where s.name = ?", name);
 	}
 
+	@Override
 	public java.lang.Object findByShort(final int transform, final java.lang.String shortName) {
 		return this.findByShort(transform, "from de.juwimm.cms.model.SiteHbm s where s.shortName = ?", shortName);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAllNotAssigned2SiteGroups(final int transform) {
 		return this.findAllNotAssigned2SiteGroups(transform, "from de.juwimm.cms.model.SiteHbm as s where s.siteGroup is null");
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll4SiteGroup(final int transform, final java.lang.Integer siteGroupId) {
 		return this.findAll4SiteGroup(transform, "from de.juwimm.cms.model.SiteHbm as s where s.siteGroup.siteGroupId = ?", siteGroupId);

@@ -38,11 +38,11 @@ import de.juwimm.cms.safeguard.model.RealmJdbcHbmDao;
  */
 public final class SqlDbRealmLoginManager implements SafeguardLoginManager {
 	private static Logger log = Logger.getLogger(SqlDbRealmLoginManager.class);
-	private String username;
-	private String password;
-	private String roleNeeded;
-	private Integer realmId;
-	private RealmJdbcHbmDao realmJdbcHbmDao;
+	private final String username;
+	private final String password;
+	private final String roleNeeded;
+	private final Integer realmId;
+	private final RealmJdbcHbmDao realmJdbcHbmDao;
 
 	public SqlDbRealmLoginManager(RealmJdbcHbmDao realmJdbcHbmDao, Integer realmId, String userName, String password, String roleNeeded) {
 		this.password = password;
@@ -108,7 +108,7 @@ public final class SqlDbRealmLoginManager implements SafeguardLoginManager {
 					while (result.next()) {
 						String role = result.getString(1);
 						if (role != null && role.length() > 0) role = role.trim();
-						if (role.equalsIgnoreCase(this.roleNeeded.trim())) {
+						if (role != null && role.equalsIgnoreCase(this.roleNeeded.trim())) {
 							login = SafeguardLoginManager.LOGIN_SUCCESSFULLY;
 							break;
 						}

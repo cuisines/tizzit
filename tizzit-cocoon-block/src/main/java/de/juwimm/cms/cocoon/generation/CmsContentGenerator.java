@@ -19,7 +19,15 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.ParserConfigurationException;
@@ -48,10 +56,14 @@ import org.apache.excalibur.source.SourceException;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
-import org.springframework.aop.target.CommonsPoolTargetSource;
 import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
-import org.w3c.dom.*;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -199,7 +211,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	private PluginManagement pluginManagement = null;
 	private String requestUrl = null;
 	private Map<String, String> safeguardMap = null;
-	private Map<Integer, String> path4ViewComponentCacheMap = new HashMap<Integer, String>();
+	private final Map<Integer, String> path4ViewComponentCacheMap = new HashMap<Integer, String>();
 
 	@Override
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters parameters) {
@@ -391,7 +403,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 
 	public void generate() throws SAXException, ProcessingException {
 		if (log.isDebugEnabled()) log.debug("begin generate");
-		if (viewComponentId == null) { throw new ResourceNotFoundException("Could not find " + request.getRequestURI()); }
+		if (viewComponentId == null) {
+			throw new ResourceNotFoundException("Could not find " + request.getRequestURI());
+		}
 
 		Document doc = null;
 		InputSource in = null;
@@ -416,7 +430,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 				log.warn("Error getting content for \"" + this.requestUrl + "\": " + exe.getMessage(), exe);
 			}
 		}
-		if (in == null) { throw new ResourceNotFoundException("Could not find resource with "); }
+		if (in == null) {
+			throw new ResourceNotFoundException("Could not find resource with ");
+		}
 		try {
 			doc = XercesHelper.inputSource2Dom(in);
 		} catch (Exception exe) {
@@ -521,15 +537,15 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 				}
 				if (log.isDebugEnabled()) log.debug("got " + totalHits + " total search-results, returning " + resultList.size());
 				Element searchresults = doc.createElement("searchresults");
-				if (totalHits == null) totalHits = new Integer(0);
+				if (totalHits == null) totalHits = Integer.valueOf(0);
 				searchresults.setAttribute("totalCount", totalHits.toString());
-				if (pageAmount == null) pageAmount = new Integer(0);
+				if (pageAmount == null) pageAmount = Integer.valueOf(0);
 				searchresults.setAttribute("pageAmount", pageAmount.toString());
-				if (pageSize == null) pageSize = new Integer(0);
+				if (pageSize == null) pageSize = Integer.valueOf(0);
 				searchresults.setAttribute("pageSize", pageSize.toString());
-				if (pageNumber == null) pageNumber = new Integer(0);
+				if (pageNumber == null) pageNumber = Integer.valueOf(0);
 				searchresults.setAttribute("pageNumber", pageNumber.toString());
-				if (duration == null) duration = new Long(0L);
+				if (duration == null) duration = Long.valueOf(0L);
 				searchresults.setAttribute("duration", duration.toString());
 				searchresults.setAttribute("count", Integer.toString(resultList.size()));
 				head.appendChild(searchresults);
@@ -620,7 +636,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			if (foundArr != null) {
 				if (log.isDebugEnabled()) log.debug("GOT FULLTEXT RETURN WITH " + foundArr.length + " ITEMS");
 				for (int i = 0; i < foundArr.length; i++) {
-					Integer foundUnitId = new Integer(0);
+					Integer foundUnitId = Integer.valueOf(0);
 					try {
 						foundUnitId = foundArr[i].getUnitId();
 					} catch (Exception exe) {
@@ -1314,7 +1330,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 				} else {
 					unitId = new Integer(unitAttr);
 				}
-				if (new Integer(0).equals(unitId)) { return; }
+				if (Integer.valueOf(0).equals(unitId)) {
+					return;
+				}
 
 				String surname = this.getAttribute(membersList, "surname");
 				if (surname == null || "".equalsIgnoreCase(surname)) {
@@ -1557,7 +1575,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	 */
 	private Date getModifiedDate() {
 		if (log.isDebugEnabled()) log.debug("start getModifiedDate for " + this.requestUrl);
-		if (viewComponentId == null) { return new Date(System.currentTimeMillis()); }
+		if (viewComponentId == null) {
+			return new Date(System.currentTimeMillis());
+		}
 
 		try {
 			if (this.webSearchquery != null) {

@@ -1357,9 +1357,10 @@ public class WebServiceSpring {
 			} else if (since.startsWith("lastNavigationRoot+")) {
 				viewComponent = viewComponentHbmDao.load(refVcId);
 				int count = new Integer(since.substring(19)).intValue();
-				ViewComponentHbm lastNavRoot = viewComponent.getNavigationRoot();
+				ViewComponentHbm lastNavRoot = null;
+				if (viewComponent != null) lastNavRoot = viewComponent.getNavigationRoot();
 				ArrayList<ViewComponentHbm> al = new ArrayList<ViewComponentHbm>();
-				if (viewComponent != null && lastNavRoot != null) {
+				if (lastNavRoot != null) {
 					while (viewComponent != null && !viewComponent.getViewComponentId().equals(lastNavRoot.getViewComponentId())) {
 						if (log.isDebugEnabled()) {
 							log.debug("count " + count + " lastNavRoot " + lastNavRoot.getViewComponentId() + " vcl " + viewComponent.getViewComponentId());

@@ -1424,8 +1424,8 @@ public class Communication implements ExitListener, ActionListener {
 			out.write(svgByte, 0, svgByte.length);
 			out.flush();
 			out.close();
-		} catch (Exception e) {
-			log.error("Image with Id " + pictureId + " has not been found");
+		} catch (IOException ioe) {
+			log.warn("Image with Id " + pictureId + " has not been found - " + ioe.getStackTrace());
 		}
 
 	}
@@ -2671,7 +2671,7 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	public List<EditionValue> getEditions() {
-		return (List<EditionValue>) getClientService().getEditions();
+		return getClientService().getEditions();
 	}
 
 	public UnitValue getRootUnit4Site(Integer siteId) {

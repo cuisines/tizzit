@@ -112,4 +112,24 @@ public class EditionHbmImpl extends EditionHbm {
 		setDeployStatus(newDeployStatus.getBytes());
 	}
 
+	@Override
+	public String toXml() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("<edition>");
+
+		buf.append("<id>" + this.getEditionId() + "</id>");
+		buf.append("<creatorId>" + this.getCreator().getUserId() + "</creatorId>");
+		buf.append("<comment>" + "<![CDATA[" + this.getComment() + "]]>" + "</comment>");
+		buf.append("<creationDate>" + this.getCreationDate() + "</creationDate>");
+		buf.append("<status>" + "<![CDATA[" + this.getStatus() + "]]>" + "</status>");
+		buf.append("<unitId>" + this.getUnitId() + "</unitId>");
+		buf.append("<siteId>" + this.getSiteId() + "</siteId>");
+		buf.append("<viewComponentId>" + this.getViewComponentId() + "</viewComponentId>");
+		buf.append("<viewDocumentId>" + this.getViewDocumentId() + "</viewDocumentId>");
+		buf.append("<FileName>" + "<![CDATA[" + this.getEditionFileName() + "]]>" + "</FileName>");
+
+		buf.append("</edition>");
+		return buf.toString();
+	}
+
 }

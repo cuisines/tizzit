@@ -287,10 +287,10 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 	}
 
 	@Override
-	protected UserLoginValue handleRemoteLogin(String userName, String pass) throws Exception {
+	protected void handleRemoteLoginLive(String userName, String pass) throws Exception {
 		UserHbm user;
 		try {
-			user = super.getUserHbmDao().load(userName);
+			user = getUserHbmDao().load(userName);
 		} catch (Exception ex) {
 			throw new SecurityException("Invalid Principal");
 		}
@@ -298,7 +298,23 @@ public class AuthorizationServiceSpringImpl extends AuthorizationServiceSpringBa
 		user.setLoginDate((System.currentTimeMillis()));
 		LoginContext lc = new LoginContext("juwimm-cms-security-domain", new CredentialCallbackHandler(userName, pass));
 		lc.login();
-		UserLoginValue ulv = super.getUserHbmDao().getUserLoginValue(user);
+		//UserLoginValue ulv = getUserHbmDao().getUserLoginValue(user);
+		//return ulv;
+	}
+
+	@Override
+	protected UserLoginValue handleRemoteLogin(String userName, String pass) throws Exception {
+		UserHbm user;
+		try {
+			user = getUserHbmDao().load(userName);
+		} catch (Exception ex) {
+			throw new SecurityException("Invalid Principal");
+		}
+
+		user.setLoginDate((System.currentTimeMillis()));
+		LoginContext lc = new LoginContext("juwimm-cms-security-domain", new CredentialCallbackHandler(userName, pass));
+		lc.login();
+		UserLoginValue ulv = getUserHbmDao().getUserLoginValue(user);
 		return ulv;
 	}
 }

@@ -61,7 +61,7 @@ public class ConfigurationHelper extends org.tizzit.cocoon.generic.helper.Config
 	}
 
 	public static String getSiteShort(Configuration config) throws ConfigurationException {
-		String siteShort = new String();
+		String siteShort = "";
 
 		try {
 			siteShort = config.getChild("siteShort").getValue();

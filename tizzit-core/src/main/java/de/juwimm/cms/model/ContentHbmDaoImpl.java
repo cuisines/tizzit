@@ -66,8 +66,8 @@ public class ContentHbmDaoImpl extends ContentHbmDaoBase {
 	@Override
 	public void handleSetContent(ContentHbm content, String ct) {
 		ContentVersionHbm contentVersion = content.getLastContentVersion();
-		updateDocumentUseCountLastVersion(contentVersion.getText(), ct);
 		if (contentVersion != null) {
+			updateDocumentUseCountLastVersion(contentVersion.getText(), ct);
 			contentVersion.setText(ct);
 		}
 		// -- Indexing through No-Messaging

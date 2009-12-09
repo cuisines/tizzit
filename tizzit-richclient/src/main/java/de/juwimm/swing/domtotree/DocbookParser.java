@@ -29,8 +29,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.tizzit.util.XercesHelper;
-import org.w3c.dom.*;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * @author Michael Meyer
@@ -42,11 +46,11 @@ public final class DocbookParser {
 	private Document mydoc;
 	private String filename;
 	private DefaultTreeModel treemodel;
-	private String titletag;
+	private final String titletag;
 	private String attrname;
 	private String attrvalue;
 
-	private Color n;
+	private final Color n;
 
 	public DocbookParser(String file, String titletag, Color normal) {
 		filename = new String(file);
@@ -67,7 +71,9 @@ public final class DocbookParser {
 
 	public boolean convertFileToDom() {
 		mydoc = parseFile(filename);
-		if (mydoc.equals(null)) { return false; }
+		if (mydoc == null) {
+			return false;
+		}
 		return true;
 	}
 
@@ -125,7 +131,7 @@ public final class DocbookParser {
 					insertNewTreeNode(akt, root);
 				}
 				if (elm.hasChildNodes()) {
-					if (akt.equals(null))
+					if (akt != null)
 						nextParsing(elm, root);
 					else {
 						nextParsing(elm, akt);
@@ -144,7 +150,7 @@ public final class DocbookParser {
 				Element el = (Element) (e.getChildNodes().item(i));
 				if (el.getLocalName().equals(titletag)) {
 					node = printOnMyScreen(el, st);
-					if (!node.equals(null)) ok = true;
+					if (node != null) ok = true;
 					break;
 				}
 			} catch (Exception ex) {
@@ -186,7 +192,9 @@ public final class DocbookParser {
 		NamedNodeMap map = el.getAttributes();
 		for (int i = 0; i < map.getLength(); i++) {
 			Node node = map.item(i);
-			if ((node.getLocalName()).equals(attrname) && (node.getNodeValue()).equals(attrvalue)) { return true; }
+			if ((node.getLocalName()).equals(attrname) && (node.getNodeValue()).equals(attrvalue)) {
+				return true;
+			}
 		}
 
 		return false;

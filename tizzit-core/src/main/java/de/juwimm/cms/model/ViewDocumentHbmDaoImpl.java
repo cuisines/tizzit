@@ -83,7 +83,7 @@ public class ViewDocumentHbmDaoImpl extends ViewDocumentHbmDaoBase {
 
 		viewDocumentHbm.setLanguage(language);
 		viewDocumentHbm.setViewType(viewType);
-		
+
 		if (rootViewComponentId != null) {
 			ViewComponentHbm viewComponent = getViewComponentHbmDao().load(rootViewComponentId);
 			viewDocumentHbm.setViewComponent(viewComponent);
@@ -97,20 +97,23 @@ public class ViewDocumentHbmDaoImpl extends ViewDocumentHbmDaoBase {
 		} catch (Exception e) {
 			log.error("An unexpected error occurred while creating a ViewDocument object", e);
 		}
-		
+
 		getHibernateTemplate().save(viewDocumentHbm);
 		return viewDocumentHbm.getViewDocumentId();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform, final java.lang.Integer siteId) {
 		return this.findAll(transform, "from de.juwimm.cms.model.ViewDocumentHbm as o where o.site.siteId = ?", siteId);
 	}
 
+	@Override
 	public java.lang.Object findByViewTypeAndLanguage(final int transform, final java.lang.String viewType, final java.lang.String language, final java.lang.Integer siteId) {
 		return this.findByViewTypeAndLanguage(transform, "from de.juwimm.cms.model.ViewDocumentHbm vc where vc.viewType = ? and vc.language = ? and vc.site.siteId = ?", viewType, language, siteId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByViewType(final int transform, final java.lang.String viewType, final java.lang.Integer siteId) {
 		return this.findByViewType(transform, "from de.juwimm.cms.model.ViewDocumentHbm as v where v.viewType = ? and v.site.siteId = ?", viewType, siteId);

@@ -220,23 +220,23 @@ public class MailHelper {
 	 * @param cc the address of the receiver of a copy of this mail
 	 * @param bcc the address of the receiver of a blind-copy of this mail
 	 */
-public static void sendHtmlMail2(String subject, String htmlMessage, String alternativeTextMessage, String from, String[] to, String[] cc, String[] bcc) {
+	public static void sendHtmlMail2(String subject, String htmlMessage, String alternativeTextMessage, String from, String[] to, String[] cc, String[] bcc) {
 		try {
-	        MimeMessage msg = new MimeMessage(mailSession);
+			MimeMessage msg = new MimeMessage(mailSession);
 			msg.setFrom(new InternetAddress(from));
-			
-			if (cc != null && !cc.equals("")) {
-				for (int i = cc.length -1; i >= 0; i--) {
+
+			if (cc != null && cc.length != 0) {
+				for (int i = cc.length - 1; i >= 0; i--) {
 					msg.addRecipients(Message.RecipientType.CC, cc[i]);
 				}
 			}
-			if (bcc != null && !bcc.equals("")) {
-				for (int i = bcc.length -1; i >= 0; i--) {
+			if (bcc != null && bcc.length != 0) {
+				for (int i = bcc.length - 1; i >= 0; i--) {
 					msg.addRecipients(Message.RecipientType.BCC, bcc[i]);
 				}
 			}
-			if (to != null && !to.equals("")) {
-				for (int i = to.length -1; i >= 0; i--) {
+			if (to != null && to.length != 0) {
+				for (int i = to.length - 1; i >= 0; i--) {
 					msg.addRecipients(Message.RecipientType.TO, to[i]);
 				}
 			}
@@ -246,26 +246,26 @@ public static void sendHtmlMail2(String subject, String htmlMessage, String alte
 			MimeMultipart multiPart = new MimeMultipart("alternative");
 			MimeBodyPart htmlPart = new MimeBodyPart();
 			MimeBodyPart textPart = new MimeBodyPart();
-			
+
 			textPart.setText(alternativeTextMessage, "ISO8859_1");
 			textPart.setHeader("MIME-Version", "1.0");
 			//textPart.setHeader("Content-Type", textPart.getContentType());
 			textPart.setHeader("Content-Type", "text/plain;charset=\"ISO-8859-1\"");
-			
-			htmlPart.setContent(htmlMessage,"text/html;charset=\"ISO8859_1\"");
+
+			htmlPart.setContent(htmlMessage, "text/html;charset=\"ISO8859_1\"");
 			htmlPart.setHeader("MIME-Version", "1.0");
-			htmlPart.setHeader("Content-Type","text/html;charset=\"ISO-8859-1\"");
+			htmlPart.setHeader("Content-Type", "text/html;charset=\"ISO-8859-1\"");
 			//htmlPart.setHeader("Content-Type", htmlPart.getContentType());
-			
+
 			multiPart.addBodyPart(textPart);
 			multiPart.addBodyPart(htmlPart);
-			
+
 			multiPart.setSubType("alternative");
-			
+
 			msg.setContent(multiPart);
 			msg.setHeader("MIME-Version", "1.0");
 			msg.setHeader("Content-Type", multiPart.getContentType());
-			
+
 			Transport.send(msg);
 		} catch (Exception e) {
 			log.error("Error sending html-mail: " + e.getLocalizedMessage());

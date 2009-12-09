@@ -29,8 +29,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.juwimm.cms.authorization.model.UserHbm;
-import de.juwimm.cms.components.model.*;
-import de.juwimm.cms.components.vo.*;
+import de.juwimm.cms.components.model.AddressHbm;
+import de.juwimm.cms.components.model.AddressHbmImpl;
+import de.juwimm.cms.components.model.DepartmentHbm;
+import de.juwimm.cms.components.model.DepartmentHbmImpl;
+import de.juwimm.cms.components.model.PersonHbm;
+import de.juwimm.cms.components.model.PersonHbmImpl;
+import de.juwimm.cms.components.model.TalktimeHbm;
+import de.juwimm.cms.components.model.TalktimeHbmImpl;
+import de.juwimm.cms.components.vo.AddressValue;
+import de.juwimm.cms.components.vo.DepartmentValue;
+import de.juwimm.cms.components.vo.PersonValue;
+import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
@@ -52,7 +62,9 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 	@Override
 	protected PersonValue handleGetPerson(Long personId) throws Exception {
 		PersonHbm person = getPersonHbmDao().load(personId);
-		if (person != null) { return person.getDao(1); }
+		if (person != null) {
+			return person.getDao(1);
+		}
 		return null;
 	}
 
@@ -112,8 +124,8 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 	@Override
 	protected UnitValue handleGetUnit(Integer unitId) throws Exception {
 		UnitHbm unit = getUnitHbmDao().load(unitId);
-		if (unit != null) { 
-			return getUnitHbmDao().getDao(unit); 
+		if (unit != null) {
+			return getUnitHbmDao().getDao(unit);
 		}
 		return null;
 	}
@@ -144,26 +156,28 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 	@Override
 	protected DepartmentValue handleGetDepartment(Long departmentId) throws Exception {
 		DepartmentHbm department = getDepartmentHbmDao().load(departmentId);
-		if (department != null) { return department.getDao(-1); }
+		if (department != null) {
+			return department.getDao(-1);
+		}
 		return null;
 	}
 
 	private PersonHbm createPersonHbmFromValue(PersonValue value) {
 		PersonHbm personHbm = null;
-		if (value.getPersonId() != null) {
-			personHbm = getPersonHbmDao().load(value.getPersonId());
-		} else {
-			personHbm = new PersonHbmImpl();
-		}
 		if (value != null) {
+			if (value.getPersonId() != null) {
+				personHbm = getPersonHbmDao().load(value.getPersonId());
+			} else {
+				personHbm = new PersonHbmImpl();
+			}
 			personHbm.setBirthDay(value.getBirthDay());
 			personHbm.setCountryJob(value.getCountryJob());
-			if(value.getDepartmentId() != null) {
+			if (value.getDepartmentId() != null) {
 				HashSet<DepartmentHbm> departments = new HashSet<DepartmentHbm>();
 				departments.add(getDepartmentHbmDao().load(value.getDepartmentId()));
 				personHbm.setDepartments(departments);
 			}
-			if(value.getUnitId() != null) {
+			if (value.getUnitId() != null) {
 				personHbm.getUnits().add(getUnitHbmDao().load(value.getUnitId().intValue()));
 			}
 			personHbm.setFirstname(value.getFirstname());
@@ -183,12 +197,12 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 
 	private AddressHbm createAddressHbmFromValue(AddressValue value) {
 		AddressHbm address = null;
-		if (value.getAddressId() != null) {
-			address = getAddressHbmDao().load(value.getAddressId());
-		} else {
-			address = new AddressHbmImpl(); 
-		}
 		if (value != null) {
+			if (value.getAddressId() != null) {
+				address = getAddressHbmDao().load(value.getAddressId());
+			} else {
+				address = new AddressHbmImpl();
+			}
 			address.setAddressType(value.getAddressType());
 			address.setBuildingLevel(value.getBuildingLevel());
 			address.setBuildingNr(value.getBuildingNr());
@@ -213,12 +227,12 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 
 	private DepartmentHbm createDepartmentHbmFromValue(DepartmentValue value) {
 		DepartmentHbm department = null;
-		if (value.getDepartmentId() != null) {
-			department = getDepartmentHbmDao().load(value.getDepartmentId());
-		} else {
-			department = new DepartmentHbmImpl(); 
-		}
-		if (value != null) {			 
+		if (value != null) {
+			if (value.getDepartmentId() != null) {
+				department = getDepartmentHbmDao().load(value.getDepartmentId());
+			} else {
+				department = new DepartmentHbmImpl();
+			}
 			department.setName(value.getName());
 		}
 		return department;
@@ -493,7 +507,9 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 	@Override
 	protected TalktimeValue handleGetTalktime(Long talktimeId) throws Exception {
 		TalktimeHbm talktime = getTalktimeHbmDao().load(talktimeId);
-		if (talktime != null) { return talktime.getData(); }
+		if (talktime != null) {
+			return talktime.getData();
+		}
 		return null;
 	}
 
@@ -503,7 +519,9 @@ public class ComponentsServiceSpringImpl extends ComponentsServiceSpringBase {
 	@Override
 	protected AddressValue handleGetAddress(Long addressId) throws Exception {
 		AddressHbm address = getAddressHbmDao().load(addressId);
-		if (address != null) { return address.getData(); }
+		if (address != null) {
+			return address.getData();
+		}
 		return null;
 	}
 

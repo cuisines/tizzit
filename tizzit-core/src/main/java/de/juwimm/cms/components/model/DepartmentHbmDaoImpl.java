@@ -30,7 +30,7 @@ import de.juwimm.cms.model.SequenceHbmDao;
  */
 public class DepartmentHbmDaoImpl extends de.juwimm.cms.components.model.DepartmentHbmDaoBase {
 	private static Logger log = Logger.getLogger(DepartmentHbmDaoImpl.class);
-	
+
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
 
@@ -39,7 +39,7 @@ public class DepartmentHbmDaoImpl extends de.juwimm.cms.components.model.Departm
 		if (departmentHbm.getDepartmentId() == null) {
 			try {
 				Integer id = sequenceHbmDao.getNextSequenceNumber("department.department_id");
-				departmentHbm.setDepartmentId(new Long(id.longValue()));		
+				departmentHbm.setDepartmentId(new Long(id.longValue()));
 			} catch (Exception e) {
 				log.error("Error creating primary key", e);
 			}
@@ -90,10 +90,9 @@ public class DepartmentHbmDaoImpl extends de.juwimm.cms.components.model.Departm
 	 */
 	@Override
 	public java.lang.Long handleCreate(org.w3c.dom.Element ael, boolean useNewId, java.util.Map mappingDepartments, java.util.Map mappingPersons, java.util.Map mappingAddresses, java.util.Map mappingTalktime) {
-		Long id = null;
 		DepartmentHbm department = DepartmentHbm.Factory.newInstance();
 		if (useNewId) {
-			id = this.create();
+			this.create();
 			mappingDepartments.put(new Long(ael.getAttribute("id")), department.getDepartmentId());
 		} else {
 			department.setDepartmentId(new Long(ael.getAttribute("id")));
@@ -107,5 +106,5 @@ public class DepartmentHbmDaoImpl extends de.juwimm.cms.components.model.Departm
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByName(final int transform, final java.lang.Integer siteId, final java.lang.String name) {
 		return this.findByName(transform, "from de.juwimm.cms.components.model.DepartmentHbm as d where d.unit.site.siteId = ? and d.name LIKE ?", siteId, name);
-	}	
+	}
 }
