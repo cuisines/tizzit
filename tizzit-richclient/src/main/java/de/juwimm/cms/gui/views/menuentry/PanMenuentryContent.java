@@ -86,6 +86,7 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 	}
 
 	void jbInit() throws Exception {
+		this.setBackground(UIConstants.backgroundBaseColor);
 		component1 = Box.createVerticalStrut(8);
 		lblTemplate.setText("Verwendetes Template");
 		lblTemplateText.setFont(new java.awt.Font("Dialog", 1, 11));
@@ -99,6 +100,7 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 		lblUnit.setText("Unit");
 
 		getOptPan().setLayout(new GridBagLayout());
+		getOptPan().setBackground(UIConstants.backgroundBaseColor);
 		btnChangeTemplate.setText("Change");
 		btnChangeTemplate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {

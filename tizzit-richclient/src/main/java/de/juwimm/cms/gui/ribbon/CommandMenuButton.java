@@ -6,7 +6,6 @@ import org.jvnet.flamingo.common.JCommandMenuButton;
 import org.jvnet.flamingo.common.icon.ResizableIcon;
 import org.jvnet.flamingo.common.ui.CommandButtonUI;
 
-
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$

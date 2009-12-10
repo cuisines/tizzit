@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,7 +28,15 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSplitPane;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -47,7 +55,12 @@ import de.juwimm.cms.content.modules.Teaser;
 import de.juwimm.cms.content.modules.Teaser.TeaserProperties;
 import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.util.Communication;
-import de.juwimm.swing.*;
+import de.juwimm.cms.util.UIConstants;
+import de.juwimm.swing.AbstractPickListModel;
+import de.juwimm.swing.DropDownHolder;
+import de.juwimm.swing.PickListData;
+import de.juwimm.swing.PickListPanel;
+import de.juwimm.swing.SortableListModel;
 
 /**
  * The panel for displaying the teaser within the client.
@@ -190,6 +203,9 @@ public class PanTeaser extends JPanel {
 			this.pnlRandomTeaser.setMaximumSize(this.maxRandomTeaserDim);
 			this.pnlRandomTeaser.setOpaque(true);
 
+			this.pnlHeaderLeft.setBackground(UIConstants.backgroundBaseColor);
+			this.pnlHeaderRight.setBackground(UIConstants.backgroundBaseColor);
+
 			this.pnlDefinedTeaser.add(this.pnlHeaderLeft, BorderLayout.NORTH);
 			this.pnlDefinedTeaser.add(this.pickListPanel, BorderLayout.CENTER);
 
@@ -234,7 +250,7 @@ public class PanTeaser extends JPanel {
 		this.pnlHeaderLeft.removeAll();
 		this.pnlRandomChoice.removeAll();
 		this.buttonGroup = new ButtonGroup();
-		
+
 		JLabel lblFixedTeaser = new JLabel(rb.getString("content.modules.teaser.fixed.text"));
 		this.pnlHeaderLeft.add(lblFixedTeaser);
 
@@ -369,7 +385,7 @@ public class PanTeaser extends JPanel {
 						log.error("Error parsing String to int: " + countString);
 					}
 				}
-				
+
 				// die ComboBoxen auf die gespeicherten Werte setzen
 				for (int i = 0, maxI = this.comboBoxList.size(); i < maxI; i++) {
 					if (this.comboBoxList.get(i).getName().equals(searchScope)) {
@@ -385,11 +401,11 @@ public class PanTeaser extends JPanel {
 			Iterator refIterator = XercesHelper.findNodes(node, "./teaserRef");
 			while (refIterator.hasNext()) {
 				Element elmTeaser = (Element) refIterator.next();
-	
+
 				String referencedComponentIdString = elmTeaser.getAttribute("viewComponentId");
 				String xpathTeaserElement = elmTeaser.getAttribute("xpathTeaserElement");
 				String teaserName = elmTeaser.getAttribute("teaserName");
-	
+
 				String xpathIdentifier = elmTeaser.getAttribute("xpathTeaserIdentifier");
 				if (xpathIdentifier.length() == 0) {
 					xpathIdentifier = null;
@@ -413,15 +429,14 @@ public class PanTeaser extends JPanel {
 		}
 	}
 
-
 	public Node getProperties() {
 		Node teaserIncludeNode = ContentManager.getDomDoc().createElement("teaserInclude");
 		AbstractPickListModel selectedTeasers = this.pickListData.getLstLeftModel();
-		
+
 		for (int i = 0, count = selectedTeasers.getSize(); i < count; i++) {
 			Element elmTeaser = ContentManager.getDomDoc().createElement("teaserRef");
 			TeaserValue teaserValue = (TeaserValue) ((DropDownHolder) selectedTeasers.getElementAt(i)).getObject();
-			
+
 			// mandatory attribute
 			Attr attrViewComponentId = ContentManager.getDomDoc().createAttribute("viewComponentId");
 			attrViewComponentId.setValue(Integer.toString(teaserValue.getViewComponentId()));
@@ -458,7 +473,7 @@ public class PanTeaser extends JPanel {
 				JComboBox comboBox = this.comboBoxList.get(i);
 				String comboBoxName = comboBox.getName(); // name = search scope
 				String xpathTeaserElement = null;
-				
+
 				Enumeration teaserPropsEnumeration = this.hshTeaserProps.elements();
 				while (teaserPropsEnumeration.hasMoreElements()) {
 					Teaser.TeaserProperties currentTeaserProps = (Teaser.TeaserProperties) teaserPropsEnumeration.nextElement();
@@ -472,7 +487,7 @@ public class PanTeaser extends JPanel {
 					}
 					continue;
 				}
-				
+
 				Element elmRandomTeaser = ContentManager.getDomDoc().createElement("teaserRandomized");
 				Attr attrXPath = ContentManager.getDomDoc().createAttribute("xpathTeaserElement");
 				attrXPath.setValue(xpathTeaserElement);
@@ -496,18 +511,18 @@ public class PanTeaser extends JPanel {
 	public boolean isModuleValid() {
 		return true;
 	}
-	
+
 	public String validateSelectedTeasers() {
 		long startTime = System.currentTimeMillis();
 		if (log.isDebugEnabled()) {
 			log.debug("Start validateSelectedTeasers()");
 		}
-		
+
 		boolean isValid = true;
 		// Hashtable: key = xpathTeaserElement (z.B. "//teaser"), value = ArrayList<TeaserValue> die das key-xpathTeaserElement beinhalten
 		Hashtable<String, ArrayList<TeaserValue>> referencedTeasers = new Hashtable<String, ArrayList<TeaserValue>>();
 		AbstractPickListModel selectedTeasers = this.pickListData.getLstLeftModel();
-		
+
 		for (int i = 0, count = selectedTeasers.getSize(); i < count; i++) {
 			TeaserValue teaserValue = (TeaserValue) ((DropDownHolder) selectedTeasers.getElementAt(i)).getObject();
 			String xpathTeaserElement = teaserValue.getXpathTeaserElement();
@@ -515,7 +530,7 @@ public class PanTeaser extends JPanel {
 			arrayListTeaserValues.add(teaserValue);
 			referencedTeasers.put(xpathTeaserElement, arrayListTeaserValues);
 		}
-		
+
 		// Check if referenced teasers still exist: 
 		try {
 			Enumeration keyEnumeration = referencedTeasers.keys();
@@ -527,14 +542,14 @@ public class PanTeaser extends JPanel {
 
 				String xpathString = (String) keyEnumeration.nextElement();
 				ArrayList<TeaserValue> arrayListReferencedTeasers = referencedTeasers.get(xpathString);
-				
+
 				// Start search (just once per xpath term!)
 				XmlSearchValue[] xmlSearchValuesAllTeaserForXpath = this.communication.searchXml(this.communication.getSiteId(), xpathString);
-				
+
 				// outer loop: all referenced teasers
 				for (int i = 0, count = arrayListReferencedTeasers.size(); i < count; i++) {
 					boolean referencedTeaserExists = false;
-					TeaserValue refTeaser =  arrayListReferencedTeasers.get(i);
+					TeaserValue refTeaser = arrayListReferencedTeasers.get(i);
 					// inner loop: all found teasers for the xpath term
 					for (int j = 0; j < xmlSearchValuesAllTeaserForXpath.length; j++) {
 						if (refTeaser.getViewComponentId() == xmlSearchValuesAllTeaserForXpath[j].getViewComponentId()) {
@@ -572,15 +587,15 @@ public class PanTeaser extends JPanel {
 					log.debug("Finished validateSelectedTeasers(): Calculation took " + milliseconds + " milliseconds");
 				}
 				return invalidTeasers.toString();
-			} 
-	} catch (Exception exception) {
-		log.error(exception);
-	}
-	long milliseconds = System.currentTimeMillis() - startTime;
-	if (log.isDebugEnabled()) {
-		log.debug("Finished validateSelectedTeasers(): Calculation took " + milliseconds + " milliseconds");
-	}
-	return null;
+			}
+		} catch (Exception exception) {
+			log.error(exception);
+		}
+		long milliseconds = System.currentTimeMillis() - startTime;
+		if (log.isDebugEnabled()) {
+			log.debug("Finished validateSelectedTeasers(): Calculation took " + milliseconds + " milliseconds");
+		}
+		return null;
 	}
 
 	public void setEnabled(boolean enabling) {
@@ -649,7 +664,7 @@ public class PanTeaser extends JPanel {
 								String resultRootStartElement = "<searchTeaserResult>";
 								String resultRootEndElement = "</searchTeaserResult>";
 								String lastElementSearchedFor = xPath.substring(xPath.lastIndexOf('/'), xPath.length());
-								
+
 								StringBuilder stringBuilder = new StringBuilder(searchResult[j].getContent());
 								stringBuilder.insert(0, resultRootStartElement);
 								stringBuilder.append(resultRootEndElement);
@@ -727,10 +742,10 @@ public class PanTeaser extends JPanel {
 						if (searchResult != null) {
 							for (int j = 0; j < searchResult.length; j++) {
 								ArrayList<TeaserValue> teaserValueList = createTeaserValueListFromXml(searchResult[j], xPath, xPathIdentifier, xPathTeaserName);
-								
+
 								for (int k = 0; k < teaserValueList.size(); k++) {
 									TeaserValue teaserValue = teaserValueList.get(k);
-								
+
 									boolean teaserAlreadyChosen = false;
 									Iterator chosenIterator = this.pickListData.getLstLeftModel().iterator();
 									while (chosenIterator.hasNext()) {
@@ -765,7 +780,7 @@ public class PanTeaser extends JPanel {
 			log.error(exception);
 		}
 	}
-	
+
 	private ArrayList<TeaserValue> createTeaserValueListFromXml(XmlSearchValue xmlSearchValue, String xpathTeaserElement, String xpathIdentifier, String xpathTeaserName) {
 		ArrayList<TeaserValue> result = new ArrayList<TeaserValue>();
 		if (xmlSearchValue != null) {
@@ -773,13 +788,12 @@ public class PanTeaser extends JPanel {
 				String resultRootStartElement = "<searchTeaserResult>";
 				String resultRootEndElement = "</searchTeaserResult>";
 				String lastElementSearchedFor = xpathTeaserElement.substring(xpathTeaserElement.lastIndexOf('/'), xpathTeaserElement.length());
-				
-			
+
 				StringBuilder stringBuilder = new StringBuilder(xmlSearchValue.getContent());
 				stringBuilder.insert(0, resultRootStartElement);
 				stringBuilder.append(resultRootEndElement);
 				Document doc = XercesHelper.string2Dom(stringBuilder.toString());
-		
+
 				Iterator teaserIterator = XercesHelper.findNodes(doc, "/" + lastElementSearchedFor);
 				String identifierValue = null;
 				String teaserNameValue = null;
@@ -797,7 +811,7 @@ public class PanTeaser extends JPanel {
 							}
 						} else {
 							// look for child element
-							Node identifierNode =XercesHelper.findNode(node, xpathIdentifier);
+							Node identifierNode = XercesHelper.findNode(node, xpathIdentifier);
 							if (identifierNode != null) {
 								identifierValue = identifierNode.getFirstChild().getNodeValue();
 							} else {
@@ -828,7 +842,7 @@ public class PanTeaser extends JPanel {
 							}
 						} else {
 							// look for child element
-							Node identifierNode =XercesHelper.findNode(node, xpathTeaserName);
+							Node identifierNode = XercesHelper.findNode(node, xpathTeaserName);
 							if (identifierNode != null) {
 								identifierValue = identifierNode.getFirstChild().getNodeValue();
 							} else {
@@ -881,7 +895,6 @@ public class PanTeaser extends JPanel {
 			this.pickListData.getLstLeftModel().addElement(ddh);
 		}
 	}
-
 
 	/**
 	 * Type for holding Teaser references (may be wrapped by a {@link DropDownHolder}).

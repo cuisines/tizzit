@@ -564,7 +564,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			}
 		});
 
-		JCommandMenuButton allClosed = new JCommandMenuButton(rb.getString("panel.tree.parameters.btnClose"), ImageWrapperResizableIcon.getIcon(UIConstants.TREE_COLLAPSE_ALL.getImage(), new Dimension(5, 5)));
+		JCommandMenuButton allClosed = new JCommandMenuButton(rb.getString("panel.tree.parameters.btnClose"), ImageWrapperResizableIcon.getIcon(UIConstants.TREE_COLLAPSE_ALL.getImage(), new Dimension(10, 10)));
 		allClosed.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				expandAllNodes((TreeNode) tree.getModel().getRoot(), false);
@@ -579,8 +579,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 		JLabel lblMenu = new JLabel(rb.getString("panel.tree.parameters.lblMenu"));
 		JLabel lblNavigationLanguage = new JLabel(rb.getString("panel.tree.parameters.lblNavigation"));
-		lblNavigationLanguage.setPreferredSize(new Dimension(90, 21));
-		lblNavigationLanguage.setMinimumSize(new Dimension(90, 21));
+		lblNavigationLanguage.setPreferredSize(new Dimension(100, 21));
+		lblNavigationLanguage.setMinimumSize(new Dimension(100, 21));
+		lblNavigationLanguage.setFont(new Font(lblNavigationLanguage.getFont().getFontName(), Font.BOLD, lblNavigationLanguage.getFont().getSize()));
 
 		JPanel unitLblPanel = new JPanel();
 		unitLblPanel.setLayout(new GridBagLayout());
@@ -588,14 +589,14 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		lblMenu.setForeground(Color.white);
 		lblMenu.setPreferredSize(new Dimension(90, 30));
 		lblMenu.setMinimumSize(new Dimension(90, 30));
-		unitLblPanel.setBackground(new Color(128, 128, 128));
+		unitLblPanel.setBackground(new Color(116, 149, 168));
 		unitLblPanel.setPreferredSize(new Dimension(100, 30));
 		unitLblPanel.setMinimumSize(new Dimension(100, 30));
 
 		final JPanel unitCBBPanel = new JPanel();
 		unitCBBPanel.setLayout(new GridBagLayout());
-		unitCBBPanel.add(cbxUnits, new GridBagConstraints(0, 0, 0, 0, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 10), 0, 0));
-		unitCBBPanel.setBackground(new Color(128, 128, 128));
+		unitCBBPanel.add(cbxUnits, new GridBagConstraints(0, 0, 0, 0, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 15, 0, 10), 0, 0));
+		unitCBBPanel.setBackground(new Color(116, 149, 168));
 		unitCBBPanel.setPreferredSize(new Dimension(200, 30));
 		unitCBBPanel.setMinimumSize(new Dimension(200, 30));
 
@@ -604,7 +605,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		cbxViewDocuments.setMaximumRowCount(20);
 
 		panel.add(lblNavigationLanguage, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
-		panel.add(cbxViewDocuments, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 100, 0, 10), 0, 0));
+		panel.add(cbxViewDocuments, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 115, 0, 10), 0, 0));
 		panel.add(unitLblPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 170), 0, 0));
 		panel.add(unitCBBPanel, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 100, 0, 0), 0, 0));
 		panel.add(allOpen, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 190), 0, 0));

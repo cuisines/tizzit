@@ -434,8 +434,7 @@ public class Main extends JFrame implements ActionListener {
 					panRibbon = new PanRibbon(comm);
 					ActionHub.addActionListener(panRibbon);
 				}
-
-				this.add(panRibbon, BorderLayout.NORTH);
+				this.getContentPane().add(panRibbon, BorderLayout.NORTH);
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_VIEW_EDITOR));
 
 				//		this.getJMenuBar().setVisible(true);

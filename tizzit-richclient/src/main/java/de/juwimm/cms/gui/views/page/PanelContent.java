@@ -156,6 +156,8 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 	}
 
 	void jbInit() throws Exception {
+		this.setBackground(UIConstants.backgroundBaseColor);
+		panContentHeader.setBackground(UIConstants.backgroundBaseColor);
 		jPanel1.setLayout(new BorderLayout());
 		panContentHeader.setPreferredSize(new Dimension(60, 60));
 		panContentHeader.setOpaque(true);

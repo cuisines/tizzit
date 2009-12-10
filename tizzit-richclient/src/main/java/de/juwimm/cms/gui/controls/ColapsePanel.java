@@ -128,9 +128,10 @@ public class ColapsePanel extends JPanel {
 			int panelWidth = getWidth();
 			GradientPaint gradientPaint;
 			if (direction == UP_DOWN) {
-				gradientPaint = new GradientPaint(0, 0, new Color(55, 55, 55), 0, panelHeight, new Color(113, 113, 113), true);
+				gradientPaint = new GradientPaint(0, 0, new Color(94, 129, 149), 0, panelHeight, new Color(130, 161, 181), true);
 			} else {
-				gradientPaint = new GradientPaint(0, 0, new Color(113, 113, 113), 0, panelHeight, new Color(55, 55, 55), true);
+				gradientPaint = new GradientPaint(0, 0, new Color(130, 161, 181), 0, panelHeight, new Color(94, 129, 149), true);
+
 			}
 
 			Graphics2D graphics2D = (Graphics2D) g;

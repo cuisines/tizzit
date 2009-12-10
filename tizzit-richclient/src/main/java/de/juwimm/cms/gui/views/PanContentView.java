@@ -18,6 +18,7 @@ package de.juwimm.cms.gui.views;
 import static de.juwimm.cms.client.beans.Application.getBean;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -196,9 +197,12 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		});
 
 		radioPreviewFrameset.setText("Preview in Frameset");
+		radioPreviewFrameset.setBackground(new Color(175, 186, 192));
 		radioPreviewWithoutFrame.setSelected(true);
 		radioPreviewWithoutFrame.setText("Preview without Frame");
+		radioPreviewWithoutFrame.setBackground(new Color(175, 186, 192));
 		panBottom.setMinimumSize(new Dimension(540, 40));
+		panBottom.setBackground(new Color(175, 186, 192));
 
 		this.add(panTab, BorderLayout.CENTER);
 
@@ -254,10 +258,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																																											 panMenuentry.unload();
-																																																																																																																																											 } else if (lastIndex == 2) {
-																																																																																																																																											 panMetaData.unload();
-																																																																																																																																											 }*/
+																																																																																																																																																							 panMenuentry.unload();
+																																																																																																																																																							 } else if (lastIndex == 2) {
+																																																																																																																																																							 panMetaData.unload();
+																																																																																																																																																							 }*/
 
 			String strTabName = "";
 			try {

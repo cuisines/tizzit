@@ -283,7 +283,6 @@ public class PanPicture extends JPanel {
 		lblAltText.setText(rb.getString("panel.content.picture.altText"));
 		lblDirection.setText(rb.getString("panel.content.picture.Direction"));
 		pnlPreview.add(btnPreview, BorderLayout.CENTER);
-		//btnPreview.setTransferHandler(tranferHandler);
 		btnPreview.setTransferHandler(new FileTransferHandler(this));
 		ckbThumbnailPopup.setText(rb.getString("panel.content.picture.ThumbnailPopup"));
 		// upper part
@@ -476,7 +475,9 @@ public class PanPicture extends JPanel {
 		InputStream is = new FileInputStream(file);
 		long length = file.length();
 
-		if (length > Integer.MAX_VALUE) { throw new IOException("File too big"); }
+		if (length > Integer.MAX_VALUE) {
+			throw new IOException("File too big");
+		}
 
 		byte[] bytes = new byte[(int) length];
 		int offset = 0;
@@ -485,7 +486,9 @@ public class PanPicture extends JPanel {
 			offset += numRead;
 		}
 
-		if (offset < bytes.length) { throw new IOException("Could not completely read file " + file.getName()); }
+		if (offset < bytes.length) {
+			throw new IOException("Could not completely read file " + file.getName());
+		}
 
 		is.close();
 		return bytes;

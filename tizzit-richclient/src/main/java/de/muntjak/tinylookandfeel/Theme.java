@@ -527,7 +527,7 @@ public class Theme {
 
 		backColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.ABS_COLOR, true);
 		backColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.ABS_COLOR, true);
-		backColor[2] = new ColorReference(new Color(225, 225, 225), 0, 0, ColorReference.ABS_COLOR, true);
+		backColor[2] = new ColorReference(new Color(225, 233, 236), 0, 0, ColorReference.ABS_COLOR, true);
 		backColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.ABS_COLOR, true);
 
 		frameColor[0] = new ColorReference(new Color(255, 255, 255), 0, 0, ColorReference.ABS_COLOR, true);
@@ -588,7 +588,8 @@ public class Theme {
 
 		buttonFontColor[0] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
 		buttonFontColor[1] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
-		buttonFontColor[2] = new ColorReference(new Color(255, 255, 255), 0, 0, ColorReference.ABS_COLOR);
+		//buttonFontColor[2] = new ColorReference(new Color(255, 255, 255), 0, 0, ColorReference.ABS_COLOR);
+		buttonFontColor[2] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
 		buttonFontColor[3] = new ColorReference(new Color(0, 0, 0), 0, 0, ColorReference.ABS_COLOR);
 
 		buttonFont[0] = new ColoredFont(buttonFontColor);
@@ -691,7 +692,7 @@ public class Theme {
 
 		tabFontColor[0] = new ColorReference(new Color(10, 50, 105));
 		tabFontColor[1] = new ColorReference(new Color(0, 0, 0));
-		tabFontColor[2] = new ColorReference(new Color(255, 255, 255));
+		tabFontColor[2] = new ColorReference(new Color(0, 0, 0));
 		tabFontColor[3] = new ColorReference(new Color(10, 50, 105));
 
 		tabSelectedFontColor[0] = new ColorReference(new Color(10, 50, 105));
@@ -877,7 +878,7 @@ public class Theme {
 
 		buttonNormalColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
 		buttonNormalColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-		buttonNormalColor[2] = new ColorReference(new Color(92, 92, 92), 0, 0, ColorReference.SUB3_COLOR);
+		buttonNormalColor[2] = new ColorReference(new Color(247, 247, 247), 0, 0, ColorReference.SUB3_COLOR);
 		buttonNormalColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
 
 		buttonRolloverBgColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
@@ -1165,12 +1166,12 @@ public class Theme {
 
 		tabNormalColor[0] = new ColorReference(new Color(242, 240, 238), 0, 0, ColorReference.BACK_COLOR);
 		tabNormalColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-		tabNormalColor[2] = new ColorReference(new Color(127, 127, 127), 0, 69, ColorReference.BACK_COLOR);
+		tabNormalColor[2] = new ColorReference(new Color(222, 222, 222), 0, 69, ColorReference.BACK_COLOR);
 		tabNormalColor[3] = new ColorReference(new Color(242, 240, 238), 0, 0, ColorReference.BACK_COLOR);
 
 		tabSelectedColor[0] = new ColorReference(new Color(251, 251, 250), 0, 0, ColorReference.BACK_COLOR);
 		tabSelectedColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-		tabSelectedColor[2] = new ColorReference(new Color(225, 225, 225), 0, 91, ColorReference.BACK_COLOR);
+		tabSelectedColor[2] = new ColorReference(new Color(255, 255, 255), 0, 91, ColorReference.BACK_COLOR);
 		tabSelectedColor[3] = new ColorReference(new Color(251, 251, 250), 0, 0, ColorReference.BACK_COLOR);
 
 		// since 1.3
@@ -2207,7 +2208,7 @@ public class Theme {
 
 		tableHeaderBackColor[0] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
 		tableHeaderBackColor[1] = new ColorReference(new Color(212, 208, 200), 0, 0, ColorReference.BACK_COLOR);
-		tableHeaderBackColor[2] = new ColorReference(new Color(55, 55, 55), 0, 0, ColorReference.BACK_COLOR);
+		tableHeaderBackColor[2] = new ColorReference(new Color(116, 149, 168), 0, 0, ColorReference.BACK_COLOR);
 		tableHeaderBackColor[3] = new ColorReference(new Color(221, 221, 221), 0, 0, ColorReference.BACK_COLOR);
 
 		tableHeaderFontColor[2] = new ColorReference(new Color(250, 250, 250), 0, 0, ColorReference.BACK_COLOR);

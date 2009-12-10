@@ -78,7 +78,8 @@ public class PanStatusbar extends JPanel implements ActionListener {
 	private BorderLayout borderLayout2 = new BorderLayout();
 	private JPanel panMandant = new JPanel();
 	private JLabel lblMandant = new JLabel();
-	private static final Color statusBackgroundColor = new Color(140, 140, 140);
+	private static final Color textFontColor = Color.white;
+	private static final Color statusBackgroundColor = new Color(37, 70, 89);
 	private static Border statusBorderLeft = new StatusBarBorder(StatusBarBorder.LEFT);
 	private static Border statusBorderRight = new StatusBarBorder(StatusBarBorder.RIGHT);
 
@@ -139,6 +140,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		lblDate.setOpaque(false);
 		lblDate.setHorizontalAlignment(SwingConstants.CENTER);
 		lblDate.setText("21.08.2003");
+		lblDate.setForeground(textFontColor);
 		panTask.setBorder(statusBorderLeft);
 		panTask.setMinimumSize(new Dimension(21, 21));
 		panTask.setOpaque(false);
@@ -146,9 +148,10 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		panTask.setLayout(new BorderLayout());
 		panTask.setBackground(statusBackgroundColor);
 		lblTask.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTask.setForeground(textFontColor);
 		progressBarPanel.setLayout(borderLayout5);
 		progressBarPanel.setBackground(statusBackgroundColor);
-		progressBar.setBackground(new Color(160, 160, 160));
+		progressBar.setBackground(new Color(80, 106, 121));
 		progressBar.setBorderPainted(false);
 		panUser.setLayout(new BorderLayout());
 		lblUser.setOpaque(false);
@@ -156,6 +159,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		lblUser.setToolTipText("");
 		lblUser.setHorizontalAlignment(SwingConstants.CENTER);
 		lblUser.setText("");
+		lblUser.setForeground(textFontColor);
 		panUser.setBorder(statusBorderLeft);
 		borderLayout2.setHgap(5);
 		borderLayout2.setVgap(5);
@@ -164,7 +168,9 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		panMandant.setBackground(statusBackgroundColor);
 		lblMandant.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMandant.setText(" ");
+		lblMandant.setForeground(textFontColor);
 		lblServername.setHorizontalAlignment(SwingConstants.CENTER);
+		lblServername.setForeground(textFontColor);
 		this.add(lblDate, new GridBagConstraints(6, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 10, 0));
 		this.add(panTask, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 0));
 		panTask.add(lblTask, BorderLayout.CENTER);
@@ -173,10 +179,12 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		lblCountPages.setText("0");
 		lblCountPages.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCountPages.setBorder(statusBorderLeft);
+		lblCountPages.setForeground(textFontColor);
 		this.add(lblCountPages, new GridBagConstraints(1, 0, 1, 1, 0.05, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 
 		this.add(panMessage, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 5));
 		lblMessage.setBorder(new EmptyBorder(0, 4, 0, 0));
+		lblMessage.setForeground(textFontColor);
 		panMessage.add(lblMessage, BorderLayout.CENTER);
 		panMessage.add(progressBarPanel, BorderLayout.EAST);
 		progressBarPanel.add(progressBar, BorderLayout.CENTER);
@@ -185,6 +193,7 @@ public class PanStatusbar extends JPanel implements ActionListener {
 		panUser.add(lblUser, BorderLayout.CENTER);
 		borderLayout1.setHgap(5);
 		lblProxy.setIcon(UIConstants.ICON_PROXY);
+		lblProxy.setForeground(textFontColor);
 		lblProxy.setText("");
 		gridBagConstraints1.gridx = 1;
 		gridBagConstraints1.gridy = 0;

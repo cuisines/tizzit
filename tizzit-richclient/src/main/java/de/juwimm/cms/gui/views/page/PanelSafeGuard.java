@@ -199,6 +199,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 	 * 
 	 */
 	private void initialize() {
+		this.setBackground(UIConstants.backgroundBaseColor);
 		GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 		gridBagConstraints6.gridx = 0;
 		gridBagConstraints6.ipady = 0;
@@ -449,6 +450,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 		if (panConfigure == null) {
 			panConfigure = new JPanel();
 			panConfigure.setLayout(new BorderLayout());
+			panConfigure.setBackground(UIConstants.backgroundBaseColor);
 		}
 		return panConfigure;
 	}

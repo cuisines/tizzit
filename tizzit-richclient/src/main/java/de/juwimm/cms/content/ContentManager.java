@@ -151,6 +151,7 @@ public final class ContentManager {
 				myDCFPanel = new JPanel();
 				myDCFPanel.setDoubleBuffered(true);
 				myDCFPanel.setLayout(new GridBagLayout());
+				myDCFPanel.setBackground(UIConstants.backgroundBaseColor);
 
 				scrollPane.setDoubleBuffered(true);
 				scrollPane.getViewport().add(myDCFPanel);
@@ -174,7 +175,7 @@ public final class ContentManager {
 							GridBagConstraints gbc = new GridBagConstraints();
 							gbc.gridx = 0;
 							gbc.gridy = i++;
-							gbc.insets = new Insets(0, 0, 0, 0);
+							gbc.insets = new Insets(0, 0, 4, 0);
 							gbc.fill = java.awt.GridBagConstraints.BOTH;
 							gbc.weightx = 1.0D;
 							myDCFPanel.add(moduleFactory.getPanelForModule(module), gbc);
@@ -221,7 +222,9 @@ public final class ContentManager {
 		ModuleFactory mf = htTemplateModuleFactory.get(strLastDcfName);
 		if (mf != null) {
 			String errMsg = mf.isModuleValid();
-			if (errMsg.equals("")) { return true; }
+			if (errMsg.equals("")) {
+				return true;
+			}
 			new FrmValidationError(errMsg);
 			return false;
 		}
@@ -238,7 +241,9 @@ public final class ContentManager {
 		ContentErrorListener cel = new ContentErrorListener();
 		xform.setErrorListener(cel);
 		xform.transform(source, result);
-		if (cel.getExceptionGot() != null) { throw cel.getExceptionGot(); }
+		if (cel.getExceptionGot() != null) {
+			throw cel.getExceptionGot();
+		}
 		return gch.getContent();
 	}
 

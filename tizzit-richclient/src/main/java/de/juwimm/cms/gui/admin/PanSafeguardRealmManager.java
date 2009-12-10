@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

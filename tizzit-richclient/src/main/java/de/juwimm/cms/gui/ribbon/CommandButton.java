@@ -47,5 +47,4 @@ public class CommandButton extends JCommandButton {
 		enabledToolTip = richTooltip;
 		super.setActionRichTooltip(richTooltip);
 	}
-
 }

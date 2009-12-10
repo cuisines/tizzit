@@ -17,6 +17,7 @@ package de.juwimm.cms.util;
 
 import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.util.HashMap;
 
@@ -48,6 +49,8 @@ public final class UIConstants {
 	public static final int IMAGE_SIZE_UNDEF = -1;
 
 	private static Main mainFrame = null;
+
+	public static Color backgroundBaseColor = Color.white;
 
 	public static ImageIcon EMPTY;
 	public static ImageIcon CMS = load("cms_16x16.gif");

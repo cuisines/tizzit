@@ -7,7 +7,6 @@ import javax.swing.UIManager;
 
 import org.jvnet.flamingo.ribbon.JRibbon;
 
-
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$

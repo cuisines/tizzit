@@ -10,19 +10,19 @@ import org.jvnet.flamingo.ribbon.ui.BasicRibbonBandUI;
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$
  */
-public class RibbonBandUI extends BasicRibbonBandUI{
+public class RibbonBandUI extends BasicRibbonBandUI {
 
 	/* (non-Javadoc)
 	 * @see org.jvnet.flamingo.ribbon.ui.BasicRibbonBandUI#paintBandTitle(java.awt.Graphics, java.awt.Rectangle, java.lang.String)
 	 */
 	@Override
-	protected void paintBandTitle(Graphics g, Rectangle titleRectangle,
-			String title) {
-		if(this.isUnderMouse){
+	protected void paintBandTitle(Graphics g, Rectangle titleRectangle, String title) {
+		if (this.isUnderMouse) {
 			this.ribbonBand.setForeground(Color.black);
-		}else{
-			this.ribbonBand.setForeground(Color.white);
+		} else {
+			this.ribbonBand.setForeground(Color.black);
 		}
 		super.paintBandTitle(g, titleRectangle, title);
 	}
+
 }

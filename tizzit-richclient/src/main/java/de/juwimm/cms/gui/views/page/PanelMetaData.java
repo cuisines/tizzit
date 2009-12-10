@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
@@ -73,6 +74,7 @@ public class PanelMetaData extends JPanel implements LoadableViewComponentPanel 
 	}
 
 	private void jbInit() throws Exception {
+		this.setBackground(UIConstants.backgroundBaseColor);
 		titledBorder1 = new TitledBorder(rb.getString("panel.panelMetaData.keywords"));
 		titledBorder2 = new TitledBorder(rb.getString("panel.panelMetaData.description"));
 		jScrollPane2 = new JScrollPane(txtDescription);
