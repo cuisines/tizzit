@@ -15,9 +15,11 @@
  */
 package de.juwimm.cms.content.modules;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -84,15 +86,41 @@ public class Anchor extends AbstractModule {
 	 */
 	private class ShowOptionPane implements Runnable {
 		private Module module = null;
+		private String initialValue = null;
 
 		public ShowOptionPane(Module module) {
 			this.module = module;
+
+		}
+
+		public void setInitialValue(String value) {
+			this.initialValue = value;
+		}
+
+		public String getInitialValue() {
+			return this.initialValue;
 		}
 
 		public void run() {
-			String newAnchor = JOptionPane.showInputDialog(rb.getString("content.modules.anchor.insertAnchorName"),
-					anchor);
-			if (newAnchor != null && !newAnchor.equals("")) {
+			String newAnchor;
+			if (getInitialValue() == null) {
+				newAnchor = JOptionPane.showInputDialog(rb.getString("content.modules.anchor.insertAnchorName"), anchor);
+			} else {
+				newAnchor = JOptionPane.showInputDialog(rb.getString("content.modules.anchor.insertAnchorName"), getInitialValue());
+			}
+			Pattern p = Pattern.compile("[\\w+][\\w\\.\\:\\-]*|[\\w\\.\\:\\-]*[\\w+]");
+			Matcher m;
+			boolean val = false;
+			String group = "";
+			if (newAnchor != null && newAnchor.length() > 0) {
+				m = p.matcher(newAnchor);
+				val = m.find();
+				if (val) {
+					group = m.group();
+				}
+			}
+
+			if (newAnchor != null && !newAnchor.equals("") && val && group.equalsIgnoreCase(newAnchor)) {
 				anchor = newAnchor;
 				EditpaneFiredEvent efe = new EditpaneFiredEvent(module);
 				runEditpaneFiredEvent(efe);
@@ -101,6 +129,10 @@ public class Anchor extends AbstractModule {
 				EditpaneFiredEvent efe = new EditpaneFiredEvent(module);
 				runEditpaneCancelEvent(efe);
 				setSaveable(false);
+			} else if (!val || !group.equalsIgnoreCase(newAnchor)) {
+				JOptionPane.showMessageDialog(this.module.viewPanelUI(), rb.getString("content.modules.anchor.notCorrectFormat"));
+				this.setInitialValue(newAnchor);
+				this.run();
 			}
 		}
 	}
@@ -149,8 +181,8 @@ public class Anchor extends AbstractModule {
 		if (panBtn != null) panBtn.setEnabled(enabling);
 		imEnabled = enabling;
 	}
-	
+
 	public void recycle() {
-		
+
 	}
 }
