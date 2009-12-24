@@ -1,6 +1,7 @@
 package de.juwimm.cms.remote.test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -8,22 +9,31 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.easymock.LogicalOperator;
 
+import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.authorization.model.UserHbmDao;
+import de.juwimm.cms.authorization.model.UserHbmImpl;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.Constants.ResourceUsageState;
+import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
 import de.juwimm.cms.exceptions.UserException;
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentHbmDao;
+import de.juwimm.cms.model.ContentHbmImpl;
 import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.ContentVersionHbmDao;
 import de.juwimm.cms.model.ContentVersionHbmImpl;
 import de.juwimm.cms.model.DocumentHbm;
 import de.juwimm.cms.model.DocumentHbmDao;
 import de.juwimm.cms.model.DocumentHbmImpl;
+import de.juwimm.cms.model.LockHbm;
+import de.juwimm.cms.model.LockHbmDao;
+import de.juwimm.cms.model.LockHbmImpl;
 import de.juwimm.cms.model.PictureHbm;
 import de.juwimm.cms.model.PictureHbmDao;
 import de.juwimm.cms.model.PictureHbmImpl;
@@ -33,6 +43,8 @@ import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewComponentHbmImpl;
 import de.juwimm.cms.remote.ContentServiceSpringImpl;
+import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
 
@@ -40,7 +52,7 @@ import de.juwimm.cms.vo.PictureSlimstValue;
  * @author fzalum
  *
  */
-public class ContentServiceTest extends TestCase {
+public class ContentServiceTest extends AbstractServiceTest {
 	private static Log log = LogFactory.getLog(ContentServiceTest.class);
 	List<ContentVersionHbm> mockContentVersions1;
 	List<ContentVersionHbm> mockContentVersions2;
@@ -61,6 +73,9 @@ public class ContentServiceTest extends TestCase {
 	ContentVersionHbmDao contentVersionDaoMock;
 	ContentServiceSpringImpl contentService;
 	ViewComponentHbmDao viewComponentMock;
+	ContentHbmDao contentDaoMock;
+	LockHbmDao lockDaoMock;
+	UserHbmDao userDaoMock;
 
 	ViewComponentHbm rootViewComponent;
 	List<ViewComponentHbm> roots;
@@ -119,6 +134,7 @@ public class ContentServiceTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		//contentVersion
 		mockContentVersions1 = new ArrayList<ContentVersionHbm>();
 		mockContentVersions2 = new ArrayList<ContentVersionHbm>();
@@ -168,6 +184,15 @@ public class ContentServiceTest extends TestCase {
 
 		pictureDaoMock = EasyMock.createMock(PictureHbmDao.class);
 		contentService.setPictureHbmDao(pictureDaoMock);
+
+		contentDaoMock = EasyMock.createMock(ContentHbmDao.class);
+		contentService.setContentHbmDao(contentDaoMock);
+
+		lockDaoMock = EasyMock.createMock(LockHbmDao.class);
+		contentService.setLockHbmDao(lockDaoMock);
+
+		userDaoMock = EasyMock.createMock(UserHbmDao.class);
+		contentService.setUserHbmDao(userDaoMock);
 
 		//create tree of view components
 		rootViewComponent = createViewComponent(0);
@@ -614,4 +639,551 @@ public class ContentServiceTest extends TestCase {
 
 	}
 
+	/**
+	 * Test CheckIn 
+	 * expect: no modifications so no need to create new contentVersion 
+	 *         and the lock is removed
+	 */
+	public void testCheckIn() {
+		ContentValue contentValue = new ContentValue();
+		contentValue.setContentId(1);
+		contentValue.setContentText("testText");
+		contentValue.setHeading("testHeading");
+
+		UserHbm userLockOwner = new UserHbmImpl();
+		userLockOwner.setUserId("testUser");
+
+		LockHbm lock = new LockHbmImpl();
+		lock.setLockId(1);
+		lock.setOwner(userLockOwner);
+
+		ContentVersionHbm lastContentVersion = new ContentVersionHbmImpl();
+		lastContentVersion.setContentVersionId(1);
+		lastContentVersion.setText("testText");
+		lastContentVersion.setHeading("testHeading");
+		lastContentVersion.setVersion("1");
+		lastContentVersion.setLock(lock);
+
+		Collection contentVersions = new ArrayList<ContentVersionHbm>();
+		contentVersions.add(lastContentVersion);
+		ContentHbm contentHbm = new ContentHbmImpl();
+		contentHbm.setContentId(1);
+		contentHbm.setContentVersions(contentVersions);
+
+		try {
+			EasyMock.expect(contentDaoMock.load(1)).andReturn(contentHbm);
+			lockDaoMock.remove((LockHbm) EasyMock.anyObject());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(lockDaoMock);
+
+		try {
+			contentService.checkIn(contentValue);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(contentDaoMock);
+	}
+
+	/**
+	 * Test CheckIn 
+	 * expect: after modifications are made to the contentVersion 
+	 *         a new content version is created
+	 *         and the lock is removed 
+	 */
+	public void testCheckIn1() {
+		ContentValue contentValue = new ContentValue();
+		contentValue.setContentId(1);
+		contentValue.setContentText("testTextNew");
+		contentValue.setHeading("testHeading");
+		contentValue.setCreateNewVersion(true);
+
+		UserHbm userLockOwner = new UserHbmImpl();
+		userLockOwner.setUserId("testUser");
+
+		LockHbm lock = new LockHbmImpl();
+		lock.setLockId(1);
+		lock.setOwner(userLockOwner);
+
+		ContentVersionHbm lastContentVersion = new ContentVersionHbmImpl();
+		lastContentVersion.setContentVersionId(1);
+		lastContentVersion.setText("testText");
+		lastContentVersion.setHeading("testHeading");
+		lastContentVersion.setVersion("1");
+		lastContentVersion.setLock(lock);
+
+		Collection contentVersions = new ArrayList<ContentVersionHbm>();
+		contentVersions.add(lastContentVersion);
+
+		ContentHbm contentHbm = new ContentHbmImpl();
+		contentHbm.setContentId(1);
+		contentHbm.setContentVersions(contentVersions);
+
+		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
+		contentVersion.setContentVersionId(1);
+		contentVersion.setText("testTextNew");
+		contentVersion.setHeading("testHeading");
+
+		try {
+			EasyMock.expect(contentDaoMock.load(1)).andReturn(contentHbm);
+			lockDaoMock.remove((LockHbm) EasyMock.anyObject());
+			EasyMock.expect(contentVersionDaoMock.create((ContentVersionHbm) EasyMock.anyObject())).andReturn(contentVersion);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(lockDaoMock);
+		EasyMock.replay(contentVersionDaoMock);
+
+		try {
+			contentService.checkIn(contentValue);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(contentDaoMock);
+		EasyMock.verify(lockDaoMock);
+		EasyMock.verify(contentVersionDaoMock);
+	}
+
+	/**
+	 * Test checkOut. Lock owner and lock caller are the same, force
+	 * expect: create new lock
+	 */
+	public void testCheckOut() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+
+		UserHbm userLockOwner = new UserHbmImpl();
+		userLockOwner.setUserId("testUser");
+
+		UserHbm caller = new UserHbmImpl();
+		caller.setUserId("testUser");
+
+		LockHbm lock = new LockHbmImpl();
+		lock.setLockId(1);
+		lock.setOwner(userLockOwner);
+
+		ContentVersionHbm lastContentVersion = new ContentVersionHbmImpl();
+		lastContentVersion.setContentVersionId(1);
+		lastContentVersion.setText("testText");
+		lastContentVersion.setHeading("testHeading");
+		lastContentVersion.setVersion("1");
+		lastContentVersion.setLock(lock);
+
+		Collection contentVersions = new ArrayList<ContentVersionHbm>();
+		contentVersions.add(lastContentVersion);
+
+		content.setContentVersions(contentVersions);
+
+		try {
+			EasyMock.expect(contentDaoMock.load(1)).andReturn(content);
+			EasyMock.expect(userDaoMock.load("testUser")).andReturn(caller);
+			lockDaoMock.remove((LockHbm) EasyMock.anyObject());
+			EasyMock.expect(lockDaoMock.create((LockHbm) EasyMock.anyObject())).andReturn(lock);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(userDaoMock);
+		EasyMock.replay(lockDaoMock);
+
+		try {
+			ContentValue value = contentService.checkOut(1, true);
+			Assert.assertNotNull(value);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+	}
+
+	/**
+	 * Test checkOut. Lock owner and lock caller are the same,not force
+	 * expect: throw alreadyCheckedOutException
+	 */
+	public void testCheckOut1() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+
+		UserHbm userLockOwner = new UserHbmImpl();
+		userLockOwner.setUserId("testUser");
+
+		UserHbm caller = new UserHbmImpl();
+		caller.setUserId("testUser");
+
+		LockHbm lock = new LockHbmImpl();
+		lock.setLockId(1);
+		lock.setOwner(userLockOwner);
+
+		ContentVersionHbm lastContentVersion = new ContentVersionHbmImpl();
+		lastContentVersion.setContentVersionId(1);
+		lastContentVersion.setText("testText");
+		lastContentVersion.setHeading("testHeading");
+		lastContentVersion.setVersion("1");
+		lastContentVersion.setLock(lock);
+
+		Collection contentVersions = new ArrayList<ContentVersionHbm>();
+		contentVersions.add(lastContentVersion);
+
+		content.setContentVersions(contentVersions);
+
+		try {
+			EasyMock.expect(contentDaoMock.load(1)).andReturn(content);
+			EasyMock.expect(userDaoMock.load("testUser")).andReturn(caller);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(userDaoMock);
+
+		try {
+			ContentValue value = contentService.checkOut(1, false);
+		} catch (Exception e) {
+			if (e instanceof AlreadyCheckedOutException) {
+				Assert.assertTrue(true);
+			} else {
+				Assert.assertTrue(false);
+			}
+		}
+
+	}
+
+	/**
+	 * Test checkOut. No lock, force
+	 * expect: create new lock and set the lock owner the caller
+	 */
+	public void testCheckOut2() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+
+		UserHbm userLockOwner = new UserHbmImpl();
+		userLockOwner.setUserId("testUser");
+
+		UserHbm caller = new UserHbmImpl();
+		caller.setUserId("testUser");
+
+		LockHbm lock = new LockHbmImpl();
+		lock.setLockId(1);
+		lock.setOwner(userLockOwner);
+
+		ContentVersionHbm lastContentVersion = new ContentVersionHbmImpl();
+		lastContentVersion.setContentVersionId(1);
+		lastContentVersion.setText("testText");
+		lastContentVersion.setHeading("testHeading");
+		lastContentVersion.setVersion("1");
+
+		Collection contentVersions = new ArrayList<ContentVersionHbm>();
+		contentVersions.add(lastContentVersion);
+
+		content.setContentVersions(contentVersions);
+
+		try {
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+			EasyMock.expect(userDaoMock.load(EasyMock.eq("testUser"))).andReturn(caller);
+			EasyMock.expect(lockDaoMock.create((LockHbm) EasyMock.anyObject())).andReturn(lock);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(userDaoMock);
+		EasyMock.replay(lockDaoMock);
+
+		try {
+			ContentValue value = contentService.checkOut(1, true);
+			Assert.assertNotNull(value);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+	}
+
+	/**
+	 * Test createContent
+	 * expect: create new content with content version
+	 */
+	public void testCreateContent() {
+		Collection contentVersions = new ArrayList<ContentVersionHbm>();
+		ContentHbm contentHbm = new ContentHbmImpl();
+		contentHbm.setContentId(1);
+		contentHbm.setContentVersions(contentVersions);
+
+		ContentValue contentValue = new ContentValue();
+		contentValue.setContentId(1);
+		contentValue.setTemplate("testTemplate");
+
+		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
+		contentVersion.setContentVersionId(1);
+		contentVersion.setVersion("testVersion");
+
+		try {
+			EasyMock.expect(contentDaoMock.create((ContentValue) EasyMock.anyObject(), EasyMock.eq("testUser"))).andReturn(contentHbm);
+			EasyMock.expect(contentVersionDaoMock.create((ContentVersionHbm) EasyMock.anyObject())).andReturn(contentVersion);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(contentVersionDaoMock);
+		try {
+			contentValue = contentService.createContent(contentValue);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(contentDaoMock);
+		EasyMock.verify(contentVersionDaoMock);
+	}
+
+	/**
+	 * Test getAllContentVersions
+	 * expect: return only content version which don't have version "PUBLS"
+	 *         versionComment is set
+	 */
+	public void testGetAllContentVersions() {
+		Collection<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
+
+		ContentVersionHbm contentVersion1 = new ContentVersionHbmImpl();
+		contentVersion1.setContentVersionId(1);
+		contentVersion1.setVersion("1");
+		contentVersion1.setCreator("testUser");
+		contentVersion1.setCreateDate(0);
+
+		ContentVersionValue contentVersionValue1 = new ContentVersionValue();
+		contentVersionValue1.setContentVersionId(1);
+		contentVersionValue1.setVersion("1");
+		contentVersionValue1.setCreateDate(0);
+		contentVersionValue1.setCreator("testUser");
+
+		ContentVersionHbm contentVersion2 = new ContentVersionHbmImpl();
+		contentVersion2.setContentVersionId(2);
+		contentVersion2.setVersion("2");
+		contentVersion2.setCreator("testUser");
+		contentVersion2.setCreateDate(0);
+
+		ContentVersionHbm contentVersion3 = new ContentVersionHbmImpl();
+		contentVersion3.setContentVersionId(3);
+		contentVersion3.setVersion("PUBLS");
+		contentVersion3.setCreator("testUser");
+		contentVersion3.setCreateDate(0);
+
+		ContentVersionValue contentVersionValue2 = new ContentVersionValue();
+		contentVersionValue2.setContentVersionId(1);
+		contentVersionValue2.setVersion("1");
+		contentVersionValue2.setCreateDate(0);
+		contentVersionValue2.setCreator("testUser");
+
+		contentVersions.add(contentVersion2);
+		contentVersions.add(contentVersion1);
+		contentVersions.add(contentVersion3);
+
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+		content.setContentVersions(contentVersions);
+
+		try {
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+			EasyMock.expect(contentVersionDaoMock.getDao(contentVersion1)).andReturn(contentVersionValue1);
+			EasyMock.expect(contentVersionDaoMock.getDao(contentVersion2)).andReturn(contentVersionValue2);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+		EasyMock.replay(contentVersionDaoMock);
+
+		try {
+			ContentVersionValue[] cv = contentService.getAllContentVersions(1);
+			Assert.assertEquals(2, cv.length);
+			Assert.assertEquals("1 - testUser (01.01.1970)", cv[0].getVersionComment());
+			Assert.assertEquals("testUser (01.01.1970)", cv[1].getVersionComment());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(contentDaoMock);
+		EasyMock.verify(contentVersionDaoMock);
+	}
+
+	/**
+	 * Test GetAllContentVersionsIds
+	 * expect: return an array with the contentVersion's ids which don't have 
+	 *         version='publs'
+	 */
+	public void testGetAllContentVersionsId() {
+		Collection<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
+
+		ContentVersionHbm contentVersion1 = new ContentVersionHbmImpl();
+		contentVersion1.setContentVersionId(1);
+		contentVersion1.setVersion("1");
+		contentVersion1.setCreator("testUser");
+		contentVersion1.setCreateDate(0);
+
+		ContentVersionValue contentVersionValue1 = new ContentVersionValue();
+		contentVersionValue1.setContentVersionId(1);
+		contentVersionValue1.setVersion("1");
+		contentVersionValue1.setCreateDate(0);
+		contentVersionValue1.setCreator("testUser");
+
+		ContentVersionHbm contentVersion2 = new ContentVersionHbmImpl();
+		contentVersion2.setContentVersionId(2);
+		contentVersion2.setVersion("2");
+		contentVersion2.setCreator("testUser");
+		contentVersion2.setCreateDate(0);
+
+		ContentVersionHbm contentVersion3 = new ContentVersionHbmImpl();
+		contentVersion3.setContentVersionId(3);
+		contentVersion3.setVersion("PUBLS");
+		contentVersion3.setCreator("testUser");
+		contentVersion3.setCreateDate(0);
+
+		ContentVersionValue contentVersionValue2 = new ContentVersionValue();
+		contentVersionValue2.setContentVersionId(1);
+		contentVersionValue2.setVersion("1");
+		contentVersionValue2.setCreateDate(0);
+		contentVersionValue2.setCreator("testUser");
+
+		contentVersions.add(contentVersion2);
+		contentVersions.add(contentVersion1);
+		contentVersions.add(contentVersion3);
+
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+		content.setContentVersions(contentVersions);
+
+		try {
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+
+		try {
+			Integer[] cv = contentService.getAllContentVersionsId(1);
+			Assert.assertEquals(2, cv.length);
+			Assert.assertEquals(1, cv[0].intValue());
+			Assert.assertEquals(2, cv[1].intValue());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(contentDaoMock);
+	}
+
+	/**
+	 * Test GetAnchors
+	 * expect: return the name of the anchor "test"
+	 */
+	public void testGetAnchors() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+
+		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
+		contentVersion.setContentVersionId(1);
+		contentVersion.setVersion("1");
+		contentVersion.setText("<p><anchor dcfname=\"de.juwimm.cms.content.modules.Anchor\" description=\"testAnchor\" label=\"Anker\"><a name=\"test\" type=\"anchor\"/></anchor></p>");
+
+		Collection<ContentVersionHbm> contentVersions = new ArrayList<ContentVersionHbm>();
+		contentVersions.add(contentVersion);
+
+		content.setContentVersions(contentVersions);
+		try {
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentDaoMock);
+
+		try {
+			String[] anchors = contentService.getAnchors(1);
+			Assert.assertEquals(1, anchors.length);
+			Assert.assertEquals("test", anchors[0]);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+	}
+
+	/**
+	 * Test GetContentTemplateName
+	 * expect: for view with view type internal link or symlink 
+	 *         first search for the referenced view component and after that get the content referenced there 
+	 *        
+	 */
+	public void testGetContentTemplateName() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+		content.setTemplate("testTemplate");
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+		viewComponent.setViewType(Constants.VIEW_TYPE_INTERNAL_LINK);
+		viewComponent.setReference("2");
+
+		ViewComponentHbm viewComponentReferenced = new ViewComponentHbmImpl();
+		viewComponentReferenced.setViewComponentId(2);
+		viewComponentReferenced.setReference("1");
+
+		try {
+			EasyMock.expect(viewComponentMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+			EasyMock.expect(viewComponentMock.load(EasyMock.eq(2))).andReturn(viewComponentReferenced);
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentMock);
+		EasyMock.replay(contentDaoMock);
+
+		try {
+			String result = contentService.getContentTemplateName(1);
+			Assert.assertEquals("testTemplate", result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentMock);
+		EasyMock.verify(contentDaoMock);
+	}
+
+	/**
+	 * Test GetContentTemplateName
+	 * expect: from the content referenced get the template name 
+	 *        
+	 */
+	public void testGetContentTemplateName1() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+		content.setTemplate("testTemplate");
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+		viewComponent.setViewType(Constants.VIEW_TYPE_CONTENT);
+		viewComponent.setReference("1");
+
+		try {
+			EasyMock.expect(viewComponentMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+			EasyMock.expect(contentDaoMock.load(EasyMock.eq(1))).andReturn(content);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentMock);
+		EasyMock.replay(contentDaoMock);
+
+		try {
+			String result = contentService.getContentTemplateName(1);
+			Assert.assertEquals("testTemplate", result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentMock);
+		EasyMock.verify(contentDaoMock);
+	}
 }

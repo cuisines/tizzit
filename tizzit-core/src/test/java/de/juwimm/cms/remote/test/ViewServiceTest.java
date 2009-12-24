@@ -6,15 +6,19 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 
+import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.authorization.model.UserHbmDao;
+import de.juwimm.cms.authorization.model.UserHbmImpl;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.ContentHbmImpl;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.SiteHbmImpl;
 import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.UnitHbmDao;
 import de.juwimm.cms.model.UnitHbmImpl;
@@ -31,12 +35,13 @@ import de.juwimm.cms.vo.ViewComponentValue;
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$
  */
-public class ViewServiceTest extends TestCase {
+public class ViewServiceTest extends AbstractServiceTest {
 
 	private ViewComponentHbmDao viewComponentDaoMock;
 	private ViewDocumentHbmDao viewDocumentDaoMock;
 	private UnitHbmDao unitDaoMock;
 	private ContentHbmDao contentDaoMock;
+	private UserHbmDao userDaoMock;
 	private ViewServiceSpringImpl viewService;
 	private ViewComponentHbm root;
 	private ViewComponentHbm first;
@@ -49,15 +54,22 @@ public class ViewServiceTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		viewComponentDaoMock = EasyMock.createMock(ViewComponentHbmDao.class);
 		viewService = new ViewServiceSpringImpl();
 		viewService.setViewComponentHbmDao(viewComponentDaoMock);
+
 		viewDocumentDaoMock = EasyMock.createMock(ViewDocumentHbmDao.class);
 		viewService.setViewDocumentHbmDao(viewDocumentDaoMock);
+
 		unitDaoMock = EasyMock.createMock(UnitHbmDao.class);
 		viewService.setUnitHbmDao(unitDaoMock);
+
 		contentDaoMock = EasyMock.createMock(ContentHbmDao.class);
 		viewService.setContentHbmDao(contentDaoMock);
+
+		userDaoMock = EasyMock.createMock(UserHbmDao.class);
+		viewService.setUserHbmDao(userDaoMock);
 	}
 
 	/**
@@ -515,4 +527,119 @@ public class ViewServiceTest extends TestCase {
 		EasyMock.verify(viewComponentDaoMock);
 	}
 
+	/**
+	 * test AddFirstViewComponent
+	 * 
+	 */
+	public void testAddFirstViewComponent() {
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+
+		ViewComponentHbm child = new ViewComponentHbmImpl();
+		child.setViewComponentId(2);
+
+		ViewComponentHbm newNode = new ViewComponentHbmImpl();
+		newNode.setViewComponentId(3);
+
+		ViewDocumentHbm viewDocument = new ViewDocumentHbmImpl();
+		viewDocument.setViewDocumentId(1);
+
+		String strReference = "testReference";
+		String strText = "testText";
+		String strInfo = "testInfo";
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+			EasyMock.expect(viewDocumentDaoMock.load(EasyMock.eq(1))).andReturn(viewDocument);
+			EasyMock.expect(viewComponentDaoMock.create(EasyMock.eq(viewDocument), EasyMock.eq(strReference), EasyMock.eq(strText), EasyMock.eq(strInfo), (Integer) EasyMock.eq(null))).andReturn(newNode);
+			EasyMock.expect(viewComponentDaoMock.create(EasyMock.eq(newNode))).andReturn(newNode);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+		EasyMock.replay(viewDocumentDaoMock);
+
+		try {
+			ViewComponentValue result = viewService.addFirstViewComponent(viewComponent.getViewComponentId(), viewDocument.getViewDocumentId(), strReference, strText, strInfo);
+			Assert.assertNotNull(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(viewComponentDaoMock);
+		EasyMock.verify(viewDocumentDaoMock);
+
+	}
+
+	/**
+	 * Test GetViewComponentForLanguageOrShortlink
+	 */
+	public void testGetViewComponentForLanguageOrShortlink() {
+		String viewType = "testViewType";
+		String language = "testLanguage";
+
+		ViewDocumentHbm viewDocument = new ViewDocumentHbmImpl();
+		viewDocument.setViewDocumentId(1);
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+
+		viewDocument.setViewComponent(viewComponent);
+
+		SiteHbm site = new SiteHbmImpl();
+		site.setSiteId(1);
+
+		try {
+			EasyMock.expect(viewDocumentDaoMock.findByViewTypeAndLanguage(viewType, language, site.getSiteId())).andReturn(viewDocument);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewDocumentDaoMock);
+
+		try {
+			String[] value = viewService.getViewComponentForLanguageOrShortlink(viewType, language, site.getSiteId());
+			Assert.assertNotNull(value);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewDocumentDaoMock);
+
+	}
+
+	/**
+	 * Test SetDefaultViewDocument
+	 * expect: no exception thrown
+	 */
+	public void testSetDefaultViewDocument() {
+		ViewDocumentHbm viewDocument = new ViewDocumentHbmImpl();
+		viewDocument.setViewDocumentId(1);
+
+		SiteHbm site = new SiteHbmImpl();
+		site.setSiteId(1);
+
+		UserHbm user = new UserHbmImpl();
+		user.setUserId("testUser");
+		user.setActiveSite(site);
+
+		try {
+			EasyMock.expect(viewDocumentDaoMock.load(EasyMock.eq(1))).andReturn(viewDocument);
+			EasyMock.expect(userDaoMock.load(EasyMock.eq("testUser"))).andReturn(user);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewDocumentDaoMock);
+		EasyMock.replay(userDaoMock);
+
+		try {
+			viewService.setDefaultViewDocument(1);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewDocumentDaoMock);
+		EasyMock.verify(userDaoMock);
+	}
 }
