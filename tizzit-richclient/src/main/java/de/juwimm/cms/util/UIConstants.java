@@ -285,6 +285,9 @@ public final class UIConstants {
 	public static ImageIcon TREE_EXPAND_ALL;
 	public static ImageIcon TREE_COLLAPSE_ALL;
 
+	public static ImageIcon ICON_PLUS;
+	public static ImageIcon ICON_MINUS;
+
 	private UIConstants() {
 	}
 
@@ -531,6 +534,9 @@ public final class UIConstants {
 
 		TREE_COLLAPSE_ALL = load("treeCollapse.png");
 		TREE_EXPAND_ALL = load("treeExpand.png");
+
+		ICON_PLUS = load("16x16/plus.gif");
+		ICON_MINUS = load("16x16/minus.gif");
 
 	}
 

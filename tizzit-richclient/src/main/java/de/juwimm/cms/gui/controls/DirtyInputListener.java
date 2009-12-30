@@ -15,9 +15,13 @@
  */
 package de.juwimm.cms.gui.controls;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
@@ -35,51 +39,68 @@ import javax.swing.event.TableModelListener;
  * @version $Id$
  * Used for different control types(JTextField,JComboBox,JSpinner,JTable) to detect value changes.
  */
-public abstract class DirtyInputListener{
-	
+public abstract class DirtyInputListener {
+
 	/**
 	 * Called when a control changes his value.
 	 */
 	public abstract void onChangeValue();
-	
-	public static void addDirtyInputListener(JComponent component,final DirtyInputListener listener){		
-		if(component instanceof JTextField){
-			((JTextField)component).getDocument().addDocumentListener(new DocumentListener(){
+
+	public static void addDirtyInputListener(JComponent component, final DirtyInputListener listener) {
+		if (component instanceof JTextField) {
+			((JTextField) component).getDocument().addDocumentListener(new DocumentListener() {
 
 				public void changedUpdate(DocumentEvent e) {
-					listener.onChangeValue();	
+					listener.onChangeValue();
 				}
 
 				public void insertUpdate(DocumentEvent e) {
-					listener.onChangeValue();					
+					listener.onChangeValue();
 				}
 
 				public void removeUpdate(DocumentEvent e) {
-					listener.onChangeValue();						
+					listener.onChangeValue();
 				}
-				
-			});			
-		}else if(component instanceof JComboBox){
-			((JComboBox)component).addItemListener(new ItemListener(){
-				public void itemStateChanged(ItemEvent e) {
-					listener.onChangeValue();					
-				}				
-			});			
-		}else if(component instanceof JSpinner){
-			((JSpinner)component).addChangeListener(new ChangeListener(){
-				public void stateChanged(ChangeEvent e) {
-					listener.onChangeValue();					
-				}
-				
+
 			});
-		}else if(component instanceof JTable){
-			JTable table = (JTable)component;			
-			table.getModel().addTableModelListener(new TableModelListener(){
+		} else if (component instanceof JComboBox) {
+			((JComboBox) component).addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					listener.onChangeValue();
+				}
+			});
+		} else if (component instanceof JSpinner) {
+			((JSpinner) component).addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					listener.onChangeValue();
+				}
+
+			});
+		} else if (component instanceof JTable) {
+			JTable table = (JTable) component;
+			table.getModel().addTableModelListener(new TableModelListener() {
 				public void tableChanged(TableModelEvent e) {
-					listener.onChangeValue();				
-				}			
+					listener.onChangeValue();
+				}
+			});
+		} else if (component instanceof JButton) {
+			JButton button = (JButton) component;
+			button.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					listener.onChangeValue();
+				}
+
+			});
+		} else if (component instanceof JCheckBox) {
+			JCheckBox checkbox = (JCheckBox) component;
+			checkbox.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent e) {
+					listener.onChangeValue();
+				}
+
 			});
 		}
 	}
-	
+
 }

@@ -15,25 +15,39 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
-import org.tizzit.util.XercesHelper;
-import org.w3c.dom.Element;
 
 import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.Parameter;
 import de.juwimm.cms.util.Parameters;
+import de.juwimm.cms.util.SmallSiteConfigReader;
 import de.juwimm.cms.util.UIConstants;
 
 /**
@@ -124,7 +138,7 @@ public class SiteParameterDialog extends JDialog {
 		}
 	}
 
-	public void save(Element node) {
+	public void save(SmallSiteConfigReader configReader) {
 		Enumeration enume = lstModel.elements();
 		while (enume.hasMoreElements()) {
 			ListItem li = (ListItem) enume.nextElement();
@@ -132,7 +146,7 @@ public class SiteParameterDialog extends JDialog {
 			while (itCustVal.hasNext()) {
 				Integer paramType = (Integer) itCustVal.next();
 				Object val = li.getCustomValues().get(paramType);
-				XercesHelper.createTextNode(node, li.getParam().getId() + "_" + paramType, val.toString());
+				configReader.saveValue("parameters/" + li.getParam().getId() + "_" + paramType, val.toString());
 			}
 		}
 	}
