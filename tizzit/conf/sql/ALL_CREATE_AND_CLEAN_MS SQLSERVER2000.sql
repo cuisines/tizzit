@@ -253,6 +253,8 @@ CREATE TABLE SITE (
 	page_name_content VARCHAR(255) NULL, 
 	page_name_search VARCHAR(255) NULL, 
 	last_modified_date BIGINT NULL DEFAULT '0', 
+	UPDATE_SITE_INDEX SMALLINT NULL, 
+	EXTERNAL_SITE_SEARCH SMALLINT NULL, 
 	PRIMARY KEY CLUSTERED(site_id)
 );
 CREATE INDEX idx_site_site_short ON site (site_short);
