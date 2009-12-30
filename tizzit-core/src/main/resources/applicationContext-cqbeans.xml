@@ -101,9 +101,11 @@
 		<property name="unitHbmDao" ref="unitHbmDao" />
 	</bean>
 	<bean class="de.juwimm.cms.search.beans.SearchengineDeleteService" id="searchengineDeleteService" />
+	<bean class="de.juwimm.cms.beans.WebCrawlerService" id="webCrawlerService" />
 
 	<bean class="de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring" id="tizzitPropertiesBeanSpring" lazy-init="false" scope="singleton" />
 	<bean class="de.juwimm.cms.beans.EditionCronService" id="editionCronService" p:contentServiceSpring-ref="contentServiceSpring" p:editionHbmDao-ref="editionHbmDao" p:editionServiceSpring-ref="editionServiceSpring" />
+	<bean class="de.juwimm.cms.beans.ExternalSitesCronService" id="externalSitesCronService" p:siteHbmDao-ref="siteHbmDao" p:webCrawler-ref="webCrawlerService"/>
 	<bean class="de.juwimm.cms.beans.SearchCronService" id="searchCronService" p:contentHbmDao-ref="contentHbmDao" p:tizzitPropertiesBeanSpring-ref="tizzitPropertiesBeanSpring" p:documentHbmDao-ref="documentHbmDao" p:searchengineService-ref="searchengineService" />
 	<bean class="de.juwimm.cms.beans.WebServiceSpring" id="webServiceSpring" />
 
@@ -173,6 +175,16 @@
 		</property>
 		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.editionCronExpression%%%" />
 	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.CronTriggerBean" id="externalSitesTrigger">
+		<property name="jobDetail">
+			<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+				<property name="targetObject" ref="externalSitesCronService" />
+				<property name="targetMethod" value="indexSites" />
+			</bean>
+		</property>
+		<property name="cronExpression" value="%%%tizzitPropertiesBeanSpring.indexExternalSiteCronExpression%%%" />
+	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
@@ -184,6 +196,7 @@
 				<ref bean="createEditionFromDeployFileTrigger" />
 				<!-- if it a liverserver this cron is not needed -->
 				<ref bean="deployStatusUpdaterTrigger"/>
+				<ref bean="externalSitesTrigger"/>				
 			</list>
 		</property>
 	</bean>
