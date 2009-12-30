@@ -98,4 +98,26 @@ public class PDFResourceLocator {
 		return resource;
 	}
 
+	public Resource getExternalResource(CompassSession session, String url, InputStream in) {
+		ResourceFactory resourceFactory = session.resourceFactory();
+		Resource resource = resourceFactory.createResource("HtmlSearchValue");
+		resource.addProperty("url", url);
+		resource.addProperty("uid", url);
+		try {
+			String content = LucenePDFDocument.getPdfContent(in);
+			if (content == null) return resource;
+			resource.addProperty("contents", content);
+			int summarySize = Math.min(content.length(), 500);
+			String summary = content.substring(0, summarySize);
+			resource.addProperty("summary", summary);
+			in.close();
+		} catch (IOException e) {
+			if (log.isInfoEnabled()) log.info("Error indexing url " + url + " document may be password-protected: " + e.getMessage());
+			if (log.isDebugEnabled()) log.debug(e.getMessage(), e);
+			return null;
+		}
+
+		return resource;
+	}
+
 }

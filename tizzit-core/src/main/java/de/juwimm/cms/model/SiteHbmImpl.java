@@ -54,6 +54,7 @@ public class SiteHbmImpl extends SiteHbm {
 		value.setPageNameContent(this.getPageNameContent());
 		value.setPageNameSearch(this.getPageNameSearch());
 		value.setLastModifiedDate(this.getLastModifiedDate());
+		value.setExternalSiteSearch(this.getExternalSiteSearch() == null ? false : this.getExternalSiteSearch());
 		return value;
 	}
 
@@ -75,6 +76,7 @@ public class SiteHbmImpl extends SiteHbm {
 		this.setPageNameContent(value.getPageNameContent());
 		this.setPageNameSearch(value.getPageNameSearch());
 		this.setLastModifiedDate(new Date().getTime());
+		this.setExternalSiteSearch(value.isExternalSiteSearch());
 	}
 
 	/**

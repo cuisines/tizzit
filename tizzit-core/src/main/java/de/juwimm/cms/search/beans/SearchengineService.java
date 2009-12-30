@@ -182,6 +182,12 @@ public class SearchengineService {
 	@SuppressWarnings("unchecked")
 	public void reindexSite(Integer siteId) throws Exception {
 		if (log.isDebugEnabled()) log.debug("Starting reindexing site " + siteId);
+		SiteHbm site = getSiteHbmDao().load(siteId);
+		//if site with external site search then schedule it to the  ExternalSitesCronService for indexing
+		if (site.getExternalSiteSearch() != null && site.getExternalSiteSearch()) {
+			site.setUpdateSiteIndex(true);
+			return;
+		}
 		CompassSession session = compass.openSession();
 		CompassQuery query = session.queryBuilder().term("siteId", siteId);
 		if (log.isDebugEnabled()) log.debug("delete sites with siteId: " + siteId + " with query: " + query.toString());

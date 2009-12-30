@@ -48,6 +48,16 @@ public class TizzitPropertiesBeanSpring {
 	private String hibernateSqlDialect;
 	private boolean hibernateShowSql;
 	private String editionCronExpression;
+	private String indexExternalSiteCronExpression;
+
+	public String getIndexExternalSiteCronExpression() {
+		return indexExternalSiteCronExpression;
+	}
+
+	public void setIndexExternalSiteCronExpression(String indexExternalSiteCronExpression) {
+		this.indexExternalSiteCronExpression = indexExternalSiteCronExpression;
+	}
+
 	private ClientMailAppenderConfig clientMailAppenderConfig = new ClientMailAppenderConfig();
 	private String updateDeployStatusCronExpression;
 

@@ -18,7 +18,6 @@ package de.juwimm.cms.search.res;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -34,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.model.DocumentHbmDao;
-import de.juwimm.cms.search.beans.SearchengineService;
 
 /**
  * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
@@ -90,12 +88,28 @@ public class RTFResourceLocator {
 		ResourceFactory resourceFactory = session.resourceFactory();
 		Resource resource = resourceFactory.createResource("DocumentSearchValue");
 		InputStream bis = new ByteArrayInputStream(documentHbmDao.getDocumentContent(document.getDocumentId()));
+		resource = getContent(resource, bis);
+		resource.addProperty("documentId", document.getDocumentId().toString());
+		resource.addProperty("uid", document.getDocumentId().toString());
+		resource.addProperty("siteId", document.getUnit().getSite().getSiteId().toString());
+		String docName = document.getDocumentName();
+		if (docName == null) docName = "";
+		resource.addProperty("documentName", docName);
+		resource.addProperty("title", docName);
+		resource.addProperty("unitId", document.getUnit().getUnitId().toString());
+		resource.addProperty("unitName", document.getUnit().getName());
+		resource.addProperty("mimeType", document.getMimeType());
+		resource.addProperty("timeStamp", document.getTimeStamp().toString());
+		return resource;
+	}
 
+	private Resource getContent(Resource resource, InputStream in) throws IOException {
 		DefaultStyledDocument styledDoc = new DefaultStyledDocument();
 		String contents = null;
 		try {
-			new RTFEditorKit().read(bis, styledDoc, 0);
+			new RTFEditorKit().read(in, styledDoc, 0);
 			contents = styledDoc.getText(0, styledDoc.getLength());
+			in.close();
 		} catch (BadLocationException e) {
 			log.warn("Error parsing rtf-doc: " + e.getMessage(), e);
 			throw new IOException("Error parsing rtf-doc: " + e.getMessage());
@@ -112,17 +126,15 @@ public class RTFResourceLocator {
 		}
 		if (summary == null) summary = "";
 		resource.addProperty("summary", summary);
-		resource.addProperty("documentId", document.getDocumentId().toString());
-		resource.addProperty("uid", document.getDocumentId().toString());
-		resource.addProperty("siteId", document.getUnit().getSite().getSiteId().toString());
-		String docName = document.getDocumentName();
-		if (docName == null) docName = "";
-		resource.addProperty("documentName", docName);
-		resource.addProperty("title", docName);
-		resource.addProperty("unitId", document.getUnit().getUnitId().toString());
-		resource.addProperty("unitName", document.getUnit().getName());
-		resource.addProperty("mimeType", document.getMimeType());
-		resource.addProperty("timeStamp", document.getTimeStamp().toString());
+		return resource;
+	}
+
+	public Resource getExternalResource(CompassSession session, String url, InputStream in) throws IOException {
+		ResourceFactory resourceFactory = session.resourceFactory();
+		Resource resource = resourceFactory.createResource("HtmlSearchValue");
+		resource.addProperty("url", url);
+		resource.addProperty("uid", url);
+		resource = getContent(resource, in);
 		return resource;
 	}
 

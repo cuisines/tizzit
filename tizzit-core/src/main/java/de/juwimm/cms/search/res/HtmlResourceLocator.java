@@ -80,6 +80,25 @@ public class HtmlResourceLocator {
 		}
 
 		HTMLParser parser = new HTMLParser(new FileInputStream(file));
+		return parseHtml(resource, parser);
+	}
+
+	public Resource getExternalResource(CompassSession session, String url, Reader htmlContent) throws IOException, InterruptedException {
+		ResourceFactory resourceFactory = session.resourceFactory();
+		Resource resource = resourceFactory.createResource("HtmlSearchValue");
+		resource.addProperty("url", url);
+		resource.addProperty("uid", url);
+		HTMLParser parser = new HTMLParser(htmlContent);
+		return parseHtml(resource, parser);
+	}
+
+	public String stripNonValidXMLCharacters(String in) {
+		if (in == null) return "";
+		String stripped = in.replaceAll("[^\\u0009\\u000a\\u000d\\u0020-\\ud7ff\\e0000-\\ufffd]", "").replaceAll("[&<>]", "");
+		return stripped;
+	}
+
+	private Resource parseHtml(Resource resource, HTMLParser parser) throws IOException, InterruptedException {
 		Reader reader = parser.getReader();
 		StringWriter sw = new StringWriter();
 		org.apache.commons.io.IOUtils.copy(reader, sw);
@@ -109,13 +128,7 @@ public class HtmlResourceLocator {
 
 		// Add the title as a field that it can be searched and that is stored.
 		resource.addProperty("title", parser.getTitle());
-
+		reader.close();
 		return resource;
-	}
-
-	public String stripNonValidXMLCharacters(String in) {
-		if (in == null) return "";
-		String stripped = in.replaceAll("[^\\u0009\\u000a\\u000d\\u0020-\\ud7ff\\e0000-\\ufffd]", "").replaceAll("[&<>]", "");
-		return stripped;
 	}
 }
