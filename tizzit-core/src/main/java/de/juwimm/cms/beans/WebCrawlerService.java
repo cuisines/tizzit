@@ -113,14 +113,6 @@ public class WebCrawlerService {
 				//link does not respect the search constraints
 				return;
 			}
-			if (!protocolsStrategy.isUrlValid(url)) {
-				//link does not respect the search constraints
-				if (!url.startsWith(baseUrl)) {
-					indexUrl(baseUrl + (url.startsWith("/") ? "" : "/") + url, depth, baseUrl);
-				} else {
-					return;
-				}
-			}
 		}
 		//configure http request
 		httpClient.getParams().setConnectionManagerTimeout(5000);
@@ -144,11 +136,18 @@ public class WebCrawlerService {
 			}
 			return;
 		}
+
 		if (httpMethod.getHostConfiguration().getHost() == null) {
 			if (!url.startsWith(baseUrl)) {
 				indexUrl(baseUrl + (url.startsWith("/") ? "" : "/") + url, depth, baseUrl);
 			}
 			return;
+		}
+		if (baseDepth != depth) {//no check for first level url
+			//protocol constraints check
+			if (!protocolsStrategy.isUrlValid(url)) {
+				return;
+			}
 		}
 
 		httpMethod.setFollowRedirects(true);
