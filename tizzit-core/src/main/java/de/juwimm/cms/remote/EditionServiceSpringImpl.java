@@ -2907,7 +2907,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		public boolean equals(Object obj) {
 			if (obj instanceof LiveServerCredentials) {
 				LiveServerCredentials credentials = (LiveServerCredentials) obj;
-				return liveServerIP.equals(credentials.liveServerIP) && liveServerPass.equals(credentials.liveServerPass) && liveServerUserName.equals(liveServerUserName);
+				return liveServerIP.equals(credentials.liveServerIP) && liveServerPass.equals(credentials.liveServerPass) && liveServerUserName.equals(credentials.liveServerUserName);
 			}
 			return false;
 		}

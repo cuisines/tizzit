@@ -57,7 +57,10 @@ public class WebCrawlerService {
 	@Autowired
 	private WordResourceLocator wordResourceLocator;
 	private Map<Integer, Set<String>> alreadyIndexedPages;
-	private Set<String> notHtmlPages;
+	/**
+	 * Used for broken links and non html pages
+	 */
+	private Set<String> alreadyIndexedNonHtmlPages;
 	private FilterCrawlUrlStrategy filtersStrategy;
 	private ProtocolCrawlUrlStrategy protocolsStrategy;
 	private int baseDepth;
@@ -78,7 +81,7 @@ public class WebCrawlerService {
 		List<String> negativeFilters = configReader.readValues(SmallSiteConfigReader.getNegativeListTag("filters"));
 
 		alreadyIndexedPages = new HashMap<Integer, Set<String>>();
-		notHtmlPages = new HashSet<String>();
+		alreadyIndexedNonHtmlPages = new HashSet<String>();
 		filtersStrategy = new FilterCrawlUrlStrategy(positiveFilters, negativeFilters);
 		protocolsStrategy = new ProtocolCrawlUrlStrategy(positiveProtocols, negativeProtocols);
 		baseDepth = Integer.valueOf(configReader.readValue(SmallSiteConfigReader.EXTERNAL_SEARCH_DEPTH_PATH));
@@ -100,7 +103,7 @@ public class WebCrawlerService {
 		//pages per depth must be indexed only once
 		if (!alreadyIndexedPages.containsKey(depth)) {
 			alreadyIndexedPages.put(depth, new HashSet<String>());
-		} else if (alreadyIndexedPages.get(depth).contains(url) || notHtmlPages.contains(url)) {
+		} else if (alreadyIndexedPages.get(depth).contains(url) || alreadyIndexedNonHtmlPages.contains(url)) {
 			return;
 		}
 
@@ -113,7 +116,7 @@ public class WebCrawlerService {
 			if (!protocolsStrategy.isUrlValid(url)) {
 				//link does not respect the search constraints
 				if (!url.startsWith(baseUrl)) {
-					indexUrl(baseUrl + url, depth, baseUrl);
+					indexUrl(baseUrl + (url.startsWith("/") ? "" : "/") + url, depth, baseUrl);
 				} else {
 					return;
 				}
@@ -123,13 +126,13 @@ public class WebCrawlerService {
 		httpClient.getParams().setConnectionManagerTimeout(5000);
 		HttpMethod httpMethod = null;
 		try {
-			httpMethod = new GetMethod(url);
+			httpMethod = new GetMethod(escapeUrl(url));
 		} catch (IllegalStateException ex) {
 			if (log.isDebugEnabled()) {
 				log.debug("failed to create http method on url " + url + " with error:" + ex.getMessage());
 			}
 			if (!url.startsWith(baseUrl)) {
-				indexUrl(baseUrl + url, depth, baseUrl);
+				indexUrl(baseUrl + (url.startsWith("/") ? "" : "/") + url, depth, baseUrl);
 			}
 			return;
 		} catch (IllegalArgumentException ex) {
@@ -137,37 +140,45 @@ public class WebCrawlerService {
 				log.debug("failed to create http method on url " + url + " with error:" + ex.getMessage());
 			}
 			if (!url.startsWith(baseUrl)) {
-				indexUrl(baseUrl + url, depth, baseUrl);
+				indexUrl(baseUrl + (url.startsWith("/") ? "" : "/") + url, depth, baseUrl);
 			}
 			return;
 		}
 		if (httpMethod.getHostConfiguration().getHost() == null) {
 			if (!url.startsWith(baseUrl)) {
-				indexUrl(baseUrl + url, depth, baseUrl);
+				indexUrl(baseUrl + (url.startsWith("/") ? "" : "/") + url, depth, baseUrl);
 			}
 			return;
 		}
+
 		httpMethod.setFollowRedirects(true);
 		httpMethod.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE, true);
-
 		log.info("indexUrl : url " + url + " depth: " + depth);
 
 		try {
 			httpClient.executeMethod(httpMethod);
 			//index content
-			indexContent(httpMethod, url, baseUrl, depth);
+			indexContent(httpMethod, url, httpMethod.getHostConfiguration().getHostURL(), depth);
 		} catch (IOException e) {
 			if (log.isDebugEnabled()) {
 				log.debug("request failed to url:" + url + " - " + e.getMessage());
 			}
+			//not to come second time at this link, if the link is broken
+			alreadyIndexedNonHtmlPages.add(url);
 			return;
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("request failed to url:" + url + " - " + e.getMessage());
 			}
+			//not to come second time at this link, if the link is broken
+			alreadyIndexedNonHtmlPages.add(url);
 			return;
 		}
 
+	}
+
+	private String escapeUrl(String url) {
+		return url.replaceAll(" ", "%20");
 	}
 
 	private void indexContent(HttpMethod httpMethod, String url, String baseUrl, int depth) {
@@ -217,7 +228,7 @@ public class WebCrawlerService {
 		} finally {
 			if (session != null) session.close();
 			httpMethod.releaseConnection();
-			notHtmlPages.add(url);
+			alreadyIndexedNonHtmlPages.add(url);
 		}
 
 	}

@@ -147,14 +147,14 @@ public class SmallSiteConfigReader {
 		String[] pathComponents = xmlPath.split("/");
 		String itemTag = pathComponents[pathComponents.length - 1];
 		Node parentNode = buildXmlPathToLeaf(xmlPath);
+
+		if (parentNode == null) {
+			return;
+		}
 		//remove old values
 		int oldLength = parentNode.getChildNodes().getLength();
 		for (int i = 0; i < oldLength; i++) {
 			parentNode.removeChild(parentNode.getChildNodes().item(0));
-		}
-
-		if (parentNode == null) {
-			return;
 		}
 
 		if (values == null || values.size() == 0) {
