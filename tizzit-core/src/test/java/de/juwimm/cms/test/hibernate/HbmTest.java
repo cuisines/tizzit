@@ -17,10 +17,8 @@ package de.juwimm.cms.test.hibernate;
 
 import java.security.Principal;
 
+public interface HbmTest {
 
-public interface HbmTest{
-	
-	
 	/**
 	 * The implemented test cases compare an ejb service implementation
 	 * with the new spring service implementation. The two necessary service
@@ -28,23 +26,26 @@ public interface HbmTest{
 	 *
 	 */
 	void initializeServiceBeans();
-	
+
 	/**
 	 * Some methods require special rights. Before testing these methods
 	 * loginPrincipal can be called 
 	 */
 	Principal loginSystemUser();
-	
-	
+
 	/**
 	 * Login a "normal" user
 	 */
-	void loginUser( String username, String password );
-	
+	void loginUser(String username, String password);
+
 	/**
 	 * Get mapped EJB object from the spring context
 	 * 
 	 */
-	Object getBean( String mappedName );
-	
+	Object getBean(String mappedName);
+
+	/**
+	 *Used to mock the user logged in 
+	 */
+	void mockAuthetication();
 }

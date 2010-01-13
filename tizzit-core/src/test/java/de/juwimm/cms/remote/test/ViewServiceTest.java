@@ -369,6 +369,40 @@ public class ViewServiceTest extends AbstractServiceTest {
 	}
 
 	/**
+	 * Test getViewComponentChildren
+	 * expect: view component is leaf so throw exception with message "node is a leaf"
+	 */
+	public void testGetViewComponentChildren1() {
+		ViewComponentHbm view = new ViewComponentHbmImpl();
+		view.setViewComponentId(1);
+		view.setFirstChild(null);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(view);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			viewService.getViewComponentChildren(1);
+		} catch (Exception e) {
+			if (e instanceof UserException) {
+				if (e.getMessage().equalsIgnoreCase("node is a leaf.")) {
+					Assert.assertTrue(true);
+				} else {
+					Assert.assertTrue(false);
+				}
+			} else {
+				Assert.assertTrue(false);
+			}
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
 	 * Test copyViewComponent. Having 2 nodes copy the child of the first
 	 * to the second node
 	 * expect: the list of children of the second node changes
@@ -641,5 +675,436 @@ public class ViewServiceTest extends AbstractServiceTest {
 
 		EasyMock.verify(viewDocumentDaoMock);
 		EasyMock.verify(userDaoMock);
+	}
+
+	/**
+	 * Test getViewComponent4UnitViewComponent
+	 * expect: view component has a unit assigned and the id of the view component is returned
+	 */
+	public void testGetViewComponent4UnitViewComponent() {
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+
+		ViewComponentHbm parent = new ViewComponentHbmImpl();
+		parent.setViewComponentId(2);
+
+		ViewComponentHbm view = new ViewComponentHbmImpl();
+		view.setViewComponentId(1);
+		view.setParent(parent);
+		view.setAssignedUnit(unit);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(view);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			Integer id = viewService.getViewComponent4UnitViewComponent(1);
+			Assert.assertEquals(new Integer(1), id);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+	}
+
+	/**
+	 * Test getViewComponent4UnitViewComponent
+	 * expect: view component has no unit assigned, it is not a root
+	 *         return the parent's id   
+	 **/
+	public void testGetViewComponent4UnitViewComponent1() {
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+
+		ViewComponentHbm parent = new ViewComponentHbmImpl();
+		parent.setViewComponentId(2);
+		parent.setAssignedUnit(unit);
+
+		ViewComponentHbm view = new ViewComponentHbmImpl();
+		view.setViewComponentId(1);
+		view.setParent(parent);
+		view.setAssignedUnit(null);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(view);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			Integer id = viewService.getViewComponent4UnitViewComponent(1);
+			Assert.assertEquals(new Integer(2), id);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+	}
+
+	/**
+	 * Test getViewComponent4UnitViewComponent
+	 * expect: view component has no unit assigned, it is root 
+	 *         return null
+	 **/
+	public void testGetViewComponent4UnitViewComponent2() {
+		ViewComponentHbm view = new ViewComponentHbmImpl();
+		view.setViewComponentId(1);
+		view.setAssignedUnit(null);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(view);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			Integer id = viewService.getViewComponent4UnitViewComponent(1);
+			Assert.assertNull(id);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+	}
+
+	/**
+	 * Test GetAllViewComponents4Status
+	 * expect: viewComp1 is root, viewComp2 is a child of viewComp1.
+	 * 		   return the viewComponentValue corresponding to viewComp2 
+	 */
+	public void testGetAllViewComponents4Status() {
+		ViewComponentHbm viewComp1 = new ViewComponentHbmImpl();
+		viewComp1.setViewComponentId(1);
+		viewComp1.setParent(null);
+		viewComp1.setViewType((byte) 0);
+		viewComp1.setDeployCommand((byte) 0);
+		viewComp1.setOnline((byte) 0);
+		viewComp1.setDisplayLinkName("testDisplayLinkName1");
+
+		ViewComponentHbm viewComp2 = new ViewComponentHbmImpl();
+		viewComp2.setViewComponentId(2);
+		viewComp2.setParent(viewComp1);
+		viewComp2.setViewType((byte) 0);
+		viewComp2.setDeployCommand((byte) 0);
+		viewComp2.setOnline((byte) 0);
+		viewComp2.setDisplayLinkName("testDisplayLinkName2");
+
+		Collection<ViewComponentHbm> collection = new ArrayList<ViewComponentHbm>();
+		collection.add(viewComp1);
+		collection.add(viewComp2);
+
+		Integer viewDocumentId = 1;
+		Integer status = 1;
+		try {
+			EasyMock.expect(viewComponentDaoMock.findByStatus(EasyMock.eq(1), EasyMock.eq(1))).andReturn(collection);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			ViewComponentValue[] values = viewService.getAllViewComponents4Status(viewDocumentId, status);
+			Assert.assertEquals(1, values.length);
+			Assert.assertEquals(new Integer(2), values[0].getViewComponentId());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test GetAllViewComponents4Status
+	 * expect: parent is root, viewComp2 is a child of viewComp1.
+	 *		   test also the private method getParentsForView	
+	 * 		   return the viewComponentValues corresponding to viewComp1 and viewComp2 
+	 * 		   pathToUnit for viewComp2 should be "\\comp1UrlLinkName\\comp2UrlLinkName"	
+	 */
+	public void testGetAllViewComponents4Status1() {
+		ViewComponentHbm parent = new ViewComponentHbmImpl();
+		parent.setViewComponentId(3);
+		parent.setUrlLinkName("parentUrlLinkName");
+
+		ViewComponentHbm viewComp1 = new ViewComponentHbmImpl();
+		viewComp1.setViewComponentId(1);
+		viewComp1.setParent(parent);
+		viewComp1.setViewType((byte) 0);
+		viewComp1.setDeployCommand((byte) 0);
+		viewComp1.setOnline((byte) 0);
+		viewComp1.setUrlLinkName("comp1UrlLinkName");
+		viewComp1.setDisplayLinkName("testDisplayLinkName1");
+
+		ViewComponentHbm viewComp2 = new ViewComponentHbmImpl();
+		viewComp2.setViewComponentId(2);
+		viewComp2.setParent(viewComp1);
+		viewComp2.setViewType((byte) 0);
+		viewComp2.setDeployCommand((byte) 0);
+		viewComp2.setOnline((byte) 0);
+		viewComp2.setUrlLinkName("comp2UrlLinkName");
+		viewComp2.setDisplayLinkName("testDisplayLinkName2");
+
+		Collection<ViewComponentHbm> collection = new ArrayList<ViewComponentHbm>();
+		collection.add(viewComp1);
+		collection.add(viewComp2);
+
+		Integer viewDocumentId = 1;
+		Integer status = 1;
+		try {
+			EasyMock.expect(viewComponentDaoMock.findByStatus(EasyMock.eq(1), EasyMock.eq(1))).andReturn(collection);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			ViewComponentValue[] values = viewService.getAllViewComponents4Status(viewDocumentId, status);
+			Assert.assertEquals(2, values.length);
+			Assert.assertEquals(new Integer(1), values[0].getViewComponentId());
+			Assert.assertEquals(new Integer(2), values[1].getViewComponentId());
+			Assert.assertEquals("\\comp1UrlLinkName\\comp2UrlLinkName", values[1].getPath2Unit());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test GetParents4ViewComponent
+	 * expect:Parent1 is the parent of parent2. Parent2 is the
+	 *        parent of viewComponent. Expect a vector of 2 elements.
+	 */
+	public void testGetParents4ViewComponent() {
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+
+		ViewComponentHbm parent1 = new ViewComponentHbmImpl();
+		parent1.setViewComponentId(2);
+
+		ViewComponentHbm parent2 = new ViewComponentHbmImpl();
+		parent2.setViewComponentId(3);
+
+		parent2.setParent(parent1);
+		viewComponent.setParent(parent2);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			String[] values = viewService.getParents4ViewComponent(1);
+			Assert.assertEquals(values.length, 2);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test IsUnitAndChangesParentUnitLeft
+	 * expect: current is root, expect false
+	 */
+	public void testIsUnitAndChangesParentUnitLeft() {
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			boolean result = viewService.isUnitAndChangesParentUnitLeft(1);
+			Assert.assertFalse(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test IsUnitAndChangesParentUnitLeft
+	 * expect: parent of current is root, expect false
+	 */
+	public void testIsUnitAndChangesParentUnitLeft1() {
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+		viewComponent.setAssignedUnit(unit);
+
+		ViewComponentHbm parent = new ViewComponentHbmImpl();
+		parent.setViewComponentId(2);
+
+		viewComponent.setParent(parent);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			boolean result = viewService.isUnitAndChangesParentUnitLeft(1);
+			Assert.assertFalse(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test IsUnitAndChangesParentUnitLeft
+	 * expect: parent of current is not root 
+	 *         and the parent and grandparent of current are in the same unit
+	 *         so expect true
+	 */
+	public void testIsUnitAndChangesParentUnitLeft2() {
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+		viewComponent.setAssignedUnit(unit);
+
+		ViewComponentHbm parent = new ViewComponentHbmImpl();
+		parent.setViewComponentId(2);
+
+		ViewComponentHbm root = new ViewComponentHbmImpl();
+		root.setViewComponentId(3);
+		root.setAssignedUnit(unit);
+
+		parent.setParent(root);
+		viewComponent.setParent(parent);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			boolean result = viewService.isUnitAndChangesParentUnitLeft(1);
+			Assert.assertTrue(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test IsUnitAndChangesParentUnitRight
+	 * expect: current is root so return false
+	 */
+	public void testIsUnitAndChangesParentUnitRight() {
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			boolean result = viewService.isUnitAndChangesParentUnitRight(1);
+			Assert.assertFalse(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test IsUnitAndChangesParentUnitRight
+	 * expect: previous node is null, so return false
+	 */
+	public void testIsUnitAndChangesParentUnitRight1() {
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+		viewComponent.setAssignedUnit(unit);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			boolean result = viewService.isUnitAndChangesParentUnitRight(1);
+			Assert.assertFalse(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
+	}
+
+	/**
+	 * Test IsUnitAndChangesParentUnitLeft
+	 * expect: parent of current is not root 
+	 *         and the parent and the previous node of current are in the same unit
+	 *         so expect true
+	 */
+	public void testIsUnitAndChangesParentUnitRight2() {
+		UnitHbm unit = new UnitHbmImpl();
+		unit.setUnitId(1);
+
+		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
+		viewComponent.setViewComponentId(1);
+		viewComponent.setAssignedUnit(unit);
+
+		ViewComponentHbm parent = new ViewComponentHbmImpl();
+		parent.setViewComponentId(2);
+		parent.setAssignedUnit(unit);
+
+		ViewComponentHbm prev = new ViewComponentHbmImpl();
+		prev.setViewComponentId(3);
+		prev.setAssignedUnit(unit);
+
+		viewComponent.setParent(parent);
+		viewComponent.setPrevNode(prev);
+
+		try {
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(viewComponentDaoMock);
+
+		try {
+			boolean result = viewService.isUnitAndChangesParentUnitRight(1);
+			Assert.assertTrue(result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(viewComponentDaoMock);
 	}
 }

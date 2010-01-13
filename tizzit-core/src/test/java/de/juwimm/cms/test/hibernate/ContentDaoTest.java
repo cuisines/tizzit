@@ -15,6 +15,7 @@ import de.juwimm.cms.model.ContentHbmImpl;
 import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.ContentVersionHbmDao;
 import de.juwimm.cms.model.ContentVersionHbmImpl;
+import de.juwimm.cms.vo.ContentValue;
 
 public class ContentDaoTest extends HbmTestImpl {
 
@@ -23,12 +24,25 @@ public class ContentDaoTest extends HbmTestImpl {
 
 	ContentVersionHbmDao contentVersionDaoMock;
 
+	@Override
+	protected void onSetUp() throws Exception {
+		super.onSetUp();
+		super.mockAuthetication();
+		contentVersionDaoMock = EasyMock.createMock(ContentVersionHbmDao.class);
+		((ContentHbmDaoImpl) contentHbmDao).setContentVersionHbmDao(contentVersionDaoMock);
+
+	}
+
 	public void initializeServiceBeans() {
 		// TODO Auto-generated method stub
 	}
 
 	public void insertContent(ContentHbm content) {
 		getJdbcTemplate().update(String.format("insert into content (content_id,status,template,UPDATE_SEARCH_INDEX) " + "values (%d,%d,'%s',%b)", content.getContentId(), content.getStatus(), content.getTemplate(), content.isUpdateSearchIndex()));
+	}
+
+	public void insertContentVersion(ContentVersionHbm contentVersion, Integer contentId) {
+		getJdbcTemplate().update(String.format("insert into contentversion (content_version_id,version,heading,text,create_date,creator,content_id_fk) " + "values (%d,'%s','%s','%s',%d,'%s',%d)", contentVersion.getContentVersionId(), contentVersion.getVersion(), contentVersion.getHeading(), contentVersion.getText(), contentVersion.getCreateDate(), contentVersion.getCreator(), contentId));
 	}
 
 	public void init() {
@@ -41,7 +55,7 @@ public class ContentDaoTest extends HbmTestImpl {
 	}
 
 	/**
-	 * Test loading
+	 * Test Load
 	 */
 	public void testLoad() {
 		init();
@@ -95,6 +109,127 @@ public class ContentDaoTest extends HbmTestImpl {
 			Assert.assertEquals("testTemplate", clonedContent.getTemplate());
 			Assert.assertEquals(1, clonedContent.getStatus());
 			Assert.assertEquals(true, clonedContent.isUpdateSearchIndex());
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+	}
+
+	/**
+	 * Test SetLatestContentVersionAsPublishVersion
+	 * expect: the version for the contentVersion is not 'PUBLS'
+	 * 		   don't update document use count
+	 * 		   no exception thrown	
+	 */
+	public void testSetLatestContentVersionAsPublishVersion() {
+		init();
+		/**Use this method to mock AuthenticationHelper.getUserName()*/
+
+		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
+		contentVersion.setContentVersionId(1);
+		contentVersion.setCreateDate(0);
+		contentVersion.setCreator("testUser");
+		contentVersion.setHeading("testHeading");
+		contentVersion.setText("testText");
+		contentVersion.setVersion("1");
+		insertContentVersion(contentVersion, 1);
+
+		try {
+			EasyMock.expect(contentVersionDaoMock.create((ContentVersionHbm) EasyMock.anyObject())).andReturn(contentVersion);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.replay(contentVersionDaoMock);
+
+		try {
+			contentHbmDao.setLatestContentVersionAsPublishVersion(1);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		EasyMock.verify(contentVersionDaoMock);
+	}
+
+	/**
+	 * Test SetLatestContentVersionAsPublishVersion
+	 * expect: the version for the contentVersion is 'PUBLS'
+	 * 		   update document use count
+	 * 		   no exception thrown	
+	 */
+	public void testSetLatestContentVersionAsPublishVersion1() {
+		init();
+		/**Use this method to mock AuthenticationHelper.getUserName()*/
+
+		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
+		contentVersion.setContentVersionId(1);
+		contentVersion.setCreateDate(0);
+		contentVersion.setCreator("testUser");
+		contentVersion.setHeading("testHeading");
+		contentVersion.setText("testText");
+		contentVersion.setVersion("PUBLS");
+		insertContentVersion(contentVersion, 1);
+
+		ContentVersionHbm latestVersion = new ContentVersionHbmImpl();
+		latestVersion.setContentVersionId(2);
+		latestVersion.setCreateDate(0);
+		latestVersion.setCreator("testUser");
+		latestVersion.setHeading("testHeading");
+		latestVersion.setText("testText");
+		latestVersion.setVersion("1");
+		insertContentVersion(latestVersion, 1);
+
+		try {
+			contentHbmDao.setLatestContentVersionAsPublishVersion(1);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+	}
+
+	/**
+	 * Test toXml
+	 * expect: the xml in the correct format
+	 */
+	public void testToXml() {
+		ContentHbm content = new ContentHbmImpl();
+		content.setContentId(1);
+		content.setStatus(1);
+		content.setTemplate("testTemplate");
+		content.setUpdateSearchIndex(true);
+
+		try {
+			String result = contentHbmDao.toXml(content);
+			String expectedResult = "<content id=\"1\">\n\t<template>testTemplate</template>\n\t<status>1</status>\n</content>\n";
+			Assert.assertNotNull(result);
+			Assert.assertEquals(expectedResult, result);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+	}
+
+	/**
+	 * Test CreateWithContentVersion
+	 * expect: on creating a content create automatically a contentVersion too
+	 */
+	public void testCreateWithContentVersion() {
+		ContentValue contentValue = new ContentValue();
+		contentValue.setContentId(1);
+		contentValue.setContentText("testText");
+		contentValue.setTemplate("testTemplate");
+
+		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
+		contentVersion.setContentVersionId(1);
+
+		try {
+			EasyMock.expect(contentVersionDaoMock.create((ContentVersionHbm) EasyMock.anyObject())).andReturn(contentVersion);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+		try {
+			ContentHbm content = contentHbmDao.createWithContentVersion(contentValue, "testUser");
+			Assert.assertEquals(1, content.getContentVersions().size());
 		} catch (Exception e) {
 			Assert.assertTrue(false);
 		}

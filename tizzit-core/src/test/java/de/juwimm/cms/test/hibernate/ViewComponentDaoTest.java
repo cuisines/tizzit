@@ -219,4 +219,39 @@ public class ViewComponentDaoTest extends HbmTestImpl {
 		EasyMock.verify(contentDaoMock);
 	}
 
+	/**
+	 *  Test Create
+	 *  expect: return a viewComponentHbm object with the id and properties set
+	 */
+	public void testCreate() {
+		String reference = "1";
+		String displayLinkName = "testDisplayLinkName";
+		String linkDescription = "testLinkDescription";
+		Integer viewComponentId = null;
+
+		ViewDocumentHbm viewDocument = new ViewDocumentHbmImpl();
+		viewDocument.setViewDocumentId(1);
+
+		try {
+			ViewComponentHbm viewComponent = viewComponentDao.create(viewDocument, reference, displayLinkName, linkDescription, viewComponentId);
+			Assert.assertNotNull(viewComponent.getCreateDate());
+			Assert.assertNotNull(viewComponent.getUserLastModifiedDate());
+			Assert.assertEquals("testDisplayLinkName", viewComponent.getDisplayLinkName());
+			Assert.assertEquals("testLinkDescription", viewComponent.getLinkDescription());
+			Assert.assertEquals(0, viewComponent.getOnline());
+			Assert.assertEquals(0, viewComponent.getOnlineStart());
+			Assert.assertEquals(0, viewComponent.getOnlineStop());
+			Assert.assertEquals(0, viewComponent.getShowType());
+			Assert.assertEquals("2", viewComponent.getUrlLinkName());
+			Assert.assertEquals(0, viewComponent.getStatus());
+			Assert.assertEquals("1", viewComponent.getReference());
+			Assert.assertEquals(true, viewComponent.isSearchIndexed());
+			Assert.assertEquals(true, viewComponent.isVisible());
+			Assert.assertEquals(true, viewComponent.isXmlSearchIndexed());
+			Assert.assertNotNull(viewComponent);
+		} catch (Exception e) {
+			Assert.assertTrue(false);
+		}
+
+	}
 }

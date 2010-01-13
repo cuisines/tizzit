@@ -26,10 +26,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.context.SecurityContextImpl;
+import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 
 import de.juwimm.cms.authorization.SimpleCallbackHandler;
-import de.juwimm.cms.test.hibernate.HbmTest;
 
 /**
  * Abstract test class inherited from
@@ -165,4 +170,12 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 		}
 		return null;
 	}
+
+	public void mockAuthetication() {
+		SecurityContextImpl secureContext = new SecurityContextImpl();
+		Authentication token = new AnonymousAuthenticationToken("testUser", "testUser", new GrantedAuthority[] {new GrantedAuthorityImpl("testRole")});
+		secureContext.setAuthentication(token);
+		SecurityContextHolder.setContext(secureContext);
+	}
+
 }
