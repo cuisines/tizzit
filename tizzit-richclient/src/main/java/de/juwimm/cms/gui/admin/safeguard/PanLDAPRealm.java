@@ -15,12 +15,19 @@
  */
 package de.juwimm.cms.gui.admin.safeguard;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.apache.log4j.Logger;
 
@@ -50,6 +57,7 @@ public final class PanLDAPRealm extends AbstractSafeguardPanel {
 	private JLabel lblLdapSuffix = null;
 	private JTextField txtLdapSuffix = null;
 	private PanChooseLoginPage panChooseLoginPage = null;
+	private final Color backgroundTextFieldError = new Color(0xed4044);
 
 	public PanLDAPRealm() {
 		super();
@@ -108,7 +116,7 @@ public final class PanLDAPRealm extends AbstractSafeguardPanel {
 			gridBagConstraints10.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints10.insets = new java.awt.Insets(5, 5, 5, 5);
 			gridBagConstraints10.gridy = 0;
-			
+
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = java.awt.GridBagConstraints.NONE;
 			gridBagConstraints6.gridy = 4;
@@ -220,14 +228,91 @@ public final class PanLDAPRealm extends AbstractSafeguardPanel {
 		value.setLdapSuffix(this.getTxtLdapSuffix().getText());
 		value.setLdapAuthenticationType(this.getCboAuthenticationType().getSelectedItem().toString());
 		value.setLoginPageId(this.panChooseLoginPage.getLoginPageViewComponentId());
-		if (value.getLdapRealmId() == -1) {
-			value.setLdapRealmId(comm.addLdapRealmToSite(Integer.valueOf(comm.getSiteId()), value).intValue());
-			((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
-		} else {
-			comm.editLdapRealm(value);
-			((SortingListModel) this.lstRealms.getModel()).removeElementAt(this.lstRealms.getSelectedIndex());
-			((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+		if (validateSaveLdap(value)) {
+			if (value.getLdapRealmId() == -1) {
+				value.setLdapRealmId(comm.addLdapRealmToSite(Integer.valueOf(comm.getSiteId()), value).intValue());
+				if (value.getLdapRealmId() != -1) {
+					((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+				}
+			} else {
+				comm.editLdapRealm(value);
+				((SortingListModel) this.lstRealms.getModel()).removeElementAt(this.lstRealms.getSelectedIndex());
+				((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+			}
 		}
+	}
+
+	private boolean validateSaveLdap(RealmLdapValue ldapValue) {
+		boolean isValid = true;
+		FocusListener focusListener = new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				if (e.getSource() instanceof JTextField) {
+					JTextField source = (JTextField) e.getSource();
+					resetInputHighlight(source);
+				}
+
+				if (e.getSource() instanceof JComboBox) {
+					JComboBox source = (JComboBox) e.getSource();
+					resetInputHighlight(source);
+				}
+			}
+
+			public void focusLost(FocusEvent e) {
+			}
+
+		};
+
+		if (ldapValue.getLdapAuthenticationType() == null || ldapValue.getLdapAuthenticationType().isEmpty()) {
+			this.cboAuthenticationType.setBackground(backgroundTextFieldError);
+			this.cboAuthenticationType.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		if (ldapValue.getLdapPrefix() == null || ldapValue.getLdapPrefix().isEmpty()) {
+			this.txtLdapPrefix.setBackground(backgroundTextFieldError);
+			txtLdapPrefix.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		if (ldapValue.getLdapSuffix() == null || ldapValue.getLdapSuffix().isEmpty()) {
+			this.txtLdapSuffix.setBackground(backgroundTextFieldError);
+			txtLdapSuffix.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		if (ldapValue.getLdapUrl() == null || ldapValue.getLdapUrl().isEmpty()) {
+			txtLdapUrl.setBackground(backgroundTextFieldError);
+			txtLdapUrl.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		if (ldapValue.getRealmName() == null || ldapValue.getRealmName().isEmpty()) {
+			txtRealmName.setBackground(backgroundTextFieldError);
+			txtRealmName.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		return isValid;
+	}
+
+	private void resetInputHighlight(JTextField source) {
+		if (source.getBackground().equals(backgroundTextFieldError)) {
+			source.setBackground(Color.WHITE);
+		}
+	}
+
+	private void resetInputHighlight(JComboBox source) {
+		if (source.getBackground().equals(backgroundTextFieldError)) {
+			source.setBackground(Color.WHITE);
+		}
+	}
+
+	private void resetInputsHighlight() {
+		resetInputHighlight(cboAuthenticationType);
+		resetInputHighlight(txtLdapPrefix);
+		resetInputHighlight(txtLdapSuffix);
+		resetInputHighlight(txtLdapUrl);
+		resetInputHighlight(txtRealmName);
 	}
 
 	@Override
@@ -242,6 +327,7 @@ public final class PanLDAPRealm extends AbstractSafeguardPanel {
 			this.lblRealmIdDisplay.setText(Integer.toString(val.getLdapRealmId()));
 			this.panChooseLoginPage.setLoginpage(val.getLoginPageId());
 			this.setActive(true);
+			resetInputsHighlight();
 		}
 	}
 

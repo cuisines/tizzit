@@ -15,10 +15,13 @@
  */
 package de.juwimm.cms.gui.admin.safeguard;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -46,6 +49,7 @@ public final class PanJAASRealm extends AbstractSafeguardPanel {
 	private JLabel lblJaasPolicyName = null;
 	private JTextField txtJaasPolicyName = null;
 	private PanChooseLoginPage panChooseLoginPage = null;
+	private final Color backgroundTextFieldError = new Color(0xed4044);
 
 	public PanJAASRealm() {
 		super();
@@ -162,14 +166,60 @@ public final class PanJAASRealm extends AbstractSafeguardPanel {
 		value.setRealmName(this.getTxtRealmName().getText());
 		value.setJaasPolicyName(this.getTxtJaasPolicyName().getText());
 		value.setLoginPageId(this.panChooseLoginPage.getLoginPageViewComponentId());
-		if (value.getJaasRealmId() == -1) {
-			value.setJaasRealmId(comm.addJaasRealmToSite(Integer.valueOf(comm.getSiteId()), value).intValue());
-			((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
-		} else {
-			comm.editJaasRealm(value);
-			((SortingListModel) this.lstRealms.getModel()).removeElementAt(this.lstRealms.getSelectedIndex());
-			((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+		if (validateSaveJaas(value)) {
+			if (value.getJaasRealmId() == -1) {
+				value.setJaasRealmId(comm.addJaasRealmToSite(Integer.valueOf(comm.getSiteId()), value).intValue());
+				if (value.getJaasRealmId() != -1) {
+					((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+				}
+			} else {
+				comm.editJaasRealm(value);
+				((SortingListModel) this.lstRealms.getModel()).removeElementAt(this.lstRealms.getSelectedIndex());
+				((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+			}
 		}
+	}
+
+	private boolean validateSaveJaas(RealmJaasValue jaasValue) {
+		boolean isValid = true;
+		FocusListener focusListener = new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				if (e.getSource() instanceof JTextField) {
+					JTextField source = (JTextField) e.getSource();
+					resetInputHighlight(source);
+				}
+
+			}
+
+			public void focusLost(FocusEvent e) {
+			}
+
+		};
+
+		if ((jaasValue.getJaasPolicyName() == null) || jaasValue.getJaasPolicyName().isEmpty()) {
+			txtJaasPolicyName.setBackground(backgroundTextFieldError);
+			txtJaasPolicyName.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		if (jaasValue.getRealmName() == null || jaasValue.getRealmName().isEmpty()) {
+			txtRealmName.setBackground(backgroundTextFieldError);
+			txtRealmName.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		return isValid;
+	}
+
+	private void resetInputHighlight(JTextField source) {
+		if (source.getBackground().equals(backgroundTextFieldError)) {
+			source.setBackground(Color.WHITE);
+		}
+	}
+
+	private void resetInputsHighlight() {
+		resetInputHighlight(txtJaasPolicyName);
+		resetInputHighlight(txtRealmName);
 	}
 
 	@Override
@@ -181,6 +231,7 @@ public final class PanJAASRealm extends AbstractSafeguardPanel {
 			this.lblRealmIdDisplay.setText(Integer.toString(val.getJaasRealmId()));
 			this.panChooseLoginPage.setLoginpage(val.getLoginPageId());
 			this.setActive(true);
+			resetInputsHighlight();
 		}
 	}
 

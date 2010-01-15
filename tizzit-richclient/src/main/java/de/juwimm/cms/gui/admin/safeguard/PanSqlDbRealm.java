@@ -15,10 +15,13 @@
  */
 package de.juwimm.cms.gui.admin.safeguard;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,6 +54,7 @@ public final class PanSqlDbRealm extends AbstractSafeguardPanel {
 	private JLabel lblSqlRole = null;
 	private JTextField txtSqlRole = null;
 	private PanChooseLoginPage panChooseLoginPage = null;
+	private final Color backgroundTextFieldError = new Color(0xed4044);
 
 	public PanSqlDbRealm() {
 		super();
@@ -109,7 +113,7 @@ public final class PanSqlDbRealm extends AbstractSafeguardPanel {
 			gridBagConstraints10.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints10.insets = new java.awt.Insets(5, 5, 5, 5);
 			gridBagConstraints10.gridy = 0;
-			
+
 			GridBagConstraints gridBagConstraints6 = new GridBagConstraints();
 			gridBagConstraints6.fill = java.awt.GridBagConstraints.NONE;
 			gridBagConstraints6.gridy = 3;
@@ -205,14 +209,51 @@ public final class PanSqlDbRealm extends AbstractSafeguardPanel {
 		value.setStatementUser(this.getTxtSqlUser().getText());
 		value.setStatementRolePerUser(this.getTxtSqlRole().getText());
 		value.setLoginPageId(this.panChooseLoginPage.getLoginPageViewComponentId());
-		if (value.getJdbcRealmId().intValue() == -1) {
-			value.setJdbcRealmId(comm.addSqlDbRealmToSite(Integer.valueOf(comm.getSiteId()), value));
-			((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
-		} else {
-			comm.editSqlDbRealm(value);
-			((SortingListModel) this.lstRealms.getModel()).removeElementAt(this.lstRealms.getSelectedIndex());
-			((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+		if (validateSaveJdbc(value)) {
+			if (value.getJdbcRealmId().intValue() == -1) {
+				value.setJdbcRealmId(comm.addSqlDbRealmToSite(Integer.valueOf(comm.getSiteId()), value));
+				((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+			} else {
+				comm.editSqlDbRealm(value);
+				((SortingListModel) this.lstRealms.getModel()).removeElementAt(this.lstRealms.getSelectedIndex());
+				((SortingListModel) this.lstRealms.getModel()).addElement(new DropDownHolder(value, value.getRealmName()));
+			}
 		}
+	}
+
+	private boolean validateSaveJdbc(RealmJdbcValue jdbcValue) {
+		boolean isValid = true;
+		FocusListener focusListener = new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				if (e.getSource() instanceof JTextField) {
+					JTextField source = (JTextField) e.getSource();
+					resetInputHighlight(source);
+				}
+
+			}
+
+			public void focusLost(FocusEvent e) {
+			}
+
+		};
+
+		if (jdbcValue.getRealmName() == null || jdbcValue.getRealmName().isEmpty()) {
+			txtRealmName.setBackground(backgroundTextFieldError);
+			txtRealmName.addFocusListener(focusListener);
+			isValid = false;
+		}
+
+		return isValid;
+	}
+
+	private void resetInputHighlight(JTextField source) {
+		if (source.getBackground().equals(backgroundTextFieldError)) {
+			source.setBackground(Color.WHITE);
+		}
+	}
+
+	private void resetInputsHighlight() {
+		resetInputHighlight(txtRealmName);
 	}
 
 	@Override
@@ -226,6 +267,7 @@ public final class PanSqlDbRealm extends AbstractSafeguardPanel {
 			this.lblRealmIdDisplay.setText(val.getJdbcRealmId().toString());
 			this.panChooseLoginPage.setLoginpage(val.getLoginPageId());
 			this.setActive(true);
+			resetInputsHighlight();
 		}
 	}
 
@@ -305,7 +347,7 @@ public final class PanSqlDbRealm extends AbstractSafeguardPanel {
 		}
 		return txtSqlRole;
 	}
-	
+
 	private void setActive(boolean enabled) {
 		this.panChooseLoginPage.setEnabled(enabled);
 		this.getTxtJndiName().setEnabled(enabled);
