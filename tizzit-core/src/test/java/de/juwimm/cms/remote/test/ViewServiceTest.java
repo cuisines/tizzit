@@ -313,12 +313,8 @@ public class ViewServiceTest extends AbstractServiceTest {
 			Assert.assertTrue(false);
 		}
 
-		try {
-			Assert.assertEquals(node.getNextNode(), viewComponent);
-			Assert.assertEquals(viewComponent.getPrevNode(), node);
-		} catch (Exception e) {
-			Assert.assertTrue(false);
-		}
+		Assert.assertEquals(node.getNextNode(), viewComponent);
+		Assert.assertEquals(viewComponent.getPrevNode(), node);
 
 		/**test add before*/
 		try {

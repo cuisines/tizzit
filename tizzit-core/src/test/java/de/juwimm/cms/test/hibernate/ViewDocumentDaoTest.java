@@ -76,7 +76,7 @@ public class ViewDocumentDaoTest extends HbmTestImpl {
 	public void testLoad() {
 		ViewDocumentHbm viewDocument = viewDocumentDao.load(1);
 		Assert.assertNotNull(viewDocument);
-		Assert.assertEquals("testaLanguage", viewDocument.getLanguage());
+		Assert.assertEquals("testLanguage", viewDocument.getLanguage());
 		Assert.assertEquals("testViewType", viewDocument.getViewType());
 
 	}

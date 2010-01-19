@@ -135,7 +135,6 @@ public class DocumentDaoTest extends HbmTestImpl {
 			DocumentHbm document = documentDao.load(result);
 			Assert.assertEquals(document.getDocumentName(), oldDocument.getDocumentName());
 			Assert.assertEquals(document.getMimeType(), oldDocument.getMimeType());
-			Assert.assertEquals(document.getTimeStamp(), oldDocument.getTimeStamp());
 			Assert.assertEquals(document.getUnit().getUnitId(), newUnit.getUnitId());
 		} catch (Exception e) {
 			Assert.assertTrue(false);

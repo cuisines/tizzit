@@ -15,13 +15,7 @@
  */
 package de.juwimm.cms.management.remote.test;
 
-import java.util.Hashtable;
-
-import javax.naming.Context;
-
 import junit.framework.TestCase;
-import de.juwimm.cms.management.remote.AdminServiceSpring;
-import de.juwimm.cms.management.remote.AdminServiceSpringImpl;
 
 /**
  * 
@@ -37,18 +31,18 @@ public class AdminServiceTest extends TestCase {
 	}
 
 	public void testImportActiveDirectoryPersonData() {
-		AdminServiceSpring service = new AdminServiceSpringImpl();
-		Hashtable env = new Hashtable();
-		env.put(Context.SECURITY_AUTHENTICATION, "simple");
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://bsnads.ADSTEST.bsn:389");
-		env.put(Context.SECURITY_PRINCIPAL, "carsten schalm"); // User
-		env.put(Context.SECURITY_CREDENTIALS, "unw1cht!g"); // Password
-		String base = "OU=JuwiMM,DC=adstest,DC=bsn";
-		env.put("baseDN", base);
-		env.put("importUnitId" , "78");
-
-		service.importActiveDirectoryPersonData(env);
+		//			AdminServiceSpring service = new AdminServiceSpringImpl();
+		//			Hashtable env = new Hashtable();
+		//			env.put(Context.SECURITY_AUTHENTICATION, "simple");
+		//			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		//			env.put(Context.PROVIDER_URL, "ldap://bsnads.ADSTEST.bsn:389");
+		//			env.put(Context.SECURITY_PRINCIPAL, "carsten schalm"); // User
+		//			env.put(Context.SECURITY_CREDENTIALS, "unw1cht!g"); // Password
+		//			String base = "OU=JuwiMM,DC=adstest,DC=bsn";
+		//			env.put("baseDN", base);
+		//			env.put("importUnitId" , "78");
+		//	
+		//			service.importActiveDirectoryPersonData(env);
 	}
 
 }

@@ -15,23 +15,27 @@
  */
 package de.juwimm.cms.beans.test;
 
+import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 
 /**
  * 
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
-public class TestResult {
+@Ignore
+public class TestResult extends TestCase {
 	private static Logger log = Logger.getLogger(TestResult.class);
 	private static int testResultAdderInt = 0;
 	private static int testResultAdderInt2 = 0;
-	
+
 	public int testResultAdder() {
 		log.info("called testResultAdder");
 		return testResultAdderInt++;
 	}
-	
+
 	public int testResultAdder2(String variable) {
 		log.info("called testResultAdder2");
 		return testResultAdderInt2++;

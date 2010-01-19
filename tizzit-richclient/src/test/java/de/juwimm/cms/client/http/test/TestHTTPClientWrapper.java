@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Ignore;
 
 import de.juwimm.cms.http.HttpClientWrapper;
 
@@ -28,9 +29,10 @@ import de.juwimm.cms.http.HttpClientWrapper;
  * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
+@Ignore
 public class TestHTTPClientWrapper extends TestCase {
 	private static Logger log = Logger.getLogger(TestHTTPClientWrapper.class);
-	
+
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -46,25 +48,25 @@ public class TestHTTPClientWrapper extends TestCase {
 		prop.setProperty("log4j.appender.STDOUT.layout.ConversionPattern", "%d %-5p [%-16t] %c{1} - %m%n");
 		PropertyConfigurator.configure(prop);
 	}
-	
+
 	public void testHTTPSwithoutAuthentication() throws Exception {
 		log.info("testHTTPSwithoutAuthentication");
 		HttpClientWrapper clientWrapper = HttpClientWrapper.getInstance();
 		clientWrapper.testAndConfigureConnection("https://ris.stadt-soltau.de");
 	}
-	
+
 	public void testHTTPSandAuthentication() throws Exception {
 		log.info("testHTTPSandAuthentication");
 		HttpClientWrapper clientWrapper = HttpClientWrapper.getInstance();
 		clientWrapper.testAndConfigureConnection("https://dev.juwimm.net/maven/", "kulawik", "dks4juwimm");
 	}
-	
+
 	/*public void testHTTPSandAuthenticationandNTLMProxy() throws Exception {
 		System.setProperty("https.proxyHost", "10.0.0.168");
 		System.setProperty("https.proxyPort", "3128");
 		testHTTPSandAuthentication();
 	}*/
-	
+
 	public void testHTTPSandAuthenticationandSquidProxy() throws Exception {
 		log.info("testHTTPSandAuthenticationandSquidProxy");
 		System.setProperty("https.proxyHost", "10.0.0.201");

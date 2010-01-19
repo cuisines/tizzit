@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.junit.Ignore;
 
 import de.juwimm.cms.common.http.HttpClientWrapper;
 
@@ -31,12 +32,13 @@ import de.juwimm.cms.common.http.HttpClientWrapper;
  * company Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
  */
+@Ignore
 public class TestHttpRequest {
 	private static Logger log = Logger.getLogger(TestHttpRequest.class);
 	public static final String URL = "http://qmd.local/deutsch/home/page.xml";
 	public static final int NUMBER_OF_THREADS = 1;
 	public static final int NUMBER_OF_REQUESTS = 1;
-	
+
 	protected TestHttpRequest() {
 	}
 
@@ -63,7 +65,7 @@ public class TestHttpRequest {
 	public class TestThread extends Thread {
 		private String url = null;
 		private int threadNo = 0;
-		
+
 		public TestThread(String url, int threadNo) {
 			log.debug("Thread" + threadNo + " created!");
 			this.url = url;
@@ -80,13 +82,13 @@ public class TestHttpRequest {
 					if (tmp != null || tmp.length() > 30) {
 						result = tmp.substring(0, 30) + "...";
 					}
-					log.info("Thread" + this.threadNo + " Request" + i + ": " + result); 
+					log.info("Thread" + this.threadNo + " Request" + i + ": " + result);
 				}
 			} catch (IOException e) {
 				log.error("Thread" + this.threadNo + ":\t" + e.getMessage());
 			}
 		}
-		
+
 	}
 
 }

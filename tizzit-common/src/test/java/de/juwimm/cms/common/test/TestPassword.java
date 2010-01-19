@@ -39,14 +39,13 @@ public class TestPassword extends TestCase {
 		String decrypted = encrypter.decrypt("FkwZWUdz6AY=");
 		assertEquals("DESTEST", decrypted);
 	}
-	
+
 	/**
 	 * 
 	 */
 	public class JUnitDesEncrypter extends DesEncrypter {
 		public JUnitDesEncrypter(String passphrase) {
-			super(passphrase, new byte[] {(byte) 0xB4, (byte) 0x1A, (byte) 0xD3, (byte) 0x1C, (byte) 0x77, (byte) 0xA6,
-					(byte) 0x50, (byte) 0x93});
+			super(passphrase, new byte[] {(byte) 0xB4, (byte) 0x1A, (byte) 0xD3, (byte) 0x1C, (byte) 0x77, (byte) 0xA6, (byte) 0x50, (byte) 0x93});
 		}
 	}
 

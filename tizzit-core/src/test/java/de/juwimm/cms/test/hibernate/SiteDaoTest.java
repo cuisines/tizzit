@@ -62,12 +62,12 @@ public class SiteDaoTest extends HbmTestImpl {
 		site.setSiteId(2);
 		site.setName("testSite");
 		insertSite(site);
-
-		try {
-			Assert.assertEquals(2, siteDao.findAll().size());
-		} catch (Exception e) {
-			Assert.assertTrue(false);
-		}
+		Assert.assertEquals(2, siteDao.findAll().size());
+		//		try {
+		//			
+		//		} catch (Exception e) {
+		//			Assert.assertTrue(false);
+		//		}
 	}
 
 	/**

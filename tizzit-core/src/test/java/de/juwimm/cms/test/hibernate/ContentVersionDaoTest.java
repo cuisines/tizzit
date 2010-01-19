@@ -34,7 +34,7 @@ public class ContentVersionDaoTest extends HbmTestImpl {
 		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
 		contentVersion.setContentVersionId(1);
 		contentVersion.setCreateDate(0);
-		contentVersion.setCreator("testCreator");
+		contentVersion.setCreator("testUser");
 		contentVersion.setHeading("testHeading");
 		contentVersion.setText("testText");
 		contentVersion.setVersion("1");
@@ -51,7 +51,7 @@ public class ContentVersionDaoTest extends HbmTestImpl {
 		try {
 			assertNotNull(contentVersion);
 			Assert.assertEquals(0, contentVersion.getCreateDate());
-			Assert.assertEquals("testCreator", contentVersion.getCreator());
+			Assert.assertEquals("testUser", contentVersion.getCreator());
 			Assert.assertEquals("testHeading", contentVersion.getHeading());
 			Assert.assertEquals("testText", contentVersion.getText());
 			Assert.assertEquals("1", contentVersion.getVersion());

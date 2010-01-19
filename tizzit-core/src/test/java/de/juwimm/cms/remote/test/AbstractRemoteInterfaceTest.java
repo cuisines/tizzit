@@ -17,8 +17,6 @@ package de.juwimm.cms.remote.test;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.context.SecurityContext;
@@ -44,14 +42,14 @@ public abstract class AbstractRemoteInterfaceTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		BasicConfigurator.configure();
-		Logger.getLogger("org.hibernate").setLevel(Level.DEBUG);
-		Logger.getLogger("org.springframework").setLevel(Level.ERROR);
-		String[] config = {REMOTE};
-		ctx = new ClassPathXmlApplicationContext(config);
-		UserLoginValue ulv = login();
-		this.uv = ulv.getUser();
-		log.debug("User logged in");
+		//		BasicConfigurator.configure();
+		//		Logger.getLogger("org.hibernate").setLevel(Level.DEBUG);
+		//		Logger.getLogger("org.springframework").setLevel(Level.ERROR);
+		//		String[] config = {REMOTE};
+		//		ctx = new ClassPathXmlApplicationContext(config);
+		//		UserLoginValue ulv = login();
+		//		this.uv = ulv.getUser();
+		//		log.debug("User logged in");
 		super.setUp();
 	}
 

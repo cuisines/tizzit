@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.juwimm.cms.model.PictureHbm;
 import de.juwimm.cms.model.PictureHbmDao;
-import de.juwimm.cms.model.PictureHbmImpl;
 import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.UnitHbmImpl;
 
@@ -25,7 +24,7 @@ public class PictureDaoTest extends HbmTestImpl {
 	 * 		   throw no exception
 	 */
 	public void testCreate() {
-		PictureHbm picture = new PictureHbmImpl();
+		PictureHbm picture = PictureHbm.Factory.newInstance();
 
 		UnitHbm unit = new UnitHbmImpl();
 		unit.setUnitId(1);
@@ -41,13 +40,10 @@ public class PictureDaoTest extends HbmTestImpl {
 		picture.setPreview(new byte[] {0});
 		picture.setPicture(new byte[] {0});
 
-		try {
-			picture = pictureDao.create(picture);
-			Assert.assertNotNull(picture.getPictureId());
-			Assert.assertNotNull(picture.getTimeStamp());
-		} catch (Exception e) {
-			Assert.assertTrue(false);
-		}
+		picture = pictureDao.create(picture);
+		Assert.assertNotNull(picture.getPictureId());
+		Assert.assertNotNull(picture.getTimeStamp());
+
 	}
 
 }
