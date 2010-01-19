@@ -2,20 +2,20 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.tizzit</groupId>
    <artifactId>tizzit-web-admin</artifactId>
-   <version>3.1.0-SNAPSHOT</version>
+   <version>3.1.0</version>
    <packaging>war</packaging>
    <name>tizzit Web Admin</name>
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
-      <version>3.1.0-SNAPSHOT</version>
+      <version>3.1.0</version>
       <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
    <dependencies>
       <dependency>
          <groupId>org.tizzit</groupId>
          <artifactId>tizzit-webstart</artifactId>
-         <version>3.1.0-SNAPSHOT</version>
+         <version>3.1.0</version>
       </dependency>
       <dependency>
          <groupId>javax.servlet</groupId>
