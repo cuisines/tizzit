@@ -130,8 +130,8 @@
           | Default XHTML doctype in Cocoon is XHTML Strict. If you want to use more than one
           | XHTML DTD simultaneously, you can define several XHTML serializers.
           +-->
-        <doctype-public>-//W3C//DTD XHTML 1.0 Strict//EN</doctype-public>
-        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</doctype-system>
+        <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
+        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
         <omit-xml-declaration>yes</omit-xml-declaration>
         <encoding>UTF-8</encoding>
       </map:serializer>
