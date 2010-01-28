@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.http;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
@@ -55,7 +55,7 @@ import de.juwimm.cms.util.UIConstants;
 public class AuthenticationStreamSupportingHttpInvokerRequestExecutor extends StreamSupportingHttpInvokerRequestExecutor {
 	private static final Log log = LogFactory.getLog(AuthenticationStreamSupportingHttpInvokerRequestExecutor.class);
 	private static boolean isErrorMessageShown = false;
-	
+
 	public AuthenticationStreamSupportingHttpInvokerRequestExecutor() {
 		setReadTimeout(10 * 60 * 60 * 1000);
 	}
@@ -64,7 +64,8 @@ public class AuthenticationStreamSupportingHttpInvokerRequestExecutor extends St
 		HttpClientWrapper.getInstance().setHostConfiguration(super.getHttpClient(), new URL(config.getServiceUrl()));
 		final PostMethod postMethod = new PostMethod(config.getServiceUrl());
 		postMethod.setRequestHeader(HTTP_HEADER_CONTENT_TYPE, CONTENT_TYPE_SERIALIZED_OBJECT_WITH_STREAM);
-		postMethod.setContentChunked(true);
+		//Solution for TIZZIT-282
+		//postMethod.setContentChunked(true);
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -116,30 +117,30 @@ public class AuthenticationStreamSupportingHttpInvokerRequestExecutor extends St
 	@Override
 	protected void executePostMethod(HttpInvokerClientConfiguration config, HttpClient httpClient, PostMethod postMethod) throws IOException {
 		HttpClientWrapper.getInstance().setHostConfiguration(super.getHttpClient(), new URL(config.getServiceUrl()));
-		try{
+		try {
 			super.executePostMethod(config, httpClient, postMethod);
 			//if call succeeds 
-			isErrorMessageShown = false;			
-		}catch(IOException e) {
-			if((e instanceof SocketException && e.getMessage().equals("Connection reset")) || (e instanceof ConnectException && e.getMessage().equals("Connection refused"))){
-				if(!isErrorMessageShown){
+			isErrorMessageShown = false;
+		} catch (IOException e) {
+			if ((e instanceof SocketException && e.getMessage().equals("Connection reset")) || (e instanceof ConnectException && e.getMessage().equals("Connection refused"))) {
+				if (!isErrorMessageShown) {
 					isErrorMessageShown = true;
-					JOptionPane errorOptionPane = new JOptionPane(Constants.rb.getString("exception.connectionToServerLost"),JOptionPane.INFORMATION_MESSAGE);					
-					JDialog errorDialogPane = errorOptionPane.createDialog(UIConstants.getMainFrame(),rb.getString("dialog.title"));					
-					errorDialogPane.setModalityType(ModalityType.MODELESS);					
-					errorDialogPane.setVisible(true);					
+					JOptionPane errorOptionPane = new JOptionPane(Constants.rb.getString("exception.connectionToServerLost"), JOptionPane.INFORMATION_MESSAGE);
+					JDialog errorDialogPane = errorOptionPane.createDialog(UIConstants.getMainFrame(), rb.getString("dialog.title"));
+					errorDialogPane.setModalityType(ModalityType.MODELESS);
+					errorDialogPane.setVisible(true);
 					errorDialogPane.setEnabled(true);
-					errorDialogPane.addWindowListener(new WindowAdapter(){
-					public void windowDeactivated(WindowEvent e) {
-						if(((JDialog)e.getSource()).isVisible() == false){
-								isErrorMessageShown = false;	
+					errorDialogPane.addWindowListener(new WindowAdapter() {
+						public void windowDeactivated(WindowEvent e) {
+							if (((JDialog) e.getSource()).isVisible() == false) {
+								isErrorMessageShown = false;
 							}
-						}						
+						}
 					});
-					
+
 				}
 				log.error("server is not reachable");
-			}else{
+			} else {
 				e.printStackTrace();
 			}
 		}
@@ -149,7 +150,7 @@ public class AuthenticationStreamSupportingHttpInvokerRequestExecutor extends St
 	@Override
 	protected RemoteInvocationResult doExecuteRequest(HttpInvokerClientConfiguration config, ByteArrayOutputStream baos) throws IOException, ClassNotFoundException {
 		HttpClientWrapper.getInstance().setHostConfiguration(super.getHttpClient(), new URL(config.getServiceUrl()));
-		RemoteInvocationResult r = super.doExecuteRequest(config, baos);		
+		RemoteInvocationResult r = super.doExecuteRequest(config, baos);
 		return r;
 	}
 
