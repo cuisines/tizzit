@@ -1565,12 +1565,26 @@ public class Communication implements ExitListener, ActionListener {
 		return arrayToVector(ud);
 	}
 
+	//	/*
+	//	 * Deploy
+	//	 */
+	//	public void createEdition(String comment, int rootViewComponentId, boolean deploy, boolean showMessage) throws UserException {
+	//		try {
+	//			getClientService().createEdition(comment, Integer.valueOf(rootViewComponentId), deploy, showMessage);
+	//		} catch (Exception ue) {
+	//			log.error("Error creating edition", ue);
+	//			throw new UserException(ue);
+	//		}
+	//	}
+
 	/*
-	 * Deploy
+	 * Deploy - new 
+	 * 
+	 * @param type - 0: fulldeploy, 1: unitdeploy, 2: pagedeploy
 	 */
-	public void createEdition(String comment, int rootViewComponentId, boolean deploy, boolean showMessage) throws UserException {
+	public void createEdition(String comment, int rootViewComponentId, boolean deploy, boolean showMessage, int type) throws UserException {
 		try {
-			getClientService().createEdition(comment, Integer.valueOf(rootViewComponentId), deploy, showMessage);
+			getClientService().createEdition(comment, Integer.valueOf(rootViewComponentId), deploy, showMessage, type);
 		} catch (Exception ue) {
 			log.error("Error creating edition", ue);
 			throw new UserException(ue);
@@ -1592,7 +1606,12 @@ public class Communication implements ExitListener, ActionListener {
 	 * @return vector of ViewComponentValue
 	 */
 	public Vector getViewComponents4Status(int unitId, int status) throws Exception {
-		return arrayToVector(getClientService().getAllViewComponents4UnitAndStatus(Integer.valueOf(unitId), Integer.valueOf(this.getViewDocumentId()), status));
+		ViewComponentValue[] vcv = getClientService().getAllViewComponents4UnitAndStatus(Integer.valueOf(unitId), Integer.valueOf(this.getViewDocumentId()), status);
+		Vector<ViewComponentValue> v = new Vector<ViewComponentValue>(vcv.length);
+		for (int i = 0; i < vcv.length; i++) {
+			v.add(vcv[i]);
+		}
+		return v;
 	}
 
 	/**

@@ -15,8 +15,8 @@
  */
 package de.juwimm.cms.deploy;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -33,7 +33,11 @@ import de.juwimm.cms.deploy.frame.FrmWizard;
 import de.juwimm.cms.deploy.panel.wizard.PanFinally;
 import de.juwimm.cms.deploy.panel.wizard.PanRootStart;
 import de.juwimm.cms.deploy.panel.wizard.WizardPanel;
-import de.juwimm.cms.exceptions.*;
+import de.juwimm.cms.exceptions.EditionXMLIsNotValid;
+import de.juwimm.cms.exceptions.ParentUnitNeverDeployed;
+import de.juwimm.cms.exceptions.PreviousUnitNeverDeployed;
+import de.juwimm.cms.exceptions.UnitWasNeverDeployed;
+import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
@@ -59,15 +63,14 @@ public class RootController implements ActionListener {
 	private PanFinally panFinally = null;
 
 	private int stage = 0;
-	private int unitId;
+	private final int unitId;
 	private int latestStageEver = 0;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 
 	public RootController(int unitId) {
 		this.unitId = unitId;
 		aPanStart = new PanRootStart();
-		wiz = new FrmWizard(this, UIConstants.WIZARD_ICON_INSTALL, Constants.rb.getString("wizard.root.title"),
-				Constants.rb.getString("wizard.root.start.introMessage"), aPanStart);
+		wiz = new FrmWizard(this, UIConstants.WIZARD_ICON_INSTALL, Constants.rb.getString("wizard.root.title"), Constants.rb.getString("wizard.root.start.introMessage"), aPanStart);
 		wiz.showWizard();
 		wiz.setNextEnabled(false);
 	}
@@ -96,10 +99,8 @@ public class RootController implements ActionListener {
 						if (panFinally.getWay().equals("11")) {
 							log.info("STAGE_DEPLOY_ROOT");
 							try {
-								comm.createEdition("ROOT EDITION", comm.getViewDocument().getViewId(), true, true);
-								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb
-										.getString("wizard.deploy.editionSucessfulTransmitted"), rb
-										.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+								comm.createEdition("ROOT EDITION", comm.getViewDocument().getViewId(), true, true, 0);
+								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("wizard.deploy.editionSucessfulTransmitted"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 							} catch (Exception exe) {
 								log.error("Creating edition error", exe);
 							}
@@ -165,12 +166,11 @@ public class RootController implements ActionListener {
 
 	public void createAllEditionsAndDeploy(int viewDocumentId) {
 		int vdvcid = comm.getViewDocument().getViewId();
-		FrmProgressDialog prog = new FrmProgressDialog(rb.getString("wizard.root.deployAll.progressdialog.task"),
-				"Root-Edition", 1);
+		FrmProgressDialog prog = new FrmProgressDialog(rb.getString("wizard.root.deployAll.progressdialog.task"), "Root-Edition", 1);
 
 		boolean gotException = false;
 		try {
-			comm.createEdition("ROOT EDITION", vdvcid, true, true);
+			comm.createEdition("ROOT EDITION", vdvcid, true, true, 0);
 			recursiveDeploy(prog, vdvcid);
 		} catch (Exception exe) {
 			String errmsg = Messages.getString("exception.UnknownError", exe.getMessage());
@@ -183,26 +183,21 @@ public class RootController implements ActionListener {
 				return;
 			}
 			prog.setProgress(rb.getString("wizard.root.deployAll.finished"), prog.getMaximum());
-			JOptionPane.showMessageDialog(prog, rb.getString("wizard.deploy.editionSucessfulTransmitted"),
-					rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(prog, rb.getString("wizard.deploy.editionSucessfulTransmitted"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 		}
 		prog.enableClose(true);
 	}
 
-	private void recursiveDeploy(FrmProgressDialog prog, int vdvcid) throws ParentUnitNeverDeployed,
-			PreviousUnitNeverDeployed, UnitWasNeverDeployed, EditionXMLIsNotValid, UserException {
+	private void recursiveDeploy(FrmProgressDialog prog, int vdvcid) throws ParentUnitNeverDeployed, PreviousUnitNeverDeployed, UnitWasNeverDeployed, EditionXMLIsNotValid, UserException {
 		ViewIdAndUnitIdValue[] vcarr = comm.getAllViewComponentsWithUnits(vdvcid);
 		prog.addToMaximum(vcarr.length);
 		if (vcarr != null) {
 			for (int i = 0; i < vcarr.length; i++) {
-				if (log.isDebugEnabled())
-					log.debug("VCL: " + vcarr[i].getViewComponentId() + " UNIT " + vcarr[i].getUnitId() + " UNITNAME "
-							+ vcarr[i].getUnitName());
+				if (log.isDebugEnabled()) log.debug("VCL: " + vcarr[i].getViewComponentId() + " UNIT " + vcarr[i].getUnitId() + " UNITNAME " + vcarr[i].getUnitName());
 
-				String msg = Messages.getString("wizard.root.deployAll.progressdialog.createEdition",
-						vcarr[i].getUnitName());
+				String msg = Messages.getString("wizard.root.deployAll.progressdialog.createEdition", vcarr[i].getUnitName());
 				prog.setProgress(msg);
-				comm.createEdition("ROOT-CREATED-FULL-DEPLOY", vcarr[i].getViewComponentId(), true, false);
+				comm.createEdition("ROOT-CREATED-FULL-DEPLOY", vcarr[i].getViewComponentId(), true, false, 1);
 				recursiveDeploy(prog, vcarr[i].getViewComponentId());
 			}
 		}

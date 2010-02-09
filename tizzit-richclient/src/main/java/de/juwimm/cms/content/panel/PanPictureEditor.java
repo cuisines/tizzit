@@ -55,6 +55,7 @@ import de.juwimm.cms.vo.PictureSlimValue;
  * @version $Id: DlgPictureEditor.java 6 2009-07-30 14:05:05Z skulawik@gmail.com $
  */
 public class PanPictureEditor extends JLayeredPane {
+	// to prevent a class not found exception
 	static {
 		System.setProperty("com.sun.media.jai.disableMediaLib", "true");
 	}
@@ -66,22 +67,22 @@ public class PanPictureEditor extends JLayeredPane {
 	private PlanarImage picture;
 	private PlanarImage scaledImage = null;
 	private PanDisplayJAIScrollable panImage = null;
-	private JButton btnCrop = new JButton();
-	private JButton btnOk = new JButton();
-	private JButton btnCancel = new JButton();
-	private JSpinner spnResizePercentalSize = new JSpinner();
-	private JFormattedTextField txtResizeWidth = new JFormattedTextField(NumberFormat.getIntegerInstance());
-	private JFormattedTextField txtResizeHeight = new JFormattedTextField(NumberFormat.getIntegerInstance());
-	private JLabel lblResizeHeader = new JLabel();
-	private JLabel lblResizePercentalSize = new JLabel();
-	private JLabel lblResizeWidth = new JLabel();
-	private JLabel lblResizeHeight = new JLabel();
-	private JLabel lblCurrentSize = new JLabel();
-	private JLabel lblSelectedSize = new JLabel();
-	private JLabel lblMousePosition = new JLabel();
-	private JPanel panPostions = new JPanel();
-	private JPanel panButtons = new JPanel();
-	private JPanel panResize = new JPanel();
+	private final JButton btnCrop = new JButton();
+	private final JButton btnOk = new JButton();
+	private final JButton btnCancel = new JButton();
+	private final JSpinner spnResizePercentalSize = new JSpinner();
+	private final JFormattedTextField txtResizeWidth = new JFormattedTextField(NumberFormat.getIntegerInstance());
+	private final JFormattedTextField txtResizeHeight = new JFormattedTextField(NumberFormat.getIntegerInstance());
+	private final JLabel lblResizeHeader = new JLabel();
+	private final JLabel lblResizePercentalSize = new JLabel();
+	private final JLabel lblResizeWidth = new JLabel();
+	private final JLabel lblResizeHeight = new JLabel();
+	private final JLabel lblCurrentSize = new JLabel();
+	private final JLabel lblSelectedSize = new JLabel();
+	private final JLabel lblMousePosition = new JLabel();
+	private final JPanel panPostions = new JPanel();
+	private final JPanel panButtons = new JPanel();
+	private final JPanel panResize = new JPanel();
 	private Point selectStart = null;
 	private Point selectEnd = null;
 	private Rectangle selection = null;
@@ -89,7 +90,7 @@ public class PanPictureEditor extends JLayeredPane {
 		WIDTH, HEIGHT, PERCENT
 	};
 	private boolean startedSizeCalculation = false;
-	private EventListenerList cancelListenerList = new EventListenerList();
+	private final EventListenerList cancelListenerList = new EventListenerList();
 
 	public PanPictureEditor(int pictureID) {
 		try {
@@ -107,7 +108,7 @@ public class PanPictureEditor extends JLayeredPane {
 			Image img = new ImageIcon(picData).getImage();
 			ParameterBlock pb = new ParameterBlock();
 			pb.add(img);
-			picture = (PlanarImage) JAI.create("AWTImage", pb);
+			picture = JAI.create("AWTImage", pb);
 		} catch (Exception ex) {
 			log.error("catched exception while loading ImagePreview of imageId: " + picture, ex);
 		}
@@ -380,6 +381,7 @@ public class PanPictureEditor extends JLayeredPane {
 			txtResizeWidth.setValue((picture.getWidth() * value / 100));
 		}
 		Thread resizer = new Thread() {
+			@Override
 			public void run() {
 				PlanarImage img = scalePreviewImage(((Long) txtResizeWidth.getValue()).floatValue() / picture.getWidth());
 				panImage.set(img);
@@ -519,6 +521,7 @@ public class PanPictureEditor extends JLayeredPane {
 		}
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		int offsetX = panImage.getVisibleRect().x;

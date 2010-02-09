@@ -209,8 +209,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					viewComponent = getViewComponentHbmDao().load(rootVcId);
 					rootUnit = viewComponent.getAssignedUnit();
 					if (viewComponent.isRoot()) {
+						rootVcId = null;
 						// context.setRollbackOnly();
-						throw new RuntimeException("You can't import an Unit-Deploy as Root-Unit at this moment");
+						//						throw new RuntimeException("You can't import an Unit-Deploy as Root-Unit at this moment");
 					}
 				} catch (Exception e) {
 					if (log.isInfoEnabled()) log.info("The given rootVcId " + rootVcId + " does not belong to any viewcomponent");
@@ -2911,5 +2912,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 			return false;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.EditionServiceSpringBase#handleImportUnit(java.lang.Integer, java.lang.String)
+	 */
+	@Override
+	protected void handleImportUnit(Integer editionId, String editionFileName) throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 }

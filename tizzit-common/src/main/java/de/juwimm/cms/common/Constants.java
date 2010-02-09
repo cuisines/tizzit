@@ -89,6 +89,10 @@ public final class Constants {
 	public static final byte DEPLOY_COMMAND_DELETE = 2;
 	public static final byte DEPLOY_COMMAND_MODIFY = 3;
 
+	public static final int DEPLOY_TYPE_FULL = 0;
+	public static final int DEPLOY_TYPE_UNIT = 1;
+	public static final int DEPLOY_TYPE_PAGE = 2;
+
 	/* This is the Status from viewcomponent.status */
 	public static final byte DEPLOY_STATUS_EDITED = 0;
 	public static final byte DEPLOY_STATUS_FOR_APPROVAL = 1;

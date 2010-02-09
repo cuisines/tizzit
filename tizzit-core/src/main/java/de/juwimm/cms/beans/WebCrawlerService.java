@@ -304,7 +304,6 @@ public class WebCrawlerService {
 
 		//index deeper
 		for (String childUrl : childUrls) {
-			//TODO http://www.juwimm.net/img/ejbfile/Share%20of%20Voice.pdf?id=12142 does not work. 
 			//childUrl.replace(" ", "%20");
 			indexUrl(childUrl, depth - 1, baseUrl);
 		}
@@ -323,18 +322,14 @@ public class WebCrawlerService {
 
 				@Override
 				public void handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos) {
-					if (t == HTML.Tag.A && a.getAttribute(HTML.Attribute.HREF) != null
-					//TODO && isLinkValid(a.getAttribute(HTML.Attribute.HREF).toString())
-					) {
+					if (t == HTML.Tag.A && a.getAttribute(HTML.Attribute.HREF) != null) {
 						childUrls.add(a.getAttribute(HTML.Attribute.HREF).toString());
 					}
 				}
 
 				@Override
 				public void handleSimpleTag(HTML.Tag t, MutableAttributeSet a, int pos) {
-					if (t == HTML.Tag.A && a.getAttribute(HTML.Attribute.HREF) != null
-					//TODO && isLinkValid(a.getAttribute(HTML.Attribute.HREF).toString())
-					) {
+					if (t == HTML.Tag.A && a.getAttribute(HTML.Attribute.HREF) != null) {
 						childUrls.add(a.getAttribute(HTML.Attribute.HREF).toString());
 					}
 				}

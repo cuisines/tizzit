@@ -240,9 +240,8 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 							this.toXml(vcl, onlyThisUnitId, withContent, withUrl, destDepth, liveServer, returnOnlyVisibleOne, out);
 						}
 					} else {
-						// This is outside the specified unit. Therefor append
-						// this shitty VC and then leave.
-						this.toXml(vcl, onlyThisUnitId, false, withUrl, 1, liveServer, returnOnlyVisibleOne, out);
+						// This is outside the specified unit. Therefor do nothing with it and look for the next fitting
+						//						this.toXml(vcl, onlyThisUnitId, false, withUrl, 1, liveServer, returnOnlyVisibleOne, out);
 					}
 				}
 			} catch (Exception exe) {

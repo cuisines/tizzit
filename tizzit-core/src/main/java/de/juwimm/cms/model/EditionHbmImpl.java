@@ -124,6 +124,7 @@ public class EditionHbmImpl extends EditionHbm {
 		buf.append("<status>" + "<![CDATA[" + this.getStatus() + "]]>" + "</status>");
 		buf.append("<unitId>" + this.getUnitId() + "</unitId>");
 		buf.append("<siteId>" + this.getSiteId() + "</siteId>");
+		buf.append("<deployType>" + this.getDeployType() + "</deployType>");
 		buf.append("<viewComponentId>" + this.getViewComponentId() + "</viewComponentId>");
 		buf.append("<viewDocumentId>" + this.getViewDocumentId() + "</viewDocumentId>");
 		buf.append("<FileName>" + "<![CDATA[" + this.getEditionFileName() + "]]>" + "</FileName>");

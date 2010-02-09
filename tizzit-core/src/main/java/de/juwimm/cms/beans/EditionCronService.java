@@ -90,7 +90,11 @@ public class EditionCronService {
 					}
 					//null for viewcomponentID for a complete Import?
 					//					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
-					getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionId(), edition.getEditionFileName(), null, false);
+					if (edition.getDeployType() == null || edition.getDeployType() == 0) {
+						getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionId(), edition.getEditionFileName(), null, false);
+					} else {
+						getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
+					}
 				}
 				getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}
@@ -196,6 +200,7 @@ public class EditionCronService {
 			edition.setUseNewIds(true);
 			edition.setViewDocumentId(new Integer(getNVal(node, "viewDocumentId")));
 			edition.setViewComponentId(new Integer(getNVal(node, "viewComponentId")));
+			edition.setDeployType(new Integer(getNVal(node, "deployType")));
 			edition.setWorkServerEditionId(new Integer(getNVal(node, "id")));
 			String user = tizzitProperties.getDeployUser();
 			String pass = tizzitProperties.getDeployPassword();
@@ -239,7 +244,11 @@ public class EditionCronService {
 				}
 				if (edFile == null || !edFile.exists()) {
 					//create deploy than
-					getContentServiceSpring().deployEdition(edition.getEditionId());
+					if (edition.getDeployType() != null && edition.getDeployType() == 0) {
+						getContentServiceSpring().deployEdition(edition.getEditionId());
+					} else if (edition.getDeployType() != null && edition.getDeployType() == 1) {
+						getContentServiceSpring().deployUnitEdition(edition.getEditionId(), edition.getUnitId());
+					}
 				}
 				UserHbm creator = edition.getCreator();
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
@@ -249,6 +258,13 @@ public class EditionCronService {
 				}
 			}
 			editionsToDeploy.clear();
+			File deployDir = new File(tizzitProperties.getDatadir() + "deploys");
+			if (deployDir.exists() && deployDir.isDirectory()) {
+				File deployes[] = deployDir.listFiles();
+				for (int i = 0; i < deployes.length; i++) {
+					deployes[i].delete();
+				}
+			}
 		} catch (Exception e) {
 			log.error("Error deploying Edition during crontask", e);
 			if (edFile != null && edFile.exists()) {

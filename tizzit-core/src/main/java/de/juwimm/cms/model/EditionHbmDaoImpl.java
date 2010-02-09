@@ -483,7 +483,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 			while (it.hasNext()) {
 				ViewDocumentHbm viewDocument = (ViewDocumentHbm) it.next();
 				try {
-					// TODO - Methode gibt es nicht mehr??
+					// FIXME - Methode gibt es nicht mehr??
 					// this.getUsedRealmsForUnitAndViewDocument(unitId,
 					// viewDocument.getViewDocumentId(), ldapMap, jdbcMap,
 					// simplePwMap, jaasMap);
@@ -583,6 +583,19 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 				UnitHbm unit = (UnitHbm) it.next();
 				out.print(getUnitHbmDao().toXmlRecursive(2, unit));
 			}
+		} catch (Exception exe) {
+			log.error("Error occured", exe);
+		}
+		out.println("\t</units>");
+
+	}
+
+	@Override
+	protected void handleUnitToXml(Integer unitId, PrintStream out, EditionHbm edition) throws Exception {
+		out.println("\t<units>");
+		try {
+			UnitHbm unit = getUnitHbmDao().load(unitId);
+			out.print(getUnitHbmDao().toXmlRecursive(2, unit));
 		} catch (Exception exe) {
 			log.error("Error occured", exe);
 		}

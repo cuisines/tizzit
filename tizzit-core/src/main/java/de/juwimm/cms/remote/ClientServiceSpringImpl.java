@@ -180,7 +180,7 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 			// checkedOut!
 			return cdao;
 		} catch (AlreadyCheckedOutException ex) {
-			throw (AlreadyCheckedOutException) ex;
+			throw ex;
 		} catch (Exception exception) {
 			UserException ue = new UserException("Error checking out: " + exception.getMessage());
 			log.error("Error checking out ", exception);
@@ -815,9 +815,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleCreateEdition(String comment, int rootViewComponentId, boolean deploy, boolean showMessage) throws Exception {
+	protected void handleCreateEdition(String comment, int rootViewComponentId, boolean deploy, boolean showMessage, int deployType) throws Exception {
 		try {
-			getContentServiceSpring().createEdition(comment, Integer.valueOf(rootViewComponentId), deploy, showMessage);
+			getContentServiceSpring().createEdition(comment, Integer.valueOf(rootViewComponentId), deploy, showMessage, Integer.valueOf(deployType));
 		} catch (UserException ue) {
 			log.error("Error creating edition", ue);
 			throw ue;
@@ -1947,5 +1947,4 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected UnitValue handleGetRootUnit4Site(Integer siteId) throws Exception {
 		return getUnitServiceSpring().getRootUnit4Site(siteId);
 	}
-
 }

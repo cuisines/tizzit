@@ -352,12 +352,13 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#createEdition(java.lang.String, java.lang.Integer, boolean, boolean)
 	 */
 	@Override
-	protected void handleCreateEdition(String commentText, Integer rootViewComponentId, boolean deploy, boolean succMessage) throws Exception {
+	protected void handleCreateEdition(String commentText, Integer rootViewComponentId, boolean deploy, boolean succMessage, Integer deployType) throws Exception {
 		if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event " + AuthenticationHelper.getUserName() + " rootVCID " + rootViewComponentId);
 		SiteHbm site = null;
+		ViewComponentHbm vc = null;
 		try {
 			site = getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
-			getViewComponentHbmDao().load(rootViewComponentId);
+			vc = getViewComponentHbmDao().load(rootViewComponentId);
 		} catch (Exception exe) {
 			log.error("Havent found either site or viewcomponent: (rootVc)" + rootViewComponentId + " " + exe.getMessage());
 		}
@@ -365,7 +366,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for viewComponentId: " + rootViewComponentId);
 			try {
 				boolean needsDeploy = true;
-				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, site.getRootUnit().getUnitId(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+				//TODO Edition
+				// site, vc, vd, unit in one value - difference makes deploy type
+				// type = 0 fulldeploy - value is site; 1 unitdeploy - value is unit, 2 pagedeploy - value is vc, rest for export...
+				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, vc.getUnit4ViewComponent(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+				newEdition.setDeployType(deployType);
 				newEdition.setStartActionTimestamp(System.currentTimeMillis());
 				newEdition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
 				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
@@ -1700,6 +1705,69 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 	}
 
+	@Override
+	protected void handleDeployUnitEdition(Integer editionId, Integer unitId) throws Exception {
+		try {
+			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
+			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
+			EditionHbm edition = getEditionHbmDao().load(editionId);
+
+			//create dir for deploys
+			String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
+			File fDir = new File(dir);
+			fDir.mkdirs();
+
+			File fle = File.createTempFile("deploy_unit_" + edition.getSiteId() + "_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate(), ".xml.gz", fDir);
+			FileOutputStream fout = new FileOutputStream(fle);
+			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
+			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
+
+			//if (log.isDebugEnabled()) log.debug("Invoker is: " + edition.getCreator() + " within Site " + site.getName());
+			if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
+			out.println("<edition>");
+			if (log.isDebugEnabled()) log.debug("editionToXml");
+			out.println(edition.toXml());
+			System.gc();
+			// site info is needed to connect to the live server
+			if (log.isDebugEnabled()) log.debug("siteToXml");
+			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
+			System.gc();
+			// Alle ..toXML + unitID to reuse them in unitDeploy
+			if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
+			getEditionHbmDao().picturesToXmlRecursive(unitId, edition.getSiteId(), out, edition);
+			System.gc();
+			if (log.isDebugEnabled()) log.debug("documentsToXmlRecursive");
+			getEditionHbmDao().documentsToXmlRecursive(unitId, edition.getSiteId(), out, true, edition);
+			System.gc();
+			if (log.isDebugEnabled()) log.debug("unitToXml");
+			getEditionHbmDao().unitToXml(unitId, out, edition);
+			System.gc();
+			//			if (log.isDebugEnabled()) log.debug("viewdocumentsToXmlRecursive");
+			//			getEditionHbmDao().viewdocumentsToXmlRecursive(edition.getSiteId(), out, edition);
+			if (log.isDebugEnabled()) log.debug("realmsToXmlUsed: unit - " + unitId);
+			getEditionHbmDao().realmsToXmlUsed(unitId, out, edition);
+			System.gc();
+			if (log.isDebugEnabled()) log.debug("Creating ViewComponent Data");
+			Iterator vdIt = getViewDocumentHbmDao().findAll(edition.getSiteId()).iterator();
+			while (vdIt.hasNext()) {
+				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
+				ViewComponentHbm vch = getViewComponentHbmDao().find4Unit(unitId, vdl.getViewDocumentId());
+				if (vch != null) getViewComponentHbmDao().toXml(vch, unitId, true, false, -1, false, false, out);
+			}
+			if (log.isDebugEnabled()) log.debug("Finished creating ViewComponent Data");
+			out.println("</edition>");
+
+			out.flush();
+			out.close();
+			out = null;
+
+			edition.setEditionFileName(fle.getAbsolutePath());
+		} catch (Exception e) {
+			editionCronService.logEditionStatusException(editionId, e.getMessage());
+			throw new UserException(e.getMessage(), e);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void handleRemoveResources(Integer[] pictureIds, Integer[] documentsIds, boolean forceDeleteHistory) throws Exception {
@@ -1888,5 +1956,4 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 		return editionValues;
 	}
-
 }
