@@ -822,7 +822,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			TreePath selectedPath = null;
 			PageNode selectedPage = treeModel.findEntry4Id((TreeNode) treeModel.getRoot(), treeSelectionEventData.getViewComponentId());
 			if (selectedPage != null) {
-				selectedPath = new TreePath(treeModel.getPathToRoot(selectedPage));
+				selectedPath = new TreePath(treeModel.getPathToRoot(selectedPage)); //			
+				tree.fireTreeWillExpand(selectedPath);
 				tree.setSelectionPath(selectedPath);
 			}
 		} else {
