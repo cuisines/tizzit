@@ -475,7 +475,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 					this.addRow(viewComponent);
 				}
 			}
-			fireTableRowsInserted(getRowCount(), getRowCount());
+			fireTableDataChanged();
 		}
 
 		@Override
@@ -484,8 +484,9 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		}
 
 		public void removeData() {
+			int oldSize = dataVector.size();
 			this.dataVector.removeAllElements();
-			fireTableRowsInserted(getRowCount(), getRowCount());
+			fireTableRowsDeleted(0, oldSize);
 		}
 	}
 
