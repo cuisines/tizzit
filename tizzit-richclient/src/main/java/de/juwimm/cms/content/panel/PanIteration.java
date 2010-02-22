@@ -550,7 +550,6 @@ public class PanIteration extends JPanel {
 		@Override
 		public boolean equals(Object obj) {
 			if (obj == null) return false;
-			if (!(obj instanceof PanIteration)) return false;
 			boolean retVal = true;
 			if (!(obj instanceof IterationItem)) return false;
 			IterationItem mo = (IterationItem) obj;
