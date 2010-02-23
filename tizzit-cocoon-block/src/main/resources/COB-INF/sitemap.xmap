@@ -398,6 +398,9 @@
       <map:match pattern="system/*.js">
         <map:read src="system/{1}.js" />
       </map:match>
+      <map:match pattern="system/*.jpg">
+        <map:read src="system/{1}.jpg" />
+      </map:match>
       <map:match pattern="fop-fonts">
         <map:generate src="{tizzit-property:cmsTemplatesPath}/xml/dummy.xml" />
         <map:transform src="{tizzit-property:cmsTemplatesPath}/templates/config/config_fop.xsl">
