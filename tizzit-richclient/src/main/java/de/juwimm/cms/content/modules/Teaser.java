@@ -84,11 +84,11 @@ public class Teaser extends AbstractModule {
 
 	/** @see de.juwimm.cms.content.modules.Module#isModuleValid() */
 	public boolean isModuleValid() {
-		String errorMessage = this.pan.validateSelectedTeasers();
+		String errorMessage = this.pan.validateSelectedTeasers(isMandatory());
 		setValidationError(errorMessage);
 		if (errorMessage != null) {
 			return false;
-		} 
+		}
 		return true;
 	}
 

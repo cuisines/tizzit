@@ -512,16 +512,23 @@ public class PanTeaser extends JPanel {
 		return true;
 	}
 
-	public String validateSelectedTeasers() {
+	public String validateSelectedTeasers(boolean isMandatory) {
+
 		long startTime = System.currentTimeMillis();
 		if (log.isDebugEnabled()) {
 			log.debug("Start validateSelectedTeasers()");
 		}
 
 		boolean isValid = true;
+
 		// Hashtable: key = xpathTeaserElement (z.B. "//teaser"), value = ArrayList<TeaserValue> die das key-xpathTeaserElement beinhalten
 		Hashtable<String, ArrayList<TeaserValue>> referencedTeasers = new Hashtable<String, ArrayList<TeaserValue>>();
 		AbstractPickListModel selectedTeasers = this.pickListData.getLstLeftModel();
+		if (isMandatory) {
+			if (selectedTeasers == null || selectedTeasers.getSize() == 0) {
+				return rb.getString("exception.TeaserRequired");
+			}
+		}
 
 		for (int i = 0, count = selectedTeasers.getSize(); i < count; i++) {
 			TeaserValue teaserValue = (TeaserValue) ((DropDownHolder) selectedTeasers.getElementAt(i)).getObject();
