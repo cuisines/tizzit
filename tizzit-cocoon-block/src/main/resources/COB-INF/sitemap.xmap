@@ -471,19 +471,37 @@
               </map:otherwise>
             </map:select>
           </map:act>
+          <map:generate  type="file" src="system/404.html"/>
+          <map:serialize type="html" status-code="404" />
         </map:match>
         <map:match pattern="*">
           <map:act type="hostSelectorAction">
             <map:select type="parameter">
               <map:parameter name="parameter-selector-test" value="{redirectURL}" />
               <map:when test="0">
-                <map:mount check-reload="yes" src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />
+                <map:select type="parameter">
+                  <map:parameter name="mandatorDir" value="{mandatorDir}"/>
+                  <map:when test="">
+                    <map:generate  type="file" src="system/404.html"/>
+                    <map:serialize type="html" status-code="404" />
+                  </map:when>
+                  <map:when test="0">
+                    <map:generate  type="file" src="system/404.html"/>
+                    <map:serialize type="html" status-code="403" />
+                  </map:when>
+                  <map:otherwise>
+                    <map:mount check-reload="yes" src="{tizzit-property:tizzitPropertiesBeanSpring.mandatorParent}{mandatorDir}" uri-prefix="" />    
+                  </map:otherwise>
+                </map:select>
+                
               </map:when>
               <map:otherwise>
                 <map:redirect-to uri="{redirectURL}" />
               </map:otherwise>
             </map:select>
           </map:act>
+          <map:generate  type="file" src="system/404.html"/>
+          <map:serialize type="html" status-code="404" />
         </map:match>
         <map:match pattern="*/**">
           <map:act type="hostSelectorAction">
@@ -497,24 +515,10 @@
               </map:otherwise>
             </map:select>
           </map:act>
+          <map:generate  type="file" src="system/404.html"/>
+          <map:serialize type="html" status-code="404" />
         </map:match>
       </map:match>
-      <map:handle-errors>
-        <map:select type="exception">
-          <map:when test="not-found">
-            <map:generate  type="file" src="system/404.html"/>
-            <map:serialize type="html" status-code="404" />
-          </map:when>
-          <map:when test="invalid-continuation">
-			<map:generate type="exception"/>
-            <map:serialize status-code="404" />
-          </map:when>
-          <map:otherwise>
-            <map:generate type="exception"/>
-            <map:serialize status-code="500" />
-          </map:otherwise>
-        </map:select>
-      </map:handle-errors>
     </map:pipeline>
 
     <map:pipeline>
