@@ -72,7 +72,7 @@ public class HttpClientWrapper {
 	private String httpProxyPort = null;
 	private static String httpProxyUser = null;
 	private static String httpProxyPassword = null;
-	private boolean useNTproxy = false;
+	private static boolean useNTproxy = false;
 	private Properties fileProp = null;
 	private final File propFile = new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".tizzit");
 	private final HashMap<String, HostConfiguration> hostMap = new HashMap<String, HostConfiguration>();
@@ -113,7 +113,7 @@ public class HttpClientWrapper {
 		}
 
 	}
-
+	
 	public boolean isUsingProxy() {
 		return (getHttpProxyHost() == null || getHttpProxyHost().equalsIgnoreCase("")) ? false : true;
 	}
@@ -242,10 +242,11 @@ public class HttpClientWrapper {
 		} else if (returnCode == 516) {
 			returnMessage = HttpMessages.getString("HttpClientWrapper.516_SSLPeerUnverified", returnMessage);
 		} else {
-			returnCode = 500;
 			returnMessage = "Unknown error with return code " + returnCode;
 		}
-		if (returnMessage != null) { throw new URIException(returnCode, returnMessage); }
+		if (returnMessage != null) {
+			throw new URIException(returnCode, returnMessage);
+		}
 		return method;
 	}
 
