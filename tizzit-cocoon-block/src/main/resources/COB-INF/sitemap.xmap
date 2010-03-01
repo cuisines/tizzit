@@ -414,10 +414,6 @@
       <map:match pattern="**error-roteskreuz.gif">
         <map:read mime-type="image/x-icon" src="{tizzit-property:cmsTemplatesPath}/img/error-roteskreuz.gif" />
       </map:match>
-      <map:match pattern="robots.txt">
-        <map:read mime-type="text/plain" src="robots.txt" />
-      </map:match>
-
       <map:match pattern="**dcf**">
         <map:mount check-reload="yes" src="dcf/sitemap.xmap" uri-prefix="" />
       </map:match>
