@@ -76,7 +76,7 @@ public final class LookAndFeel {
 	 */
 	public static boolean switchTo(String lookAndFeel) {
 		try {
-			if (Constants.isClientOS(Constants.OS_MACOSX)) { 
+		/*	if (Constants.isClientOS(Constants.OS_MACOSX)) { 
 				UIManager.put("Label.font", new Font("SansSerif", Font.PLAIN, 11));
 				UIManager.put("Button.font", new Font("SansSerif", Font.PLAIN, 11));
 				UIManager.put("Component.font", new Font("SansSerif", Font.PLAIN, 11));
@@ -92,7 +92,7 @@ public final class LookAndFeel {
 				UIManager.put("TabbedPane.font", new Font("SansSerif", Font.PLAIN, 11));
 				UIManager.put("List.font", new Font("SansSerif", Font.PLAIN, 11));
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} else {
+			} else {*/
 				//PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceRoyale());
 				//UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
 				lookAndFeel.getClass().getResource("YQSilver.theme");
@@ -103,7 +103,7 @@ public final class LookAndFeel {
 				Toolkit.getDefaultToolkit().setDynamicLayout(true);
 				// no flickering on resize
 				System.setProperty("sun.awt.noerasebackground", "true");
-			}
+			//}
 			SwingUtilities.updateComponentTreeUI(UIConstants.getMainFrame());
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
