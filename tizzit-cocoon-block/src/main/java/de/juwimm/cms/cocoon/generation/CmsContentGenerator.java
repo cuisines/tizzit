@@ -515,9 +515,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			ArrayList<SearchResultValue> resultList = new ArrayList<SearchResultValue>();
 			SearchResultValue[] results = null;
 			if (urlSearch == null) {
-				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber);
+				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber, safeguardMap);
 			} else {
-				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber, urlSearch);
+				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber, safeguardMap, urlSearch);
 			}
 
 			if (results != null) {

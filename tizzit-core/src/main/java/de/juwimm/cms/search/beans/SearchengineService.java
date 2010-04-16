@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -59,6 +61,7 @@ import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.model.ViewDocumentHbmDao;
+import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
 import de.juwimm.cms.search.res.DocumentResourceLocatorFactory;
 import de.juwimm.cms.search.res.HtmlResourceLocator;
 import de.juwimm.cms.search.vo.LinkDataValue;
@@ -89,6 +92,9 @@ public class SearchengineService {
 	private DocumentResourceLocatorFactory documentResourceLocatorFactory;
 	@Autowired
 	private SearchengineDeleteService searchengineDeleteService;
+	@Autowired
+	private SafeguardServiceSpring safeguardServiceSpring;
+
 	private ViewComponentHbmDao viewComponentHbmDao;
 	private SiteHbmDao siteHbmDao;
 	private DocumentHbmDao documentHbmDao;
@@ -97,6 +103,14 @@ public class SearchengineService {
 	private UnitHbmDao unitHbmDao;
 
 	private final HttpClient client = new HttpClient();
+
+	public SafeguardServiceSpring getSafeguardServiceSpring() {
+		return safeguardServiceSpring;
+	}
+
+	public void setSafeguardServiceSpring(SafeguardServiceSpring safeguardServiceSpring) {
+		this.safeguardServiceSpring = safeguardServiceSpring;
+	}
 
 	public void setViewComponentHbmDao(ViewComponentHbmDao viewComponentHbmDao) {
 		this.viewComponentHbmDao = viewComponentHbmDao;
@@ -299,14 +313,15 @@ public class SearchengineService {
 	}
 
 	@Transactional(readOnly = true)
-	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber) throws Exception {
-		return searchWeb(siteId, searchItem, pageSize, pageNumber, null);
+	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap) throws Exception {
+		return searchWeb(siteId, searchItem, pageSize, pageNumber, safeGuardCookieMap, null);
 	}
 
-	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber, String searchUrl) throws Exception {
+	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap, String searchUrl) throws Exception {
 		if (pageSize != null && pageSize.intValue() <= 1) pageSize = new Integer(20);
 		if (pageNumber != null && pageNumber.intValue() < 0) pageNumber = new Integer(0); // first page
-		SearchResultValue[] retArr = null;
+		SearchResultValue[] staticRetArr = null;
+		Vector<SearchResultValue> retArr = new Vector<SearchResultValue>();
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
 		try {
@@ -354,34 +369,39 @@ public class SearchengineService {
 			CompassSearchResults results = searchHelper.search(command);
 			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
 			CompassHit[] hits = results.getHits();
-			retArr = new SearchResultValue[hits.length];
 			for (int i = 0; i < hits.length; i++) {
-				retArr[i] = new SearchResultValue();
-				Resource resource = hits[i].getResource();
-				retArr[i].setScore((int) (hits[i].getScore() * 100.0f));
-				//CompassHighlightedText text = hits[i].getHighlightedText();
-				retArr[i].setSummary(stripNonValidXMLCharacters(hits[i].getHighlightedText().getHighlightedText("contents")));
-				retArr[i].setUnitId(new Integer(resource.getProperty("unitId").getStringValue()));
-				retArr[i].setUnitName(resource.getProperty("unitName").getStringValue());
-				retArr[i].setPageSize(pageSize);
-				retArr[i].setPageNumber(pageNumber);
-				retArr[i].setDuration(Long.valueOf(results.getSearchTime()));
-				if (results.getPages() != null) {
-					retArr[i].setPageAmount(Integer.valueOf(results.getPages().length));
-				} else {
-					retArr[i].setPageAmount(new Integer(1));
-				}
-				retArr[i].setTotalHits(Integer.valueOf(results.getTotalHits()));
 				String alias = hits[i].getAlias();
+				Resource resource = hits[i].getResource();
+				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
+					Integer vcId = Integer.getInteger(resource.getProperty("viewComponentId").getStringValue());
+					if (safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
+						continue;
+					}
+				}
+				SearchResultValue retVal = new SearchResultValue();
+				retVal.setScore((int) (hits[i].getScore() * 100.0f));
+				//CompassHighlightedText text = hits[i].getHighlightedText();
+				retVal.setSummary(stripNonValidXMLCharacters(hits[i].getHighlightedText().getHighlightedText("contents")));
+				retVal.setUnitId(new Integer(resource.getProperty("unitId").getStringValue()));
+				retVal.setUnitName(resource.getProperty("unitName").getStringValue());
+				retVal.setPageSize(pageSize);
+				retVal.setPageNumber(pageNumber);
+				retVal.setDuration(Long.valueOf(results.getSearchTime()));
+				if (results.getPages() != null) {
+					retVal.setPageAmount(Integer.valueOf(results.getPages().length));
+				} else {
+					retVal.setPageAmount(new Integer(1));
+				}
+				retVal.setTotalHits(Integer.valueOf(results.getTotalHits()));
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
 					String url = resource.getProperty("url").getStringValue();
 					if (url != null) {
-						retArr[i].setUrl(url);
-						retArr[i].setTitle(resource.getProperty("title").getStringValue());
-						retArr[i].setLanguage(resource.getProperty("language").getStringValue());
-						retArr[i].setViewType(resource.getProperty("viewtype").getStringValue());
+						retVal.setUrl(url);
+						retVal.setTitle(resource.getProperty("title").getStringValue());
+						retVal.setLanguage(resource.getProperty("language").getStringValue());
+						retVal.setViewType(resource.getProperty("viewtype").getStringValue());
 						Property template = resource.getProperty("template");
-						retArr[i].setTemplate(template != null ? template.getStringValue() : "standard");
+						retVal.setTemplate(template != null ? template.getStringValue() : "standard");
 					}
 				} else {
 					String documentId = resource.getProperty("documentId").getStringValue();
@@ -393,12 +413,13 @@ public class SearchengineService {
 						if (log.isDebugEnabled()) log.debug(e);
 					}
 					if (docId != null) {
-						retArr[i].setDocumentId(docId);
-						retArr[i].setDocumentName(resource.getProperty("documentName").getStringValue());
-						retArr[i].setMimeType(resource.getProperty("mimeType").getStringValue());
-						retArr[i].setTimeStamp(resource.getProperty("timeStamp").getStringValue());
+						retVal.setDocumentId(docId);
+						retVal.setDocumentName(resource.getProperty("documentName").getStringValue());
+						retVal.setMimeType(resource.getProperty("mimeType").getStringValue());
+						retVal.setTimeStamp(resource.getProperty("timeStamp").getStringValue());
 					}
 				}
+				retArr.add(retVal);
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
 			StringBuffer sb = new StringBuffer(256);
@@ -413,7 +434,9 @@ public class SearchengineService {
 			log.error("Error performing search with compass: " + e.getMessage(), e);
 		}
 		if (log.isDebugEnabled()) log.debug("finished compass-search");
-		return retArr;
+		staticRetArr = new SearchResultValue[retArr.size()];
+		retArr.toArray(staticRetArr);
+		return staticRetArr;
 	}
 
 	public String stripNonValidXMLCharacters(String in) {

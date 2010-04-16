@@ -64,6 +64,7 @@ public class HtmlResourceLocator {
 		resource.addProperty("viewtype", vdl.getViewType());
 		resource.addProperty("modified", DateTools.timeToString(modifiedDate.getTime(), DateTools.Resolution.MINUTE));
 		resource.addProperty("uid", url);
+		resource.addProperty("viewComponentId", vcl.getViewComponentId());
 		try {
 			Integer unitId = vcl.getUnit4ViewComponent();
 			if (unitId != null) {
