@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.1.2-SNAPSHOT</version>
+		<version>3.1.2</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-cocoon-components</artifactId>
-	<version>3.1.2-SNAPSHOT</version>
+	<version>3.1.2</version>
 
 	<name>tizzit Cocoon Components</name>
 
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-common</artifactId>
-			<version>3.1.2-SNAPSHOT</version>
+			<version>3.1.2</version>
 		</dependency>
 
 		<dependency>
