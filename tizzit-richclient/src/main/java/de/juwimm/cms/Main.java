@@ -116,14 +116,13 @@ public class Main extends JFrame implements ActionListener {
 			String pom = IOUtils.toString(in);
 			Document doc = XercesHelper.string2Dom(pom);
 
-			String version = XercesHelper.getNodeValue(doc, "//tizzit.version");
+			String version = XercesHelper.getNodeValue(doc, "/project/version");
 			System.setProperty("tizzit.version", version);
 
 			Constants.CMS_VERSION = "V " + version;
 
 			logSys("Starting Tizzit Version " + Constants.CMS_VERSION);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		//SplashShell splash = new SplashShell();
