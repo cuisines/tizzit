@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.vo.ViewComponentValue;
 
@@ -315,8 +316,11 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	 */
 	@Override
 	public void setUnitOnline() {
-		// @todo implement public void setUnitOnline()
-		throw new java.lang.UnsupportedOperationException("de.juwimm.cms.model.ViewComponent.setUnitOnline() Not implemented!");
+		Collection<ViewComponentHbm> children = getAllChildrenOfUnit(); //getAllChildrenOfUnit();
+		for (ViewComponentHbm child : children) {
+			child.setOnline(Constants.ONLINE_STATUS_ONLINE);
+			child.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
+		}
 	}
 
 	/**
@@ -521,6 +525,27 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 			ViewComponentHbm vcp = vcl.getParent();
 			return this.getUnitViewComponent(vcp);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.ViewComponentHbm#getAllChildrenOfUnit()
+	 */
+	@Override
+	public Collection getAllChildrenOfUnit() {
+		return getAllChildrenOfUnit(this.getViewComponentUnit());
+	}
+
+	private Vector<ViewComponentHbm> getAllChildrenOfUnit(ViewComponentHbm mother) {
+		Vector<ViewComponentHbm> retVec = new Vector<ViewComponentHbm>();
+		ViewComponentHbm vcl = mother.getFirstChild();
+		while (vcl != null) {
+			if (!vcl.isUnit()) {
+				retVec.add(vcl);
+				retVec.addAll(getAllChildrenOfUnit(vcl));
+			}
+			vcl = vcl.getNextNode();
+		}
+		return retVec;
 	}
 
 }

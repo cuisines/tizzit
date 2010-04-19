@@ -60,6 +60,7 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
 import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
 import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.XMLWriter;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -168,6 +169,35 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		getEditionHbmDao().remove(edition);
 	}
 
+	private Document getDocumentFromFile(File preparsedXMLfile, String editionFileName) throws Exception {
+		if (log.isInfoEnabled()) log.info("Finished writing Edition to File, starting to import it as GZIP-InputStream...");
+		XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
+		preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
+		if (log.isDebugEnabled()) log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
+		XMLWriter xmlWriter = new XMLWriter(new OutputStreamWriter(new FileOutputStream(preparsedXMLfile)));
+		filter.setContentHandler(new EditionBlobContentHandler(xmlWriter, preparsedXMLfile));
+		InputSource saxIn = null;
+		try {
+			try {
+				saxIn = new InputSource(new GZIPInputStream(new FileInputStream(editionFileName)));
+			} catch (Exception exe) {
+				saxIn = new InputSource(new BufferedReader(new FileReader(editionFileName)));
+			}
+		} catch (FileNotFoundException exe) {
+			log.error("Edition file isnt available anymore. Edition needs to be deleted!");
+		}
+		filter.parse(saxIn);
+		xmlWriter.flush();
+		xmlWriter = null;
+		filter = null;
+		System.gc();
+		if (log.isInfoEnabled()) log.info("Finished cutting BLOBs, starting to open XML Document...");
+		// BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
+		// InputSource in = new InputSource(br);
+		InputSource domIn = new InputSource(new FileInputStream(preparsedXMLfile));
+		return XercesHelper.inputSource2Dom(domIn);
+	}
+
 	@Override
 	public void handleImportEdition(Integer siteId, Integer editionId, String editionFileName, Integer rootVcId, boolean useNewIds) throws Exception {
 		this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportStarted, editionId);
@@ -192,6 +222,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		loginPagesRealmsJaas = new Hashtable<Integer, Integer>();
 		loginPagesRealm2vc = new Hashtable<Integer, Integer>();
 		File preparsedXMLfile = null;
+		EditionHbm edition = null;
 		try {
 			if (log.isInfoEnabled()) {
 				if (rootVcId == null) {
@@ -200,50 +231,27 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					log.info("processFileImport for Site: " + siteId + " in the RootVCId: " + rootVcId);
 				}
 			}
-
+			edition = getEditionHbmDao().load(editionId);
 			UnitHbm rootUnit = null;
 			ViewComponentHbm viewComponent = null;
-			if (rootVcId != null) {
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_PAGE) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0) {
 				try {
 					log.info("try to load ViewComponent: " + rootVcId);
 					viewComponent = getViewComponentHbmDao().load(rootVcId);
 					rootUnit = viewComponent.getAssignedUnit();
-					if (viewComponent.isRoot()) {
-						rootVcId = null;
-						// context.setRollbackOnly();
-						//						throw new RuntimeException("You can't import an Unit-Deploy as Root-Unit at this moment");
-					}
+					//					if (viewComponent.isRoot()) {
+					//						rootVcId = null;
+					//						// context.setRollbackOnly();
+					//						//						throw new RuntimeException("You can't import an Unit-Deploy as Root-Unit at this moment");
+					//					}
 				} catch (Exception e) {
 					if (log.isInfoEnabled()) log.info("The given rootVcId " + rootVcId + " does not belong to any viewcomponent");
 				}
 			}
 
 			if (log.isInfoEnabled()) log.info("Finished writing Edition to File, starting to import it as GZIP-InputStream...");
-			XMLFilter filter = new XMLFilterImpl(XMLReaderFactory.createXMLReader());
 			preparsedXMLfile = File.createTempFile("edition_import_preparsed_", ".xml");
-			if (log.isDebugEnabled()) log.debug("preparsedXMLfile: " + preparsedXMLfile.getAbsolutePath());
-			XMLWriter xmlWriter = new XMLWriter(new OutputStreamWriter(new FileOutputStream(preparsedXMLfile)));
-			filter.setContentHandler(new EditionBlobContentHandler(xmlWriter, preparsedXMLfile));
-			InputSource saxIn = null;
-			try {
-				try {
-					saxIn = new InputSource(new GZIPInputStream(new FileInputStream(editionFileName)));
-				} catch (Exception exe) {
-					saxIn = new InputSource(new BufferedReader(new FileReader(editionFileName)));
-				}
-			} catch (FileNotFoundException exe) {
-				log.error("Edition file isnt available anymore. Edition needs to be deleted!");
-			}
-			filter.parse(saxIn);
-			xmlWriter.flush();
-			xmlWriter = null;
-			filter = null;
-			System.gc();
-			if (log.isInfoEnabled()) log.info("Finished cutting BLOBs, starting to open XML Document...");
-			// BufferedReader br = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
-			// InputSource in = new InputSource(br);
-			InputSource domIn = new InputSource(new FileInputStream(preparsedXMLfile));
-			org.w3c.dom.Document doc = XercesHelper.inputSource2Dom(domIn);
+			Document doc = getDocumentFromFile(preparsedXMLfile, editionFileName);
 			/*
 			 * DOMParser parser = new DOMParser(); parser.parse(domIn); org.w3c.dom.Document doc = parser.getDocument();
 			 */
@@ -301,8 +309,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			if (siteIsNew) {
 				getSiteHbmDao().create(importSite);
 			}
-
-			if (rootVcId != null) {
+			if (rootUnit != null) {
 				// if provided a unit import, we will fillup the mapping for this unit
 				Integer newUnitId = rootUnit.getUnitId();
 				Element unitNode = (Element) XercesHelper.findNode(doc, "/edition/units/unit");
@@ -312,18 +319,16 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				mappingUnitsReverse.put(newUnitId, oldUnitId);
 			}
 
-			//---------------------------------------------------------------
-			//create site if necessary
-			//---------------------------------------------------------------
-
 			/*
 			 * #################################################################################### 
 			 * S T E P 1 Clean the complete Database
 			 * ####################################################################################
 			 */
+			//TODO: on UnitDeploy delete just unit relevant stuff, for rootImport site stuff too
 			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportCleanDatabase, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 1/6");
-			if (rootVcId == null) {
+
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
 				Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
 				Iterator vdocsIt = vdocs.iterator();
 				while (vdocsIt.hasNext()) {
@@ -332,29 +337,53 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					ViewComponentHbm rootViewComponent = viewDocument.getViewComponent();
 					if (log.isDebugEnabled()) log.debug("Removing rootVC: " + rootViewComponent.getViewComponentId());
 					getViewComponentHbmDao().remove(rootViewComponent);
-					//viewDocument.setSite(null);
 					getViewDocumentHbmDao().remove(viewDocument);
 					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
 				}
 				Collection units = getUnitHbmDao().findAll(siteId);
-				if (units != null) {
-					for (Object u : units) {
-					}
-				}
 				getUnitHbmDao().remove(units);
-
-				Collection realms = getRealmJdbcHbmDao().findBySiteId(siteId);
-				getRealmJdbcHbmDao().remove(realms);
-
-				realms = getRealmLdapHbmDao().findBySiteId(siteId);
-				getRealmLdapHbmDao().remove(realms);
-
-				realms = getRealmSimplePwHbmDao().findBySiteId(siteId);
-				getRealmSimplePwHbmDao().remove(realms);
-
-				realms = getRealmJaasHbmDao().findBySiteId(siteId);
-				getRealmJaasHbmDao().remove(realms);
 			}
+
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
+				ViewComponentHbm rootViewComponent = getViewComponentHbmDao().find4Unit(edition.getUnitId(), edition.getViewDocumentId());
+				if (rootViewComponent != null) {
+					Collection vComps = rootViewComponent.getChildren();
+					while (vComps.iterator().hasNext()) {
+						ViewComponentHbm vc = (ViewComponentHbm) vComps.iterator().next();
+						Realm2viewComponentHbm r2vc = getRealm2viewComponentHbmDao().findByViewComponent(vc.getViewComponentId());
+						if (r2vc != null) {
+							if (r2vc.getJaasRealm() != null) getRealmJaasHbmDao().remove(r2vc.getJaasRealm());
+							if (r2vc.getJdbcRealm() != null) getRealmJdbcHbmDao().remove(r2vc.getJdbcRealm());
+							if (r2vc.getLdapRealm() != null) getRealmLdapHbmDao().remove(r2vc.getLdapRealm());
+							if (r2vc.getSimplePwRealm() != null) getRealmSimplePwHbmDao().remove(r2vc.getSimplePwRealm());
+						}
+						vc.getChildren();
+					}
+					if (log.isDebugEnabled()) log.debug("Removing rootVC: " + rootViewComponent.getViewComponentId());
+					getViewComponentHbmDao().remove(rootViewComponent);
+					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
+				} else {
+					if (log.isDebugEnabled()) log.debug("RootVC: " + edition.getViewDocumentId() + " not found - first deploy?");
+
+				}
+
+			}
+
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_PAGE) == 0) {
+				ViewComponentHbm vc = getViewComponentHbmDao().load(edition.getViewComponentId());
+				Realm2viewComponentHbm r2vc = getRealm2viewComponentHbmDao().findByViewComponent(vc.getViewComponentId());
+				if (r2vc != null) {
+					if (r2vc.getJaasRealm() != null) getRealmJaasHbmDao().remove(r2vc.getJaasRealm());
+					if (r2vc.getJdbcRealm() != null) getRealmJdbcHbmDao().remove(r2vc.getJdbcRealm());
+					if (r2vc.getLdapRealm() != null) getRealmLdapHbmDao().remove(r2vc.getLdapRealm());
+					if (r2vc.getSimplePwRealm() != null) getRealmSimplePwHbmDao().remove(r2vc.getSimplePwRealm());
+				}
+
+				if (log.isDebugEnabled()) log.debug("Removing vC: " + vc.getViewComponentId());
+				getViewComponentHbmDao().remove(vc);
+				if (log.isDebugEnabled()) log.debug("Removing SUCC!");
+			}
+
 			/*
 			 * #################################################################################### 
 			 * S T E P 2 Import Units WITHOUT IMAGEID, ViewDocuments WITHOUT rootVC, Hosts WITHOUT vcId
@@ -362,7 +391,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 */
 			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportUnits, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 2/6");
-			if (rootVcId == null) {
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_FULL) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
 				importUnitsAndViewDocumentsAndRealms(doc, siteId, useNewIds);
 			} else {
 				// perhaps protected pages should stay protected after an import?
@@ -376,7 +405,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportResources, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 3/6");
 			importDocumentsAndPictures(doc, rootUnit, useNewIds, preparsedXMLfile);
-			if (rootVcId == null) {
+			// pics and docs are in full, unit and root
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_PAGE) != 0) {
 				Collection units = getUnitHbmDao().findAll(siteId);
 				Iterator unitsIt = units.iterator();
 				while (unitsIt.hasNext()) {
@@ -434,21 +464,42 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportViewComponents, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 4+5(6)/6");
 			if (XercesHelper.findNode(doc, "/edition/viewcomponent") != null) {
-				if (rootVcId == null) {
+				//if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_FULL) == 0) {
+				if (viewComponent == null) {
 					Iterator vcNodeIt = XercesHelper.findNodes(doc, "/edition/viewcomponent");
 					while (vcNodeIt.hasNext()) {
 						Element vcNode = (Element) vcNodeIt.next();
 						String oldVcId = vcNode.getAttribute("id");
-						String oldVdId = ((Element) XercesHelper.findNode(doc, "/edition/viewDocuments/viewDocument[@rootViewComponentId='" + oldVcId + "']")).getAttribute("id");
+						String oldVdId = null;
+						try {
+							oldVdId = ((Element) XercesHelper.findNode(doc, "/edition/viewDocuments/viewDocument[@rootViewComponentId='" + oldVcId + "']")).getAttribute("id");
+						} catch (Exception e) {
+							oldVdId = XercesHelper.getNodeValue(vcNode, "./viewDocumentId");
+							new Integer(oldVdId);
+							//							Integer tempParent = Integer.decode(vcNode.getAttribute("parent"));
+							//							oldVdId = getViewComponentHbmDao().load(tempParent).getViewDocument().getViewDocumentId().toString();
+						}
 						Integer newVdlId = new Integer(oldVdId);
 						if (useNewIds) {
 							newVdlId = mappingVDs.get(newVdlId);
 						}
 						if (log.isDebugEnabled()) log.debug("Importing one of the Root-ViewComponents with oldVcId:" + oldVcId + " oldVdId:" + oldVdId + " newVdlId:" + newVdlId);
 						ViewDocumentHbm viewDocument = getViewDocumentHbmDao().load(newVdlId);
-						ViewComponentHbm rootViewComponent = createViewComponent(null, viewDocument, null, vcNode, null, null, false, 1, useNewIds);
-						getViewComponentHbmDao().remove(viewDocument.getViewComponent());
-						viewDocument.setViewComponent(rootViewComponent);
+						ViewComponentHbm parentVc = null;
+						ViewComponentHbm prevVc = null;
+						Integer id = null;
+
+						if ((id = getIntegerAttributeValue(vcNode, "parent")) != null) {
+							parentVc = getViewComponentHbmDao().load(id);
+						}
+						if ((id = getIntegerAttributeValue(vcNode, "prev")) != null) {
+							prevVc = getViewComponentHbmDao().load(id);
+						}
+
+						ViewComponentHbm rootViewComponent = createViewComponent(null, viewDocument, null, vcNode, parentVc, prevVc, false, 1, useNewIds);
+
+						//getViewComponentHbmDao().remove(viewDocument.getViewComponent());
+						//viewDocument.setViewComponent(rootViewComponent);
 					}
 				} else {
 					// Unit-Import or Unit-Deploy!
@@ -547,7 +598,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 */
 			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportHosts, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 6/6");
-			if (rootVcId == null) {
+			// hosts are only depoyed with full and root
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_FULL) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
 				Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
 				Iterator vdocsIt = vdocs.iterator();
 				while (vdocsIt.hasNext()) {
@@ -576,7 +628,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			this.restoreSafeguardLoginPages(true);
 		} catch (Exception exe) {
 			// context.setRollbackOnly();
-			editionCronService.logEditionStatusException(editionId, exe.getMessage());
+			if (exe.getMessage() != null) {
+				editionCronService.logEditionStatusException(editionId, exe.getMessage());
+			} else {
+				editionCronService.logEditionStatusException(editionId, exe.getClass().toString());
+			}
 			log.error("Error occured processFileImport", exe);
 			throw exe;
 			// this.createUserTask(context.getCallerPrincipal().getName(), "Error importing edition: " + exe.getMessage(), rootVcId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
@@ -711,9 +767,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 							vdoc.getViewDocumentId();
 						} catch (Exception exe) {
 							if (log.isDebugEnabled()) log.debug("creating ViewDocument: " + vdId);
-							vdoc = createViewDocumentHbm(lang, viewType, null, rootViewComponentId);
-							vdoc.setViewDocumentId(vdId);
-							vdoc = getViewDocumentHbmDao().create(vdoc);
+							//							vdoc = createViewDocumentHbm(lang, viewType, null, rootViewComponentId);
+							//							vdoc.setViewDocumentId(vdId);
+							vdoc = getViewDocumentHbmDao().load(getViewDocumentHbmDao().create(lang, viewType, vdId, rootViewComponentId));
 						}
 						// only if we are doing a live-deploy, we will create the rootViewComponent as well,
 						// if it is not existing
@@ -973,6 +1029,19 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			return null;
 		}
 		return tmp;
+	}
+
+	private Integer getIntegerAttributeValue(Element ael, String attributeName) {
+		String attribute = ael.getAttribute(attributeName);
+		Integer retValue = null;
+		if (attribute != null && !attribute.isEmpty()) {
+			try {
+				retValue = Integer.decode(attribute);
+			} catch (Exception e) {
+				if (log.isInfoEnabled()) log.info("getIntegerAttributeValue could not find value for key: " + attributeName);
+			}
+		}
+		return retValue;
 	}
 
 	/**
@@ -1718,9 +1787,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
 
 				if (log.isInfoEnabled()) log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
-				ViewComponentHbm vcl = getViewComponentHbmDao().find4Unit(new Integer(unitId), new Integer(viewDocumentId));
-				//FIXME: uncomment and implement
-				//vcl.setUnitOnline();
+				setViewComponentsOnline(edition);
 			} catch (Exception exe) {
 				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
 				throw new UserException(exe.getMessage());
@@ -1732,6 +1799,35 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			throw new UserException(e.getMessage());
 		}
 		editionCronService.logEditionStatusInfo(LiveserverDeployStatus.FileDeployedOnLiveServer, editionId);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void setViewComponentsOnline(EditionHbm edition) {
+		// fullDeploy all
+		// unitDeploy just unit
+		// pageDeploy just VC
+		// rootDeploy non
+		ViewComponentHbm vc = getViewComponentHbmDao().load(edition.getViewComponentId());
+
+		if (edition.getDeployType() == Constants.DEPLOY_TYPE_FULL) {
+			Collection units = getUnitHbmDao().findAll(edition.getSiteId());
+			Collection vds = getViewDocumentHbmDao().findAll(edition.getSiteId());
+			for (int unitc = 0; unitc < units.size(); unitc++) {
+				for (int vdc = 0; vdc < vds.size(); vdc++) {
+					ViewComponentHbm unitRoot = getViewComponentHbmDao().find4Unit(unitc, vdc);
+					if (unitRoot != null) {
+						unitRoot.setUnitOnline();
+					}
+				}
+			}
+		}
+		if (edition.getDeployType() == Constants.DEPLOY_TYPE_UNIT) {
+			vc.setUnitOnline();
+		}
+		if (edition.getDeployType() == Constants.DEPLOY_TYPE_PAGE) {
+			vc.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
+			vc.setOnline(Constants.ONLINE_STATUS_ONLINE);
+		}
 	}
 
 	/**
@@ -2291,7 +2387,21 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 						viewComponent.setApprovedLinkName(approvedLinkName);
 						mappingVCs.put(vcId, viewComponent.getViewComponentId());
 					} else {
-						viewComponent = getViewComponentHbmDao().create(viewDocument, reference, linkName, statusInfo, urlLinkName, vcId);
+						// viewDocs can only be crated with viewComps 
+						if (viewDocument.getViewComponent().getViewComponentId().compareTo(vcId) == 0) {
+							viewComponent = viewDocument.getViewComponent();
+						} else {
+							viewComponent = getViewComponentHbmDao().load(vcId);
+						}
+						if (viewComponent == null) {
+							viewComponent = getViewComponentHbmDao().create(viewDocument, reference, linkName, statusInfo, urlLinkName, vcId);
+						} else {
+							viewComponent.setDisplayLinkName(linkName);
+							viewComponent.setViewDocument(viewDocument);
+							viewComponent.setReference(reference);
+							viewComponent.setUrlLinkName(urlLinkName);
+							viewComponent.setLinkDescription(statusInfo);
+						}
 						viewComponent.setApprovedLinkName(approvedLinkName);
 						mappingVCs.put(vcId, vcId);
 					}
@@ -2354,11 +2464,21 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				viewComponent.setVisible(visible);
 				viewComponent.setSearchIndexed(Boolean.valueOf(XercesHelper.getNodeValue(nde, "./searchIndexed")).booleanValue());
 				viewComponent.setXmlSearchIndexed(Boolean.valueOf(XercesHelper.getNodeValue(nde, "./xmlSearchIndexed")).booleanValue());
-				byte status = new Byte(XercesHelper.getNodeValue(nde, "./status")).byteValue();
+				byte status = -1;
+				try {
+					status = new Byte(XercesHelper.getNodeValue(nde, "./status")).byteValue();
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) log.debug("Status was not set...");
+				}
 				// on import set deploy-state to "edited"
 				if (!livedeploy) status = Constants.DEPLOY_STATUS_EDITED;
 				viewComponent.setStatus(status);
-				byte onlineState = new Byte(XercesHelper.getNodeValue(nde, "./online")).byteValue();
+				byte onlineState = -1;
+				try {
+					onlineState = new Byte(XercesHelper.getNodeValue(nde, "./online")).byteValue();
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) log.debug("OnlineState was not set...");
+				}
 				// on import set online-state to offline
 				if (!livedeploy) onlineState = Constants.ONLINE_STATUS_OFFLINE;
 				viewComponent.setOnline(onlineState);
@@ -2388,7 +2508,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 							Node relNode = XercesHelper.findNode(nodeRealm, "jdbcRealmId");
 							if (relNode != null) {
 								Integer id = new Integer(XercesHelper.getNodeValue(relNode));
-								RealmJdbcHbm sqlrealm = getRealmJdbcHbmDao().load(mappingRealmsJdbc.get(id));
+								RealmJdbcHbm sqlrealm = null;
+								if (useNewIds) {
+									sqlrealm = getRealmJdbcHbmDao().load(mappingRealmsJdbc.get(id));
+								} else {
+									sqlrealm = getRealmJdbcHbmDao().load(id);
+								}
 								Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, sqlrealm, null, null, null);
 								Realm2viewComponentHbm r = getRealm2viewComponentHbmDao().create(tempRealm);
 								viewComponent.setRealm2vc(r);
@@ -2396,7 +2521,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 								relNode = XercesHelper.findNode(nodeRealm, "simplePwRealmId");
 								if (relNode != null) {
 									Integer id = new Integer(XercesHelper.getNodeValue(relNode));
-									RealmSimplePwHbm realm = getRealmSimplePwHbmDao().load(mappingRealmsSimplePw.get(id));
+									RealmSimplePwHbm realm = null;
+									if (useNewIds) {
+										realm = getRealmSimplePwHbmDao().load(mappingRealmsSimplePw.get(id));
+									} else {
+										realm = getRealmSimplePwHbmDao().load(id);
+									}
 									Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, null, realm, null, null);
 									Realm2viewComponentHbm r = getRealm2viewComponentHbmDao().create(tempRealm);
 									viewComponent.setRealm2vc(r);
@@ -2404,7 +2534,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 									relNode = XercesHelper.findNode(nodeRealm, "ldapRealmId");
 									if (relNode != null) {
 										Integer id = new Integer(XercesHelper.getNodeValue(relNode));
-										RealmLdapHbm realm = getRealmLdapHbmDao().load(mappingRealmsLdap.get(id));
+										RealmLdapHbm realm = null;
+										if (useNewIds) {
+											realm = getRealmLdapHbmDao().load(mappingRealmsLdap.get(id));
+										} else {
+											realm = getRealmLdapHbmDao().load(id);
+										}
 										Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, null, null, realm, null);
 										Realm2viewComponentHbm r = getRealm2viewComponentHbmDao().create(tempRealm);
 										viewComponent.setRealm2vc(r);
@@ -2412,7 +2547,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 										relNode = XercesHelper.findNode(nodeRealm, "jaasRealmId");
 										if (relNode != null) {
 											Integer id = new Integer(XercesHelper.getNodeValue(relNode));
-											RealmJaasHbm realm = getRealmJaasHbmDao().load(mappingRealmsJaas.get(id));
+											RealmJaasHbm realm = null;
+											if (useNewIds) {
+												realm = getRealmJaasHbmDao().load(mappingRealmsJaas.get(id));
+											} else {
+												realm = getRealmJaasHbmDao().load(id);
+											}
 											Realm2viewComponentHbm tempRealm = createTempRealm(viewComponent, neededrole, null, null, null, realm);
 											Realm2viewComponentHbm r = getRealm2viewComponentHbmDao().create(tempRealm);
 											viewComponent.setRealm2vc(r);

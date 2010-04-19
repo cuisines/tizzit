@@ -99,7 +99,7 @@ public class RootController implements ActionListener {
 						if (panFinally.getWay().equals("11")) {
 							log.info("STAGE_DEPLOY_ROOT");
 							try {
-								comm.createEdition("ROOT EDITION", comm.getViewDocument().getViewId(), true, true, 0);
+								comm.createEdition("ROOT EDITION", comm.getViewDocument().getViewId(), true, true, Constants.DEPLOY_TYPE_ROOT);
 								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("wizard.deploy.editionSucessfulTransmitted"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 							} catch (Exception exe) {
 								log.error("Creating edition error", exe);
@@ -108,7 +108,12 @@ public class RootController implements ActionListener {
 							log.info("STAGE_DEPLOY_ALL_WITH_ROOT");
 							Thread t = new Thread(new Runnable() {
 								public void run() {
-									createAllEditionsAndDeploy(comm.getViewDocumentId());
+									try {
+										comm.createEdition("Full Deploy", comm.getViewDocument().getViewId(), true, false, Constants.DEPLOY_TYPE_FULL);
+									} catch (UserException e) {
+										log.warn("Error while creating 'full deploy' - ", e);
+									}
+									//createAllEditionsAndDeploy(comm.getViewDocumentId());
 								}
 							});
 							t.setPriority(Thread.NORM_PRIORITY);
@@ -170,7 +175,7 @@ public class RootController implements ActionListener {
 
 		boolean gotException = false;
 		try {
-			comm.createEdition("ROOT EDITION", vdvcid, true, true, 0);
+			comm.createEdition("ROOT EDITION", vdvcid, true, true, Constants.DEPLOY_TYPE_ROOT);
 			recursiveDeploy(prog, vdvcid);
 		} catch (Exception exe) {
 			String errmsg = Messages.getString("exception.UnknownError", exe.getMessage());
@@ -197,7 +202,7 @@ public class RootController implements ActionListener {
 
 				String msg = Messages.getString("wizard.root.deployAll.progressdialog.createEdition", vcarr[i].getUnitName());
 				prog.setProgress(msg);
-				comm.createEdition("ROOT-CREATED-FULL-DEPLOY", vcarr[i].getViewComponentId(), true, false, 1);
+				comm.createEdition("ROOT-CREATED-FULL-DEPLOY", vcarr[i].getViewComponentId(), true, false, Constants.DEPLOY_TYPE_UNIT);
 				recursiveDeploy(prog, vcarr[i].getViewComponentId());
 			}
 		}

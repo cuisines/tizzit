@@ -114,7 +114,7 @@
         <doctype-public>-//W3C//DTD SVG 1.0//EN</doctype-public>
         <doctype-system>http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd</doctype-system>
       </map:serializer>
-      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtml" src="org.apache.cocoon.serialization.XMLSerializer">
+      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtml" src="org.apache.cocoon.serialization.HTMLSerializer">
         <!--+
           | You can choose from Strict, Transitional, or Frameset XHTML.
           | For Strict XHTML set doctype to:
@@ -130,9 +130,8 @@
           | Default XHTML doctype in Cocoon is XHTML Strict. If you want to use more than one
           | XHTML DTD simultaneously, you can define several XHTML serializers.
           +-->
-        <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
-        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
-        <omit-xml-declaration>yes</omit-xml-declaration>
+        <doctype-public>-//W3C//DTD XHTML 1.0 Frameset//EN</doctype-public>
+        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd</doctype-system>
         <encoding>UTF-8</encoding>
       </map:serializer>
       <map:serializer logger="sitemap.serializer.xhtml" mime-type="application/xhtml+xml" name="xhtml11" pool-max="64" src="org.apache.cocoon.serialization.XMLSerializer">
@@ -140,9 +139,9 @@
         <doctype-system>http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd</doctype-system>
         <encoding>UTF-8</encoding>
       </map:serializer>
-      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtmlt" src="org.apache.cocoon.serialization.XMLSerializer">
-        <doctype-public>-//W3C//DTD XHTML 1.0 Transitional//EN</doctype-public>
-        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</doctype-system>
+      <map:serializer logger="sitemap.serializer.xhtml" mime-type="text/html" name="xhtmlt" src="org.apache.cocoon.serialization.HTMLSerializer">
+        <doctype-public>-//W3C//DTD XHTML 1.0 Strict//EN</doctype-public>
+        <doctype-system>http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</doctype-system>
         <omit-xml-declaration>yes</omit-xml-declaration>
         <encoding>UTF-8</encoding>
       </map:serializer>

@@ -570,8 +570,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected ViewComponentValue handleGetViewComponent4Unit(Integer unitId, Integer viewDocumentId) throws Exception {
 		ViewComponentValue vcd = null;
 		try {
-			ViewComponentHbm view = super.getViewComponentHbmDao().find4Unit(unitId, viewDocumentId);
-			vcd = view.getDao(-1);
+			ViewComponentHbm view = getViewComponentHbmDao().find4Unit(unitId, viewDocumentId);
+			if (view != null) vcd = view.getDao(-1);
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -1758,9 +1758,11 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 		out.print("<site>\n");
 		out.print("<hostUrl>" + hostUrl + "</hostUrl>\n");
-		getViewComponentHbmDao().toXmlComplete(viewComponentId, true, null, true, 1, true, false, out);
+		ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
+		// TODO: depth 0 or 1 ???
+		getViewComponentHbmDao().toXml(viewComponent, null, true, true, true, true, 0, true, false, out);
+		//		getViewComponentHbmDao().toXmlComplete(viewComponentId, true, null, true, 1, true, false, out);
 		if (withMedia) {
-			ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
 			ContentHbm content = getContentHbmDao().load(Integer.parseInt(viewComponent.getReference()));
 			ContentVersionHbm contentVersion = content.getLastContentVersion();
 			String contentVersionText = contentVersion.getText();
@@ -1815,8 +1817,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		out.print("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 		out.print("<site>\n");
 		out.print("<hostUrl>" + Constants.URL_HOST + "</hostUrl>\n");
-		getViewComponentHbmDao().toXmlComplete(viewComponentId, true, null, true, 1, true, false, out);
 		ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
+		// TODO: depth 0 or 1 ???
+		getViewComponentHbmDao().toXml(viewComponent, null, true, true, true, true, 0, true, false, out);
+
 		ContentHbm content = getContentHbmDao().load(Integer.parseInt(viewComponent.getReference()));
 		ContentVersionHbm contentVersion = content.getLastContentVersion();
 		String contentVersionText = contentVersion.getText();

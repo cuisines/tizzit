@@ -68,6 +68,10 @@ public class ViewDocumentHbmDaoImpl extends ViewDocumentHbmDaoBase {
 	}
 
 	@Override
+	/**
+	 * for the deploy we need a way to create VC's and VD's with existing Id's ...
+	 * there for I will catch the case 
+	 */
 	protected Integer handleCreate(String language, String viewType, Integer id, Integer rootViewComponentId) throws Exception {
 		ViewDocumentHbm viewDocumentHbm = ViewDocumentHbm.Factory.newInstance();
 		if (id == null) {
@@ -84,13 +88,14 @@ public class ViewDocumentHbmDaoImpl extends ViewDocumentHbmDaoBase {
 		viewDocumentHbm.setLanguage(language);
 		viewDocumentHbm.setViewType(viewType);
 
+		ViewComponentHbm viewComponent = null;
 		if (rootViewComponentId != null) {
-			ViewComponentHbm viewComponent = getViewComponentHbmDao().load(rootViewComponentId);
-			viewDocumentHbm.setViewComponent(viewComponent);
-		} else {
-			ViewComponentHbm viewComponent = getViewComponentHbmDao().create(viewDocumentHbm, "root", "root", "root", null);
-			viewDocumentHbm.setViewComponent(viewComponent);
+			viewComponent = getViewComponentHbmDao().load(rootViewComponentId);
 		}
+		if (viewComponent == null) {
+			viewComponent = getViewComponentHbmDao().create(viewDocumentHbm, "root", "root", "root", rootViewComponentId);
+		}
+		viewDocumentHbm.setViewComponent(viewComponent);
 		viewDocumentHbm.setSite(getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite());
 		try {
 			viewDocumentHbm.getViewComponent().setAssignedUnit(viewDocumentHbm.getSite().getRootUnit());

@@ -92,6 +92,7 @@ public final class Constants {
 	public static final int DEPLOY_TYPE_FULL = 0;
 	public static final int DEPLOY_TYPE_UNIT = 1;
 	public static final int DEPLOY_TYPE_PAGE = 2;
+	public static final int DEPLOY_TYPE_ROOT = 3;
 
 	/* This is the Status from viewcomponent.status */
 	public static final byte DEPLOY_STATUS_EDITED = 0;

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.sql.Blob;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -146,7 +148,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			boolean textEqual = latest.getText() != null && latest.getText().equals(contentValue.getContentText());
 			if (headingEqual && textEqual) {
 				contentValue.setCreateNewVersion(false);
-				this.updateDocumentUseCountLastVersion(latest.getText(), contentValue.getContentText());
+				//				this.updateDocumentUseCountLastVersion(latest.getText(), contentValue.getContentText());
 			}
 			contentValue.setVersion(latest.getVersion());
 
@@ -368,6 +370,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				boolean needsDeploy = true;
 				//TODO Edition
 				// site, vc, vd, unit in one value - difference makes deploy type
+				// type = 3 rootDeploy
 				// type = 0 fulldeploy - value is site; 1 unitdeploy - value is unit, 2 pagedeploy - value is vc, rest for export...
 				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, vc.getUnit4ViewComponent(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
 				newEdition.setDeployType(deployType);
@@ -406,10 +409,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
 			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
 
-			UserHbm invoker = super.getUserHbmDao().load(AuthenticationHelper.getUserName());
+			UserHbm invoker = getUserHbmDao().load(AuthenticationHelper.getUserName());
 			SiteHbm site = invoker.getActiveSite();
 			if (log.isDebugEnabled()) log.debug("Invoker is: " + invoker.getUserId() + " within Site " + site.getName());
-			EditionHbm edition = super.getEditionHbmDao().create("INTERIMEDITION", null, null, true);
+			EditionHbm edition = getEditionHbmDao().create("INTERIMEDITION", null, null, true);
 			if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
 			out.println("<edition>");
 			if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
@@ -433,12 +436,12 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			while (vdIt.hasNext()) {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
 				// vdl.getViewComponent().toXml(null, 0, true, false, 1, false, false, out);
-				super.getViewComponentHbmDao().toXml(vdl.getViewComponent(), null, true, false, -1, false, false, out);
+				getViewComponentHbmDao().toXml(vdl.getViewComponent(), null, true, false, -1, false, false, out);
 
 			}
 			if (log.isDebugEnabled()) log.debug("Finished creating ViewComponent Data");
 			out.println("</edition>");
-			super.getEditionHbmDao().remove(edition);
+			getEditionHbmDao().remove(edition);
 			out.flush();
 			out.close();
 			out = null;
@@ -1011,23 +1014,6 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			} catch (IOException e) {
 				log.warn("Unable to copy received inputstream: " + e.getMessage(), e);
 			}
-			//			EditionHbm edition = EditionHbm.Factory.newInstance();
-			//			edition.setComment("Edition to import on local server");
-			//			UserHbm user = getUserHbmDao().load(AuthenticationHelper.getUserName());
-			//			edition.setViewComponentId(viewComponentId); // might be null if the import should be for the complete site
-			//			edition.setCreator(user);
-			//			edition.setNeedsImport(true);
-			//			edition.setCreationDate(new Date().getTime());
-			//			edition.setWorkServerEditionId(workServerEditionId);
-			//			if (log.isInfoEnabled()) log.info("-------------->setting unit id");
-			//			edition.setUnitId(user.getActiveSite().getRootUnit().getUnitId());
-			//			edition.setEditionFileName(tmpFileName);
-			//			edition.setSiteId(user.getActiveSite().getSiteId());
-			//			edition.setStartActionTimestamp(System.currentTimeMillis());
-			//			edition.setEndActionTimestamp(null);
-			//			edition.setDeployStatus(LiveserverDeployStatus.FileDeployedOnLiveServer.name().getBytes());
-			//			edition.setUseNewIds(useNewIds);
-			//			getEditionHbmDao().create(edition);
 			if (log.isInfoEnabled()) log.info("end importEdition - please wait for cronjob to pick up!");
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
@@ -1254,7 +1240,10 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		String dir = getTizzitPropertiesBeanSpring().getDeployDir();
 		File fDir = new File(dir);
 		fDir.mkdirs();
-		File storedEditionFile = File.createTempFile("edition_import_" + new Date().getTime(), ".xml.gz", fDir);
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+		String date = dateFormat.format(new Date());
+		File storedEditionFile = new File(fDir.getAbsolutePath() + File.separatorChar + "edition_import_" + date + ".xml.gz");
+		//File.createTempFile("edition_import_" + date, ".xml.gz", fDir);
 		FileOutputStream out = new FileOutputStream(storedEditionFile);
 		IOUtils.copyLarge(in, out);
 		IOUtils.closeQuietly(out);
@@ -1277,47 +1266,47 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		return storedEditionFile;
 	}
 
-	/**
-	 * @param oldContentText
-	 * @param newContentText
-	 */
-	private void updateDocumentUseCountLastVersion(String oldContentText, String newContentText) {
-		/*  
-		HashMap<Integer, Integer> deltaMap = this.getDeltaDocumentCounts(oldContentText, newContentText);
-		this.updateDocumentUseCounts(deltaMap, true);
-		*/
-	}
-
-	private void updateDocumentUseCountPublishVersion(String oldContentText, String newContentText) {
-		/*  
-		HashMap<Integer, Integer> deltaMap = this.getDeltaDocumentCounts(oldContentText, newContentText);
-		this.updateDocumentUseCounts(deltaMap, false);
-		*/
-	}
-
-	private void updateDocumentUseCounts(HashMap<Integer, Integer> deltaMap, boolean isLastVersion) {
-		Iterator<Integer> it = deltaMap.keySet().iterator();
-		while (it.hasNext()) {
-			Integer docId = it.next();
-			Integer docCountDelta = deltaMap.get(docId);
-			if (docCountDelta != null && docCountDelta.intValue() != 0) {
-				try {
-					DocumentHbm doc = super.getDocumentHbmDao().load(docId);
-					if (isLastVersion) {
-						int newCount = doc.getUseCountLastVersion() + docCountDelta.intValue();
-						if (newCount < 0) newCount = 0;
-						doc.setUseCountLastVersion(newCount);
-					} else {
-						int newCount = doc.getUseCountPublishVersion() + docCountDelta.intValue();
-						if (newCount < 0) newCount = 0;
-						doc.setUseCountPublishVersion(newCount);
-					}
-				} catch (Exception e) {
-					log.warn("Error updating documentCount for document " + docId + ": " + e.getMessage());
-				}
-			}
-		}
-	}
+	//		/**
+	//		 * @param oldContentText
+	//		 * @param newContentText
+	//		 */
+	//		private void updateDocumentUseCountLastVersion(String oldContentText, String newContentText) {
+	//			/*  
+	//			HashMap<Integer, Integer> deltaMap = this.getDeltaDocumentCounts(oldContentText, newContentText);
+	//			this.updateDocumentUseCounts(deltaMap, true);
+	//			*/
+	//		}
+	//
+	//	private void updateDocumentUseCountPublishVersion(String oldContentText, String newContentText) {
+	//		/*  
+	//		HashMap<Integer, Integer> deltaMap = this.getDeltaDocumentCounts(oldContentText, newContentText);
+	//		this.updateDocumentUseCounts(deltaMap, false);
+	//		*/
+	//	}
+	//
+	//	private void updateDocumentUseCounts(HashMap<Integer, Integer> deltaMap, boolean isLastVersion) {
+	//		Iterator<Integer> it = deltaMap.keySet().iterator();
+	//		while (it.hasNext()) {
+	//			Integer docId = it.next();
+	//			Integer docCountDelta = deltaMap.get(docId);
+	//			if (docCountDelta != null && docCountDelta.intValue() != 0) {
+	//				try {
+	//					DocumentHbm doc = super.getDocumentHbmDao().load(docId);
+	//					if (isLastVersion) {
+	//						int newCount = doc.getUseCountLastVersion() + docCountDelta.intValue();
+	//						if (newCount < 0) newCount = 0;
+	//						doc.setUseCountLastVersion(newCount);
+	//					} else {
+	//						int newCount = doc.getUseCountPublishVersion() + docCountDelta.intValue();
+	//						if (newCount < 0) newCount = 0;
+	//						doc.setUseCountPublishVersion(newCount);
+	//					}
+	//				} catch (Exception e) {
+	//					log.warn("Error updating documentCount for document " + docId + ": " + e.getMessage());
+	//				}
+	//			}
+	//		}
+	//	}
 
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleUpdatePictureData(java.lang.Integer, byte[], byte[])
@@ -1639,6 +1628,28 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		return it.hasNext();
 	}
 
+	private PrintStream createEditionOutputStream(EditionHbm edition) throws IOException {
+		//create dir for deploys
+		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
+		File fDir = new File(dir);
+		fDir.mkdirs();
+
+		String fileName = fDir.getAbsolutePath() + File.separatorChar + "deploy_file_edition_" + edition.getEditionId() + "_byUser_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate() + ".xml.gz";
+		File fle = new File(fileName);
+		edition.setEditionFileName(fle.getAbsolutePath());
+		FileOutputStream fout = new FileOutputStream(fle);
+		GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
+		PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
+
+		//if (log.isDebugEnabled()) log.debug("Invoker is: " + edition.getCreator() + " within Site " + site.getName());
+		if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
+		out.println("<edition>");
+		if (log.isDebugEnabled()) log.debug("editionToXml");
+		out.println(edition.toXml());
+		System.gc();
+		return out;
+	}
+
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleDeployEdition(de.juwimm.cms.model.EditionHbm)
 	 */
@@ -1649,22 +1660,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
-			//create dir for deploys
-			String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
-			File fDir = new File(dir);
-			fDir.mkdirs();
-
-			File fle = File.createTempFile("deploy_site_" + edition.getSiteId() + "_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate(), ".xml.gz", fDir);
-			FileOutputStream fout = new FileOutputStream(fle);
-			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
-			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
-
-			//if (log.isDebugEnabled()) log.debug("Invoker is: " + edition.getCreator() + " within Site " + site.getName());
-			if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
-			out.println("<edition>");
-			if (log.isDebugEnabled()) log.debug("editionToXml");
-			out.println(edition.toXml());
-			System.gc();
+			PrintStream out = createEditionOutputStream(edition);
 			//
 			if (log.isDebugEnabled()) log.debug("siteToXml");
 			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
@@ -1689,7 +1685,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			Iterator vdIt = getViewDocumentHbmDao().findAll(edition.getSiteId()).iterator();
 			while (vdIt.hasNext()) {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
-				super.getViewComponentHbmDao().toXml(vdl.getViewComponent(), null, true, false, -1, false, false, out);
+				getViewComponentHbmDao().toXml(vdl.getViewComponent(), null, true, true, false, false, -1, false, false, out);
 			}
 			if (log.isDebugEnabled()) log.debug("Finished creating ViewComponent Data");
 			out.println("</edition>");
@@ -1697,8 +1693,6 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
-
-			edition.setEditionFileName(fle.getAbsolutePath());
 		} catch (Exception e) {
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
@@ -1712,22 +1706,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
-			//create dir for deploys
-			String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
-			File fDir = new File(dir);
-			fDir.mkdirs();
-
-			File fle = File.createTempFile("deploy_unit_" + edition.getSiteId() + "_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate(), ".xml.gz", fDir);
-			FileOutputStream fout = new FileOutputStream(fle);
-			GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
-			PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
-
-			//if (log.isDebugEnabled()) log.debug("Invoker is: " + edition.getCreator() + " within Site " + site.getName());
-			if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
-			out.println("<edition>");
-			if (log.isDebugEnabled()) log.debug("editionToXml");
-			out.println(edition.toXml());
-			System.gc();
+			PrintStream out = createEditionOutputStream(edition);
 			// site info is needed to connect to the live server
 			if (log.isDebugEnabled()) log.debug("siteToXml");
 			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
@@ -1752,7 +1731,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			while (vdIt.hasNext()) {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
 				ViewComponentHbm vch = getViewComponentHbmDao().find4Unit(unitId, vdl.getViewDocumentId());
-				if (vch != null) getViewComponentHbmDao().toXml(vch, unitId, true, false, -1, false, false, out);
+				if (vch != null) getViewComponentHbmDao().toXml(vch, unitId, true, true, true, false, -1, false, false, out);
 			}
 			if (log.isDebugEnabled()) log.debug("Finished creating ViewComponent Data");
 			out.println("</edition>");
@@ -1760,8 +1739,6 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
-
-			edition.setEditionFileName(fle.getAbsolutePath());
 		} catch (Exception e) {
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
@@ -1955,5 +1932,69 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			}
 		}
 		return editionValues;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleDeployRootUnitEdition(java.lang.Integer)
+	 */
+	@Override
+	protected void handleDeployRootUnitEdition(Integer editionId) throws Exception {
+		try {
+			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
+			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
+			EditionHbm edition = getEditionHbmDao().load(editionId);
+
+			PrintStream out = createEditionOutputStream(edition);
+			// site info is needed to connect to the live server
+			if (log.isDebugEnabled()) log.debug("siteToXml");
+			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
+			System.gc();
+			// Alle ..toXML + unitID to reuse them in unitDeploy
+			if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
+			//TODO: change -1 to null and check edition.type later ....
+			getEditionHbmDao().picturesToXmlRecursive(-1, edition.getSiteId(), out, edition);
+			System.gc();
+			if (log.isDebugEnabled()) log.debug("documentsToXmlRecursive");
+			getEditionHbmDao().documentsToXmlRecursive(-1, edition.getSiteId(), out, true, edition);
+			System.gc();
+
+			if (log.isDebugEnabled()) log.debug("unitsToXmlRecursive");
+			getEditionHbmDao().unitsToXmlRecursive(edition.getSiteId(), out, edition);
+			System.gc();
+			//			if (log.isDebugEnabled()) log.debug("viewdocumentsToXmlRecursive");
+			//			getEditionHbmDao().viewdocumentsToXmlRecursive(edition.getSiteId(), out, edition);
+			if (log.isDebugEnabled()) log.debug("hostsToXmlRecursive");
+			getEditionHbmDao().hostsToXmlRecursive(edition.getSiteId(), out, edition);
+
+			if (log.isDebugEnabled()) log.debug("viewdocumentsToXmlRecursive");
+			getEditionHbmDao().viewdocumentsToXmlRecursive(edition.getSiteId(), out, edition);
+			if (log.isDebugEnabled()) log.debug("realmsToXmlRecursive");
+			getEditionHbmDao().realmsToXmlUsed(edition.getUnitId(), out, edition);
+			System.gc();
+			if (log.isDebugEnabled()) log.debug("Creating ViewComponent Data");
+			Iterator vdIt = getViewDocumentHbmDao().findAll(edition.getSiteId()).iterator();
+			while (vdIt.hasNext()) {
+				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
+				//getViewComponentHbmDao().toXml(vdl.getViewComponent(), edition.getUnitId(), true, false, -1, false, false, out);
+				getViewComponentHbmDao().toXml(vdl.getViewComponent(), edition.getUnitId(), true, true, true, false, -1, false, false, out);
+				// get all VC's with UnitID in this VD and deploy them too
+				Iterator vcIt = getViewComponentHbmDao().findAllWithUnit(vdl.getViewDocumentId()).iterator();
+				while (vcIt.hasNext()) {
+					ViewComponentHbm vc = (ViewComponentHbm) vcIt.next();
+					if (vc.getAssignedUnit().getUnitId().compareTo(edition.getUnitId()) != 0) {
+						getViewComponentHbmDao().toXml(vc, null, false, false, 0, false, false, out);
+					}
+				}
+			}
+
+			out.println("</edition>");
+
+			out.flush();
+			out.close();
+			out = null;
+		} catch (Exception e) {
+			editionCronService.logEditionStatusException(editionId, e.getMessage());
+			throw new UserException(e.getMessage(), e);
+		}
 	}
 }

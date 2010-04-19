@@ -1580,7 +1580,7 @@ public class Communication implements ExitListener, ActionListener {
 	/*
 	 * Deploy - new 
 	 * 
-	 * @param type - 0: fulldeploy, 1: unitdeploy, 2: pagedeploy
+	 * @param type - 0: fulldeploy, 1: unitdeploy, 2: pagedeploy, 3: rootdeploy
 	 */
 	public void createEdition(String comment, int rootViewComponentId, boolean deploy, boolean showMessage, int type) throws UserException {
 		try {

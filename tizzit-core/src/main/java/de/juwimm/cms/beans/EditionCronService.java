@@ -68,6 +68,14 @@ public class EditionCronService {
 			Collection<EditionHbm> editionsToImport = getEditionHbmDao().findByNeedsImport(true);
 			if (log.isInfoEnabled()) log.info("Found " + editionsToImport.size() + " Editions to import");
 			for (EditionHbm edition : editionsToImport) {
+				String deployStatus = null;
+				if (edition.getDeployStatus() != null) {
+					deployStatus = new String(edition.getDeployStatus());
+				}
+				if (deployStatus != null && deployStatus.contains("Exception") && edition.getEndActionTimestamp() != null) {
+					log.warn("Tried to import Edition [" + edition.getEditionId() + " ] before - skipping it now.");
+					continue;
+				}
 				File edFile = new File(edition.getEditionFileName());
 				if (!edFile.exists()) {
 					log.warn("Edition " + edition.getEditionId() + " will be deleted because the editionfile isnt available anymore " + edition.getEditionFileName());
@@ -135,9 +143,9 @@ public class EditionCronService {
 			editionDoc = XercesHelper.inputSource2Dom(domIn);
 			return (Element) XercesHelper.findNode(editionDoc, path);
 		} catch (IOException ioe) {
-			log.warn("Error while parsing EditionFile." + ioe.getStackTrace());
+			log.warn("IOException while parsing EditionFile." + ioe.getStackTrace());
 		} catch (SAXException e) {
-			log.warn("Error while parsing EditionFile." + e.getStackTrace());
+			log.warn("SAXException while parsing EditionFile." + " -> " + e.getMessage() + " - " + e.getStackTrace());
 		} catch (Exception e) {
 			log.warn("Error while parsing EditionFile." + e.getStackTrace());
 		}
@@ -248,6 +256,8 @@ public class EditionCronService {
 						getContentServiceSpring().deployEdition(edition.getEditionId());
 					} else if (edition.getDeployType() != null && edition.getDeployType() == 1) {
 						getContentServiceSpring().deployUnitEdition(edition.getEditionId(), edition.getUnitId());
+					} else if (edition.getDeployType() != null && edition.getDeployType() == 3) {
+						getContentServiceSpring().deployRootUnitEdition(edition.getEditionId());
 					}
 				}
 				UserHbm creator = edition.getCreator();

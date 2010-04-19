@@ -41,6 +41,7 @@ import org.tizzit.util.XercesHelper;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
 import de.juwimm.cms.safeguard.model.RealmJaasHbm;
 import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
 import de.juwimm.cms.safeguard.model.RealmLdapHbm;
@@ -178,144 +179,100 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 		return edition;
 	}
 
-	/*
-	 * POSTCREATES!!!!
-	 * 
-	 * 
-	 * public void ejbPostCreate(String comment, Integer rootViewComponentId,
-	 * PrintStream out, boolean includeUnused) throws CreateException { if
-	 * (log.isDebugEnabled()) log.debug("Postcreating Edition");
-	 * if (rootViewComponentId != null) { EditionSliceOutputStream byteOut =
-	 * null; if (out == null) { //if no Stream was submitted, create out own and
-	 * store in DB at least. try { byteOut = new
-	 * EditionSliceOutputStream((Edition) ctx.getEJBLocalObject());
-	 * GZIPOutputStream gzOut = new GZIPOutputStream(byteOut); out = new
-	 * PrintStream(gzOut, true, "UTF-8"); } catch (Exception exe) {
-	 * log.error("Could not create GZIPOutputStream because of: " +
-	 * exe.getMessage()); throw new
-	 * javax.ejb.CreateException(exe.getMessage()); } } try { User creator =
-	 * getUserLocalHome().findByPrimaryKey(ctx.getCallerPrincipal().getName());
-	 * setCreator(creator); } catch (Exception exe) { log.warn("There went
-	 * something wrong during ejbPostcreate and finding the right user", exe);
-	 * } try { ViewComponent vc =
-	 * getViewComponentLocalHome().findByPrimaryKey(rootViewComponentId);
-	 * 
-	 * Integer unitId = vc.getUnit4ViewComponent(); Integer siteId =
-	 * vc.getViewDocument().getSite().getSiteId();
-	 * 
-	 * out.println("<edition>");
-	 * 
-	 * if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
-	 * this.picturesToXmlRecursive(unitId, siteId, out);
-	 * System.gc(); if (log.isDebugEnabled())
-	 * log.debug("documentsToXmlRecursive");
-	 * this.documentsToXmlRecursive(unitId, siteId, out, includeUnused);
-	 * System.gc(); if (vc.isRoot()) { // ROOT Deploy can only be done by a
-	 * ROOT-User (and this must be automatically invoked!) if
-	 * (log.isDebugEnabled()) log.debug("ROOT Deploy");
-	 * this.hostsToXmlRecursive(siteId, out);
-	 * this.shortLinksToXmlRecursive(siteId, out);
-	 * this.unitsToXmlRecursive(siteId, out);
-	 * this.viewdocumentsToXmlRecursive(siteId, out);
-	 * this.realmsToXmlRecursive(siteId, out); } else { Unit unit =
-	 * getUnitLocalHome().findByPrimaryKey(unitId); if (log.isDebugEnabled())
-	 * log.debug("Unit Export/Deploy " + unit.getUnitId() + "(" +
-	 * unit.getName().trim() + ")");
-	 * out.println("\t<units>"); if (log.isDebugEnabled())
-	 * log.debug("unit.toXmlRecursive");
-	 * out.print(unit.toXmlRecursive(2)); out.println("\t</units>");
-	 * if (log.isDebugEnabled()) log.debug("realmsToXmlUsed");
-	 * this.realmsToXmlUsed(unitId, out); } System.gc(); if
-	 * (log.isDebugEnabled()) log.debug("Creating ViewComponent Data");
-	 * vc.toXml(vc.getUnit4ViewComponent(), true, false, 0, 0,
-	 * false, false, out); if (log.isDebugEnabled()) log.debug("Finished
-	 * creating ViewComponent Data"); out.println("</edition>");
-	 *
-	 * 
-	 * setUnitId(vc.getAssignedUnit().getUnitId().intValue());
-	 * setViewDocumentId(vc.getViewDocument().getViewDocumentId().intValue());
-	 * 
-	 * out.flush(); out.close(); out = null; String siteConfig =
-	 * vc.getViewDocument().getSite().getConfigXML(); org.w3c.dom.Document doc =
-	 * XercesHelper.string2Dom(siteConfig); String isEditionLimited =
-	 * XercesHelper .getNodeValue(doc,
-	 * "/config/default/parameters/maxEditionStack_1"); if
-	 * (isEditionLimited != null && !"".equalsIgnoreCase(isEditionLimited)
-	 * && Boolean.valueOf(isEditionLimited).booleanValue()) {
-	 * String maxEditionStack = XercesHelper.getNodeValue(doc,
-	 * "/config/default/parameters/maxEditionStack_2"); if
-	 * (maxEditionStack != null && !"".equalsIgnoreCase(maxEditionStack)) {
-	 * int max = Integer.valueOf(maxEditionStack); // max must be >
-	 * 0, otherwise the created edition would be deleted before the deploy if
-	 * (max > 0) { if (log.isDebugEnabled()) log.debug("Site: " + siteId + "
-	 * maxEditionStack: " + max); Collection
-	 * editions = ((EditionLocalHome) this.ctx.getEJBLocalHome())
-	 * .findByUnitAndViewDocument(vc.getAssignedUnit().getUnitId(),
-	 * vc.getViewDocument() .getViewDocumentId()); while (editions.size() > max) { //
-	 * get oldest edition Edition oldestEdition = null; Iterator edIt =
-	 * editions.iterator(); while (edIt.hasNext()) { Edition currentEdition =
-	 * (Edition) edIt.next(); if ((oldestEdition == null) ||
-	 * (currentEdition.getCreationDate() < oldestEdition.getCreationDate())) {
-	 * oldestEdition = currentEdition; } } if (oldestEdition != null) { //
-	 * delete oldest one Date oldestCreateDate = new
-	 * Date(oldestEdition.getCreationDate()); if (log.isDebugEnabled())
-	 * log.debug("Deleting edition " + oldestEdition.getEditionId() + " of unit
-	 * \"" + vc.getAssignedUnit().getName().trim() +
-	 * "\" (" + unitId + ") from " +
-	 * sdf.format(oldestCreateDate) + " for language \"" +
-	 * vc.getViewDocument().getLanguage().trim() + "\"");
-	 * oldestEdition.remove(); } editions = ((EditionLocalHome)
-	 * this.ctx.getEJBLocalHome()).findByUnitAndViewDocument(vc
-	 * .getAssignedUnit().getUnitId(),
-	 * vc.getViewDocument().getViewDocumentId()); } } } } } catch (Exception
-	 * exe) { log.error("Error occured", exe); } }
-	 * log.debug("Finished Postcreating Edition"); }
-	 * 
-	 * private void getUsedRealmsForUnitAndViewDocument(Integer unitId, Integer
-	 * viewDocumentId, HashMap ldapMap, HashMap jdbcMap, HashMap simplePwMap,
-	 * HashMap jaasMap) throws Exception { ViewComponent viewRoot =
-	 * getViewComponentLocalHome().find4Unit(unitId, viewDocumentId);
-	 * this.getRealmsForViewComponent(viewRoot, ldapMap, jdbcMap, simplePwMap,
-	 * jaasMap); }
-	 * 
-	 * private void getRealmsForViewComponent(ViewComponent viewComponent,
-	 * HashMap ldapMap, HashMap jdbcMap, HashMap simplePwMap, HashMap jaasMap)
-	 * throws Exception { Realm2viewComponent realm =
-	 * viewComponent.getRealm2vc(); if (realm != null) { if
-	 * (realm.getLdapRealm() != null && realm.getLdapRealm().getLdapRealmId() !=
-	 * null) { if(log.isDebugEnabled()) log.debug("Adding Ldap Realm " +
-	 * realm.getLdapRealm().getLdapRealmId() + " used by VC " +
-	 * viewComponent.getViewComponentId());
-	 * ldapMap.put(realm.getLdapRealm().getLdapRealmId(),
-	 * realm.getLdapRealm().getLdapRealmId()); } else if
-	 * (realm.getSimplePwRealm() != null &&
-	 * realm.getSimplePwRealm().getSimplePwRealmId() != null) {
-	 * if(log.isDebugEnabled()) log.debug("Adding SimplePwRealm Realm " +
-	 * realm.getSimplePwRealm().getSimplePwRealmId() + " used by VC " +
-	 * viewComponent.getViewComponentId());
-	 * simplePwMap.put(realm.getSimplePwRealm().getSimplePwRealmId(),
-	 * realm.getSimplePwRealm().getSimplePwRealmId()); } else if
-	 * (realm.getJdbcRealm() != null && realm.getJdbcRealm().getJdbcRealmId() !=
-	 * null) { if(log.isDebugEnabled()) log.debug("Adding Jdbc Realm " +
-	 * realm.getJdbcRealm().getJdbcRealmId() + " used by VC " +
-	 * viewComponent.getViewComponentId());
-	 * ldapMap.put(realm.getJdbcRealm().getJdbcRealmId(),
-	 * realm.getJdbcRealm().getJdbcRealmId()); } else if (realm.getJaasRealm() !=
-	 * null && realm.getJaasRealm().getJaasRealmId() != null) {
-	 * if(log.isDebugEnabled()) log.debug("Adding Jaas Realm " +
-	 * realm.getJaasRealm().getJaasRealmId() + " used by VC " +
-	 * viewComponent.getViewComponentId());
-	 * jaasMap.put(realm.getJaasRealm().getJaasRealmId(),
-	 * realm.getJaasRealm().getJaasRealmId()); } else { log.warn("There is a
-	 * Realm protecting ViewComponent " + viewComponent.getViewComponentId() + "
-	 * but I can't identify it!"); } } Collection
-	 * children = viewComponent.getChildren(); if (children != null) { Iterator
-	 * it = children.iterator(); while (it.hasNext()) { ViewComponent child =
-	 * (ViewComponent) it.next(); if (!child.isUnit()) {
-	 * this.getRealmsForViewComponent(child, ldapMap, jdbcMap, simplePwMap,
-	 * jaasMap); } } } }
-	 * 
-	 */
+	/*	
+		 * POSTCREATES!!!!
+		 * 
+		 * 
+		 * public void ejbPostCreate(String comment, Integer rootViewComponentId,
+		 * PrintStream out, boolean includeUnused) throws CreateException { if
+		 * (log.isDebugEnabled()) log.debug("Postcreating Edition");
+		 * if (rootViewComponentId != null) { EditionSliceOutputStream byteOut =
+		 * null; if (out == null) { //if no Stream was submitted, create out own and
+		 * store in DB at least. try { byteOut = new
+		 * EditionSliceOutputStream((Edition) ctx.getEJBLocalObject());
+		 * GZIPOutputStream gzOut = new GZIPOutputStream(byteOut); out = new
+		 * PrintStream(gzOut, true, "UTF-8"); } catch (Exception exe) {
+		 * log.error("Could not create GZIPOutputStream because of: " +
+		 * exe.getMessage()); throw new
+		 * javax.ejb.CreateException(exe.getMessage()); } } try { User creator =
+		 * getUserLocalHome().findByPrimaryKey(ctx.getCallerPrincipal().getName());
+		 * setCreator(creator); } catch (Exception exe) { log.warn("There went
+		 * something wrong during ejbPostcreate and finding the right user", exe);
+		 * } try { ViewComponent vc =
+		 * getViewComponentLocalHome().findByPrimaryKey(rootViewComponentId);
+		 * 
+		 * Integer unitId = vc.getUnit4ViewComponent(); Integer siteId =
+		 * vc.getViewDocument().getSite().getSiteId();
+		 * 
+		 * out.println("<edition>");
+		 * 
+		 * if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
+		 * this.picturesToXmlRecursive(unitId, siteId, out);
+		 * System.gc(); if (log.isDebugEnabled())
+		 * log.debug("documentsToXmlRecursive");
+		 * this.documentsToXmlRecursive(unitId, siteId, out, includeUnused);
+		 * System.gc(); if (vc.isRoot()) { // ROOT Deploy can only be done by a
+		 * ROOT-User (and this must be automatically invoked!) if
+		 * (log.isDebugEnabled()) log.debug("ROOT Deploy");
+		 * this.hostsToXmlRecursive(siteId, out);
+		 * this.shortLinksToXmlRecursive(siteId, out);
+		 * this.unitsToXmlRecursive(siteId, out);
+		 * this.viewdocumentsToXmlRecursive(siteId, out);
+		 * this.realmsToXmlRecursive(siteId, out); } else { Unit unit =
+		 * getUnitLocalHome().findByPrimaryKey(unitId); if (log.isDebugEnabled())
+		 * log.debug("Unit Export/Deploy " + unit.getUnitId() + "(" +
+		 * unit.getName().trim() + ")");
+		 * out.println("\t<units>"); if (log.isDebugEnabled())
+		 * log.debug("unit.toXmlRecursive");
+		 * out.print(unit.toXmlRecursive(2)); out.println("\t</units>");
+		 * if (log.isDebugEnabled()) log.debug("realmsToXmlUsed");
+		 * this.realmsToXmlUsed(unitId, out); } System.gc(); if
+		 * (log.isDebugEnabled()) log.debug("Creating ViewComponent Data");
+		 * vc.toXml(vc.getUnit4ViewComponent(), true, false, 0, 0,
+		 * false, false, out); if (log.isDebugEnabled()) log.debug("Finished
+		 * creating ViewComponent Data"); out.println("</edition>");
+		 *
+		 * 
+		 * setUnitId(vc.getAssignedUnit().getUnitId().intValue());
+		 * setViewDocumentId(vc.getViewDocument().getViewDocumentId().intValue());
+		 * 
+		 * out.flush(); out.close(); out = null; String siteConfig =
+		 * vc.getViewDocument().getSite().getConfigXML(); org.w3c.dom.Document doc =
+		 * XercesHelper.string2Dom(siteConfig); String isEditionLimited =
+		 * XercesHelper .getNodeValue(doc,
+		 * "/config/default/parameters/maxEditionStack_1"); if
+		 * (isEditionLimited != null && !"".equalsIgnoreCase(isEditionLimited)
+		 * && Boolean.valueOf(isEditionLimited).booleanValue()) {
+		 * String maxEditionStack = XercesHelper.getNodeValue(doc,
+		 * "/config/default/parameters/maxEditionStack_2"); if
+		 * (maxEditionStack != null && !"".equalsIgnoreCase(maxEditionStack)) {
+		 * int max = Integer.valueOf(maxEditionStack); // max must be >
+		 * 0, otherwise the created edition would be deleted before the deploy if
+		 * (max > 0) { if (log.isDebugEnabled()) log.debug("Site: " + siteId + "
+		 * maxEditionStack: " + max); Collection
+		 * editions = ((EditionLocalHome) this.ctx.getEJBLocalHome())
+		 * .findByUnitAndViewDocument(vc.getAssignedUnit().getUnitId(),
+		 * vc.getViewDocument() .getViewDocumentId()); while (editions.size() > max) { //
+		 * get oldest edition Edition oldestEdition = null; Iterator edIt =
+		 * editions.iterator(); while (edIt.hasNext()) { Edition currentEdition =
+		 * (Edition) edIt.next(); if ((oldestEdition == null) ||
+		 * (currentEdition.getCreationDate() < oldestEdition.getCreationDate())) {
+		 * oldestEdition = currentEdition; } } if (oldestEdition != null) { //
+		 * delete oldest one Date oldestCreateDate = new
+		 * Date(oldestEdition.getCreationDate()); if (log.isDebugEnabled())
+		 * log.debug("Deleting edition " + oldestEdition.getEditionId() + " of unit
+		 * \"" + vc.getAssignedUnit().getName().trim() +
+		 * "\" (" + unitId + ") from " +
+		 * sdf.format(oldestCreateDate) + " for language \"" +
+		 * vc.getViewDocument().getLanguage().trim() + "\"");
+		 * oldestEdition.remove(); } editions = ((EditionLocalHome)
+		 * this.ctx.getEJBLocalHome()).findByUnitAndViewDocument(vc
+		 * .getAssignedUnit().getUnitId(),
+		 * vc.getViewDocument().getViewDocumentId()); } } } } } catch (Exception
+		 * exe) { log.error("Error occured", exe); } }
+		 * log.debug("Finished Postcreating Edition"); }
+		 * 
+		 */
 
 	@Override
 	public EditionHbm create(EditionHbm editionHbm) {
@@ -406,6 +363,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					}
 				}
 			} else {
+				if (unitId == -1) unitId = getSiteHbmDao().load(siteId).getRootUnit().getUnitId();
 				Collection<PictureHbm> pictures = getPictureHbmDao().findAllPerUnit(unitId);
 				for (PictureHbm pic : pictures) {
 					out.print(pic.toXml(2));
@@ -483,10 +441,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 			while (it.hasNext()) {
 				ViewDocumentHbm viewDocument = (ViewDocumentHbm) it.next();
 				try {
-					// FIXME - Methode gibt es nicht mehr??
-					// this.getUsedRealmsForUnitAndViewDocument(unitId,
-					// viewDocument.getViewDocumentId(), ldapMap, jdbcMap,
-					// simplePwMap, jaasMap);
+					this.getUsedRealmsForUnitAndViewDocument(unitId, viewDocument.getViewDocumentId(), ldapMap, jdbcMap, simplePwMap, jaasMap);
 				} catch (Exception ex) {
 					log.error("Error getting Realms in use for Unit " + unitId + " and ViewDocument " + viewDocument.getLanguage() + ": " + ex.getMessage());
 				}
@@ -554,6 +509,42 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 			log.error("Error getting all used Realms: " + e.getMessage(), e);
 		}
 
+	}
+
+	private void getUsedRealmsForUnitAndViewDocument(Integer unitId, Integer viewDocumentId, HashMap ldapMap, HashMap jdbcMap, HashMap simplePwMap, HashMap jaasMap) throws Exception {
+		ViewComponentHbm viewRoot = getViewComponentHbmDao().find4Unit(unitId, viewDocumentId);
+		this.getRealmsForViewComponent(viewRoot, ldapMap, jdbcMap, simplePwMap, jaasMap);
+	}
+
+	private void getRealmsForViewComponent(ViewComponentHbm viewComponent, HashMap ldapMap, HashMap jdbcMap, HashMap simplePwMap, HashMap jaasMap) throws Exception {
+		Realm2viewComponentHbm realm = viewComponent.getRealm2vc();
+		if (realm != null) {
+			if (realm.getLdapRealm() != null && realm.getLdapRealm().getLdapRealmId() != null) {
+				if (log.isDebugEnabled()) log.debug("Adding Ldap Realm " + realm.getLdapRealm().getLdapRealmId() + " used by VC " + viewComponent.getViewComponentId());
+				ldapMap.put(realm.getLdapRealm().getLdapRealmId(), realm.getLdapRealm().getLdapRealmId());
+			} else if (realm.getSimplePwRealm() != null && realm.getSimplePwRealm().getSimplePwRealmId() != null) {
+				if (log.isDebugEnabled()) log.debug("Adding SimplePwRealm Realm " + realm.getSimplePwRealm().getSimplePwRealmId() + " used by VC " + viewComponent.getViewComponentId());
+				simplePwMap.put(realm.getSimplePwRealm().getSimplePwRealmId(), realm.getSimplePwRealm().getSimplePwRealmId());
+			} else if (realm.getJdbcRealm() != null && realm.getJdbcRealm().getJdbcRealmId() != null) {
+				if (log.isDebugEnabled()) log.debug("Adding Jdbc Realm " + realm.getJdbcRealm().getJdbcRealmId() + " used by VC " + viewComponent.getViewComponentId());
+				ldapMap.put(realm.getJdbcRealm().getJdbcRealmId(), realm.getJdbcRealm().getJdbcRealmId());
+			} else if (realm.getJaasRealm() != null && realm.getJaasRealm().getJaasRealmId() != null) {
+				if (log.isDebugEnabled()) log.debug("Adding Jaas Realm " + realm.getJaasRealm().getJaasRealmId() + " used by VC " + viewComponent.getViewComponentId());
+				jaasMap.put(realm.getJaasRealm().getJaasRealmId(), realm.getJaasRealm().getJaasRealmId());
+			} else {
+				log.warn("There is a Realm protecting ViewComponent " + viewComponent.getViewComponentId() + " but I can't identify it!");
+			}
+		}
+		Collection children = viewComponent.getChildren();
+		if (children != null) {
+			Iterator it = children.iterator();
+			while (it.hasNext()) {
+				ViewComponentHbm child = (ViewComponentHbm) it.next();
+				if (!child.isUnit()) {
+					this.getRealmsForViewComponent(child, ldapMap, jdbcMap, simplePwMap, jaasMap);
+				}
+			}
+		}
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,14 +84,11 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return retVal;
 	}
 
-	@Override
-	/**
-	 * @param current
-	 * @param onlyThisUnitId
-	 * @param withContent
-	 * @param depth max level of recursion, 0 for this node only, -1 for infinity
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleToXml(de.juwimm.cms.model.ViewComponentHbm, java.lang.Integer, boolean, boolean, boolean, int, boolean, boolean, java.io.PrintStream)
 	 */
-	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
+	@Override
+	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
 		out.print("<viewcomponent id=\"");
 		out.print(current.getViewComponentId());
@@ -150,6 +148,9 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		out.print("<viewLevel>" + current.getViewLevel() + "</viewLevel>\n");
 		out.print("<viewIndex>" + current.getViewIndex() + "</viewIndex>\n");
 		out.print("<displaySettings>" + current.getDisplaySettings() + "</displaySettings>\n");
+		if (viewDocumentValue != null) {
+			out.print("<viewDocumentId>" + viewDocumentValue.getViewDocumentId() + "</viewDocumentId>\n");
+		}
 		out.print("<viewDocumentViewType>" + (viewDocumentValue != null ? viewDocumentValue.getViewType() : "browser") + "</viewDocumentViewType>\n");
 		out.print("<language>" + (viewDocumentValue != null ? viewDocumentValue.getLanguage() : "deutsch") + "</language>\n");
 		out.print("<userModifiedDate>" + current.getUserLastModifiedDate() + "</userModifiedDate>\n");
@@ -169,7 +170,11 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				if (current.getViewType() == Constants.VIEW_TYPE_CONTENT || current.getViewType() == Constants.VIEW_TYPE_UNIT) {
 					if (log.isDebugEnabled()) log.debug("GETTING CONTENT");
 					ContentHbm cl = getContentHbmDao().load(new Integer(current.getReference()));
-					out.print(getContentHbmDao().toXml(cl));
+					if (lastContenVersionOnly) {
+						out.print(getContentHbmDao().toXmlWithLastContentVersion(cl));
+					} else {
+						out.print(getContentHbmDao().toXml(cl));
+					}
 				}
 			} catch (Exception exe) {
 				log.warn("Error occured ViewComponentHbmImpl to XML " + exe.getMessage());
@@ -227,7 +232,15 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				}
 			}
 		}
-		if (depth != 0) { // 1 is only THIS ViewComponent
+
+		if (withSiteProtection) {
+			if (current.getRealm2vc() != null) {
+				out.println(current.getRealm2vc().toXml());
+			}
+			exportVCRealms(out, current);
+		}
+
+		if (depth != 0) { // 0 is only THIS ViewComponent
 			try {
 				Collection coll = current.getChildrenOrdered();
 				Iterator it = coll.iterator();
@@ -237,7 +250,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 						if (!returnOnlyVisibleOne || this.shouldBeVisible(vcl, liveServer)) {
 							int destDepth = depth - 1;
 							if (depth == -1) destDepth = -1;
-							this.toXml(vcl, onlyThisUnitId, withContent, withUrl, destDepth, liveServer, returnOnlyVisibleOne, out);
+							this.toXml(vcl, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, destDepth, liveServer, returnOnlyVisibleOne, out);
 						}
 					} else {
 						// This is outside the specified unit. Therefor do nothing with it and look for the next fitting
@@ -250,6 +263,19 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		out.println("</viewcomponent>");
 		if (log.isDebugEnabled()) log.debug("toXml end");
+	}
+
+	@Override
+	/**
+	 * @param current
+	 * @param onlyThisUnitId
+	 * @param withContent
+	 * @param depth max level of recursion, 0 for this node only, -1 for infinity
+	 */
+	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
+		boolean lastContenVersionOnly = false;
+		boolean withSiteProtection = false;
+		this.toXml(current, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, depth, liveServer, returnOnlyVisibleOne, out);
 	}
 
 	/**
@@ -537,11 +563,15 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			}
 		}
 		// sending deleted-message to searchEngine
-		searchengineDeleteService.deletePage(viewComponentHbm);
+		if (viewComponentHbm.getViewDocument() != null) {
+			searchengineDeleteService.deletePage(viewComponentHbm);
+		}
 
 		// if this page was protected remove protection
 		Realm2viewComponentHbm realm = viewComponentHbm.getRealm2vc();
-		if (realm != null) getRealm2viewComponentHbmDao().remove(realm);
+		if (realm != null) {
+			getRealm2viewComponentHbmDao().remove(realm);
+		}
 		// if this page is a login-page, update realms that use this page
 
 		Iterator it = viewComponentHbm.getRealm4login().iterator();
@@ -601,173 +631,174 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	}
 
 	@Override
+	@Deprecated
 	protected void handleToXmlComplete(Integer viewComponentId, Boolean onlyLastContentVersion, Integer onlyThisUnitId, Boolean withURL, int depth, Boolean liveServer, Boolean returnOnlyVisibleOne, PrintStream out) throws Exception {
-		ViewComponentHbm current = load(viewComponentId);
-		out.print("<viewcomponent id=\"");
-		out.print(current.getViewComponentId());
-		out.print("\" unitId=\"");
-		out.print(current.getUnit4ViewComponent());
-
-		if (withURL) {
-			out.print("\" hasChild=\"");
-			out.print(hasVisibleChild(current, liveServer));
-		}
-		if (current.getPrevNode() != null) {
-			out.print("\" prev=\"");
-			out.print(current.getPrevNode().getViewComponentId());
-		}
-		if (current.getNextNode() != null) {
-			out.print("\" next=\"");
-			out.print(current.getNextNode().getViewComponentId());
-		}
-		if (current.getParent() != null) {
-			out.print("\" parent=\"");
-			out.print(current.getParent().getViewComponentId());
-		}
-
-		out.print("\">\n");
-		ViewDocumentValue viewDocumentValue = null;
-		try {
-			viewDocumentValue = current.getViewDocument().getDao();
-		} catch (Exception e) {
-		}
-		out.print("<showType>" + current.getShowType() + "</showType>\n");
-		out.print("<viewType>" + current.getViewType() + "</viewType>\n");
-		out.print("<visible>" + current.isVisible() + "</visible>\n");
-		out.print("<searchIndexed>" + current.isSearchIndexed() + "</searchIndexed>\n");
-		out.print("<statusInfo><![CDATA[" + current.getLinkDescription() + "]]></statusInfo>\n");
-		if (liveServer) {
-			byte viewType = current.getViewType();
-			if (viewType == Constants.VIEW_TYPE_EXTERNAL_LINK || viewType == Constants.VIEW_TYPE_INTERNAL_LINK || viewType == Constants.VIEW_TYPE_SYMLINK) {
-				if (current.getStatus() != Constants.DEPLOY_STATUS_APPROVED) {
-					if (current.getApprovedLinkName() != null && !"null".equalsIgnoreCase(current.getApprovedLinkName())) {
-						out.print("<linkName><![CDATA[" + current.getApprovedLinkName() + "]]></linkName>\n");
-					} else {
-						out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
-					}
-				} else {
-					out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
-				}
-			} else {
-				out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
-			}
-		} else {
-			out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
-		}
-		out.print("<urlLinkName><![CDATA[" + current.getUrlLinkName() + "]]></urlLinkName>\n");
-		out.print("<viewLevel>" + current.getViewLevel() + "</viewLevel>\n");
-		out.print("<viewIndex>" + current.getViewIndex() + "</viewIndex>\n");
-		out.print("<displaySettings>" + current.getDisplaySettings() + "</displaySettings>\n");
-		out.print("<viewDocumentViewType>" + (viewDocumentValue != null ? viewDocumentValue.getViewType() : "browser") + "</viewDocumentViewType>\n");
-		out.print("<language>" + (viewDocumentValue != null ? viewDocumentValue.getLanguage() : "deutsch") + "</language>\n");
-		out.print("<userModifiedDate>" + current.getUserLastModifiedDate() + "</userModifiedDate>\n");
-
-		// this is for the edition
-
-		out.print("<status>" + current.getStatus() + "</status>\n");
-		out.print("<onlineStart>" + current.getOnlineStart() + "</onlineStart>\n");
-		out.print("<onlineStop>" + current.getOnlineStop() + "</onlineStop>\n");
-		out.print("<online>" + current.getOnline() + "</online>\n");
-		out.print("<reference><![CDATA[" + current.getReference() + "]]></reference>\n");
-		out.print("<metaKeywords><![CDATA[" + current.getMetaData() + "]]></metaKeywords>\n");
-		out.print("<metaDescription><![CDATA[" + current.getMetaDescription() + "]]></metaDescription>\n");
-		try {
-			out.print("<modifiedDate>" + DateConverter.getSql2String(new Date(current.getLastModifiedDate())) + "</modifiedDate>\n");
-			out.print("<createDate>" + DateConverter.getSql2String(new Date(current.getCreateDate())) + "</createDate>\n");
-			if (current.getViewType() == Constants.VIEW_TYPE_CONTENT || current.getViewType() == Constants.VIEW_TYPE_UNIT) {
-				if (log.isDebugEnabled()) log.debug("GETTING CONTENT");
-				ContentHbm cl = getContentHbmDao().load(new Integer(current.getReference()));
-				if (onlyLastContentVersion) {
-					out.print(getContentHbmDao().toXmlWithLastContentVersion(cl));
-				} else {
-					out.print(getContentHbmDao().toXml(cl));
-				}
-			}
-		} catch (Exception exe) {
-			log.warn("Error occured ViewComponentHbmImpl to XML " + exe.getMessage());
-		}
-		/* Safeguard RealmAtVC */
-		/*
-		 * try { RealmAtVC realmatvc = current.getRealmAtVC(); if (realmatvc !=
-		 * null) { out.print("" + realmatvc.toXml() + "\n"); } } catch
-		 * (Exception ine) { log.error("CANNOT APPEND REALM AT VC " +
-		 * ine.getMessage()); }
-		 */
-
-		// this is for navigation, f.e.
-		if (withURL) {
-			if (current.getViewType() == Constants.VIEW_TYPE_EXTERNAL_LINK) {
-				out.print("<extUrl><![CDATA[" + current.getReference() + "]]></extUrl>\n");
-			} else if (current.getViewType() == Constants.VIEW_TYPE_SEPARATOR) {
-				out.print("<separator><![CDATA[" + current.getReference() + "]]></separator>\n");
-			} else if (current.getViewType() == Constants.VIEW_TYPE_INTERNAL_LINK) {
-				try {
-					ViewComponentHbm vclJump = (ViewComponentHbm) getSessionFactory().getCurrentSession().load(ViewComponentHbmImpl.class, new Integer(current.getReference()));
-					out.print("<url");
-					if (current.getMetaData() != null && !current.getMetaData().equals("")) {
-						out.print(" anchor=\"" + current.getMetaData() + "\"><![CDATA[" + vclJump.getPath() + "]]></url>\n");
-					} else {
-						out.print("><![CDATA[" + vclJump.getPath() + "]]></url>\n");
-					}
-				} catch (Exception exe) {
-					out.print("/>\n");
-					log.warn("Error getting path for referenced viewComponent " + current.getReference() + " by internalLink " + current.getViewComponentId() + ": " + exe.getMessage());
-				}
-			} else {
-				out.print("<url><![CDATA[" + current.getPath() + "]]></url>\n");
-				try {
-					if (current.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
-						try {
-							ViewComponentHbm vclSym = (ViewComponentHbm) getSessionFactory().getCurrentSession().load(ViewComponentHbmImpl.class, new Integer(current.getReference()));
-							String reference = vclSym.getReference();
-							ContentHbm content = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, new Integer(reference));
-							out.print("<template>" + content.getTemplate() + "</template>\n");
-						} catch (Exception symEx) {
-							log.warn("ViewComponent " + current.getViewComponentId() + " is a SymLink, maybe the LinkTarget " + current.getReference() + " does not exist (anymore)? -> " + symEx.getMessage());
-						}
-					} else {
-						String reference = current.getReference();
-						ContentHbm content = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, new Integer(reference));
-						out.print("<template>" + content.getTemplate() + "</template>\n");
-						// out.print("<template>" +
-						// getContentLocalHome().findByPrimaryKey(new
-						// Integer(getReference())).getTemplate() +
-						// "</template>\n");
-					}
-				} catch (Exception exe) {
-					log.warn("Error getting url or template for viewComponent " + current.getViewComponentId() + ": " + exe.getMessage());
-				}
-			}
-		}
-		if (current.getRealm2vc() != null) {
-			out.println(current.getRealm2vc().toXml());
-		}
-		exportVCRealms(out, current);
-
-		if (depth != 0) { // 1 is only THIS ViewComponent
-			try {
-				Collection coll = current.getChildrenOrdered();
-				Iterator it = coll.iterator();
-				while (it.hasNext()) {
-					ViewComponentHbm vcl = (ViewComponentHbm) it.next();
-					if (onlyThisUnitId == null || onlyThisUnitId.equals(vcl.getUnit4ViewComponent())) {
-						if (!returnOnlyVisibleOne || this.shouldBeVisible(vcl, liveServer)) {
-							int destDepth = depth - 1;
-							if (depth == -1) destDepth = -1;
-							this.toXmlComplete(vcl.getViewComponentId(), onlyLastContentVersion, onlyThisUnitId, withURL, destDepth, liveServer, returnOnlyVisibleOne, out);
-						}
-					} else {
-						//this.toXml(vcl, onlyThisUnitId, false, withUrl, 1, liveServer, returnOnlyVisibleOne, out);
-						this.toXmlComplete(vcl.getViewComponentId(), onlyLastContentVersion, onlyThisUnitId, false, 1, liveServer, returnOnlyVisibleOne, out);
-					}
-				}
-			} catch (Exception exe) {
-				log.error("Error occured calling children.toXmlComplete: " + exe.getMessage(), exe);
-			}
-		}
-		out.println("</viewcomponent>");
-		if (log.isDebugEnabled()) log.debug("toXml end");
-
+		//		ViewComponentHbm current = load(viewComponentId);
+		//		out.print("<viewcomponent id=\"");
+		//		out.print(current.getViewComponentId());
+		//		out.print("\" unitId=\"");
+		//		out.print(current.getUnit4ViewComponent());
+		//
+		//		if (withURL) {
+		//			out.print("\" hasChild=\"");
+		//			out.print(hasVisibleChild(current, liveServer));
+		//		}
+		//		if (current.getPrevNode() != null) {
+		//			out.print("\" prev=\"");
+		//			out.print(current.getPrevNode().getViewComponentId());
+		//		}
+		//		if (current.getNextNode() != null) {
+		//			out.print("\" next=\"");
+		//			out.print(current.getNextNode().getViewComponentId());
+		//		}
+		//		if (current.getParent() != null) {
+		//			out.print("\" parent=\"");
+		//			out.print(current.getParent().getViewComponentId());
+		//		}
+		//
+		//		out.print("\">\n");
+		//		ViewDocumentValue viewDocumentValue = null;
+		//		try {
+		//			viewDocumentValue = current.getViewDocument().getDao();
+		//		} catch (Exception e) {
+		//		}
+		//		out.print("<showType>" + current.getShowType() + "</showType>\n");
+		//		out.print("<viewType>" + current.getViewType() + "</viewType>\n");
+		//		out.print("<visible>" + current.isVisible() + "</visible>\n");
+		//		out.print("<searchIndexed>" + current.isSearchIndexed() + "</searchIndexed>\n");
+		//		out.print("<statusInfo><![CDATA[" + current.getLinkDescription() + "]]></statusInfo>\n");
+		//		if (liveServer) {
+		//			byte viewType = current.getViewType();
+		//			if (viewType == Constants.VIEW_TYPE_EXTERNAL_LINK || viewType == Constants.VIEW_TYPE_INTERNAL_LINK || viewType == Constants.VIEW_TYPE_SYMLINK) {
+		//				if (current.getStatus() != Constants.DEPLOY_STATUS_APPROVED) {
+		//					if (current.getApprovedLinkName() != null && !"null".equalsIgnoreCase(current.getApprovedLinkName())) {
+		//						out.print("<linkName><![CDATA[" + current.getApprovedLinkName() + "]]></linkName>\n");
+		//					} else {
+		//						out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
+		//					}
+		//				} else {
+		//					out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
+		//				}
+		//			} else {
+		//				out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
+		//			}
+		//		} else {
+		//			out.print("<linkName><![CDATA[" + current.getDisplayLinkName() + "]]></linkName>\n");
+		//		}
+		//		out.print("<urlLinkName><![CDATA[" + current.getUrlLinkName() + "]]></urlLinkName>\n");
+		//		out.print("<viewLevel>" + current.getViewLevel() + "</viewLevel>\n");
+		//		out.print("<viewIndex>" + current.getViewIndex() + "</viewIndex>\n");
+		//		out.print("<displaySettings>" + current.getDisplaySettings() + "</displaySettings>\n");
+		//		out.print("<viewDocumentViewType>" + (viewDocumentValue != null ? viewDocumentValue.getViewType() : "browser") + "</viewDocumentViewType>\n");
+		//		out.print("<language>" + (viewDocumentValue != null ? viewDocumentValue.getLanguage() : "deutsch") + "</language>\n");
+		//		out.print("<userModifiedDate>" + current.getUserLastModifiedDate() + "</userModifiedDate>\n");
+		//
+		//		// this is for the edition
+		//
+		//		out.print("<status>" + current.getStatus() + "</status>\n");
+		//		out.print("<onlineStart>" + current.getOnlineStart() + "</onlineStart>\n");
+		//		out.print("<onlineStop>" + current.getOnlineStop() + "</onlineStop>\n");
+		//		out.print("<online>" + current.getOnline() + "</online>\n");
+		//		out.print("<reference><![CDATA[" + current.getReference() + "]]></reference>\n");
+		//		out.print("<metaKeywords><![CDATA[" + current.getMetaData() + "]]></metaKeywords>\n");
+		//		out.print("<metaDescription><![CDATA[" + current.getMetaDescription() + "]]></metaDescription>\n");
+		//		try {
+		//			out.print("<modifiedDate>" + DateConverter.getSql2String(new Date(current.getLastModifiedDate())) + "</modifiedDate>\n");
+		//			out.print("<createDate>" + DateConverter.getSql2String(new Date(current.getCreateDate())) + "</createDate>\n");
+		//			if (current.getViewType() == Constants.VIEW_TYPE_CONTENT || current.getViewType() == Constants.VIEW_TYPE_UNIT) {
+		//				if (log.isDebugEnabled()) log.debug("GETTING CONTENT");
+		//				ContentHbm cl = getContentHbmDao().load(new Integer(current.getReference()));
+		//				if (onlyLastContentVersion) {
+		//					out.print(getContentHbmDao().toXmlWithLastContentVersion(cl));
+		//				} else {
+		//					out.print(getContentHbmDao().toXml(cl));
+		//				}
+		//			}
+		//		} catch (Exception exe) {
+		//			log.warn("Error occured ViewComponentHbmImpl to XML " + exe.getMessage());
+		//		}
+		//		/* Safeguard RealmAtVC */
+		//		/*
+		//		 * try { RealmAtVC realmatvc = current.getRealmAtVC(); if (realmatvc !=
+		//		 * null) { out.print("" + realmatvc.toXml() + "\n"); } } catch
+		//		 * (Exception ine) { log.error("CANNOT APPEND REALM AT VC " +
+		//		 * ine.getMessage()); }
+		//		 */
+		//
+		//		// this is for navigation, f.e.
+		//		if (withURL) {
+		//			if (current.getViewType() == Constants.VIEW_TYPE_EXTERNAL_LINK) {
+		//				out.print("<extUrl><![CDATA[" + current.getReference() + "]]></extUrl>\n");
+		//			} else if (current.getViewType() == Constants.VIEW_TYPE_SEPARATOR) {
+		//				out.print("<separator><![CDATA[" + current.getReference() + "]]></separator>\n");
+		//			} else if (current.getViewType() == Constants.VIEW_TYPE_INTERNAL_LINK) {
+		//				try {
+		//					ViewComponentHbm vclJump = (ViewComponentHbm) getSessionFactory().getCurrentSession().load(ViewComponentHbmImpl.class, new Integer(current.getReference()));
+		//					out.print("<url");
+		//					if (current.getMetaData() != null && !current.getMetaData().equals("")) {
+		//						out.print(" anchor=\"" + current.getMetaData() + "\"><![CDATA[" + vclJump.getPath() + "]]></url>\n");
+		//					} else {
+		//						out.print("><![CDATA[" + vclJump.getPath() + "]]></url>\n");
+		//					}
+		//				} catch (Exception exe) {
+		//					out.print("/>\n");
+		//					log.warn("Error getting path for referenced viewComponent " + current.getReference() + " by internalLink " + current.getViewComponentId() + ": " + exe.getMessage());
+		//				}
+		//			} else {
+		//				out.print("<url><![CDATA[" + current.getPath() + "]]></url>\n");
+		//				try {
+		//					if (current.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
+		//						try {
+		//							ViewComponentHbm vclSym = (ViewComponentHbm) getSessionFactory().getCurrentSession().load(ViewComponentHbmImpl.class, new Integer(current.getReference()));
+		//							String reference = vclSym.getReference();
+		//							ContentHbm content = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, new Integer(reference));
+		//							out.print("<template>" + content.getTemplate() + "</template>\n");
+		//						} catch (Exception symEx) {
+		//							log.warn("ViewComponent " + current.getViewComponentId() + " is a SymLink, maybe the LinkTarget " + current.getReference() + " does not exist (anymore)? -> " + symEx.getMessage());
+		//						}
+		//					} else {
+		//						String reference = current.getReference();
+		//						ContentHbm content = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, new Integer(reference));
+		//						out.print("<template>" + content.getTemplate() + "</template>\n");
+		//						// out.print("<template>" +
+		//						// getContentLocalHome().findByPrimaryKey(new
+		//						// Integer(getReference())).getTemplate() +
+		//						// "</template>\n");
+		//					}
+		//				} catch (Exception exe) {
+		//					log.warn("Error getting url or template for viewComponent " + current.getViewComponentId() + ": " + exe.getMessage());
+		//				}
+		//			}
+		//		}
+		//		if (current.getRealm2vc() != null) {
+		//			out.println(current.getRealm2vc().toXml());
+		//		}
+		//		exportVCRealms(out, current);
+		//
+		//		if (depth != 0) { // 0 is only THIS ViewComponent
+		//			try {
+		//				Collection coll = current.getChildrenOrdered();
+		//				Iterator it = coll.iterator();
+		//				while (it.hasNext()) {
+		//					ViewComponentHbm vcl = (ViewComponentHbm) it.next();
+		//					if (onlyThisUnitId == null || onlyThisUnitId.equals(vcl.getUnit4ViewComponent())) {
+		//						if (!returnOnlyVisibleOne || this.shouldBeVisible(vcl, liveServer)) {
+		//							int destDepth = depth - 1;
+		//							if (depth == -1) destDepth = -1;
+		//							this.toXmlComplete(vcl.getViewComponentId(), onlyLastContentVersion, onlyThisUnitId, withURL, destDepth, liveServer, returnOnlyVisibleOne, out);
+		//						}
+		//					} else {
+		//						//this.toXml(vcl, onlyThisUnitId, false, withUrl, 1, liveServer, returnOnlyVisibleOne, out);
+		//						this.toXmlComplete(vcl.getViewComponentId(), onlyLastContentVersion, onlyThisUnitId, withURL, 1, liveServer, returnOnlyVisibleOne, out);
+		//					}
+		//				}
+		//			} catch (Exception exe) {
+		//				log.error("Error occured calling children.toXmlComplete: " + exe.getMessage(), exe);
+		//			}
+		//		}
+		//		out.println("</viewcomponent>");
+		//		if (log.isDebugEnabled()) log.debug("toXml end");
+		throw new NotImplementedException("should never be used");
 	}
 
 	private void exportVCRealms(PrintStream out, ViewComponentHbm viewComponent) {
@@ -833,5 +864,4 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		viewComponentHbm.setReference(String.valueOf(newContent.getContentId()));
 		return create(viewComponentHbm);
 	}
-
 }
