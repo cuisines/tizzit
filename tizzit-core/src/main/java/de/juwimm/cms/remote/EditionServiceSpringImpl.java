@@ -345,27 +345,29 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 
 			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
-				ViewComponentHbm rootViewComponent = getViewComponentHbmDao().find4Unit(edition.getUnitId(), edition.getViewDocumentId());
-				if (rootViewComponent != null) {
-					Collection vComps = rootViewComponent.getChildren();
-					while (vComps.iterator().hasNext()) {
-						ViewComponentHbm vc = (ViewComponentHbm) vComps.iterator().next();
-						Realm2viewComponentHbm r2vc = getRealm2viewComponentHbmDao().findByViewComponent(vc.getViewComponentId());
-						if (r2vc != null) {
-							if (r2vc.getJaasRealm() != null) getRealmJaasHbmDao().remove(r2vc.getJaasRealm());
-							if (r2vc.getJdbcRealm() != null) getRealmJdbcHbmDao().remove(r2vc.getJdbcRealm());
-							if (r2vc.getLdapRealm() != null) getRealmLdapHbmDao().remove(r2vc.getLdapRealm());
-							if (r2vc.getSimplePwRealm() != null) getRealmSimplePwHbmDao().remove(r2vc.getSimplePwRealm());
-						}
-						vc.getChildren();
-					}
-					if (log.isDebugEnabled()) log.debug("Removing rootVC: " + rootViewComponent.getViewComponentId());
-					getViewComponentHbmDao().remove(rootViewComponent);
-					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
-				} else {
-					if (log.isDebugEnabled()) log.debug("RootVC: " + edition.getViewDocumentId() + " not found - first deploy?");
-
-				}
+				//				ViewComponentHbm rootViewComponent = getViewComponentHbmDao().find4Unit(edition.getUnitId(), edition.getViewDocumentId());
+				//				if (rootViewComponent != null) {
+				//					Collection vComps = rootViewComponent.getChildren();
+				//					while (vComps.iterator().hasNext()) {
+				//						ViewComponentHbm vc = (ViewComponentHbm) vComps.iterator().next();
+				//						if (vc.getAssignedUnit().equals(rootUnit)) {
+				//							Realm2viewComponentHbm r2vc = getRealm2viewComponentHbmDao().findByViewComponent(vc.getViewComponentId());
+				//							if (r2vc != null) {
+				//								if (r2vc.getJaasRealm() != null) getRealmJaasHbmDao().remove(r2vc.getJaasRealm());
+				//								if (r2vc.getJdbcRealm() != null) getRealmJdbcHbmDao().remove(r2vc.getJdbcRealm());
+				//								if (r2vc.getLdapRealm() != null) getRealmLdapHbmDao().remove(r2vc.getLdapRealm());
+				//								if (r2vc.getSimplePwRealm() != null) getRealmSimplePwHbmDao().remove(r2vc.getSimplePwRealm());
+				//							}
+				//						}
+				//						//vc.getChildren();
+				//					}
+				//					if (log.isDebugEnabled()) log.debug("Removing rootVC: " + rootViewComponent.getViewComponentId());
+				//					//getViewComponentHbmDao().remove(rootViewComponent);
+				//					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
+				//				} else {
+				//					if (log.isDebugEnabled()) log.debug("RootVC: " + edition.getViewDocumentId() + " not found - first deploy?");
+				//
+				//				}
 
 			}
 
@@ -412,6 +414,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				while (unitsIt.hasNext()) {
 					UnitHbm unit = (UnitHbm) unitsIt.next();
 					Integer newId = unit.getUnitId();
+					if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0 && rootUnit != null && newId.compareTo(rootUnit.getUnitId()) != 0) continue;
 					Element unitNode = null;
 					if (useNewIds) {
 						unitNode = (Element) XercesHelper.findNode(doc, "/edition/units/unit[@id='" + mappingUnitsReverse.get(newId) + "']");
@@ -541,7 +544,6 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					} else if (viewComponent.getNextNode() != null) {
 						temp2 = viewComponent.getNextNode();
 						temp = viewComponent.getPrevNode();
-
 						temp2.setPrevNode(temp);
 						temp.setNextNode(viewComponent.getNextNode());
 					} else {

@@ -72,8 +72,16 @@ public class PanEditorApproveMessage extends JPanel implements WizardPanel {
 	public void save() {
 		// CREATE EDITION AND SAVE THE COMMENT.... - btw. it's always a unitDeploy
 		Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+
 		try {
+			Integer rootUnitId = comm.getRootUnit4Site(comm.getCurrentSite().getSiteId()).getUnitId();
+			int deployType = Constants.DEPLOY_TYPE_UNIT;
 			String message = this.txtMessage.getText();
+			if (rootUnitId.compareTo(this.unitId) == 0) {
+				deployType = Constants.DEPLOY_TYPE_ROOT;
+				if (message == null) message = "";
+				message = "RootUnitDeploy " + message;
+			}
 			if (message == null || message.isEmpty()) {
 				message = "UnitDeploy of Unit " + this.unitId;
 			}

@@ -1951,10 +1951,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			System.gc();
 			// Alle ..toXML + unitID to reuse them in unitDeploy
 			if (log.isDebugEnabled()) log.debug("picturesToXmlRecursive");
-			//TODO: change -1 to null and check edition.type later ....
+			//TODO: change -1 to null and check edition.type later .... - for the moment -1 = rootdeploy
 			getEditionHbmDao().picturesToXmlRecursive(-1, edition.getSiteId(), out, edition);
 			System.gc();
 			if (log.isDebugEnabled()) log.debug("documentsToXmlRecursive");
+			//TODO: change -1 to null and check edition.type later .... - for the moment -1 = rootdeploy
 			getEditionHbmDao().documentsToXmlRecursive(-1, edition.getSiteId(), out, true, edition);
 			System.gc();
 

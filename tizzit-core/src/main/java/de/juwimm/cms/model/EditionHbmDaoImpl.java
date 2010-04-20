@@ -305,6 +305,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					}
 				}
 			} else {
+				if (unitId == -1) unitId = getSiteHbmDao().load(siteId).getRootUnit().getUnitId();
 				Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unitId);
 				for (DocumentHbm doc : docs) {
 					if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
