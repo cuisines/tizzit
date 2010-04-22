@@ -373,9 +373,13 @@ public class SearchengineService {
 				String alias = hits[i].getAlias();
 				Resource resource = hits[i].getResource();
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
-					Integer vcId = Integer.getInteger(resource.getProperty("viewComponentId").getStringValue());
-					if (safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
-						continue;
+					try {
+						Integer vcId = Integer.getInteger(resource.getProperty("viewComponentId").getStringValue());
+						if (safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
+							continue;
+						}
+					} catch (Exception e) {
+						if (log.isDebugEnabled()) log.debug("Error in compas result filtering - " + e.getMessage(), e);
 					}
 				}
 				SearchResultValue retVal = new SearchResultValue();
