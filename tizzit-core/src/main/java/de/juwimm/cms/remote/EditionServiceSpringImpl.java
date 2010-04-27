@@ -233,6 +233,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 			edition = getEditionHbmDao().load(editionId);
 			UnitHbm rootUnit = null;
+			Integer rootUnitId = null;
 			ViewComponentHbm viewComponent = null;
 			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_PAGE) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0) {
 				try {
@@ -288,15 +289,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				importSite.setLastModifiedDate(new Long(getNVal(node, "lastModifiedDate")));
 
 				String str = getNVal(node, "rootUnitId");
-				Integer rootUnitId_import;
-				Integer defaultViewDocumentId_import;
-				Integer siteGroupId_import;
+				Integer defaultViewDocumentId_import = null;
+				Integer siteGroupId_import = null;
 				if (str != null) {
-					rootUnitId_import = new Integer(str);
+					rootUnitId = Integer.decode(str);
 				}
 				str = getNVal(node, "defaultViewDocumentId");
 				if (str != null) {
-					defaultViewDocumentId_import = new Integer(str);
+					defaultViewDocumentId_import = Integer.decode(str);
 				}
 				str = getNVal(node, "siteGroupId");
 				if (str != null) {
@@ -345,29 +345,29 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 
 			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
-				//				ViewComponentHbm rootViewComponent = getViewComponentHbmDao().find4Unit(edition.getUnitId(), edition.getViewDocumentId());
-				//				if (rootViewComponent != null) {
-				//					Collection vComps = rootViewComponent.getChildren();
-				//					while (vComps.iterator().hasNext()) {
-				//						ViewComponentHbm vc = (ViewComponentHbm) vComps.iterator().next();
-				//						if (vc.getAssignedUnit().equals(rootUnit)) {
-				//							Realm2viewComponentHbm r2vc = getRealm2viewComponentHbmDao().findByViewComponent(vc.getViewComponentId());
-				//							if (r2vc != null) {
-				//								if (r2vc.getJaasRealm() != null) getRealmJaasHbmDao().remove(r2vc.getJaasRealm());
-				//								if (r2vc.getJdbcRealm() != null) getRealmJdbcHbmDao().remove(r2vc.getJdbcRealm());
-				//								if (r2vc.getLdapRealm() != null) getRealmLdapHbmDao().remove(r2vc.getLdapRealm());
-				//								if (r2vc.getSimplePwRealm() != null) getRealmSimplePwHbmDao().remove(r2vc.getSimplePwRealm());
-				//							}
-				//						}
-				//						//vc.getChildren();
-				//					}
-				//					if (log.isDebugEnabled()) log.debug("Removing rootVC: " + rootViewComponent.getViewComponentId());
-				//					//getViewComponentHbmDao().remove(rootViewComponent);
-				//					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
-				//				} else {
-				//					if (log.isDebugEnabled()) log.debug("RootVC: " + edition.getViewDocumentId() + " not found - first deploy?");
-				//
-				//				}
+				ViewComponentHbm rootViewComponent = getViewComponentHbmDao().find4Unit(edition.getUnitId(), edition.getViewDocumentId());
+				if (rootViewComponent != null) {
+					Collection vComps = rootViewComponent.getChildren();
+					while (vComps.iterator().hasNext()) {
+						ViewComponentHbm vc = (ViewComponentHbm) vComps.iterator().next();
+						if (vc.getAssignedUnit().equals(rootUnit)) {
+							Realm2viewComponentHbm r2vc = getRealm2viewComponentHbmDao().findByViewComponent(vc.getViewComponentId());
+							if (r2vc != null) {
+								if (r2vc.getJaasRealm() != null) getRealmJaasHbmDao().remove(r2vc.getJaasRealm());
+								if (r2vc.getJdbcRealm() != null) getRealmJdbcHbmDao().remove(r2vc.getJdbcRealm());
+								if (r2vc.getLdapRealm() != null) getRealmLdapHbmDao().remove(r2vc.getLdapRealm());
+								if (r2vc.getSimplePwRealm() != null) getRealmSimplePwHbmDao().remove(r2vc.getSimplePwRealm());
+							}
+						}
+						//vc.getChildren();
+					}
+					if (log.isDebugEnabled()) log.debug("Removing rootVC: " + rootViewComponent.getViewComponentId());
+					//getViewComponentHbmDao().remove(rootViewComponent);
+					if (log.isDebugEnabled()) log.debug("Removing SUCC!");
+				} else {
+					if (log.isDebugEnabled()) log.debug("RootVC: " + edition.getViewDocumentId() + " not found - first deploy?");
+
+				}
 
 			}
 
