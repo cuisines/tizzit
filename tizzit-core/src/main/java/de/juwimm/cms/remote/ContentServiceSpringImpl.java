@@ -1728,6 +1728,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			System.gc();
 			if (log.isDebugEnabled()) log.debug("Creating ViewComponent Data");
 			Iterator vdIt = getViewDocumentHbmDao().findAll(edition.getSiteId()).iterator();
+
+			//
+
 			while (vdIt.hasNext()) {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
 				ViewComponentHbm vch = getViewComponentHbmDao().find4Unit(unitId, vdl.getViewDocumentId());

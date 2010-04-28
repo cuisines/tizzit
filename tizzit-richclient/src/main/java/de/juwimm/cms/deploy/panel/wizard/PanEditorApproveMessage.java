@@ -85,7 +85,7 @@ public class PanEditorApproveMessage extends JPanel implements WizardPanel {
 			if (message == null || message.isEmpty()) {
 				message = "UnitDeploy of Unit " + this.unitId;
 			}
-			comm.createEdition(message, comm.getViewComponent4Unit(this.unitId).getViewComponentId(), true, true, Constants.DEPLOY_TYPE_UNIT);
+			comm.createEdition(message, comm.getViewComponent4Unit(this.unitId).getViewComponentId(), true, true, deployType);
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("wizard.deploy.editionSucessfulTransmitted"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 		} catch (ParentUnitNeverDeployed pd) {
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.ParentUnitNeverDeployed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
