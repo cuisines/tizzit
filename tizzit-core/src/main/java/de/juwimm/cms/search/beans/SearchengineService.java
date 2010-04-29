@@ -325,27 +325,27 @@ public class SearchengineService {
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
 		//FIXME remove after debugging phase
-		if (log.isDebugEnabled() && safeGuardCookieMap != null && !safeGuardCookieMap.isEmpty()) {
-			log.debug("got safegueardMap for authentication: [Nr. " + safeGuardCookieMap.size() + " ]");
+		if (log.isInfoEnabled() && safeGuardCookieMap != null && !safeGuardCookieMap.isEmpty()) {
+			log.info("got safegueardMap for authentication: [Nr. " + safeGuardCookieMap.size() + " ]");
 			Iterator sgIt = safeGuardCookieMap.entrySet().iterator();
 			while (sgIt.hasNext()) {
 				Object o = sgIt.next();
 				if (o == null) {
-					log.debug("safeGuardCookieMap has includes null values.... - going to take next");
+					log.info("safeGuardCookieMap has includes null values.... - going to take next");
 					continue;
 				}
 				o = safeGuardCookieMap.get(o);
 				if (o != null) {
-					log.debug("safeGuardCookie: " + o.toString());
+					log.info("safeGuardCookie: " + o.toString());
 				} else {
-					log.debug("safeGuardCookieMap has includes null values.... - going to take next");
+					log.info("safeGuardCookieMap has includes null values.... - going to take next");
 				}
 			}
 		}
 		try {
 
 			if (log.isDebugEnabled()) {
-				log.debug("search for: \"" + searchItem + "\"");
+				log.info("search for: \"" + searchItem + "\"");
 			}
 
 			//TODO: find calls of searchWeb and ADD exception handling 
@@ -365,8 +365,8 @@ public class SearchengineService {
 
 			//per default searchItems get connected by AND (compare CompassSettings.java)
 			CompassQuery query = buildRatedWildcardQuery(session, siteId, searchItemEsc, searchUrlEsc);
-			if (log.isDebugEnabled()) {
-				log.debug("search for query: " + query.toString());
+			if (log.isInfoEnabled()) {
+				log.info("search for query: " + query.toString());
 			}
 			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
 				@Override
@@ -385,21 +385,21 @@ public class SearchengineService {
 			}
 
 			CompassSearchResults results = searchHelper.search(command);
-			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
+			if (log.isInfoEnabled()) log.info("search lasted " + results.getSearchTime() + " milliseconds");
 			CompassHit[] hits = results.getHits();
 			for (int i = 0; i < hits.length; i++) {
 				String alias = hits[i].getAlias();
 				Resource resource = hits[i].getResource();
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
 					try {
-						if (log.isDebugEnabled()) log.debug("Filtering searchresults for rights management");
+						if (log.isInfoEnabled()) log.info("Filtering searchresults for rights management");
 						Integer vcId = Integer.getInteger(resource.getProperty("viewComponentId").getStringValue());
 						if (safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
-							if (log.isDebugEnabled()) log.debug("Extra authentication neede - skipping VC : " + vcId);
+							if (log.isInfoEnabled()) log.info("Extra authentication neede - skipping VC : " + vcId);
 							continue;
 						}
 					} catch (Exception e) {
-						if (log.isDebugEnabled()) log.debug("Error in compas result filtering - " + e.getMessage(), e);
+						if (log.isInfoEnabled()) log.info("Error in compas result filtering - " + e.getMessage(), e);
 					}
 				}
 				SearchResultValue retVal = new SearchResultValue();
