@@ -324,6 +324,14 @@ public class SearchengineService {
 		Vector<SearchResultValue> retArr = new Vector<SearchResultValue>();
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
+		//FIXME remove after debugging phase
+		if (log.isDebugEnabled() && !safeGuardCookieMap.isEmpty()) {
+			log.debug("got safegueardMap for authentication: [Nr. " + safeGuardCookieMap.size() + " ]");
+			Iterator sgIt = safeGuardCookieMap.entrySet().iterator();
+			while (sgIt.hasNext()) {
+				log.debug("safeGuardCookie: " + safeGuardCookieMap.get(sgIt.next()).toString());
+			}
+		}
 		try {
 
 			if (log.isDebugEnabled()) {
@@ -374,8 +382,10 @@ public class SearchengineService {
 				Resource resource = hits[i].getResource();
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
 					try {
+						if (log.isDebugEnabled()) log.debug("Filtering searchresults for rights management");
 						Integer vcId = Integer.getInteger(resource.getProperty("viewComponentId").getStringValue());
 						if (safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
+							if (log.isDebugEnabled()) log.debug("Extra authentication neede - skipping VC : " + vcId);
 							continue;
 						}
 					} catch (Exception e) {
