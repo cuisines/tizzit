@@ -325,11 +325,21 @@ public class SearchengineService {
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
 		//FIXME remove after debugging phase
-		if (log.isDebugEnabled() && !safeGuardCookieMap.isEmpty()) {
+		if (log.isDebugEnabled() && safeGuardCookieMap != null && !safeGuardCookieMap.isEmpty()) {
 			log.debug("got safegueardMap for authentication: [Nr. " + safeGuardCookieMap.size() + " ]");
 			Iterator sgIt = safeGuardCookieMap.entrySet().iterator();
 			while (sgIt.hasNext()) {
-				log.debug("safeGuardCookie: " + safeGuardCookieMap.get(sgIt.next()).toString());
+				Object o = sgIt.next();
+				if (o == null) {
+					log.debug("safeGuardCookieMap has includes null values.... - going to take next");
+					continue;
+				}
+				o = safeGuardCookieMap.get(o);
+				if (o != null) {
+					log.debug("safeGuardCookie: " + o.toString());
+				} else {
+					log.debug("safeGuardCookieMap has includes null values.... - going to take next");
+				}
 			}
 		}
 		try {
