@@ -324,24 +324,6 @@ public class SearchengineService {
 		Vector<SearchResultValue> retArr = new Vector<SearchResultValue>();
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
-		//FIXME remove after debugging phase
-		if (log.isDebugEnabled() && safeGuardCookieMap != null && !safeGuardCookieMap.isEmpty()) {
-			log.debug("got safegueardMap for authentication: [Nr. " + safeGuardCookieMap.size() + " ]");
-			Iterator sgIt = safeGuardCookieMap.entrySet().iterator();
-			while (sgIt.hasNext()) {
-				Object o = sgIt.next();
-				if (o == null) {
-					log.debug("safeGuardCookieMap has includes null keys.... - going to take next");
-					continue;
-				}
-				o = safeGuardCookieMap.get(o);
-				if (o != null) {
-					log.debug("safeGuardCookie: " + o.toString());
-				} else {
-					log.debug("safeGuardCookieMap has includes null values.... - going to take next");
-				}
-			}
-		}
 		try {
 
 			if (log.isDebugEnabled()) {
@@ -378,15 +360,24 @@ public class SearchengineService {
 			};
 
 			CompassSearchCommand command = null;
-			if (pageSize == null) {
-				command = new CompassSearchCommand(query);
-			} else {
-				command = new CompassSearchCommand(query, pageNumber);
-			}
+
+			command = new CompassSearchCommand(query);
+
+			// doesn't work since the filtered results can have less pages
+
+			//			if (pageSize == null) {
+			//				command = new CompassSearchCommand(query);
+			//			} else {
+			//				command = new CompassSearchCommand(query, pageNumber);
+			//			}
 
 			CompassSearchResults results = searchHelper.search(command);
 			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
 			CompassHit[] hits = results.getHits();
+
+			// filtering starts here 
+			// to get the true number of results and pages 
+			Vector<CompassHit> hitVector = new Vector<CompassHit>();
 			for (int i = 0; i < hits.length; i++) {
 				String alias = hits[i].getAlias();
 				Resource resource = hits[i].getResource();
@@ -396,13 +387,26 @@ public class SearchengineService {
 						Integer vcId = new Integer(resource.getProperty("viewComponentId").getStringValue());
 						if (log.isDebugEnabled()) log.debug("Found vcId test safeguard for: " + resource.getProperty("viewComponentId").getStringValue());
 						if (vcId != null && safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
-							if (log.isDebugEnabled()) log.debug("Extra authentication neede - skipping VC : " + vcId);
+							if (log.isDebugEnabled()) log.debug("Extra authentication neede - skipping this");
 							continue;
 						}
+						hitVector.add(hits[i]);
 					} catch (Exception e) {
 						if (log.isDebugEnabled()) log.debug("Error in compas result filtering - " + e.getMessage(), e);
 					}
 				}
+			}
+			// calculate the page and results to return
+			int startIndex = (pageNumber == 0) ? 0 : (pageNumber + 1) * pageSize;
+			if (log.isDebugEnabled()) log.debug("returning results for page: " + pageNumber + " - from index: " + startIndex);
+			int endIndex = ((startIndex + pageSize) > hitVector.size()) ? (startIndex + pageSize) : hitVector.size();
+			if (log.isDebugEnabled()) log.debug("returning results to index: " + endIndex);
+
+			hits = new CompassHit[endIndex - startIndex];
+			hitVector.toArray(hits);
+			for (int i = startIndex; i < endIndex; i++) {
+				String alias = hits[i].getAlias();
+				Resource resource = hits[i].getResource();
 				SearchResultValue retVal = new SearchResultValue();
 				retVal.setScore((int) (hits[i].getScore() * 100.0f));
 				//CompassHighlightedText text = hits[i].getHighlightedText();
@@ -413,11 +417,11 @@ public class SearchengineService {
 				retVal.setPageNumber(pageNumber);
 				retVal.setDuration(Long.valueOf(results.getSearchTime()));
 				if (results.getPages() != null) {
-					retVal.setPageAmount(Integer.valueOf(results.getPages().length));
+					retVal.setPageAmount(Math.round((hitVector.size() / pageSize) + 0.5f));
 				} else {
 					retVal.setPageAmount(new Integer(1));
 				}
-				retVal.setTotalHits(Integer.valueOf(results.getTotalHits()));
+				retVal.setTotalHits(Integer.valueOf(hitVector.size()));
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
 					String url = resource.getProperty("url").getStringValue();
 					if (url != null) {

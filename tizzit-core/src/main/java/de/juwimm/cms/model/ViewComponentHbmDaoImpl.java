@@ -84,12 +84,19 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return retVal;
 	}
 
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleToXml(de.juwimm.cms.model.ViewComponentHbm, java.lang.Integer, boolean, boolean, boolean, int, boolean, boolean, java.io.PrintStream)
-	 */
 	@Override
-	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
+	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, boolean isDeploy, PrintStream out) {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
+
+		// if it's a deploy - the status has to be 'approved' and will be set to 'for_deploy'
+		if (isDeploy) {
+			if (current.getStatus() == Constants.DEPLOY_STATUS_APPROVED) {
+				current.setStatus(Constants.DEPLOY_STATUS_FOR_DEPLOY);
+			} else {
+				return;
+			}
+		}
+
 		out.print("<viewcomponent id=\"");
 		out.print(current.getViewComponentId());
 		out.print("\" unitId=\"");
@@ -263,6 +270,15 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		out.println("</viewcomponent>");
 		if (log.isDebugEnabled()) log.debug("toXml end");
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleToXml(de.juwimm.cms.model.ViewComponentHbm, java.lang.Integer, boolean, boolean, boolean, int, boolean, boolean, java.io.PrintStream)
+	 */
+	@Override
+	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
+		boolean isDeploy = false;
+		this.toXml(current, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, depth, liveServer, returnOnlyVisibleOne, isDeploy, out);
 	}
 
 	@Override

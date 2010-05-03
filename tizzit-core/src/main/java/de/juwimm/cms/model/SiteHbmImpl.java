@@ -176,7 +176,7 @@ public class SiteHbmImpl extends SiteHbm {
 		buf.append("<pageNameSearch>").append("<![CDATA[").append(this.getPageNameSearch()).append("]]>").append("</pageNameSearch>");
 		buf.append("<lastModifiedDate>").append(this.getLastModifiedDate()).append("</lastModifiedDate>");
 
-		buf.append("</site>");
+		buf.append("</site>").append("\n");
 		return buf.toString();
 	}
 }
