@@ -89,6 +89,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 	private ModifiedDateContentHandler mdch = null;
 	private SiteValue siteValue = null;
 	private UnitValue unitValue = null;
+	private Integer depth = null;
 	private Parameters par = null;
 	private SessionContext sessContext = null;
 	private final ServiceManager serviceManager = null;
@@ -303,15 +304,28 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 		super.startElement(uri, localName, qName, attrs);
 		if (localName.equals("navigation")) {
 			if (log.isDebugEnabled()) log.debug("begin transform for navigation element");
-			Integer depth = null;
 			String safeguardUsername = null;
 			try {
-				viewComponentId = Integer.getInteger(attrs.getValue("viewComponentId"));
+				viewComponentId = new Integer(attrs.getValue("viewComponentId"));
 			} catch (Exception exe) {
 			}
+			if (log.isDebugEnabled()) {
+				if (viewComponentId != null) {
+					log.debug("found viewComponentId: " + viewComponentId);
+				} else {
+					log.debug("Could not find viewComponentId.");
+				}
+			}
 			try {
-				depth = Integer.getInteger(attrs.getValue("depth"));
+				depth = new Integer(attrs.getValue("depth"));
 			} catch (Exception exe) {
+			}
+			if (log.isDebugEnabled()) {
+				if (depth != null) {
+					log.debug("found depth: " + depth);
+				} else {
+					log.debug("Could not find depth.");
+				}
 			}
 			try {
 				iAmTheLiveserver = Boolean.getBoolean(attrs.getValue("isLiveServer"));
@@ -330,8 +344,6 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			} catch (Exception exe) {
 			}
 
-			// Das ganze leben ist ein Quitz, und wir sind nur die Kandidaten.
-			// Und wir raten, raten, raten...
 			try {
 				Document doc = this.generate();
 				String docString = documentToString(doc);
