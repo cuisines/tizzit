@@ -73,7 +73,7 @@ import de.juwimm.cms.vo.ViewDocumentValue;
  *
  */
 public class NavigationTransformer extends AbstractTransformer implements Recyclable {
-	private static Logger log = Logger.getLogger(CmsContentGenerator.class);
+	private static Logger log = Logger.getLogger(NavigationTransformer.class);
 	private static Logger cacheLogger = Logger.getLogger(CmsContentGenerator.class.getName() + "-CacheLogger");
 	private static final DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	public static final int ADDRESSTYPE_OFFICE = 1;
@@ -411,24 +411,24 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 		}
 
 		try {
-			if (!disableContentInclude) {
-				this.fillContentInclude(doc);
-				this.fillTeaserInclude(doc);
-			}
-			if (!disableUnitInformation) // has to be before fulltext, because fulltext will fill its own
-				this.fillUnitInformation(doc, null);
-			if (!disableFulltext) // has to be at the beginning, because it can contain other tags as well
-				this.fillFulltext(doc);
-			if (!disableMeta) this.fillMeta(doc);
-			if (!disableHeadLine) this.fillHeadLine(doc);
-			if (!disableAggregations) this.fillAggregations(doc);
-			if (!disableMembersList) this.fillMembersList(doc);
-			if (!disableUnitList) // im filling also unitInformations
-				this.fillUnitList(doc);
-			if (!disableInternalLinks) this.solveInternalLinks(doc);
+			//			if (!disableContentInclude) {
+			//				this.fillContentInclude(doc);
+			//				this.fillTeaserInclude(doc);
+			//			}
+			//			if (!disableUnitInformation) // has to be before fulltext, because fulltext will fill its own
+			//				this.fillUnitInformation(doc, null);
+			//			if (!disableFulltext) // has to be at the beginning, because it can contain other tags as well
+			//				this.fillFulltext(doc);
+			//			if (!disableMeta) this.fillMeta(doc);
+			//			if (!disableHeadLine) this.fillHeadLine(doc);
+			//			if (!disableAggregations) this.fillAggregations(doc);
+			//			if (!disableMembersList) this.fillMembersList(doc);
+			//			if (!disableUnitList) // im filling also unitInformations
+			//				this.fillUnitList(doc);
+			//			if (!disableInternalLinks) this.solveInternalLinks(doc);
 			if (!disableNavigation) this.fillNavigation(doc);
 			if (!disableNavigationBackward) this.fillNavigationBackward(doc);
-			if (!disableLanguageVersions) this.fillLanguageVersions(doc);
+			//			if (!disableLanguageVersions) this.fillLanguageVersions(doc);
 		} catch (Exception e) {
 			String errMsg = "An error occured while processing the content";
 			log.error(errMsg, e);
@@ -641,6 +641,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 	}
 
 	private void fillNavigation(Document doc) throws Exception {
+		if (log.isDebugEnabled()) log.debug("fillNavigation entered.");
 		Iterator it = XercesHelper.findNodes(doc, "//navigation");
 		String navigationXml = "";
 
