@@ -36,8 +36,8 @@ public final class Constants {
 
 	public static String CMS_PATH_WYSIWYGIMAGE = "";
 	public static String CMS_PATH_DEMOPAGE = "";
-	public static String CMS_PATH_DEMOPAGE_FULLFRAMESET = "index_1.html";
-	public static String CMS_PATH_DEMOPAGE_CONTENT = ".html";
+	public static String CMS_PATH_DEMOPAGE_FULLFRAMESET = "html";
+	public static String CMS_PATH_DEMOPAGE_CONTENT = "html";
 	public static String CMS_PATH_DCF = "";
 	public static String CMS_PATH_HELP = "";
 	public static String CMS_CUSTOMER_STRING = "";

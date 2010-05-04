@@ -334,7 +334,7 @@ public class Communication implements ExitListener, ActionListener {
 		}
 
 		try {
-			Browser.displayURL(strHost + getViewDocument().getLanguage() + "/" + getPathForViewComponentId(vcId) + "/" + page);
+			Browser.displayURL(strHost + getViewDocument().getLanguage() + "/" + getPathForViewComponentId(vcId) + "." + page);
 		} catch (IOException exe) {
 			log.error("Show browser error occures", exe);
 		}
