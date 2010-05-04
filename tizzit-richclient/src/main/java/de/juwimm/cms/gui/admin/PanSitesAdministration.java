@@ -877,9 +877,9 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtHelpUrl.setText("http://wiki.tizzit.org/");
 			txtDcfUrl.setText("http://");
 			txtPreviewUrl.setText("http://");
-			txtPageNameFull.setText(".html");
-			txtPageNameContent.setText(".html");
-			txtPageNameSearch.setText(".html?viewType=search");
+			txtPageNameFull.setText("html");
+			txtPageNameContent.setText("html");
+			txtPageNameSearch.setText("html?viewType=search");
 			lblSiteIdContent.setText(" ");
 			txtLiveserverPassword.setText("");
 			txtLiveserverURL.setText("");

@@ -756,6 +756,8 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		newUrl = newUrl.replaceAll("Ö", "Oe");
 		newUrl = newUrl.replaceAll("Ü", "Ue");
 		newUrl = newUrl.replaceAll("ß", "ss");
+		newUrl = newUrl.replaceAll("ß", "ss");
+		newUrl = newUrl.replaceAll("[\s]+", "-");
 		return newUrl.replaceAll("[^A-Za-z_0-9\\.-]", "");
 	}
 

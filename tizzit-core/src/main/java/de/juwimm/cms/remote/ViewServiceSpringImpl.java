@@ -2551,14 +2551,14 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					if (existingUrlLinkname.equalsIgnoreCase(urlLinkName)) {
 						flag = true;
 					}
-					if (existingUrlLinkname.startsWith(urlLinkName + "_")) {
+					if (existingUrlLinkname.startsWith(urlLinkName + "-")) {
 						Integer version = Integer.parseInt(existingUrlLinkname.substring(urlLinkName.length() + 1, existingUrlLinkname.length()));
 						existingNumber.add(version);
 					}
 				}
 			}
 			if ((flag) && (existingNumber.size() == 0)) {
-				urlLinkName = urlLinkName + "_1";
+				urlLinkName = urlLinkName + "-1";
 			}
 			if ((existingNumber.size() > 0) && (flag)) {
 				Integer max = 0;
@@ -2568,7 +2568,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 					}
 				}
 				max++;
-				urlLinkName = urlLinkName + "_" + max;
+				urlLinkName = urlLinkName + "-" + max;
 			}
 
 		}
