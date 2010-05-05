@@ -316,6 +316,14 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			} catch (Exception exe) {
 				if (log.isDebugEnabled()) log.debug("value for 'depth' not found ");
 			}
+			try {
+				viewComponentId = new Integer(attrs.getValue("viewComponentId"));
+				if (viewComponentId != null) {
+					viewComponentValue = this.webSpringBean.getViewComponent4Id(viewComponentId);
+				}
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("value for 'viewComponentId' not found ");
+			}
 			int ifDistanceToNavigationRoot = -1;
 			try {
 				ifDistanceToNavigationRoot = new Integer(attrs.getValue("ifDistanceToNavigationRoot")).intValue();

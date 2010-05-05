@@ -374,7 +374,7 @@ public class SearchengineService {
 			CompassSearchResults results = searchHelper.search(command);
 			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
 			CompassHit[] hits = results.getHits();
-
+			if (log.isDebugEnabled()) log.debug(hits.length + " results found");
 			// filtering starts here 
 			// to get the true number of results and pages 
 			Vector<CompassHit> hitVector = new Vector<CompassHit>();
@@ -396,6 +396,7 @@ public class SearchengineService {
 					}
 				}
 			}
+			if (log.isDebugEnabled()) log.debug("after filtering number of results: " + hitVector.size());
 			// calculate the page and results to return
 			int startIndex = (pageNumber == 0) ? 0 : (pageNumber + 1) * pageSize;
 			if (log.isDebugEnabled()) log.debug("returning results for page: " + pageNumber + " - from index: " + startIndex);
@@ -403,7 +404,8 @@ public class SearchengineService {
 			if (log.isDebugEnabled()) log.debug("returning results to index: " + endIndex);
 
 			hits = new CompassHit[hitVector.size()];
-			hitVector.toArray(hits);
+			hits = hitVector.toArray(hits);
+			if (log.isDebugEnabled()) log.debug("hits now contains: " + hits.length + " entries ");
 			for (int i = startIndex; i < endIndex; i++) {
 				String alias = hits[i].getAlias();
 				Resource resource = hits[i].getResource();

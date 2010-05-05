@@ -281,11 +281,11 @@ public class WebServiceSpring {
 
 	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getNavigationXML start");
-
 		try {
 			String retVal = "";
 			Integer vclpk = this.navigationViewComponentSolver(refVcId, since, getPUBLSVersion);
 			if (vclpk != null) {
+				if (log.isDebugEnabled()) log.debug("starting at: " + vclpk);
 				ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(byteOut, true, "UTF-8");
 				ViewComponentHbm vcl = viewComponentHbmDao.load(vclpk);
