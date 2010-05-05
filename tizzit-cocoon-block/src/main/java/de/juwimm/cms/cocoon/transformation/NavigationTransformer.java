@@ -50,15 +50,14 @@ import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import de.juwimm.cms.beans.PluginManagement;
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.beans.cocoon.ModifiedDateContentHandler;
 import de.juwimm.cms.cocoon.generation.CmsContentGenerator;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
-import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.search.beans.SearchengineService;
-import de.juwimm.cms.search.vo.XmlSearchValue;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewComponentValue;
@@ -85,7 +84,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 	private ModifiedDateContentHandler mdch = null;
 	private SiteValue siteValue = null;
 	private UnitValue unitValue = null;
-	private Integer depth = null;
+	private final Integer depth = null;
 	private Parameters par = null;
 	private SessionContext sessContext = null;
 	private final ServiceManager serviceManager = null;
@@ -296,9 +295,125 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-		super.startElement(uri, localName, qName, attrs);
 		if (localName.equals("navigation")) {
-			if (log.isDebugEnabled()) log.debug("begin transform for navigation element");
+			AttributesImpl newAtts = new AttributesImpl();
+			newAtts.setAttributes(attrs);
+			if (this.unitValue != null) {
+				if (log.isDebugEnabled()) log.debug("found a unitValue: " + unitValue.getUnitId());
+				try {
+					SAXHelper.setSAXAttr(newAtts, "unitImageId", this.unitValue.getImageId().toString());
+				} catch (Exception exe) {
+					if (log.isDebugEnabled()) log.debug("found a unitValue - but no Image for it ");
+				}
+				try {
+					SAXHelper.setSAXAttr(newAtts, "unitLogoId", this.unitValue.getLogoId().toString());
+				} catch (Exception exe) {
+					if (log.isDebugEnabled()) log.debug("found a unitValue - but no Logo for it ");
+				}
+			}
+			if (log.isDebugEnabled()) log.debug("calling startElement with new attrs");
+			super.startElement(uri, localName, qName, newAtts);
+		} else {
+			super.startElement(uri, localName, qName, attrs);
+		}
+		if (localName.equals("navigation")) {
+			Document doc = XercesHelper.getNewDocument();
+			if (log.isDebugEnabled()) log.debug("fillNavigation entered.");
+			String navigationXml = "";
+
+			String since = attrs.getValue("since");
+			int depth = -1;
+			try {
+				depth = new Integer(attrs.getValue("depth")).intValue();
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("value for 'depth' not found ");
+			}
+			int ifDistanceToNavigationRoot = -1;
+			try {
+				ifDistanceToNavigationRoot = new Integer(attrs.getValue("ifDistanceToNavigationRoot")).intValue();
+				if (log.isDebugEnabled()) log.debug("GOT ifDistanceToNavigationRoot");
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("value for 'ifDistanceToNavigationRoot' not found ");
+			}
+			boolean showOnlyAuthorized = false;
+			try {
+				showOnlyAuthorized = Boolean.valueOf(attrs.getValue("showOnlyAuthorized")).booleanValue();
+				if (log.isDebugEnabled()) log.debug("showOnlyAuthorized: " + showOnlyAuthorized);
+			} catch (Exception e) {
+				if (log.isDebugEnabled()) log.debug("value for 'showOnlyAuthorized' not found ");
+			}
+			try {
+				if (this.unitValue != null) {
+					try {
+						if (log.isDebugEnabled()) log.debug("found that unitValue again: " + unitValue.getUnitId() + " - Try to get it's info...");
+						Document docUnitInfoXml = XercesHelper.string2Dom(this.webSpringBean.getUnitInfoXml(this.unitValue.getUnitId()));
+						if (log.isDebugEnabled() && docUnitInfoXml != null) log.debug("got the info for that unit...");
+						Node page = doc.importNode(docUnitInfoXml.getDocumentElement(), true);
+						SAXHelper.string2sax(XercesHelper.node2string(page), this);
+						if (log.isDebugEnabled()) log.debug("attached the unit info to this node...");
+					} catch (Exception e) {
+						if (log.isDebugEnabled()) log.debug("Error catched while trying to get unit info from webSpringBean and attache it to the xml", e);
+					}
+				}
+			} catch (Exception exe) {
+			}
+			try {
+				if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(viewComponentValue.getViewComponentId()) >= ifDistanceToNavigationRoot) {
+					navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver);
+					if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
+						try {
+							Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
+							// add axis
+							if (!disableNavigationAxis) {
+								String viewComponentXPath = "//viewcomponent[@id=\"" + viewComponentId + "\"]";
+								if (log.isDebugEnabled()) log.debug("Resolving Navigation Axis: " + viewComponentXPath);
+								Node found = XercesHelper.findNode(docNavigationXml, viewComponentXPath);
+								if (found != null) {
+									if (log.isDebugEnabled()) log.debug("Found Axis in viewComponentId " + viewComponentId);
+									this.setAxisToRootAttributes(found);
+								} else {
+									ViewComponentValue axisVcl = webSpringBean.getViewComponent4Id(viewComponentValue.getParentId());
+									while (axisVcl != null) {
+										found = XercesHelper.findNode(docNavigationXml, "//viewcomponent[@id=\"" + axisVcl.getViewComponentId() + "\"]");
+										if (found != null) {
+											if (log.isDebugEnabled()) log.debug("Found Axis in axisVcl " + axisVcl.getViewComponentId());
+											this.setAxisToRootAttributes(found);
+											break;
+										}
+										axisVcl = axisVcl.getParentId() == null ? null : webSpringBean.getViewComponent4Id(axisVcl.getParentId());
+									}
+								}
+							}
+							// filter safeGuard
+							if (showOnlyAuthorized) {
+								try {
+									String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
+									String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
+									if (log.isDebugEnabled()) {
+										log.debug("allNavigationXml\n" + allNavigationXml);
+										log.debug("filteredNavigationXml\n" + filteredNavigationXml);
+									}
+									docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
+								} catch (Exception e) {
+									log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
+								}
+							}
+							// Insert navigationXml -> sitemap
+							Node page = doc.importNode(docNavigationXml.getFirstChild(), true);
+							SAXHelper.string2sax(XercesHelper.node2string(page), this);
+						} catch (Exception exe) {
+							log.error("An error occured", exe);
+						}
+					}
+				}
+			} catch (Exception ex) {
+				log.warn("Exception in NavigationTransformer accured: " + ex.getMessage(), ex);
+			}
+		}
+	}
+
+	/*
+	 * if (log.isDebugEnabled()) log.debug("begin transform for navigation element");
 			String safeguardUsername = null;
 			try {
 				viewComponentId = new Integer(attrs.getValue("viewComponentId"));
@@ -338,7 +453,6 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 				attrs.getValue("languageCode");
 			} catch (Exception exe) {
 			}
-
 			try {
 				Document doc = this.generate();
 				String docString = documentToString(doc);
@@ -346,9 +460,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			} catch (ProcessingException e) {
 				if (log.isDebugEnabled()) log.debug("Error while generating output ", e);
 			}
-
-		}
-	}
+	 */
 
 	private String documentToString(Node node) {
 		try {
@@ -491,69 +603,6 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 		}
 	}
 
-	/**
-	 * new for database fulltext searching in DCF file, defines something like : <fulltextsearch nodename="joboffer"
-	 * searchOnlyInThisUnit="false"/>
-	 * <ul>
-	 * <li>String[x][0] contains the content.</li>
-	 * <li>String[x][1] contains the infoText</li>
-	 * <li>String[x][2] contains the text</li>
-	 * <li>String[x][3] contains the unitId</li>
-	 * </ul>
-	 */
-	private void fillFulltext(Document doc) throws Exception {
-		boolean ifOnlyUnit = true;
-		Integer myUnitId = null;
-		Iterator itFulltext = XercesHelper.findNodes(doc, "//fulltextsearch");
-		while (itFulltext.hasNext()) {
-			Element fulltextsearch = (Element) itFulltext.next();
-			ifOnlyUnit = Boolean.valueOf(fulltextsearch.getAttribute("searchOnlyInThisUnit")).booleanValue();
-			if (ifOnlyUnit && myUnitId == null) {
-				myUnitId = this.webSpringBean.getUnit4ViewComponent(viewComponentValue.getViewComponentId()).getUnitId();
-			}
-			String xpath = "//" + fulltextsearch.getAttribute("nodename").trim();
-			if (log.isDebugEnabled()) log.debug("STARTING FULLTEXT with XPATH: " + xpath);
-
-			XmlSearchValue[] foundArr = searchengineService.searchXML(siteValue.getSiteId(), xpath);
-
-			if (foundArr != null) {
-				if (log.isDebugEnabled()) log.debug("GOT FULLTEXT RETURN WITH " + foundArr.length + " ITEMS");
-				for (int i = 0; i < foundArr.length; i++) {
-					Integer foundUnitId = Integer.valueOf(0);
-					try {
-						foundUnitId = foundArr[i].getUnitId();
-					} catch (Exception exe) {
-						log.debug("Cannot catch unitId: " + foundArr[i].getUnitId());
-					}
-					if ((ifOnlyUnit && foundUnitId.equals(myUnitId)) || !ifOnlyUnit) {
-						String foundContent = foundArr[i].getContent();
-						if (foundContent != null && !foundContent.equalsIgnoreCase("")) {
-							Document docContent = XercesHelper.string2Dom(foundContent);
-							Node newNode = doc.importNode(docContent.getFirstChild(), true);
-							fulltextsearch.appendChild(newNode);
-
-							Integer foundVcId = null;
-							try {
-								foundVcId = foundArr[i].getViewComponentId();
-							} catch (Exception exe) {
-								log.warn("fillFulltext: Could not find vcId: " + foundArr[i].getViewComponentId());
-							}
-							if (foundVcId != null) {
-								ViewComponentValue foundVc = null;
-								try {
-									foundVc = webSpringBean.getViewComponent4Id(foundVcId);
-								} catch (Exception e) {
-									if (log.isDebugEnabled()) log.debug("Can't find viewComponentId " + foundVcId + "!\n" + e.getMessage());
-								}
-								if (foundVc != null) this.fillUnitInformation(newNode, foundVc);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
 	private void fillMeta(Document doc) throws Exception {
 		Node head = XercesHelper.findNode(doc, "//source/head");
 		if (head != null) {
@@ -578,31 +627,6 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			head.appendChild(metaDesc);
 			head.appendChild(metaKeyw);
 			head.appendChild(metaLastEdited);
-		}
-	}
-
-	private void fillHeadLine(Document doc) throws Exception {
-		Iterator it = XercesHelper.findNodes(doc, "//headLine");
-		Integer contentId = null;
-
-		while (it.hasNext()) {
-			Element headLine = (Element) it.next();
-			try {
-				if (contentId == null) {
-					if (viewComponentValue.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
-						ViewComponentValue vclSym = webSpringBean.getViewComponent4Id(new Integer(viewComponentValue.getReference()));
-						contentId = new Integer(vclSym.getReference());
-					} else {
-						contentId = new Integer(viewComponentValue.getReference());
-					}
-				}
-				try {
-					Node txtNde = doc.createTextNode(webSpringBean.getHeading(contentId, iAmTheLiveserver));
-					headLine.appendChild(txtNde);
-				} catch (Exception exe) {
-				}
-			} catch (NumberFormatException nfe) {
-			}
 		}
 	}
 
@@ -637,98 +661,95 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 
 	private void fillNavigation(Document doc) throws Exception {
 		if (log.isDebugEnabled()) log.debug("fillNavigation entered.");
-		Iterator it = XercesHelper.findNodes(doc, "//navigation");
+		doc.createElement("//navigation");
 		String navigationXml = "";
+		Element navigation = doc.getElementById("//navigation");
+		if (log.isDebugEnabled() && navigation != null) log.debug("found navigation element");
+		String since = navigation.getAttribute("since");
+		int depth = -1;
+		try {
+			depth = new Integer(navigation.getAttribute("depth")).intValue();
+		} catch (Exception exe) {
+		}
+		int ifDistanceToNavigationRoot = -1;
+		try {
+			ifDistanceToNavigationRoot = new Integer(navigation.getAttribute("ifDistanceToNavigationRoot")).intValue();
+			if (log.isDebugEnabled()) log.debug("GOT ifDistanceToNavigationRoot");
+		} catch (Exception exe) {
+		}
+		boolean showOnlyAuthorized = false;
+		try {
+			showOnlyAuthorized = Boolean.valueOf(navigation.getAttribute("showOnlyAuthorized")).booleanValue();
+			if (log.isDebugEnabled()) log.debug("showOnlyAuthorized: " + showOnlyAuthorized);
+		} catch (Exception e) {
+		}
 
-		while (it.hasNext()) {
-			if (log.isDebugEnabled()) log.debug("found Navigation");
-			Element navigation = (Element) it.next();
-			String since = navigation.getAttribute("since");
-			int depth = -1;
-			try {
-				depth = new Integer(navigation.getAttribute("depth")).intValue();
-			} catch (Exception exe) {
-			}
-			int ifDistanceToNavigationRoot = -1;
-			try {
-				ifDistanceToNavigationRoot = new Integer(navigation.getAttribute("ifDistanceToNavigationRoot")).intValue();
-				if (log.isDebugEnabled()) log.debug("GOT ifDistanceToNavigationRoot");
-			} catch (Exception exe) {
-			}
-			boolean showOnlyAuthorized = false;
-			try {
-				showOnlyAuthorized = Boolean.valueOf(navigation.getAttribute("showOnlyAuthorized")).booleanValue();
-				if (log.isDebugEnabled()) log.debug("showOnlyAuthorized: " + showOnlyAuthorized);
-			} catch (Exception e) {
-			}
-
-			try {
-				if (this.unitValue != null) {
-					try {
-						navigation.setAttribute("unitImageId", this.unitValue.getImageId().toString());
-					} catch (Exception exe) {
-					}
-					try {
-						navigation.setAttribute("unitLogoId", this.unitValue.getLogoId().toString());
-					} catch (Exception exe) {
-					}
-					try {
-						Document docUnitInfoXml = XercesHelper.string2Dom(this.webSpringBean.getUnitInfoXml(this.unitValue.getUnitId()));
-						Node page = doc.importNode(docUnitInfoXml.getDocumentElement(), true);
-						navigation.appendChild(page);
-					} catch (Exception e) {
-						if (log.isDebugEnabled()) log.debug(e.getMessage(), e);
-					}
+		try {
+			if (this.unitValue != null) {
+				try {
+					navigation.setAttribute("unitImageId", this.unitValue.getImageId().toString());
+				} catch (Exception exe) {
 				}
-			} catch (Exception exe) {
+				try {
+					navigation.setAttribute("unitLogoId", this.unitValue.getLogoId().toString());
+				} catch (Exception exe) {
+				}
+				try {
+					Document docUnitInfoXml = XercesHelper.string2Dom(this.webSpringBean.getUnitInfoXml(this.unitValue.getUnitId()));
+					Node page = doc.importNode(docUnitInfoXml.getDocumentElement(), true);
+					navigation.appendChild(page);
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) log.debug(e.getMessage(), e);
+				}
 			}
+		} catch (Exception exe) {
+		}
 
-			if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(viewComponentValue.getViewComponentId()) >= ifDistanceToNavigationRoot) {
-				navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver);
-				if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
-					try {
-						Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
-						// add axis
-						if (!disableNavigationAxis) {
-							String viewComponentXPath = "//viewcomponent[@id=\"" + viewComponentId + "\"]";
-							if (log.isDebugEnabled()) log.debug("Resolving Navigation Axis: " + viewComponentXPath);
-							Node found = XercesHelper.findNode(docNavigationXml, viewComponentXPath);
-							if (found != null) {
-								if (log.isDebugEnabled()) log.debug("Found Axis in viewComponentId " + viewComponentId);
-								this.setAxisToRootAttributes(found);
-							} else {
-								ViewComponentValue axisVcl = webSpringBean.getViewComponent4Id(viewComponentValue.getParentId());
-								while (axisVcl != null) {
-									found = XercesHelper.findNode(docNavigationXml, "//viewcomponent[@id=\"" + axisVcl.getViewComponentId() + "\"]");
-									if (found != null) {
-										if (log.isDebugEnabled()) log.debug("Found Axis in axisVcl " + axisVcl.getViewComponentId());
-										this.setAxisToRootAttributes(found);
-										break;
-									}
-									axisVcl = axisVcl.getParentId() == null ? null : webSpringBean.getViewComponent4Id(axisVcl.getParentId());
+		if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(viewComponentValue.getViewComponentId()) >= ifDistanceToNavigationRoot) {
+			navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver);
+			if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
+				try {
+					Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
+					// add axis
+					if (!disableNavigationAxis) {
+						String viewComponentXPath = "//viewcomponent[@id=\"" + viewComponentId + "\"]";
+						if (log.isDebugEnabled()) log.debug("Resolving Navigation Axis: " + viewComponentXPath);
+						Node found = XercesHelper.findNode(docNavigationXml, viewComponentXPath);
+						if (found != null) {
+							if (log.isDebugEnabled()) log.debug("Found Axis in viewComponentId " + viewComponentId);
+							this.setAxisToRootAttributes(found);
+						} else {
+							ViewComponentValue axisVcl = webSpringBean.getViewComponent4Id(viewComponentValue.getParentId());
+							while (axisVcl != null) {
+								found = XercesHelper.findNode(docNavigationXml, "//viewcomponent[@id=\"" + axisVcl.getViewComponentId() + "\"]");
+								if (found != null) {
+									if (log.isDebugEnabled()) log.debug("Found Axis in axisVcl " + axisVcl.getViewComponentId());
+									this.setAxisToRootAttributes(found);
+									break;
 								}
+								axisVcl = axisVcl.getParentId() == null ? null : webSpringBean.getViewComponent4Id(axisVcl.getParentId());
 							}
 						}
-						// filter safeGuard
-						if (showOnlyAuthorized) {
-							try {
-								String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
-								String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
-								if (log.isDebugEnabled()) {
-									log.debug("allNavigationXml\n" + allNavigationXml);
-									log.debug("filteredNavigationXml\n" + filteredNavigationXml);
-								}
-								docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
-							} catch (Exception e) {
-								log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
-							}
-						}
-						// Insert navigationXml -> sitemap
-						Node page = doc.importNode(docNavigationXml.getFirstChild(), true);
-						navigation.appendChild(page);
-					} catch (Exception exe) {
-						log.error("An error occured", exe);
 					}
+					// filter safeGuard
+					if (showOnlyAuthorized) {
+						try {
+							String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
+							String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
+							if (log.isDebugEnabled()) {
+								log.debug("allNavigationXml\n" + allNavigationXml);
+								log.debug("filteredNavigationXml\n" + filteredNavigationXml);
+							}
+							docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
+						} catch (Exception e) {
+							log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
+						}
+					}
+					// Insert navigationXml -> sitemap
+					Node page = doc.importNode(docNavigationXml.getFirstChild(), true);
+					navigation.appendChild(page);
+				} catch (Exception exe) {
+					log.error("An error occured", exe);
 				}
 			}
 		}
@@ -742,165 +763,4 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 		}
 	}
 
-	private void fillUnitInformation(Node nde, ViewComponentValue vcl) throws Exception {
-		ViewComponentValue myVcl = null;
-		if (vcl != null) {
-			myVcl = vcl;
-		} else {
-			myVcl = viewComponentValue;
-		}
-		Iterator it = XercesHelper.findNodes(nde, ".//unitInformation");
-
-		while (it.hasNext()) {
-			Element el = (Element) it.next();
-			String strUn = el.getAttribute("unitId");
-
-			UnitValue uv = null;
-			if (strUn != null && !strUn.equals("")) {
-				uv = webSpringBean.getUnit(new Integer(strUn));
-			} else {
-				uv = webSpringBean.getUnit4ViewComponent(myVcl.getViewComponentId());
-				el.setAttribute("unitId", uv.getUnitId().toString());
-			}
-
-			Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(myVcl.getViewComponentId()).getViewDocumentId();
-			try {
-				String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
-				el.setAttribute("url", unitPath);
-			} catch (Exception exe) {
-			}
-
-			el.setAttribute("unitName", uv.getName());
-		}
-	}
-
-	/**
-	 * Method to create "Contact-Lists". <br/>This Contactlist will show all persons in one unit at the given Node
-	 * "unitMembersList" inside the content-xml. <br/>Will be called after generating the aggregations.
-	 *
-	 * @param document Document-Node of the content
-	 */
-	private void fillMembersList(Document document) {
-		try {
-			Integer siteId = siteValue.getSiteId();
-			Iterator it = XercesHelper.findNodes(document, "//membersList | //unitMembersList");
-			while (it.hasNext()) {
-				Element membersList = (Element) it.next();
-				if (log.isDebugEnabled()) log.debug("Found membersList");
-				/*
-				 * now we habe three modes: - no attributes, get actual unit -
-				 * unit attribute, get all from this unitId - surname attribute - lastname attribute
-				 */
-				Integer unitId = null;
-				String unitAttr = this.getAttribute(membersList, "unitId");
-				if (unitAttr == null || unitAttr.equalsIgnoreCase("")) {
-					unitId = unitValue.getUnitId();
-				} else if (unitAttr.equalsIgnoreCase("all")) {
-					unitId = null;
-				} else {
-					unitId = new Integer(unitAttr);
-				}
-				if (Integer.valueOf(0).equals(unitId)) {
-					return;
-				}
-
-				String surname = this.getAttribute(membersList, "surname");
-				if (surname == null || "".equalsIgnoreCase(surname)) {
-					surname = "*";
-				}
-				surname = surname.replaceAll("[*]", "%");
-
-				String lastname = this.getAttribute(membersList, "lastname");
-				if (lastname == null || "".equalsIgnoreCase(lastname)) {
-					lastname = "*";
-				}
-				lastname = lastname.replaceAll("[*]", "%");
-
-				String ml = webSpringBean.getMembersList(siteId, unitId, surname, lastname);
-
-				if (log.isDebugEnabled()) log.debug("Converting MembersList to XML");
-				try {
-					Document pdoc = XercesHelper.string2Dom(ml); //ml contains all
-					Node mlnde = document.importNode(pdoc.getFirstChild(), true);
-					membersList.getParentNode().replaceChild(mlnde, membersList);
-				} catch (Exception exe) {
-				}
-
-				if (log.isDebugEnabled()) log.debug("Finished MembersList");
-			} //end while
-		} catch (Exception exe) {
-			log.error("An error occured", exe);
-		}
-	}
-
-	private void fillUnitList(Document document) throws Exception {
-		Iterator it = XercesHelper.findNodes(document, "//unitList");
-		while (it.hasNext()) {
-			Element elm = (Element) it.next();
-			Document unitXmlDoc = XercesHelper.string2Dom(webSpringBean.getAllUnitsXml(siteValue.getSiteId()));
-			Iterator ui = XercesHelper.findNodes(unitXmlDoc, "//unit");
-			while (ui.hasNext()) {
-				Element unit = (Element) ui.next();
-				Node xd = document.importNode(unit, true);
-				elm.appendChild(xd);
-			}
-		}
-	}
-
-	private void solveInternalLinks(Document document) {
-		Iterator it = XercesHelper.findNodes(document, "//internalLink/internalLink");
-		while (it.hasNext()) {
-			Element elm = (Element) it.next();
-			Integer vcid = null;
-			try {
-				vcid = new Integer(elm.getAttribute("viewid"));
-				String path = webSpringBean.getPath4ViewComponent(vcid);
-				String lang = webSpringBean.getViewDocument4ViewComponentId(vcid).getLanguage();
-				Integer unitId = webSpringBean.getUnitIdForViewComponent(vcid);
-
-				elm.setAttribute("url", path);
-				elm.setAttribute("language", lang);
-				if (unitId != null) elm.setAttribute("unitid", unitId.toString());
-			} catch (Exception exe) {
-				log.info("Could not solve internalLink with vcid " + vcid + " in content of vcid " + this.viewComponentId + " (\"" + this.getPath4CurrentRequest() + "\")");
-			}
-		}
-	}
-
-	/**
-	 * Resolves Attributes from Nodenames. As required, it is possible to overwrite every Parameter with
-	 * request-parameters called: <br>
-	 * conquest-{nodename}-{attributename}
-	 *
-	 * @param node
-	 * @param attributeName
-	 * @return The Value
-	 */
-	private String getAttribute(Element node, String attributeName) {
-		String param = request.getParameter("conquest_" + node.getNodeName() + "_" + attributeName);
-		if (param == null || "".equalsIgnoreCase(param)) {
-			param = node.getAttribute(attributeName);
-		}
-		return param;
-	}
-
-	private String getPath4CurrentRequest() {
-		String result = this.path4ViewComponentCacheMap.get(this.viewComponentId);
-		if (result == null) {
-			String requestPath = "";
-			String requestLang = "";
-			try {
-				requestLang = webSpringBean.getViewDocument4ViewComponentId(this.viewComponentId).getLanguage();
-			} catch (Exception e) {
-			}
-			try {
-				requestPath = webSpringBean.getPath4ViewComponent(this.viewComponentId);
-			} catch (Exception e) {
-			}
-			result = this.siteValue.getShortName() + "/" + requestLang + "/" + requestPath;
-			this.path4ViewComponentCacheMap.put(this.viewComponentId, result);
-		}
-
-		return result;
-	}
 }
