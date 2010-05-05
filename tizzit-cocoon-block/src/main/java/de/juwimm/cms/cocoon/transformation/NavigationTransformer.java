@@ -6,11 +6,8 @@ package de.juwimm.cms.cocoon.transformation;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -18,19 +15,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.SAXParser;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.avalon.excalibur.pool.Recyclable;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.avalon.framework.service.ServiceManager;
 import org.apache.cocoon.ProcessingException;
-import org.apache.cocoon.ResourceNotFoundException;
 import org.apache.cocoon.components.source.SourceUtil;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Request;
@@ -48,7 +37,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -462,101 +450,83 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			}
 	 */
 
-	private String documentToString(Node node) {
-		try {
-			javax.xml.transform.Source source = new DOMSource(node);
-			StringWriter stringWriter = new StringWriter();
-			Result result = new StreamResult(stringWriter);
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Transformer transformer = factory.newTransformer();
-			transformer.transform(source, result);
-			return stringWriter.getBuffer().toString();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public Document generate() throws SAXException, ProcessingException {
-		if (log.isDebugEnabled()) log.debug("begin generate");
-		if (viewComponentId == null) {
-			throw new ResourceNotFoundException("Could not find " + request.getRequestURI());
-		}
-
-		Document doc = null;
-		InputSource in = null;
-
-		if (this.inputSource != null) {
-			if (log.isDebugEnabled()) log.debug("loading xml from file");
-			try {
-				in = new InputSource(this.inputSource.getInputStream());
-			} catch (Exception exe) {
-			}
-		} else {
-			if (log.isDebugEnabled()) log.debug("loading xml from database");
-			try {
-				//	String content = webService.getContent(viewComponentId, iAmTheLiveserver);
-				if (cacheLogger.isDebugEnabled()) {
-					cacheLogger.debug("generating content at " + sdf.format(new Date()));
-				}
-				String content = webSpringBean.getContent(viewComponentId, iAmTheLiveserver);
-				//	enterlogger.debug(content);
-				in = new InputSource(new StringReader(content));
-			} catch (Exception exe) {
-				log.warn("Error getting content for \"" + this.requestUrl + "\": " + exe.getMessage(), exe);
-			}
-		}
-		if (in == null) {
-			throw new ResourceNotFoundException("Could not find resource with ");
-		}
-		try {
-			doc = XercesHelper.inputSource2Dom(in);
-		} catch (Exception exe) {
-			throw new ProcessingException("Error parsing the content", exe);
-		}
-
-		try {
-			//			if (!disableContentInclude) {
-			//				this.fillContentInclude(doc);
-			//				this.fillTeaserInclude(doc);
-			//			}
-			//			if (!disableUnitInformation) // has to be before fulltext, because fulltext will fill its own
-			//				this.fillUnitInformation(doc, null);
-			//			if (!disableFulltext) // has to be at the beginning, because it can contain other tags as well
-			//				this.fillFulltext(doc);
-			//			if (!disableMeta) this.fillMeta(doc);
-			//			if (!disableHeadLine) this.fillHeadLine(doc);
-			//			if (!disableAggregations) this.fillAggregations(doc);
-			//			if (!disableMembersList) this.fillMembersList(doc);
-			//			if (!disableUnitList) // im filling also unitInformations
-			//				this.fillUnitList(doc);
-			//			if (!disableInternalLinks) this.solveInternalLinks(doc);
-			if (!disableNavigation) this.fillNavigation(doc);
-			if (!disableNavigationBackward) this.fillNavigationBackward(doc);
-			if (!disableLanguageVersions) this.fillLanguageVersions(doc);
-		} catch (Exception e) {
-			String errMsg = "An error occured while processing the content";
-			log.error(errMsg, e);
-			throw new ProcessingException(errMsg, e);
-		}
-		//		if (doc != null && contentHandler != null) {
-		//			if (log.isDebugEnabled()) log.debug("start streaming to sax");
-		//			try {
-		//				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginManagement, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
-		//				contentHandlerWrapper.startDocument();
-		//				DOMStreamer ds = new DOMStreamer(contentHandlerWrapper);
-		//				ds.stream(doc.getDocumentElement());
-		//				contentHandlerWrapper.endDocument();
-		//			} catch (Exception exe) {
-		//				log.error("An error occured", exe);
-		//			}
-		//		}
-		if (log.isDebugEnabled()) log.debug("end generate");
-		return doc;
-	}
-
+	//	public Document generate() throws SAXException, ProcessingException {
+	//		if (log.isDebugEnabled()) log.debug("begin generate");
+	//		if (viewComponentId == null) {
+	//			throw new ResourceNotFoundException("Could not find " + request.getRequestURI());
+	//		}
+	//
+	//		Document doc = null;
+	//		InputSource in = null;
+	//
+	//		if (this.inputSource != null) {
+	//			if (log.isDebugEnabled()) log.debug("loading xml from file");
+	//			try {
+	//				in = new InputSource(this.inputSource.getInputStream());
+	//			} catch (Exception exe) {
+	//			}
+	//		} else {
+	//			if (log.isDebugEnabled()) log.debug("loading xml from database");
+	//			try {
+	//				//	String content = webService.getContent(viewComponentId, iAmTheLiveserver);
+	//				if (cacheLogger.isDebugEnabled()) {
+	//					cacheLogger.debug("generating content at " + sdf.format(new Date()));
+	//				}
+	//				String content = webSpringBean.getContent(viewComponentId, iAmTheLiveserver);
+	//				//	enterlogger.debug(content);
+	//				in = new InputSource(new StringReader(content));
+	//			} catch (Exception exe) {
+	//				log.warn("Error getting content for \"" + this.requestUrl + "\": " + exe.getMessage(), exe);
+	//			}
+	//		}
+	//		if (in == null) {
+	//			throw new ResourceNotFoundException("Could not find resource with ");
+	//		}
+	//		try {
+	//			doc = XercesHelper.inputSource2Dom(in);
+	//		} catch (Exception exe) {
+	//			throw new ProcessingException("Error parsing the content", exe);
+	//		}
+	//
+	//		try {
+	//			//			if (!disableContentInclude) {
+	//			//				this.fillContentInclude(doc);
+	//			//				this.fillTeaserInclude(doc);
+	//			//			}
+	//			//			if (!disableUnitInformation) // has to be before fulltext, because fulltext will fill its own
+	//			//				this.fillUnitInformation(doc, null);
+	//			//			if (!disableFulltext) // has to be at the beginning, because it can contain other tags as well
+	//			//				this.fillFulltext(doc);
+	//			//			if (!disableMeta) this.fillMeta(doc);
+	//			//			if (!disableHeadLine) this.fillHeadLine(doc);
+	//			//			if (!disableAggregations) this.fillAggregations(doc);
+	//			//			if (!disableMembersList) this.fillMembersList(doc);
+	//			//			if (!disableUnitList) // im filling also unitInformations
+	//			//				this.fillUnitList(doc);
+	//			//			if (!disableInternalLinks) this.solveInternalLinks(doc);
+	//			if (!disableNavigation) this.fillNavigation(doc);
+	//			if (!disableNavigationBackward) this.fillNavigationBackward(doc);
+	//			if (!disableLanguageVersions) this.fillLanguageVersions(doc);
+	//		} catch (Exception e) {
+	//			String errMsg = "An error occured while processing the content";
+	//			log.error(errMsg, e);
+	//			throw new ProcessingException(errMsg, e);
+	//		}
+	//		//		if (doc != null && contentHandler != null) {
+	//		//			if (log.isDebugEnabled()) log.debug("start streaming to sax");
+	//		//			try {
+	//		//				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginManagement, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
+	//		//				contentHandlerWrapper.startDocument();
+	//		//				DOMStreamer ds = new DOMStreamer(contentHandlerWrapper);
+	//		//				ds.stream(doc.getDocumentElement());
+	//		//				contentHandlerWrapper.endDocument();
+	//		//			} catch (Exception exe) {
+	//		//				log.error("An error occured", exe);
+	//		//			}
+	//		//		}
+	//		if (log.isDebugEnabled()) log.debug("end generate");
+	//		return doc;
+	//	}
 	/**
 	 * creates langName and langUrl Elements under languageVersions Element
 	 */
