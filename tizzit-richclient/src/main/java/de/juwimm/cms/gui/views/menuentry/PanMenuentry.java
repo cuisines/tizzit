@@ -512,11 +512,13 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 			} else {
 				this.chkOpenNewNavi.setSelected(false);
 			}
+			/* we need the checkbox in the first level, too
 			if (viewComponent.isFirstLevel()) {
 				this.chkOpenNewNavi.setEnabled(false);
 			} else {
 				this.chkOpenNewNavi.setEnabled(true);
 			}
+			*/
 		} else {
 			if (communication.isUserInRole(UserRights.PAGE_OPEN_NEW_NAVIGATION)) {
 				this.chkOpenNewNavi.setVisible(false);
