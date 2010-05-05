@@ -7,7 +7,6 @@ package de.juwimm.cms.cocoon.transformation;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,12 +17,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.parsers.SAXParser;
-import javax.xml.transform.Result;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.avalon.excalibur.pool.Recyclable;
 import org.apache.avalon.framework.parameters.Parameters;
@@ -36,7 +29,6 @@ import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.Response;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
-import org.apache.cocoon.transformation.Transformer;
 import org.apache.cocoon.webapps.session.ContextManager;
 import org.apache.cocoon.webapps.session.context.SessionContext;
 import org.apache.excalibur.source.Source;
@@ -346,30 +338,13 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 
 			try {
 				Document doc = this.generate();
-				String docString = documentToString(doc);
+				String docString = XercesHelper.node2string(doc);
 				SAXHelper.string2sax(docString, this);
 			} catch (ProcessingException e) {
 				if (log.isDebugEnabled()) log.debug("Error while generating output ", e);
 			}
 
 		}
-	}
-
-	private String documentToString(Node node) {
-		try {
-			javax.xml.transform.Source source = new DOMSource(node);
-			StringWriter stringWriter = new StringWriter();
-			Result result = new StreamResult(stringWriter);
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Transformer transformer = (Transformer) factory.newTransformer();
-			((javax.xml.transform.Transformer) transformer).transform(source, result);
-			return stringWriter.getBuffer().toString();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public Document generate() throws SAXException, ProcessingException {

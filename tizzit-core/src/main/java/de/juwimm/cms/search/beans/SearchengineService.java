@@ -402,15 +402,15 @@ public class SearchengineService {
 			int endIndex = ((startIndex + pageSize) > hitVector.size()) ? (startIndex + pageSize) : hitVector.size();
 			if (log.isDebugEnabled()) log.debug("returning results to index: " + endIndex);
 
-			hits = new CompassHit[endIndex - startIndex];
+			hits = new CompassHit[hitVector.size()];
 			hitVector.toArray(hits);
 			for (int i = startIndex; i < endIndex; i++) {
-				String alias = hitVector.get(i).getAlias();
-				Resource resource = hitVector.get(i).getResource();
+				String alias = hits[i].getAlias();
+				Resource resource = hits[i].getResource();
 				SearchResultValue retVal = new SearchResultValue();
-				retVal.setScore((int) (hitVector.get(i).getScore() * 100.0f));
+				retVal.setScore((int) (hits[i].getScore() * 100.0f));
 				//CompassHighlightedText text = hits[i].getHighlightedText();
-				retVal.setSummary(stripNonValidXMLCharacters(hitVector.get(i).getHighlightedText().getHighlightedText("contents")));
+				retVal.setSummary(stripNonValidXMLCharacters(hits[i].getHighlightedText().getHighlightedText("contents")));
 				retVal.setUnitId(new Integer(resource.getProperty("unitId").getStringValue()));
 				retVal.setUnitName(resource.getProperty("unitName").getStringValue());
 				retVal.setPageSize(pageSize);
