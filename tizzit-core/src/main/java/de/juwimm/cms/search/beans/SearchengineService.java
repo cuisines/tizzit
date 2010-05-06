@@ -400,7 +400,7 @@ public class SearchengineService {
 			// calculate the page and results to return
 			int startIndex = (pageNumber == 0) ? 0 : (pageNumber + 1) * pageSize;
 			if (log.isDebugEnabled()) log.debug("returning results for page: " + pageNumber + " - from index: " + startIndex);
-			int endIndex = ((startIndex + pageSize) > hitVector.size()) ? (startIndex + pageSize) : hitVector.size();
+			int endIndex = ((startIndex + pageSize) < hitVector.size()) ? (startIndex + pageSize) : hitVector.size();
 			if (log.isDebugEnabled()) log.debug("returning results to index: " + endIndex);
 
 			hits = new CompassHit[hitVector.size()];
