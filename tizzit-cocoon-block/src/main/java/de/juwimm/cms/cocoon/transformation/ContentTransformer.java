@@ -151,7 +151,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " found " + attrs.getLength() + " attributes");
+		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " at Uri: " + uri + " found " + attrs.getLength() + " attributes");
 		if (localName.equals("contentInclude")) {
 			inContentInclude = true;
 			contentHandler.startElement(uri, localName, qName, attrs);
@@ -212,7 +212,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 	 */
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (log.isDebugEnabled()) log.debug("endElement: " + localName);
+		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " at URI: " + uri);
 		if (localName.equals("contentInclude")) {
 			inContentInclude = false;
 			contentSearchBy = null;
