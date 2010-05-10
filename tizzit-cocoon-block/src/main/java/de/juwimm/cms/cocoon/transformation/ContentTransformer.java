@@ -154,7 +154,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " found " + attrs.getLength() + " attributes");
 		if (localName.equals("contentInclude")) {
 			inContentInclude = true;
-			super.startElement(uri, localName, qName, attrs);
+			contentHandler.startElement(uri, localName, qName, attrs);
 		} else if ((localName.equals("byViewComponent") || localName.equals("byUnit")) && inContentInclude) {
 			contentSearchBy = localName;
 		}
@@ -173,7 +173,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 				if (log.isDebugEnabled()) log.debug("error in charactersFillContentInclude ", e);
 			}
 		} else {
-			super.characters(ch, start, length);
+			contentHandler.characters(ch, start, length);
 		}
 	}
 
@@ -201,7 +201,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 			Document unitXmlDoc = XercesHelper.string2Dom(webSpringBean.getIncludeContent(viewComponentId, contentSearchBy.contains("unit"), value, iAmTheLiveserver, xPathQuery));
 			String result;
 			result = XercesHelper.doc2String(unitXmlDoc);
-			super.characters(result.toCharArray(), 0, result.length());
+			contentHandler.characters(result.toCharArray(), 0, result.length());
 		} catch (Exception e) {
 			log.warn("Error getting includeContent: " + e.getMessage(), e);
 		}
@@ -219,7 +219,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 		} else if ((localName.compareToIgnoreCase("byUnit") == 0 && inContentInclude) || (localName.compareToIgnoreCase("byViewComponent") == 0 && inContentInclude)) {
 			return;
 		}
-		super.endElement(uri, localName, qName);
+		contentHandler.endElement(uri, localName, qName);
 	}
 
 	//	public Document generate() throws SAXException, ProcessingException {
