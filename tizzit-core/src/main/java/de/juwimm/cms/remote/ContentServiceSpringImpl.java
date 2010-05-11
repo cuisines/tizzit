@@ -1980,15 +1980,15 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			while (vdIt.hasNext()) {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) vdIt.next();
 				//getViewComponentHbmDao().toXml(vdl.getViewComponent(), edition.getUnitId(), true, false, -1, false, false, out);
-				getViewComponentHbmDao().toXml(vdl.getViewComponent(), edition.getUnitId(), true, true, true, false, -1, false, false, out);
+				getViewComponentHbmDao().toXml(vdl.getViewComponent(), edition.getUnitId(), true, true, true, false, -1, false, false, Constants.DEPLOY_TYPE_ROOT, out);
 				// get all VC's with UnitID in this VD and deploy them too
-				Iterator vcIt = getViewComponentHbmDao().findAllWithUnit(vdl.getViewDocumentId()).iterator();
-				while (vcIt.hasNext()) {
-					ViewComponentHbm vc = (ViewComponentHbm) vcIt.next();
-					if (vc.getAssignedUnit().getUnitId().compareTo(edition.getUnitId()) != 0) {
-						getViewComponentHbmDao().toXml(vc, null, false, false, 0, false, false, out);
-					}
-				}
+				//				Iterator vcIt = getViewComponentHbmDao().findAllWithUnit(vdl.getViewDocumentId()).iterator();
+				//				while (vcIt.hasNext()) {
+				//					ViewComponentHbm vc = (ViewComponentHbm) vcIt.next();
+				//					if (vc.getAssignedUnit().getUnitId().compareTo(edition.getUnitId()) != 0) {
+				//						getViewComponentHbmDao().toXml(vc, null, false, false, 0, false, false, out);
+				//					}
+				//				}
 			}
 
 			out.println("</edition>");

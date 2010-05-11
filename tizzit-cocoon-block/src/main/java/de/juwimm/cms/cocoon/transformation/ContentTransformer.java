@@ -219,7 +219,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 		} else if ((localName.compareToIgnoreCase("byUnit") == 0 && inContentInclude) || (localName.compareToIgnoreCase("byViewComponent") == 0 && inContentInclude)) {
 			return;
 		}
-		super.endElement(uri, localName, qName);
+		//super.endElement(uri, localName, qName);
 	}
 
 	//	public Document generate() throws SAXException, ProcessingException {

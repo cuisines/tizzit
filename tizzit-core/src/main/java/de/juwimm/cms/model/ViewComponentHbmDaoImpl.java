@@ -84,14 +84,19 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return retVal;
 	}
 
+	/**
+	 * @param isDeploy - Constants.Deploy_type
+	 * 	
+	 */
 	@Override
-	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, boolean isDeploy, PrintStream out) {
+	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, int deployType, PrintStream out) {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
 
 		// if it's a deploy - the status has to be 'approved' and will be set to 'for_deploy'
-		if (isDeploy) {
+		if (deployType != -1) {
 			if (current.getStatus() == Constants.DEPLOY_STATUS_APPROVED) {
 				current.setStatus(Constants.DEPLOY_STATUS_FOR_DEPLOY);
+				this.update(current);
 			} else {
 				return;
 			}
@@ -253,11 +258,11 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				Iterator it = coll.iterator();
 				while (it.hasNext()) {
 					ViewComponentHbm vcl = (ViewComponentHbm) it.next();
-					if (onlyThisUnitId == null || onlyThisUnitId.equals(vcl.getUnit4ViewComponent())) {
+					if (onlyThisUnitId == null || onlyThisUnitId.equals(vcl.getUnit4ViewComponent()) || (deployType == Constants.DEPLOY_TYPE_ROOT && !vcl.getUnit4ViewComponent().equals(vcl.getParent().getUnit4ViewComponent()))) {
 						if (!returnOnlyVisibleOne || this.shouldBeVisible(vcl, liveServer)) {
 							int destDepth = depth - 1;
 							if (depth == -1) destDepth = -1;
-							this.toXml(vcl, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, destDepth, liveServer, returnOnlyVisibleOne, out);
+							this.toXml(vcl, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, destDepth, liveServer, returnOnlyVisibleOne, deployType, out);
 						}
 					} else {
 						// This is outside the specified unit. Therefor do nothing with it and look for the next fitting
@@ -277,8 +282,8 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	 */
 	@Override
 	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, PrintStream out) {
-		boolean isDeploy = false;
-		this.toXml(current, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, depth, liveServer, returnOnlyVisibleOne, isDeploy, out);
+		int deployType = -1;
+		this.toXml(current, onlyThisUnitId, withContent, lastContenVersionOnly, withSiteProtection, withUrl, depth, liveServer, returnOnlyVisibleOne, deployType, out);
 	}
 
 	@Override

@@ -233,7 +233,8 @@ public class EditionCronService {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	///@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void cronEditionDeploy() throws Exception {
 		if (cronEditionDeployIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
@@ -263,6 +264,7 @@ public class EditionCronService {
 				UserHbm creator = edition.getCreator();
 				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
+				edition.setNeedsDeploy(false);
 				if (edFile != null) {
 					edFile.delete();
 				}
