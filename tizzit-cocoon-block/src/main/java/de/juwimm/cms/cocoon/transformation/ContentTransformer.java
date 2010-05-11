@@ -151,10 +151,10 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " at Uri: " + uri + " found " + attrs.getLength() + " attributes");
+		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
 		if (localName.equals("contentInclude")) {
 			inContentInclude = true;
-			contentHandler.startElement(uri, localName, qName, attrs);
+			super.startElement(uri, localName, qName, attrs);
 		} else if ((localName.equals("byViewComponent") || localName.equals("byUnit")) && inContentInclude) {
 			contentSearchBy = localName;
 		}
@@ -173,7 +173,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 				if (log.isDebugEnabled()) log.debug("error in charactersFillContentInclude ", e);
 			}
 		} else {
-			contentHandler.characters(ch, start, length);
+			super.characters(ch, start, length);
 		}
 	}
 
@@ -212,14 +212,14 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 	 */
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " at URI: " + uri);
+		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
 		if (localName.equals("contentInclude")) {
 			inContentInclude = false;
 			contentSearchBy = null;
 		} else if ((localName.compareToIgnoreCase("byUnit") == 0 && inContentInclude) || (localName.compareToIgnoreCase("byViewComponent") == 0 && inContentInclude)) {
 			return;
 		}
-		contentHandler.endElement(uri, localName, qName);
+		super.endElement(uri, localName, qName);
 	}
 
 	//	public Document generate() throws SAXException, ProcessingException {
