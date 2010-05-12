@@ -157,6 +157,8 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 			super.startElement(uri, localName, qName, attrs);
 		} else if ((localName.equals("byViewComponent") || localName.equals("byUnit")) && inContentInclude) {
 			contentSearchBy = localName;
+		} else {
+			super.startElement(uri, localName, qName, attrs);
 		}
 	}
 
@@ -216,10 +218,12 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 		if (localName.equals("contentInclude")) {
 			inContentInclude = false;
 			contentSearchBy = null;
+			super.endElement(uri, localName, qName);
 		} else if ((localName.compareToIgnoreCase("byUnit") == 0 && inContentInclude) || (localName.compareToIgnoreCase("byViewComponent") == 0 && inContentInclude)) {
-			return;
+			
+		} else{
+			super.endElement(uri, localName, qName);
 		}
-		//super.endElement(uri, localName, qName);
 	}
 
 	//	public Document generate() throws SAXException, ProcessingException {
