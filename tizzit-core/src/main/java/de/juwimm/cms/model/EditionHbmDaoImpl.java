@@ -20,7 +20,6 @@
  */
 package de.juwimm.cms.model;
 
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.GZIPOutputStream;
 
 import javax.ejb.CreateException;
 
@@ -46,8 +44,6 @@ import de.juwimm.cms.safeguard.model.RealmJaasHbm;
 import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
 import de.juwimm.cms.safeguard.model.RealmLdapHbm;
 import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
-import de.juwimm.cms.util.EditionSliceInputStream;
-import de.juwimm.cms.util.EditionSliceOutputStream;
 
 /**
  * @see de.juwimm.cms.model.EditionHbm
@@ -77,17 +73,6 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 	private EditionHbm postCreate(EditionHbm edition, String comment, Integer rootViewComponentId, PrintStream out, boolean includeUnused) throws CreateException {
 		if (log.isDebugEnabled()) log.debug("Postcreating Edition");
 		if (rootViewComponentId != null) {
-			EditionSliceOutputStream byteOut = null;
-			if (out == null) { //if no Stream was submitted, create out own and store in DB at least.
-				try {
-					byteOut = new EditionSliceOutputStream(edition, null);
-					GZIPOutputStream gzOut = new GZIPOutputStream(byteOut);
-					out = new PrintStream(gzOut, true, "UTF-8");
-				} catch (Exception exe) {
-					log.error("Could not create GZIPOutputStream because of: " + exe.getMessage());
-					throw new javax.ejb.CreateException(exe.getMessage());
-				}
-			}
 			try {
 				UserHbm creator = getUserHbmDao().load(AuthenticationHelper.getUserName());
 				edition.setCreator(creator);
@@ -316,11 +301,6 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 			log.error("Error occured", exe);
 		}
 		out.println("\t</documents>");
-	}
-
-	@Override
-	protected InputStream handleGetEditionDataRaw(EditionHbm edition) throws Exception {
-		return new EditionSliceInputStream(edition.getEditionId(), null);
 	}
 
 	@Override
