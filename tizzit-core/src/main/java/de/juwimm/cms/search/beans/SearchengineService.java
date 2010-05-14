@@ -326,6 +326,8 @@ public class SearchengineService {
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
 		if (log.isDebugEnabled()) log.debug("searchurl is: " + searchUrl);
 		if (log.isDebugEnabled()) log.debug("searchItem is: " + searchItem);
+		if (log.isDebugEnabled()) log.debug("SonderZeicheVergleich (ae, oe, ue): ä ö ü");
+
 		try {
 
 			if (log.isDebugEnabled()) {
