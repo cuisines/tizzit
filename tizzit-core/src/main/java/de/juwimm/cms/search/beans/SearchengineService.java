@@ -324,15 +324,11 @@ public class SearchengineService {
 		Vector<SearchResultValue> retArr = new Vector<SearchResultValue>();
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
-		if (log.isDebugEnabled()) log.debug("searchurl is: " + searchUrl);
-		if (log.isDebugEnabled()) log.debug("searchItem is: " + searchItem);
-		if (log.isDebugEnabled()) log.debug("SonderZeicheVergleich (ae, oe, ue): ä ö ü");
 
 		try {
-
-			if (log.isDebugEnabled()) {
-				log.debug("search for: \"" + searchItem + "\"");
-			}
+			if (log.isDebugEnabled()) log.debug("searchurl is: " + searchUrl);
+			if (log.isDebugEnabled()) log.debug("search for: \"" + searchItem + "\"");
+			if (log.isDebugEnabled()) log.debug("SonderZeicheVergleich (ae, oe, ue): ä ö ü");
 
 			//TODO: find calls of searchWeb and ADD exception handling 
 			//special chars with a meaning in Lucene have to be escaped - there is a mechanism for
@@ -515,11 +511,17 @@ public class SearchengineService {
 			if (i == (searchFields.length - 1) && searchUrl != null) {
 				searchItem = searchItem + " " + searchUrl;
 			}
+			if (log.isDebugEnabled()) {
+				log.debug("wildcart query string: " + searchItem);
+			}
 			parser = new QueryParser(searchFields[i], analyzer);
 			parser.setAllowLeadingWildcard(true);
 			query = parser.parse(searchItem);
+			if (log.isDebugEnabled()) log.debug("wildcart query part: " + query.toString());
 			query = query.rewrite(ir);
 			query.setBoost(searchFields.length - i);
+			if (log.isDebugEnabled()) log.debug("wildcart query part - rewritten: " + query.toString());
+
 			subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
 		}
 		queryBuilder.addMust(subQueryBuilder.toQuery());
