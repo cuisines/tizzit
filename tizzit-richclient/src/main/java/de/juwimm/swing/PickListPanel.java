@@ -22,7 +22,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -39,13 +44,13 @@ public class PickListPanel extends JPanel implements ActionListener {
 	private PickListData data = null;
 	private boolean isEnabled = false;
 	private boolean manuallySortable = false;
-	
-    private static final String ACTION_MOVE_ALL_RIGHT = "ACTION_MOVE_ALL_RIGHT";
-    private static final String ACTION_MOVE_RIGHT = "ACTION_MOVE_RIGHT";
-    private static final String ACTION_MOVE_ALL_LEFT = "ACTION_MOVE_ALL_LEFT";
-    private static final String ACTION_MOVE_LEFT = "ACTION_MOVE_LEFT";
-    private static final String ACTION_MOVE_UP = "ACTION_MOVE_UP";
-    private static final String ACTION_MOVE_DOWN = "ACTION_MOVE_DOWN";
+
+	private static final String ACTION_MOVE_ALL_RIGHT = "ACTION_MOVE_ALL_RIGHT";
+	private static final String ACTION_MOVE_RIGHT = "ACTION_MOVE_RIGHT";
+	private static final String ACTION_MOVE_ALL_LEFT = "ACTION_MOVE_ALL_LEFT";
+	private static final String ACTION_MOVE_LEFT = "ACTION_MOVE_LEFT";
+	private static final String ACTION_MOVE_UP = "ACTION_MOVE_UP";
+	private static final String ACTION_MOVE_DOWN = "ACTION_MOVE_DOWN";
 
 	private JPanel panExchangeButtons = null;
 	private JButton btnMoveLeft = null;
@@ -65,18 +70,18 @@ public class PickListPanel extends JPanel implements ActionListener {
 		super();
 		initialize();
 	}
-	
+
 	public PickListPanel(PickListData pickListData) {
 		this(pickListData, false);
 	}
-	
+
 	public PickListPanel(PickListData pickListData, boolean manuallySortable) {
 		super();
 		this.data = pickListData;
 		this.manuallySortable = manuallySortable;
 		initialize();
 	}
-	
+
 	private void initialize() {
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints panConstraints = new GridBagConstraints();
@@ -129,7 +134,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		this.add(lblRightArea, lbAvailableConstraints);
 		this.add(getSpRight(), lstAvailConstraints);
 	}
-	
+
 	private JPanel getPanExchangeButtons() {
 		if (panExchangeButtons == null) {
 			java.awt.GridBagConstraints btnRemoveAllConstraints = new GridBagConstraints();
@@ -174,7 +179,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 				sortingPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
 				sortingPanelConstraints.fill = GridBagConstraints.HORIZONTAL;
 				sortingPanelConstraints.insets = new Insets(5, 5, 0, 5);
-				
+
 				GridBagConstraints btnUpConstraints = new GridBagConstraints();
 				GridBagConstraints btnDownConstraints = new GridBagConstraints();
 				btnUpConstraints.gridx = 0;
@@ -193,7 +198,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return panExchangeButtons;
 	}
-	
+
 	private JButton getBtnMoveLeft() {
 		if (btnMoveLeft == null) {
 			btnMoveLeft = new JButton();
@@ -204,7 +209,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return btnMoveLeft;
 	}
-	
+
 	private JButton getBtnMoveAllLeft() {
 		if (btnMoveAllLeft == null) {
 			btnMoveAllLeft = new JButton();
@@ -215,7 +220,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return btnMoveAllLeft;
 	}
-	
+
 	private JButton getBtnMoveRight() {
 		if (btnMoveRight == null) {
 			btnMoveRight = new JButton();
@@ -226,6 +231,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return btnMoveRight;
 	}
+
 	private JButton getBtnMoveAllRight() {
 		if (btnMoveAllRight == null) {
 			btnMoveAllRight = new JButton();
@@ -236,7 +242,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return btnMoveAllRight;
 	}
-	
+
 	private JButton getBtnUp() {
 		if (this.btnUp == null) {
 			this.btnUp = new JButton();
@@ -253,7 +259,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return this.btnUp;
 	}
-	
+
 	private JButton getBtnDown() {
 		if (this.btnDown == null) {
 			this.btnDown = new JButton();
@@ -271,60 +277,60 @@ public class PickListPanel extends JPanel implements ActionListener {
 		return this.btnDown;
 	}
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-    	String cmd = e.getActionCommand();
-    	if (PickListPanel.ACTION_MOVE_LEFT.equalsIgnoreCase(cmd)) {
-    		// add new item
-    		Object[] selectedItems = lstRight.getSelectedValues();
-    		for (int i = (selectedItems.length - 1); i >= 0; i--) {
-    			this.data.getLstLeftModel().addElement(selectedItems[i]);
-    			this.data.getLstRightModel().removeElement(selectedItems[i]);
-    		}
-    		this.disableButtons();
-    		this.data.setModified(true);
-    	} else if (PickListPanel.ACTION_MOVE_ALL_LEFT.equalsIgnoreCase(cmd)) {
-    		// add all items
-    		for (int i = (this.data.getLstRightModel().getSize() - 1); i >= 0; i--) {
-    			Object current = this.data.getLstRightModel().getElementAt(i);
-    			this.data.getLstLeftModel().addElement(current);
-    			this.data.getLstRightModel().removeElement(current);
-    		}
-    		this.disableButtons();
-    		this.data.setModified(true);
-    	} else if (PickListPanel.ACTION_MOVE_RIGHT.equalsIgnoreCase(cmd)) {
-    		// remove item
-    		Object[] selectedItems = lstLeft.getSelectedValues();
-    		for (int i = (selectedItems.length - 1); i >= 0; i--) {
-    			this.data.getLstRightModel().addElement(selectedItems[i]);
-    			this.data.getLstLeftModel().removeElement(selectedItems[i]);
-    		}
-    		this.disableButtons();
-    		this.data.setModified(true);
-    	} else if (PickListPanel.ACTION_MOVE_ALL_RIGHT.equalsIgnoreCase(cmd)) {
-    		// remove all items
-    		for (int i = (this.data.getLstLeftModel().getSize() - 1); i >= 0; i--) {
-    			Object current = this.data.getLstLeftModel().getElementAt(i);
-    			this.data.getLstRightModel().addElement(current);
-    			this.data.getLstLeftModel().removeElement(current);
-    		}
-    		this.disableButtons();
-    		this.data.setModified(true);
-    	} else if (PickListPanel.ACTION_MOVE_UP.equalsIgnoreCase(cmd)) {
-    		if (this.manuallySortable) {
-    			if (this.lstLeft.isSelectionEmpty()) {
-    				if (!this.lstRight.isSelectionEmpty()) {
-    					moveItemUp(this.lstRight);
-    				}
-    			} else if (this.lstRight.isSelectionEmpty()) {
-    				if (!this.lstLeft.isSelectionEmpty()) {
-    					moveItemUp(this.lstLeft);
-    				}
-    			}
-    		}
-    	} else if (PickListPanel.ACTION_MOVE_DOWN.equalsIgnoreCase(cmd)) {
+	/* (non-Javadoc)
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand();
+		if (PickListPanel.ACTION_MOVE_LEFT.equalsIgnoreCase(cmd)) {
+			// add new item
+			Object[] selectedItems = lstRight.getSelectedValues();
+			for (int i = (selectedItems.length - 1); i >= 0; i--) {
+				this.data.getLstLeftModel().addElement(selectedItems[i]);
+				this.data.getLstRightModel().removeElement(selectedItems[i]);
+			}
+			this.disableButtons();
+			this.data.setModified(true);
+		} else if (PickListPanel.ACTION_MOVE_ALL_LEFT.equalsIgnoreCase(cmd)) {
+			// add all items
+			for (int i = (this.data.getLstRightModel().getSize() - 1); i >= 0; i--) {
+				Object current = this.data.getLstRightModel().getElementAt(i);
+				this.data.getLstLeftModel().addElement(current);
+				this.data.getLstRightModel().removeElement(current);
+			}
+			this.disableButtons();
+			this.data.setModified(true);
+		} else if (PickListPanel.ACTION_MOVE_RIGHT.equalsIgnoreCase(cmd)) {
+			// remove item
+			Object[] selectedItems = lstLeft.getSelectedValues();
+			for (int i = (selectedItems.length - 1); i >= 0; i--) {
+				this.data.getLstRightModel().addElement(selectedItems[i]);
+				this.data.getLstLeftModel().removeElement(selectedItems[i]);
+			}
+			this.disableButtons();
+			this.data.setModified(true);
+		} else if (PickListPanel.ACTION_MOVE_ALL_RIGHT.equalsIgnoreCase(cmd)) {
+			// remove all items
+			for (int i = (this.data.getLstLeftModel().getSize() - 1); i >= 0; i--) {
+				Object current = this.data.getLstLeftModel().getElementAt(i);
+				this.data.getLstRightModel().addElement(current);
+				this.data.getLstLeftModel().removeElement(current);
+			}
+			this.disableButtons();
+			this.data.setModified(true);
+		} else if (PickListPanel.ACTION_MOVE_UP.equalsIgnoreCase(cmd)) {
+			if (this.manuallySortable) {
+				if (this.lstLeft.isSelectionEmpty()) {
+					if (!this.lstRight.isSelectionEmpty()) {
+						moveItemUp(this.lstRight);
+					}
+				} else if (this.lstRight.isSelectionEmpty()) {
+					if (!this.lstLeft.isSelectionEmpty()) {
+						moveItemUp(this.lstLeft);
+					}
+				}
+			}
+		} else if (PickListPanel.ACTION_MOVE_DOWN.equalsIgnoreCase(cmd)) {
 			if (this.manuallySortable) {
 				if (this.lstLeft.isSelectionEmpty()) {
 					if (!this.lstRight.isSelectionEmpty()) {
@@ -335,38 +341,38 @@ public class PickListPanel extends JPanel implements ActionListener {
 						moveItemDown(this.lstLeft);
 					}
 				}
-			}    		
-    	}
-    }
-    
-    private void moveItemDown(JList list) {
-    	if (list.getSelectedIndices().length > 1) {
-    		list.setSelectedIndex(list.getSelectedIndex());
-    		return;
-    	}
-    	AbstractPickListModel listModel = (AbstractPickListModel) list.getModel();
+			}
+		}
+	}
+
+	private void moveItemDown(JList list) {
+		if (list.getSelectedIndices().length > 1) {
+			list.setSelectedIndex(list.getSelectedIndex());
+			return;
+		}
+		AbstractPickListModel listModel = (AbstractPickListModel) list.getModel();
 		// erster Index, falls mehrere Items selektiert waren
 		int selectedId = list.getSelectedIndex();
 		Object lower = listModel.getElementAt(selectedId + 1);
 		listModel.setElementAt(listModel.getElementAt(selectedId), selectedId + 1);
 		listModel.setElementAt(lower, selectedId);
 		list.setSelectedIndex(selectedId + 1);
-    }
-    
-    private void moveItemUp(JList list) {
-    	if (list.getSelectedIndices().length > 1) {
-    		list.setSelectedIndex(list.getSelectedIndex());
-    		return;
-    	}
-    	AbstractPickListModel listModel = (AbstractPickListModel) list.getModel();
-    	// erster Index, falls mehrere Items selektiert waren
-    	int selectedIndex = list.getSelectedIndex();
-    	Object upper = listModel.getElementAt(selectedIndex - 1);
-    	listModel.setElementAt(listModel.getElementAt(selectedIndex), selectedIndex - 1);
-    	listModel.setElementAt(upper, selectedIndex);
-    	list.setSelectedIndex(selectedIndex - 1);
-    }
-    
+	}
+
+	private void moveItemUp(JList list) {
+		if (list.getSelectedIndices().length > 1) {
+			list.setSelectedIndex(list.getSelectedIndex());
+			return;
+		}
+		AbstractPickListModel listModel = (AbstractPickListModel) list.getModel();
+		// erster Index, falls mehrere Items selektiert waren
+		int selectedIndex = list.getSelectedIndex();
+		Object upper = listModel.getElementAt(selectedIndex - 1);
+		listModel.setElementAt(listModel.getElementAt(selectedIndex), selectedIndex - 1);
+		listModel.setElementAt(upper, selectedIndex);
+		list.setSelectedIndex(selectedIndex - 1);
+	}
+
 	private JList getLstLeft() {
 		if (lstLeft == null) {
 			lstLeft = new JList();
@@ -390,7 +396,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return lstLeft;
 	}
-	
+
 	private JList getLstRight() {
 		if (lstRight == null) {
 			lstRight = new JList();
@@ -414,6 +420,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return lstRight;
 	}
+
 	private void repaintButtons(JList list) {
 		if (isEnabled) {
 			this.btnUp.setEnabled(true);
@@ -445,7 +452,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		this.btnMoveRight.setEnabled(false);
 		this.btnMoveAllRight.setEnabled(false);
 	}
-	
+
 	/**
 	 * Enable or disable the PickListPanel
 	 * @see java.awt.Component#setEnabled(boolean)
@@ -472,5 +479,26 @@ public class PickListPanel extends JPanel implements ActionListener {
 		}
 		return this.spRight;
 	}
-	
-}  //  @jve:decl-index=0:visual-constraint="10,10"
+
+	public void removeSelectedItem() {
+		if (this.lstLeft.isSelectionEmpty()) {
+			if (!this.lstRight.isSelectionEmpty()) {
+				int selectedIndex = this.lstRight.getSelectedIndex();
+				this.data.getLstRightModel().removeElementAt(selectedIndex);
+				this.data.setModified(true);
+			}
+		} else if (this.lstRight.isSelectionEmpty()) {
+			if (!this.lstLeft.isSelectionEmpty()) {
+				int selectedIndex = this.lstLeft.getSelectedIndex();
+				this.data.getLstLeftModel().removeElementAt(selectedIndex);
+				this.data.setModified(true);
+			}
+		}
+	}
+
+	public void insertElementInLeftList(String value) {
+		this.data.getLstLeftModel().addElement(value);
+		this.data.setModified(true);
+	}
+
+} //  @jve:decl-index=0:visual-constraint="10,10"

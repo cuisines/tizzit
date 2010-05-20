@@ -2,19 +2,24 @@ package de.juwimm.cms.gui.admin;
 
 import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -24,19 +29,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jvnet.flamingo.common.JCommandMenuButton;
-import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
+import de.juwimm.cms.gui.controls.GradientBar;
 import de.juwimm.cms.util.SmallSiteConfigReader;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.swing.PickListData;
+import de.juwimm.swing.PickListPanel;
+import de.juwimm.swing.SortableListModel;
 
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
@@ -51,8 +57,8 @@ public class ExternalSearchConfigDialog extends JDialog {
 	private PositiveNegativePanel filtersPanel;
 	private PositiveNegativePanel protocolsPanel;
 	private JPanel urlPanel;
-	private JCommandMenuButton addUrlButton;
-	private JCommandMenuButton removeUrlButton;
+	private JButton addUrlButton;
+	private JButton removeUrlButton;
 	private JTextField urlInput;
 	private JLabel urlLabel;
 	private JLabel depthLabel;
@@ -62,6 +68,7 @@ public class ExternalSearchConfigDialog extends JDialog {
 	private JButton cancelButton;
 	private SmallSiteConfigReader configReader;
 	private final Color backgroundColorError = new Color(0xed4044);
+	private GradientBar headerPanel;
 
 	public ExternalSearchConfigDialog(SiteValue site) {
 		super();
@@ -84,6 +91,10 @@ public class ExternalSearchConfigDialog extends JDialog {
 		depthInput = new JSpinner();
 		SpinnerModel spinnerModel = new SpinnerNumberModel(depth, 0, 8, 1);
 		depthInput.setModel(spinnerModel);
+		depthInput.setMinimumSize(new Dimension(40, 20));
+		urlLabel.setSize(new Dimension(70, 12));
+		urlLabel.setPreferredSize(new Dimension(70, 12));
+		urlLabel.setMinimumSize(new Dimension(70, 12));
 
 		urlTable.getColumnModel().getColumn(0).setWidth(50);
 		urlTable.setShowGrid(false);
@@ -93,26 +104,46 @@ public class ExternalSearchConfigDialog extends JDialog {
 		urlPanel = new JPanel(new GridBagLayout());
 		urlInput = new JTextField();
 		urlInput.setColumns(13);
-		addUrlButton = new JCommandMenuButton("", ImageWrapperResizableIcon.getIcon(UIConstants.ICON_PLUS.getImage(), new Dimension(16, 16)));
-		removeUrlButton = new JCommandMenuButton("", ImageWrapperResizableIcon.getIcon(UIConstants.ICON_MINUS.getImage(), new Dimension(16, 16)));
+		urlInput.setMinimumSize(new Dimension(150, 20));
+
+		addUrlButton = new JButton(rb.getString("dialog.externalSearchConfig.add"), new ImageIcon(UIConstants.ICON_PLUS.getImage()));
+		addUrlButton.addMouseListener(new MyMouseListener());
+		addUrlButton.setOpaque(false);
+		removeUrlButton = new JButton(rb.getString("dialog.externalSearchConfig.remove"), new ImageIcon(UIConstants.ICON_MINUS.getImage()));
+		removeUrlButton.addMouseListener(new MyMouseListener());
+		removeUrlButton.setOpaque(false);
 
 		urlTable.setFillsViewportHeight(true);
 		urlTable.setTableHeader(null);
 
-		urlPanel.add(depthLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		urlPanel.add(depthInput, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		urlPanel.add(urlLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		urlPanel.add(urlInput, new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 0, 0), 0, 0));
-		urlPanel.add(addUrlButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		urlPanel.add(removeUrlButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-		urlPanel.add(urlTableScrollPane, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		headerPanel = new GradientBar();
+		headerPanel.setLayout(new BorderLayout());
+		JLabel label = new JLabel(rb.getString("dialog.externalSearchConfig.header"));
+		label.setMinimumSize(new Dimension(100, 100));
+		label.setForeground(Color.white);
+		label.setFont(new Font("SansSerif", Font.BOLD, 14));
+		headerPanel.add(label, BorderLayout.LINE_START);
 
-		this.getContentPane().setLayout(new GridBagLayout());
-		this.getContentPane().add(urlPanel, new GridBagConstraints(0, 0, 2, 1, 0.1, 0.1, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(filtersPanel, new GridBagConstraints(0, 1, 1, 1, 0.1, 0.1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(protocolsPanel, new GridBagConstraints(1, 1, 1, 1, 0.1, 0.1, GridBagConstraints.EAST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		this.getContentPane().add(okButton, new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 3, 0), 0, 0));
-		this.getContentPane().add(cancelButton, new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 3, 0), 0, 0));
+		urlPanel.add(depthLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+		urlPanel.add(depthInput, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+		urlPanel.add(urlLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(14, 0, 0, 0), 0, 0));
+		urlPanel.add(urlInput, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(11, 0, 0, 100), 0, 0));
+		urlPanel.add(addUrlButton, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+		urlPanel.add(removeUrlButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(15, 4, 0, 0), 0, 0));
+		urlPanel.add(urlTableScrollPane, new GridBagConstraints(1, 2, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 0, 0, 0), 0, 0));
+
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(headerPanel, BorderLayout.PAGE_START);
+
+		JPanel contentPanel = new JPanel();
+		contentPanel.setLayout(new GridBagLayout());
+		contentPanel.add(urlPanel, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		contentPanel.add(filtersPanel, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+		contentPanel.add(protocolsPanel, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10, 0, 0, 0), 0, 0));
+		contentPanel.add(okButton, new GridBagConstraints(1, 4, 1, 0, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(20, 100, 3, 300), 0, 0));
+		contentPanel.add(cancelButton, new GridBagConstraints(1, 4, 1, 0, 0, 0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(20, 200, 3, 200), 0, 0));
+
+		this.getContentPane().add(contentPanel, BorderLayout.CENTER);
 
 		removeUrlButton.addActionListener(new ActionListener() {
 
@@ -123,9 +154,7 @@ public class ExternalSearchConfigDialog extends JDialog {
 						((DefaultTableModel) urlTable.getModel()).removeRow(selectedRows[i]);
 					}
 				}
-
 			}
-
 		});
 
 		addUrlButton.addActionListener(new ActionListener() {
@@ -207,59 +236,11 @@ public class ExternalSearchConfigDialog extends JDialog {
 	 * @return void
 	 */
 	private void initialize() {
-		this.setSize(500, 420);
+		this.setSize(600, 850);
 		this.setResizable(false);
 		this.setLocationRelativeTo(UIConstants.getMainFrame());
 		this.setModal(true);
 		this.setTitle(rb.getString("dialog.title"));
-	}
-
-	private class PositiveNegativeTableModel extends DefaultTableModel {
-		private static final long serialVersionUID = 1L;
-
-		public PositiveNegativeTableModel(SiteValue site, String property) {
-			super();
-			this.columnIdentifiers.add("");
-			this.columnIdentifiers.add("");
-			readData(property);
-		}
-
-		private void readData(String property) {
-
-			List<String> positives = configReader.readValues(SmallSiteConfigReader.getPositiveListTag(property));
-			List<String> negatievs = configReader.readValues(SmallSiteConfigReader.getNegativeListTag(property));
-			if (positives == null || negatievs == null) {
-				return;
-			}
-			int pozLen = positives.size();
-			int negLen = negatievs.size();
-			int maxLength = Math.max(pozLen, negLen);
-			if (maxLength == 0) {
-				return;
-			}
-			for (int i = 0; i < maxLength; i++) {
-				Object[] data = new Object[2];
-				if (i < pozLen) {
-					data[0] = positives.get(i);
-				}
-				if (i < negLen) {
-					data[1] = negatievs.get(i);
-				}
-				this.addRow(data);
-			}
-		}
-
-		public List<String> getValues(int columnIndex) {
-			List<String> result = new ArrayList<String>();
-			for (int i = 0; i < this.getRowCount(); i++) {
-				Object value = this.getValueAt(i, columnIndex);
-				if (value == null || ((String) value).equals("")) {
-					continue;
-				}
-				result.add((String) value);
-			}
-			return result;
-		}
 	}
 
 	private class UrlTableModel extends DefaultTableModel {
@@ -307,8 +288,8 @@ public class ExternalSearchConfigDialog extends JDialog {
 	private class PositiveNegativePanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private JLabel titleLabel;
-		private JCommandMenuButton addButton;
-		private JCommandMenuButton removeButton;
+		private JButton addButton;
+		private JButton removeButton;
 		private JTextField valueInput;
 		private JTable positiveNegativeTable;
 		private ButtonGroup buttonGroup = new ButtonGroup();
@@ -316,6 +297,9 @@ public class ExternalSearchConfigDialog extends JDialog {
 		private JRadioButton negativeRadioButton;
 		private JScrollPane tableScrollpane;
 		private String propertyToEdit;
+
+		private PickListData pickListData;
+		private PickListPanel pickListPanel;
 
 		public PositiveNegativePanel(String title, SiteValue site, String propertyToEdit) {
 			super();
@@ -325,39 +309,53 @@ public class ExternalSearchConfigDialog extends JDialog {
 		}
 
 		public void saveValues() {
-			configReader.saveValues(SmallSiteConfigReader.getPositiveListTag(propertyToEdit), ((PositiveNegativeTableModel) positiveNegativeTable.getModel()).getValues(0));
-			configReader.saveValues(SmallSiteConfigReader.getNegativeListTag(propertyToEdit), ((PositiveNegativeTableModel) positiveNegativeTable.getModel()).getValues(1));
+			List<String> positive = new ArrayList<String>();
+			for (int i = (pickListData.getLstLeftModel().getSize() - 1); i >= 0; i--) {
+				Object current = pickListData.getLstLeftModel().getElementAt(i);
+				positive.add(current.toString());
+			}
+			List<String> negative = new ArrayList<String>();
+			for (int i = (pickListData.getLstRightModel().getSize() - 1); i >= 0; i--) {
+				Object current = pickListData.getLstRightModel().getElementAt(i);
+				negative.add(current.toString());
+			}
+			configReader.saveValues(SmallSiteConfigReader.getPositiveListTag(propertyToEdit), positive);
+			configReader.saveValues(SmallSiteConfigReader.getNegativeListTag(propertyToEdit), negative);
+
 		}
 
 		private void initComponents(String title, SiteValue site) {
 			this.setLayout(new GridBagLayout());
 			titleLabel = new JLabel(title);
+			titleLabel.setSize(new Dimension(70, 12));
+			titleLabel.setPreferredSize(new Dimension(70, 12));
+			titleLabel.setMinimumSize(new Dimension(70, 12));
+
 			valueInput = new JTextField();
-			positiveRadioButton = new JRadioButton(rb.getString("dialog.externalSearchConfig.positive"));
-			negativeRadioButton = new JRadioButton(rb.getString("dialog.externalSearchConfig.negative"));
+			valueInput.setMinimumSize(new Dimension(150, 20));
+			valueInput.setPreferredSize(new Dimension(150, 20));
 
-			buttonGroup.add(positiveRadioButton);
-			buttonGroup.add(negativeRadioButton);
-			positiveNegativeTable = new JTable(new PositiveNegativeTableModel(site, propertyToEdit));
-			positiveNegativeTable.setShowGrid(false);
-			positiveNegativeTable.setCellSelectionEnabled(true);
-			positiveNegativeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tableScrollpane = new JScrollPane(positiveNegativeTable);
-			tableScrollpane.setMinimumSize(new Dimension(215, 120));
-			positiveNegativeTable.setTableHeader(null);
-			positiveNegativeTable.setFillsViewportHeight(true);
-			valueInput.setColumns(13);
+			this.pickListData = new PickListData(new SortableListModel(), new SortableListModel());
+			fillPickListData(propertyToEdit);
+			this.pickListData.setLeftLabel(rb.getString("dialog.externalSearchConfig.positive"));
+			this.pickListData.setRightLabel(rb.getString("dialog.externalSearchConfig.negative"));
+			this.pickListPanel = new PickListPanel(this.pickListData, false);
+			this.pickListPanel.setEnabled(true);
 
-			addButton = new JCommandMenuButton("", ImageWrapperResizableIcon.getIcon(UIConstants.ICON_PLUS.getImage(), new Dimension(16, 16)));
-			removeButton = new JCommandMenuButton("", ImageWrapperResizableIcon.getIcon(UIConstants.ICON_MINUS.getImage(), new Dimension(16, 16)));
+			addButton = new JButton(rb.getString("dialog.externalSearchConfig.add"), new ImageIcon(UIConstants.ICON_PLUS.getImage()));
+			addButton.addMouseListener(new MyMouseListener());
+			addButton.setOpaque(false);
 
-			this.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-			this.add(valueInput, new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(3, 0, 0, 0), 0, 0));
-			this.add(addButton, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-			this.add(removeButton, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-			this.add(positiveRadioButton, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-			this.add(negativeRadioButton, new GridBagConstraints(1, 2, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-			this.add(tableScrollpane, new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			removeButton = new JButton(rb.getString("dialog.externalSearchConfig.remove"), new ImageIcon(UIConstants.ICON_MINUS.getImage()));
+			removeButton.addMouseListener(new MyMouseListener());
+			removeButton.setOpaque(false);
+			removeButton.setMaximumSize(new Dimension(15, 10));
+
+			this.add(titleLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(4, 0, 0, 0), 0, 0));
+			this.add(valueInput, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(1, 0, 0, 100), 0, 0));
+			this.add(addButton, new GridBagConstraints(1, 0, 2, 0, 0.0, 0.0, GridBagConstraints.NORTHEAST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+			this.add(removeButton, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
+			this.add(pickListPanel, new GridBagConstraints(1, 3, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 
 			addButton.addActionListener(new ActionListener() {
 
@@ -377,73 +375,60 @@ public class ExternalSearchConfigDialog extends JDialog {
 			removeButton.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					positiveNegativeTable.getSelectedRow();
-					DefaultTableModel model = (DefaultTableModel) positiveNegativeTable.getModel();
-					int column = positiveNegativeTable.getSelectedColumn();
-					int row = positiveNegativeTable.getSelectedRow();
-					model.setValueAt("", row, column);
-					//move values
-					int i = row;
-					for (; i < model.getRowCount() - 1; i++) {
-						String value = (String) model.getValueAt(i + 1, column);
-						if (value != null && value != "") {
-							model.setValueAt(value, i, column);
-						} else {
-							break;
-						}
-					}
-
-					//check last row
-					String nearValue = (String) model.getValueAt(model.getRowCount() - 1, (column + 1) % 2);
-					if (nearValue == null || nearValue == "") {
-						model.removeRow(model.getRowCount() - 1);
-					} else {
-						model.setValueAt("", i, column);
-					}
-
+					pickListPanel.removeSelectedItem();
 				}
 
 			});
+		}
+
+		private void fillPickListData(String property) {
+			List<String> positives = configReader.readValues(SmallSiteConfigReader.getPositiveListTag(property));
+			List<String> negatives = configReader.readValues(SmallSiteConfigReader.getNegativeListTag(property));
+			for (String value : positives) {
+				pickListData.getLstLeftModel().addElement(value);
+			}
+			for (String value : negatives) {
+				pickListData.getLstRightModel().addElement(value);
+			}
 		}
 
 		private void insertNewValue() {
 			if (valueInput.getText() == null || valueInput.getText().equals("")) {
 				return;
 			}
-			int column;
-			if (positiveRadioButton.isSelected()) {
-				column = 0;
-			} else if (negativeRadioButton.isSelected()) {
-				column = 1;
-			} else {
-				return;
-			}
-
-			DefaultTableModel model = ((DefaultTableModel) positiveNegativeTable.getModel());
-			int i = model.getRowCount() - 1;
-			if (model.getRowCount() == 0 || (model.getValueAt(i, column) != null && !model.getValueAt(i, column).equals(""))) {
-				//add new row;
-				Object[] data = new Object[2];
-				data[column] = valueInput.getText();
-				model.addRow(data);
-				urlInput.setText("");
-				return;
-			}
-
-			while (i > 0) {
-				i--;
-				String value = (String) model.getValueAt(i, column);
-				if (value == null || value == "") {
-					continue;
-				} else {
-					model.setValueAt(valueInput.getText(), i + 1, column);
-					urlInput.setText("");
-					return;
-				}
-			}
-
-			model.setValueAt(valueInput.getText(), 0, column);
+			pickListPanel.insertElementInLeftList(valueInput.getText());
 		}
+	}
+
+}
+
+class MyMouseListener implements MouseListener {
+
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		JButton button = (JButton) e.getComponent();
+		button.setOpaque(true);
+
+	}
+
+	public void mouseExited(MouseEvent e) {
+		JButton button = (JButton) e.getComponent();
+		button.setOpaque(false);
+
+	}
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

@@ -535,8 +535,8 @@ public final class UIConstants {
 		TREE_COLLAPSE_ALL = load("treeCollapse.png");
 		TREE_EXPAND_ALL = load("treeExpand.png");
 
-		ICON_PLUS = load("16x16/plus.gif");
-		ICON_MINUS = load("16x16/minus.gif");
+		ICON_PLUS = load("16x16/plus12x12.gif");
+		ICON_MINUS = load("16x16/minus12x12.gif");
 
 	}
 
