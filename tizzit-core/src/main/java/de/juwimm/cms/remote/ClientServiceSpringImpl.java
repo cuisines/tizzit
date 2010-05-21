@@ -452,9 +452,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected boolean handleIsNewTask4User() throws Exception {
+	protected boolean handleIsNewTask4User(String userId) throws Exception {
 		UserServiceSpring us = getUserServiceSpring();
-		return us.isNewTask4User().booleanValue();
+		return us.isNewTask4User(userId);
 	}
 
 	@Override

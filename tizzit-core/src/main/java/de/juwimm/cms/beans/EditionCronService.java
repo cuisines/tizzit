@@ -30,6 +30,7 @@ import org.xml.sax.helpers.XMLFilterImpl;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.authorization.model.UserHbmDao;
 import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants.LiveserverDeployStatus;
 import de.juwimm.cms.model.EditionHbm;
@@ -49,6 +50,7 @@ public class EditionCronService {
 	private EditionHbmDao editionHbmDao;
 	private EditionServiceSpring editionServiceSpring;
 	private ContentServiceSpring contentServiceSpring;
+	private UserHbmDao userHbmDao;
 	@Autowired
 	TizzitPropertiesBeanSpring tizzitProperties;
 
@@ -104,6 +106,8 @@ public class EditionCronService {
 						getEditionServiceSpring().importEdition(edition.getSiteId(), edition.getEditionId(), edition.getEditionFileName(), edition.getViewComponentId(), false);
 					}
 				}
+				edition.setNeedsImport(false);
+				getEditionHbmDao().update(edition);
 				getEditionServiceSpring().removeEdition(edition.getEditionId());
 			}
 		} catch (Exception e) {
@@ -185,33 +189,41 @@ public class EditionCronService {
 				}
 			}
 			if (!found) {
-				createEditionFromDeployFile(files[i].getAbsolutePath());
+				try {
+					createEditionFromDeployFile(files[i].getAbsolutePath());
+				} catch (Exception e) {
+					log.warn("Error while creating edition from File ", e);
+				}
 			}
 		}
 		cronCreateEditionFromDeployFileIsRunning = false;
 		if (log.isInfoEnabled()) log.info("finished cronCreateEditionFromDeployFile");
 	}
 
-	private EditionHbm createEditionFromDeployFile(String editionFileName) {
+	private EditionHbm createEditionFromDeployFile(String editionFileName) throws Exception {
 		EditionHbm edition = null;
-		Element node = getElementFromXmlInFile(editionFileName, "/edition/edition");
+		Element editionNode = getElementFromXmlInFile(editionFileName, "/edition/edition");
+		Element siteNode = getElementFromXmlInFile(editionFileName, "/edition/site");
 
-		if (node != null) {
+		if (editionNode != null) {
 			edition = EditionHbm.Factory.newInstance();
-			edition.setComment(getNVal(node, "comment"));
-			edition.setCreationDate(new Long(getNVal(node, "creationDate")).longValue());
-			//			edition.setCreator(new Integer(getNVal(node, "creatorId")));
+			edition.setComment(getNVal(editionNode, "comment"));
+			edition.setCreationDate(new Long(getNVal(editionNode, "creationDate")).longValue());
+			//			edition.setCreator(new Integer(getNVal(editionNode, "creatorId")));
 			edition.setEditionFileName(editionFileName);
 			edition.setNeedsImport(true);
-			edition.setSiteId(new Integer(getNVal(node, "siteId")));
-			edition.setUnitId(new Integer(getNVal(node, "unitId")));
+			edition.setSiteId(new Integer(getNVal(editionNode, "siteId")));
+			edition.setUnitId(new Integer(getNVal(editionNode, "unitId")));
 			edition.setUseNewIds(true);
-			edition.setViewDocumentId(new Integer(getNVal(node, "viewDocumentId")));
-			edition.setViewComponentId(new Integer(getNVal(node, "viewComponentId")));
-			edition.setDeployType(new Integer(getNVal(node, "deployType")));
-			edition.setWorkServerEditionId(new Integer(getNVal(node, "id")));
-			String user = tizzitProperties.getDeployUser();
-			String pass = tizzitProperties.getDeployPassword();
+			edition.setCreator(getUserHbmDao().load(getNVal(editionNode, "creatorId")));
+			edition.setViewDocumentId(new Integer(getNVal(editionNode, "viewDocumentId")));
+			edition.setViewComponentId(new Integer(getNVal(editionNode, "viewComponentId")));
+			edition.setDeployType(new Integer(getNVal(editionNode, "deployType")));
+			edition.setWorkServerEditionId(new Integer(getNVal(editionNode, "id")));
+			String config = getNVal(siteNode, "siteConfig");
+			Document doc = XercesHelper.string2Dom(config);
+			String user = XercesHelper.getNodeValue(doc, "/config/default/liveServer/username");
+			String pass = XercesHelper.getNodeValue(doc, "/config/default/liveServer/password");
 			SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, pass));
 			getEditionHbmDao().create(edition);
 		} else {
@@ -296,6 +308,14 @@ public class EditionCronService {
 		getEditionHbmDao().update(edition);
 	}
 
+	//	possible values for status
+	//	EditionCreated, 
+	//	CreateDeployFileForExport, TransmitDeployFile, 
+	//	FileDeployedOnLiveServer, ImportStarted, 
+	//	ImportCleanDatabase, ImportUnits, ImportResources, 
+	//	ImportDatabaseComponents, ImportViewComponents, 
+	//	ImportHosts, ImportSuccessful, Exception;
+
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_UNCOMMITTED)
 	public void logEditionStatusInfo(LiveserverDeployStatus status, Integer editionId) {
 		String statusValue = status.name();
@@ -351,5 +371,13 @@ public class EditionCronService {
 
 	public ContentServiceSpring getContentServiceSpring() {
 		return contentServiceSpring;
+	}
+
+	public UserHbmDao getUserHbmDao() {
+		return userHbmDao;
+	}
+
+	public void setUserHbmDao(UserHbmDao userHbmDao) {
+		this.userHbmDao = userHbmDao;
 	}
 }

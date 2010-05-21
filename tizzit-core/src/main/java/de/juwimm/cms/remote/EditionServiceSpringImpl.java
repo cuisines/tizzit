@@ -166,7 +166,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				log.warn("Could not delete file: " + f.getAbsolutePath() + " " + se.getStackTrace());
 			}
 		}
-		getEditionHbmDao().remove(edition);
+		//getEditionHbmDao().remove(edition);
 	}
 
 	private Document getDocumentFromFile(File preparsedXMLfile, String editionFileName) throws Exception {
@@ -649,6 +649,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			//			}
 			System.gc();
 		}
+		this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportSuccessful, editionId);
 		if (log.isInfoEnabled()) log.info("End processFileImport");
 	}
 
@@ -2922,7 +2923,6 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleUpdateDeployStatus(List editions) throws Exception {
 		if (editions != null && editions.size() > 0) {
-
 			//group editions by liveserver
 			Map<LiveServerCredentials, List<EditionHbm>> editionsByLiveServers = new HashMap<LiveServerCredentials, List<EditionHbm>>();
 			for (EditionHbm edition : (List<EditionHbm>) editions) {
@@ -2958,7 +2958,15 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					for (EditionValue editionResponse : editionStatusesResponse) {
 						if (editionResponse.getWorkServerEditionId().equals(editionValueRequest.getEditionId())) {
 							//update deploy status
-							editionRequest.setDeployStatus(editionResponse.getDeployStatus() == null ? new byte[0] : editionResponse.getDeployStatus().getBytes());
+							if (editionResponse.getDeployStatus() == null) {
+								editionRequest.setDeployStatus(new byte[0]);
+							} else {
+								editionRequest.setDeployStatus(editionResponse.getDeployStatus().getBytes());
+								String message = new String(editionResponse.getDeployStatus().getBytes());
+								if (message.contains("Exception") || message.compareToIgnoreCase("ImportSuccessful") == 0) {
+									createDeployFinishedTask(message, editionRequest);
+								}
+							}
 							editionRequest.setStartActionTimestamp(editionResponse.getStartActionTimestamp() == null ? null : editionResponse.getStartActionTimestamp().getTime());
 							editionRequest.setEndActionTimestamp(editionResponse.getEndActionTimestamp() == null ? null : editionResponse.getEndActionTimestamp().getTime());
 							getEditionHbmDao().update(editionRequest);
@@ -2969,12 +2977,30 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 					if (!foundEditionInResponse) {
 						//deploy finished
-						getEditionHbmDao().remove(editionRequest.getEditionId());
+						//getEditionHbmDao().remove(editionRequest.getEditionId());
 					}
 				}
 			}
 
 		}
+	}
+
+	private void createDeployFinishedTask(String message, EditionHbm edition) {
+		TaskHbm finish = TaskHbm.Factory.newInstance();
+		finish.setComment(message);
+		finish.setCreationDate(new Date().getTime());
+		finish.setReceiverRole("deploy");
+		finish.setSender(edition.getCreator());
+		finish.setUnit(getUnitHbmDao().load(edition.getUnitId()));
+		finish.setTaskType(Constants.TASK_SYSTEMMESSAGE_INFORMATION);
+		if (message.compareToIgnoreCase("ImportSuccessful") == 0) {
+			message = "Edition " + edition.getComment() + " (" + edition.getEditionId() + ") has been deployed successfully.";
+		} else {
+			message = "Edition " + edition.getComment() + " (" + edition.getEditionId() + ") could not be deployed. Please contact your administrator.";
+		}
+		getTaskHbmDao().create(finish);
+		edition.setDeployStatus("Finished".getBytes());
+		getEditionHbmDao().update(edition);
 	}
 
 	private List<EditionValue> getDeployStatusFromLiveServer(List<EditionHbm> editions, LiveServerCredentials credentials) throws UserException {

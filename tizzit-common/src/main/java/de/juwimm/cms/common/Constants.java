@@ -270,7 +270,7 @@ public final class Constants {
 
 	public enum LiveserverDeployStatus {
 
-		EditionCreated, CreateDeployFileForExport, TransmitDeployFile, FileDeployedOnLiveServer, ImportStarted, ImportCleanDatabase, ImportUnits, ImportResources, ImportDatabaseComponents, ImportViewComponents, ImportHosts, Exception;
+		EditionCreated, CreateDeployFileForExport, TransmitDeployFile, FileDeployedOnLiveServer, ImportStarted, ImportCleanDatabase, ImportUnits, ImportResources, ImportDatabaseComponents, ImportViewComponents, ImportHosts, ImportSuccessful, Exception;
 
 	}
 }

@@ -85,16 +85,16 @@ public class ViewServiceTest extends AbstractServiceTest {
 
 	public void testCheckForUniqueUrlLinkName2() {
 		ViewComponentHbm root = ViewComponentHbm.Factory.newInstance();
-		ViewComponentHbm firstChild = createViewComponent(2, "child_1");
+		ViewComponentHbm firstChild = createViewComponent(2, "child-1");
 		root.setFirstChild(firstChild);
 		root.addChild(firstChild);
-		root.addChild(createViewComponent(3, "child_2"));
-		root.addChild(createViewComponent(4, "child_5"));
-		root.addChild(createViewComponent(5, "child_7"));
+		root.addChild(createViewComponent(3, "child-2"));
+		root.addChild(createViewComponent(4, "child-5"));
+		root.addChild(createViewComponent(5, "child-7"));
 		EasyMock.expect(viewComponentDaoMock.load(EasyMock.anyInt())).andReturn(root);
 		EasyMock.replay(viewComponentDaoMock);
 		try {
-			Assert.assertEquals("child_2_1", viewService.checkForUniqueUrlLinkName(4, 1, "child_2"));
+			Assert.assertEquals("child-2-1", viewService.checkForUniqueUrlLinkName(4, 1, "child-2"));
 		} catch (UserException e) {
 			Assert.assertTrue(false);
 		}

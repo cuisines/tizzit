@@ -807,18 +807,18 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 	 * @see de.juwimm.cms.remote.UserServiceSpring#isNewTask4User()
 	 */
 	@Override
-	protected Boolean handleIsNewTask4User() throws Exception {
+	protected boolean handleIsNewTask4User(String userId) throws Exception {
 		try {
 			TaskValue[] td = this.getAllTasks();
 			for (int i = 0; i < td.length; i++) {
-				if (td[i].getStatus() == Constants.TASK_STATUS_NEW) {
-					return new Boolean(true);
+				if (td[i].getStatus() == Constants.TASK_STATUS_NEW && !td[i].getSender().getUserName().matches(userId)) {
+					return true;
 				}
 			}
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
-		return new Boolean(false);
+		return false;
 	}
 
 	/**

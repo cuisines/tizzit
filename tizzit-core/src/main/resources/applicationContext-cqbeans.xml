@@ -104,7 +104,7 @@
 	<bean class="de.juwimm.cms.beans.WebCrawlerService" id="webCrawlerService" />
 	
 	<bean class="de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring" id="tizzitPropertiesBeanSpring" lazy-init="false" scope="singleton" />
-	<bean class="de.juwimm.cms.beans.EditionCronService" id="editionCronService" p:contentServiceSpring-ref="contentServiceSpring" p:editionHbmDao-ref="editionHbmDao" p:editionServiceSpring-ref="editionServiceSpring" />
+	<bean class="de.juwimm.cms.beans.EditionCronService" id="editionCronService" p:contentServiceSpring-ref="contentServiceSpring" p:editionHbmDao-ref="editionHbmDao" p:editionServiceSpring-ref="editionServiceSpring" p:userHbmDao-ref="userHbmDao"/>
 	<bean class="de.juwimm.cms.beans.ExternalSitesCronService" id="externalSitesCronService" p:siteHbmDao-ref="siteHbmDao" p:webCrawler-ref="webCrawlerService"/>
 	<bean class="de.juwimm.cms.beans.SearchCronService" id="searchCronService" p:contentHbmDao-ref="contentHbmDao" p:tizzitPropertiesBeanSpring-ref="tizzitPropertiesBeanSpring" p:documentHbmDao-ref="documentHbmDao" p:searchengineService-ref="searchengineService" />
 	<bean class="de.juwimm.cms.beans.WebServiceSpring" id="webServiceSpring" />
