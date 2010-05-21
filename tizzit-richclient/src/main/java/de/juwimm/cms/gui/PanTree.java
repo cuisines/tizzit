@@ -459,8 +459,10 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					try {
 						if (e.getClickCount() == 2) {
-							if (tree.isExpanded(selPath)) {
-								tree.collapsePath(selPath);
+							if (!treeNode.isRoot()) {
+								if (tree.isExpanded(selPath)) {
+									tree.collapsePath(selPath);
+								}
 							}
 						} else if (selRow != -1) {
 							PageNode pn = (PageNode) selPath.getLastPathComponent();
@@ -485,6 +487,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			}
 		};
 
+		tree.setToggleClickCount(0);
 		tree.putClientProperty("JTree.lineStyle", "Angled");
 		tree.addTreeWillExpandListener(tl);
 		tree.addMouseListener(ml);
@@ -1191,9 +1194,12 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			try {
 				pageNode.loadChildren();
 				if (pageNode.isChildADao()) {
-					treeModel.nodeStructureChanged(pageNode); // THIS FUCKED ME UP TO 4 HOURES OF WORK.... OH MY GODNESS
+					treeModel.nodeStructureChanged(pageNode);
 				}
 			} catch (Exception ex) {
+				if (log.isDebugEnabled()) {
+					log.debug("Error in expandAllNodes ", ex);
+				}
 			}
 
 			Enumeration vec = pageNode.children();
@@ -1206,11 +1212,15 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			if (expand) {
 				tree.expandPath(new TreePath(treeModel.getPathToRoot(pageNode)));
 			} else {
-				tree.collapsePath(new TreePath(treeModel.getPathToRoot(pageNode)));
+				if (pageNode.getParent() != null) {
+					if (!tree.isCollapsed(new TreePath(treeModel.getPathToRoot(pageNode)))) {
+						tree.collapsePath(new TreePath(treeModel.getPathToRoot(pageNode)));
+					}
+
+				}
 			}
 		}
 	}
-
 	/**
 	 * @version $Id$
 	 */
