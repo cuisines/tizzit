@@ -166,7 +166,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private final String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
 	private JButton refresh;
 	private final HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
-	private Integer[] viewComponentIdsCopy = null;
+	private final Integer[] viewComponentIdsCopy = null;
 	private TreePath previousTreeNodePath = null;
 	private boolean stop = true;
 	private JPanel panelParameters;
@@ -1932,15 +1932,17 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		//miCopy.setEnabled(flag);
 		miPaste.setEnabled(!flag);
 	}
-	private String fileSuffix = ".xml.gz";
+	private final String fileSuffix = ".xml.gz";
 
 	private void exportTreeNode(ViewComponentValue viewComponent) {
 		JFileChooser fc = new JFileChooser();
 		fc.setFileFilter(new FileFilter() {
+			@Override
 			public boolean accept(File fle) {
 				return (fle.getName().endsWith(fileSuffix) || fle.isDirectory());
 			}
 
+			@Override
 			public String getDescription() {
 				return "XML-Gunzip Site (" + fileSuffix + ")";
 			}
@@ -2014,6 +2016,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		* to the selected value and returns the label, set up
 		* to display the text and image.
 		*/
+		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
 			ViewDocumentValue selectedIndex = (ViewDocumentValue) ((DropDownHolder) value).getObject();

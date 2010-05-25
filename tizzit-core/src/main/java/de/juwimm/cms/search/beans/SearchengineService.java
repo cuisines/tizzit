@@ -322,24 +322,25 @@ public class SearchengineService {
 		if (pageNumber != null && pageNumber.intValue() < 0) pageNumber = new Integer(0); // first page
 		SearchResultValue[] staticRetArr = null;
 		Vector<SearchResultValue> retArr = new Vector<SearchResultValue>();
+		String searchItem_iso = new String(searchItem.getBytes("ISO-8859-1"));
 
 		if (log.isDebugEnabled()) log.debug("starting compass-search");
 
 		try {
 			if (log.isDebugEnabled()) log.debug("searchurl is: " + searchUrl);
-			if (log.isDebugEnabled()) log.debug("search for: \"" + searchItem + "\"");
+			if (log.isDebugEnabled()) log.debug("search for: \"" + searchItem_iso + "\"");
 			if (log.isDebugEnabled()) log.debug("SonderZeicheVergleich (ae, oe, ue): ä ö ü");
 
 			//TODO: find calls of searchWeb and ADD exception handling 
 			//special chars with a meaning in Lucene have to be escaped - there is a mechanism for
 			//that in Lucene - QueryParser.escape but I don't want to replace '*','?','+','-' in searchItem 
-			String searchItemEsc = LUCENE_PATTERN.matcher(searchItem).replaceAll(REPLACEMENT_STRING);
+			String searchItemEsc = LUCENE_PATTERN.matcher(searchItem_iso).replaceAll(REPLACEMENT_STRING);
 			String searchUrlEsc = null;
 			if (searchUrl != null) {
 				searchUrlEsc = LUCENE_PATTERN.matcher(searchUrl).replaceAll(REPLACEMENT_STRING);
 			}
 
-			if (log.isDebugEnabled() && !searchItem.equalsIgnoreCase(searchItemEsc)) {
+			if (log.isDebugEnabled() && !searchItem_iso.equalsIgnoreCase(searchItemEsc)) {
 				log.debug("search for(escaped form): \"" + searchItemEsc + "\"");
 			}
 
