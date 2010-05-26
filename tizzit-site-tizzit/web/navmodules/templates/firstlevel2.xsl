@@ -28,7 +28,7 @@
                     <div class="flm_bg">
                         <div class="clicked">
                             <div class="actualClicked">
-                                <xsl:apply-templates select="." mode="links"/>
+                                <xsl:value-of select="linkName"/>
                             </div>
                         </div>
                     </div>
@@ -38,13 +38,13 @@
                     <div class="fl_bg_l">&#160;</div>
                     <div class="flm_bg">
                         <div class="clicked">
-                            <xsl:apply-templates select="." mode="links"/>
+                            <xsl:value-of select="linkName"/>
                         </div>
                     </div>
                     <div class="fl_bg">&#160;</div>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates select="." mode="links"/>
+                    <xsl:value-of select="linkName"/>
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:if test="@hasChild='true' and (viewcomponent[showType='2' or showType='0'])">
