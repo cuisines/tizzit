@@ -301,7 +301,8 @@
 		.firstlevel2 .firstlink{
 			margin-right:13px;
 		}
-		.firstlevel2 .firstlink a, .firstlevel2 .last-of-firstlink a {
+		.firstlevel2 .firstlink .link, .firstlevel2 .last-of-firstlink .link,
+		.firstlevel2 .firstlink .clicked, .firstlevel2 .last-of-firstlink .clicked {
 			color: #494949;
 			text-decoration:none;
 			font-size:17px;
@@ -331,8 +332,8 @@
 			background-image:url('/httpd/img/navi/nav_bg_middle.gif');
 			background-repeat:repeat-x;
 		}
-		.firstlevel2 .firstlink .actualClicked a, .firstlevel2 .firstlink .clicked a,
-		.firstlevel2 .last-of-firstlink .actualClicked a, .firstlevel2 .last-of-firstlink .clicked a {
+		.firstlevel2 .firstlink .actualClicked, .firstlevel2 .firstlink .clicked,
+		.firstlevel2 .last-of-firstlink .actualClicked, .firstlevel2 .last-of-firstlink .clicked {
 			background-image:url('/httpd/img/navi/nav_bg_bottom.gif');
 			background-repeat:no-repeat;
 			background-position:center 29px;

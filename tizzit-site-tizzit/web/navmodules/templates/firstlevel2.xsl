@@ -44,7 +44,9 @@
                     <div class="fl_bg">&#160;</div>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="linkName"/>
+                    <div class="link">
+                        <xsl:value-of select="linkName"/>
+                    </div>
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:if test="@hasChild='true' and (viewcomponent[showType='2' or showType='0'])">
