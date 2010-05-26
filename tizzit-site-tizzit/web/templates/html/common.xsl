@@ -40,7 +40,7 @@
 	<!-- Shadowbox for content image thumbnails - only for center images -->
 	<xsl:param name="cfg-enableShadowboxContentThumbnails" select="'true'"/>
 	<xsl:param name="cfg-shadowboxContentThumbnailsImageWidth" select="'90'"/>
-	
+	 
 	<!-- Overwrite standard content tables for better usability, please use our config parameters in variables.xsl -->
 	<xsl:template match="table[not(@viewborder)] | th | td" mode="format" priority="2">
 		<!-- Show error messages on work server if table has too much width -->

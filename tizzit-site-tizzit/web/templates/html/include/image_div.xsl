@@ -31,22 +31,7 @@
         <div class="left_image">
             <xsl:attribute name="style">
                 <xsl:text>width:</xsl:text>
-                <xsl:choose>
-                    <xsl:when test="$cfg-enableMaxContentImageWidth = 'true'">
-                        <xsl:choose>
-                            <xsl:when test="@width &gt; $cfg-maxContentImageWidth">
-                                <xsl:value-of select="$cfg-maxContentImageWidth"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates select="@width"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="@width"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>px;</xsl:text>
+                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
             </xsl:attribute>
             <xsl:apply-templates select="." mode="newimage"/>
             <xsl:apply-templates select="legend" mode="format"/>
@@ -57,54 +42,11 @@
         <div class="center_image">
             <xsl:attribute name="style">
                 <xsl:text>width:</xsl:text>
-                <xsl:choose>
-                    <xsl:when test="$cfg-enableShadowboxContentThumbnails = 'true'">
-                        <xsl:value-of select="$cfg-shadowboxContentThumbnailsImageWidth"/>
-                    </xsl:when>
-                    <xsl:when test="$cfg-enableMaxContentImageWidth = 'true'">
-                        <xsl:choose>
-                            <xsl:when test="@width &gt; $cfg-maxContentImageWidth">
-                                <xsl:value-of select="$cfg-maxContentImageWidth"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates select="@width"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="@width"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>px;</xsl:text>
+                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
+                <!--  <xsl:text>height:</xsl:text>
+                    <xsl:apply-templates select="@height"/><xsl:text>px;</xsl:text>-->
             </xsl:attribute>
-            <xsl:choose>
-                <xsl:when test="$cfg-enableShadowboxContentThumbnails = 'true'">
-                    <a>
-                        <xsl:attribute name="id">
-                            <xsl:text>single_3</xsl:text>
-                        </xsl:attribute>
-                        <xsl:attribute name="href">
-                            <xsl:text>/img/ejbimage</xsl:text>
-                            <xsl:choose>
-                                <xsl:when test="filename != ''">
-                                    <xsl:text>/</xsl:text>
-                                    <xsl:value-of select="filename"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:text>/dummy.jpg</xsl:text>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            <xsl:text>?id=</xsl:text>
-                            <xsl:apply-templates select="@src"/>
-                            <xsl:text>&amp;typ=s</xsl:text>
-                        </xsl:attribute>
-                        <xsl:apply-templates select="." mode="newimage"/>
-                    </a>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="." mode="newimage"/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:apply-templates select="." mode="newimage"/>
             <xsl:apply-templates select="legend" mode="format"/>
         </div>
     </xsl:template>
@@ -113,22 +55,7 @@
         <div class="right_image">
             <xsl:attribute name="style">
                 <xsl:text>width:</xsl:text>
-                <xsl:choose>
-                    <xsl:when test="$cfg-enableMaxContentImageWidth = 'true'">
-                        <xsl:choose>
-                            <xsl:when test="@width &gt; $cfg-maxContentImageWidth">
-                                <xsl:value-of select="$cfg-maxContentImageWidth"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates select="@width"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="@width"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>px;</xsl:text>
+                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
             </xsl:attribute>
             <xsl:apply-templates select="." mode="newimage"/>
             <xsl:apply-templates select="legend" mode="format"/>
@@ -136,30 +63,8 @@
     </xsl:template>
     
     <xsl:template match="image" mode="newimage">
-        <img style="border:0px;" align="left">
-            <xsl:attribute name="src">
-                <xsl:text>/img/ejbimage</xsl:text>
-                <xsl:choose>
-                    <xsl:when test="filename != ''">
-                        <xsl:text>/</xsl:text>
-                        <xsl:value-of select="filename"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>/dummy.jpg</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>?id=</xsl:text>
-                <xsl:apply-templates select="@src"/>
-                <xsl:text>&amp;typ=</xsl:text>
-                <xsl:choose>
-                    <xsl:when test="$cfg-enableShadowboxContentThumbnails = 'true'">
-                        <xsl:text>t</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>s</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
+        <img style="border:0px;">
+            <xsl:attribute name="src">/img/ejbimage<xsl:if test="filename != ''">/<xsl:value-of select="filename"/></xsl:if>?id=<xsl:apply-templates select="@src"/>&amp;typ=s</xsl:attribute>
             <xsl:attribute name="alt">
                 <xsl:choose>
                     <xsl:when test="alttext !=''">
@@ -172,25 +77,9 @@
             </xsl:attribute>
             <xsl:attribute name="style">
                 <xsl:text>width:</xsl:text>
-                <xsl:choose>
-                    <xsl:when test="$cfg-enableShadowboxContentThumbnails = 'true'">
-                        <xsl:value-of select="$cfg-shadowboxContentThumbnailsImageWidth"/>
-                    </xsl:when>
-                    <xsl:when test="$cfg-enableMaxContentImageWidth = 'true'">
-                        <xsl:choose>
-                            <xsl:when test="@width &gt; $cfg-maxContentImageWidth">
-                                <xsl:value-of select="$cfg-maxContentImageWidth"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates select="@width"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="@width"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:text>px;</xsl:text>
+                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
+                <xsl:text>height:</xsl:text>
+                <xsl:apply-templates select="@height"/><xsl:text>px;</xsl:text>
             </xsl:attribute>
         </img>
     </xsl:template>
