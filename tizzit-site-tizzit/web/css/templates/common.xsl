@@ -309,6 +309,7 @@
 			display:block;
 			padding:5px 8px 16px 8px;
 			font-weight:bold;
+			cursor:default;
 		}
 		.firstlevel2 .secondlink a, .firstlevel2 .last-of-secondlink a {
 			color: #fff;
