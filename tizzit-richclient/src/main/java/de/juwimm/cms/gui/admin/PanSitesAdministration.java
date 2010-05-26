@@ -645,6 +645,20 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				txtMandatorDir.setBackground(backgroundTextFieldError);
 				isValid = false;
 			}
+			if (chkLiveserver.isSelected()) {
+				if (txtLiveserverPassword.getText() == null || txtLiveserverPassword.getText().isEmpty()) {
+					txtLiveserverPassword.setBackground(backgroundTextFieldError);
+					isValid = false;
+				}
+				if (txtLiveserverURL.getText() == null || txtLiveserverURL.getText().isEmpty()) {
+					txtLiveserverURL.setBackground(backgroundTextFieldError);
+					isValid = false;
+				}
+				if (txtLiveserverUser.getText() == null || txtLiveserverUser.getText().isEmpty()) {
+					txtLiveserverUser.setBackground(backgroundTextFieldError);
+					isValid = false;
+				}
+			}
 		}
 		if (isValid == false) {
 			//if user tries to save when he switched to another tab and there is a validation error then 
@@ -660,6 +674,24 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private void resetInputHighlight(JComponent source) {
 		if (source.getBackground().equals(backgroundTextFieldError)) {
 			source.setBackground(Color.WHITE);
+		}
+	}
+
+	private void resetLiveDeploymentInputsHighlight() {
+		resetInputHighlight(txtLiveserverUser);
+		resetInputHighlight(txtLiveserverURL);
+		resetInputHighlight(txtLiveserverPassword);
+	}
+
+	private void setLiveDeploymentRequired(boolean required) {
+		if (required) {
+			lblLiveserverURL.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL") + "*");
+			lblLiveserverUser.setText(rb.getString("panel.sitesAdministration.lblLiveserverUser") + "*");
+			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword") + "*");
+		} else {
+			lblLiveserverURL.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL"));
+			lblLiveserverUser.setText(rb.getString("panel.sitesAdministration.lblLiveserverUser"));
+			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword"));
 		}
 	}
 
@@ -699,9 +731,12 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 					}
 					comm.setConnectedUsersForSite(siteToSelect, tblUserModel.getSelectedUsers());
 					if (chkLiveserver.isSelected()) {
+						configReader.saveValue("liveServer/liveDeploymentActive", "1");
 						configReader.saveValue("liveServer/password", txtLiveserverPassword.getText());
 						configReader.saveValue("liveServer/url", txtLiveserverURL.getText());
 						configReader.saveValue("liveServer/username", txtLiveserverUser.getText());
+					} else {
+						configReader.saveValue("liveServer/liveDeploymentActive", "0");
 					}
 					dlgSiteparams.save(configReader);
 					configReader.updateConfigXml(vo);
@@ -739,6 +774,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		txtLiveserverPassword.setEnabled(sel);
 		txtLiveserverURL.setEnabled(sel);
 		txtLiveserverUser.setEnabled(sel);
+		setLiveDeploymentRequired(sel);
+		if (!sel) {
+			resetLiveDeploymentInputsHighlight();
+		}
 	}
 
 	/**
@@ -859,7 +898,12 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				txtLiveserverPassword.setText(cfg.getConfigNodeValue("liveServer/password"));
 				txtLiveserverURL.setText(cfg.getConfigNodeValue("liveServer/url"));
 				txtLiveserverUser.setText(cfg.getConfigNodeValue("liveServer/username"));
-				chkLiveserver.setSelected(true);
+				if (cfg.getConfigNodeValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1")) {
+					chkLiveserver.setSelected(true);
+					setLiveDeploymentRequired(true);
+				} else {
+					chkLiveserver.setSelected(false);
+				}
 			} else {
 				txtLiveserverPassword.setText("");
 				txtLiveserverURL.setText("");
