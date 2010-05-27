@@ -508,7 +508,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 				simplePwMap.put(realm.getSimplePwRealm().getSimplePwRealmId(), realm.getSimplePwRealm().getSimplePwRealmId());
 			} else if (realm.getJdbcRealm() != null && realm.getJdbcRealm().getJdbcRealmId() != null) {
 				if (log.isDebugEnabled()) log.debug("Adding Jdbc Realm " + realm.getJdbcRealm().getJdbcRealmId() + " used by VC " + viewComponent.getViewComponentId());
-				ldapMap.put(realm.getJdbcRealm().getJdbcRealmId(), realm.getJdbcRealm().getJdbcRealmId());
+				jdbcMap.put(realm.getJdbcRealm().getJdbcRealmId(), realm.getJdbcRealm().getJdbcRealmId());
 			} else if (realm.getJaasRealm() != null && realm.getJaasRealm().getJaasRealmId() != null) {
 				if (log.isDebugEnabled()) log.debug("Adding Jaas Realm " + realm.getJaasRealm().getJaasRealmId() + " used by VC " + viewComponent.getViewComponentId());
 				jaasMap.put(realm.getJaasRealm().getJaasRealmId(), realm.getJaasRealm().getJaasRealmId());

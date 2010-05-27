@@ -2926,6 +2926,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			//group editions by liveserver
 			Map<LiveServerCredentials, List<EditionHbm>> editionsByLiveServers = new HashMap<LiveServerCredentials, List<EditionHbm>>();
 			for (EditionHbm edition : (List<EditionHbm>) editions) {
+				// edition is deployed - no new status expected
+				if (edition.getEndActionTimestamp() != null) {
+					continue;
+				}
 				SiteHbm site = getSiteHbmDao().load(edition.getSiteId());
 				LiveServerCredentials credentials = new LiveServerCredentials();
 				org.w3c.dom.Document doc = null;
@@ -2963,11 +2967,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 							} else {
 								editionRequest.setDeployStatus(editionResponse.getDeployStatus().getBytes());
 								String message = new String(editionResponse.getDeployStatus().getBytes());
-								if (message.compareToIgnoreCase("ImportSuccessful") == 0) {
+								if (message.compareToIgnoreCase("ImportSuccessful") == 0 && editionRequest.getEndActionTimestamp() == null) {
 									createDeployFinishedTask(message, editionRequest);
 									setViewComponentsOnline(editionRequest);
 								}
-								if (message.contains("Exception")) {
+								if (message.contains("Exception") && editionRequest.getEndActionTimestamp() == null) {
 									createDeployFinishedTask(message, editionRequest);
 								}
 							}
@@ -2990,6 +2994,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	}
 
 	private void createDeployFinishedTask(String message, EditionHbm edition) {
+		if (log.isDebugEnabled()) log.debug("start createDeployFinishedTask");
+		if (log.isDebugEnabled() && message != null) log.debug("parameter message: " + message);
+		if (log.isDebugEnabled() && edition != null) log.debug("parameter edition(id): " + edition.getEditionId());
 		TaskHbm finish = TaskHbm.Factory.newInstance();
 		finish.setComment(message);
 		finish.setCreationDate(new Date().getTime());
@@ -3005,6 +3012,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		getTaskHbmDao().create(finish);
 		edition.setDeployStatus("Finished".getBytes());
 		getEditionHbmDao().update(edition);
+		if (log.isDebugEnabled()) log.debug("end createDeployFinishedTask");
 	}
 
 	private List<EditionValue> getDeployStatusFromLiveServer(List<EditionHbm> editions, LiveServerCredentials credentials) throws UserException {
