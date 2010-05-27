@@ -2963,7 +2963,11 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 							} else {
 								editionRequest.setDeployStatus(editionResponse.getDeployStatus().getBytes());
 								String message = new String(editionResponse.getDeployStatus().getBytes());
-								if (message.contains("Exception") || message.compareToIgnoreCase("ImportSuccessful") == 0) {
+								if (message.compareToIgnoreCase("ImportSuccessful") == 0) {
+									createDeployFinishedTask(message, editionRequest);
+									setViewComponentsOnline(editionRequest);
+								}
+								if (message.contains("Exception")) {
 									createDeployFinishedTask(message, editionRequest);
 								}
 							}

@@ -81,6 +81,7 @@ import de.juwimm.cms.model.SequenceHbmDao;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
@@ -1322,19 +1323,19 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ViewServiceSpring#getParents4ViewComponent(java.lang.Integer)
 	 */
 	@Override
-	protected String[] handleGetParents4ViewComponent(Integer viewComponentId) throws Exception {
+	protected Integer[] handleGetParents4ViewComponent(Integer viewComponentId) throws Exception {
 		try {
 			ViewComponentHbm view = super.getViewComponentHbmDao().load(viewComponentId);
 			Vector<Integer> vec = new Vector<Integer>();
-			Vector<String> topDown = new Vector<String>();
+			Vector<Integer> topDown = new Vector<Integer>();
 			ViewComponentHbm parentView = view;
 			while ((parentView = parentView.getParent()) != null) {
 				vec.addElement(parentView.getViewComponentId());
 			}
 			for (int i = vec.size() - 1; i > -1; i--) {
-				topDown.addElement(vec.elementAt(i).toString());
+				topDown.addElement(vec.elementAt(i));
 			}
-			return topDown.toArray(new String[0]);
+			return topDown.toArray(new Integer[0]);
 		} catch (Exception e) {
 			throw new UserException(e.getMessage());
 		}
@@ -2573,5 +2574,18 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 		}
 		return urlLinkName;
+	}
+
+	@Override
+	protected boolean handleIsViewComponentPublishable(Integer viewComponentId) throws Exception {
+		Integer[] vcArray = getParents4ViewComponent(viewComponentId);
+		ViewComponentHbmDao vcDao = getViewComponentHbmDao();
+		for (int i = 0; i < vcArray.length; i++) {
+			ViewComponentHbm vc = vcDao.load(viewComponentId);
+			if ((vc.getStatus() < Constants.DEPLOY_STATUS_FOR_DEPLOY) && (vc.getOnline() == 0)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

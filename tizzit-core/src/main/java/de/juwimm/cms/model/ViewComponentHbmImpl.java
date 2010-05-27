@@ -318,8 +318,10 @@ public class ViewComponentHbmImpl extends ViewComponentHbm {
 	public void setUnitOnline() {
 		Collection<ViewComponentHbm> children = getAllChildrenOfUnit(); //getAllChildrenOfUnit();
 		for (ViewComponentHbm child : children) {
-			child.setOnline(Constants.ONLINE_STATUS_ONLINE);
-			child.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
+			if (child.getStatus() == Constants.DEPLOY_STATUS_FOR_DEPLOY) {
+				child.setOnline(Constants.ONLINE_STATUS_ONLINE);
+				child.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
+			}
 		}
 	}
 

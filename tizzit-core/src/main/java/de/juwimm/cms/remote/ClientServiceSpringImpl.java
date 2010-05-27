@@ -366,7 +366,7 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected String[] handleGetParents4ViewComponent(int viewComponentId) throws Exception {
+	protected Integer[] handleGetParents4ViewComponent(int viewComponentId) throws Exception {
 		return getViewServiceSpring().getParents4ViewComponent(Integer.valueOf(viewComponentId));
 	}
 
@@ -1946,5 +1946,13 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected UnitValue handleGetRootUnit4Site(Integer siteId) throws Exception {
 		return getUnitServiceSpring().getRootUnit4Site(siteId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleIsViewComponentPublishable(java.lang.Integer)
+	 */
+	@Override
+	protected boolean handleIsViewComponentPublishable(Integer viewComponentId) throws Exception {
+		return getViewServiceSpring().isViewComponentPublishable(viewComponentId);
 	}
 }

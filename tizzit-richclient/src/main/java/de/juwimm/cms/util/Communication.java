@@ -1146,13 +1146,19 @@ public class Communication implements ExitListener, ActionListener {
 		return getClientService().getViewComponentWithDepth(viewComponentId, depth);
 	}
 
-	public String[] getParents4ViewComponent(int viewComponentId) throws Exception {
-		String[] vcdarr = null;
+	// returns 	true if all parents have status ForDeploy or Deployed
+	// 			false else
+	public boolean isViewComponentPublishable(int viewComponentId) {
+		return getClientService().isViewComponentPublishable(Integer.valueOf(viewComponentId));
+	}
+
+	public Integer[] getParents4ViewComponent(int viewComponentId) throws Exception {
+		Integer[] vcdarr = null;
 		try {
-			vcdarr = getClientService().getParents4ViewComponent(Integer.valueOf(viewComponentId));
-			if (vcdarr == null) vcdarr = new String[0];
+			vcdarr = getClientService().getParents4ViewComponent(viewComponentId);
+			if (vcdarr == null) vcdarr = new Integer[0];
 		} catch (Exception exe) {
-			vcdarr = new String[0];
+			vcdarr = new Integer[0];
 		}
 		return vcdarr;
 	}

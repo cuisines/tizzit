@@ -15,14 +15,22 @@
  */
 package de.juwimm.cms.deploy.panel.wizard;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
 
 import org.apache.log4j.Logger;
 
@@ -43,17 +51,26 @@ import de.juwimm.cms.util.Communication;
 public class PanEditorStart extends JPanel implements WizardPanel, ActionListener {
 	private static Logger log = Logger.getLogger(PanEditorStart.class);
 	private Wizard wizard;
-	private JLabel lblProsa = new JLabel();
-	private JRadioButton optApprove = new JRadioButton();
-	private JRadioButton optDeleteOldEditions = new JRadioButton();
-	private JRadioButton optSendMessage = new JRadioButton();
-	private GridBagLayout gridBagLayout1 = new GridBagLayout();
+	private final JLabel lblProsa = new JLabel();
+	private final JRadioButton optApprove = new JRadioButton();
+	private final JRadioButton optDeleteOldEditions = new JRadioButton();
+	private final JRadioButton optSendMessage = new JRadioButton();
+	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
 	private ButtonGroup btnGrpOptions = new ButtonGroup();
 
 	public PanEditorStart() {
 		try {
 			jbInit();
-			deployAllow();
+			deployAllow(null);
+		} catch (Exception exe) {
+			log.error("Initialization Error", exe);
+		}
+	}
+
+	public PanEditorStart(Integer unitId) {
+		try {
+			jbInit();
+			deployAllow(unitId);
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
@@ -84,19 +101,14 @@ public class PanEditorStart extends JPanel implements WizardPanel, ActionListene
 		optApprove.addActionListener(this);
 		optDeleteOldEditions.setText("<html>Alte Editionen l�schen oder online stellen</html>");
 		optDeleteOldEditions.addActionListener(this);
-		optDeleteOldEditions
-				.setActionCommand(new Integer(EditorController.STAGE_OLDEDITIONSDELETE_SHOWLIST).toString());
+		optDeleteOldEditions.setActionCommand(new Integer(EditorController.STAGE_OLDEDITIONSDELETE_SHOWLIST).toString());
 		optSendMessage.setText("<html>Eine Nachricht an einen Autor senden</html>");
 		optSendMessage.addActionListener(this);
 		optSendMessage.setActionCommand(new Integer(EditorController.STAGE_SEND_COMMENT).toString());
-		this.add(lblProsa, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 59, 17));
-		this.add(optApprove, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 1, -5));
-		this.add(optDeleteOldEditions, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 37, -6));
-		this.add(optSendMessage, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 50), 0, 0));
+		this.add(lblProsa, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 59, 17));
+		this.add(optApprove, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 1, -5));
+		this.add(optDeleteOldEditions, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 37, -6));
+		this.add(optSendMessage, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 50), 0, 0));
 		getBtnGrpOptions().add(optApprove);
 		getBtnGrpOptions().add(optDeleteOldEditions);
 		getBtnGrpOptions().add(optSendMessage);
@@ -112,8 +124,18 @@ public class PanEditorStart extends JPanel implements WizardPanel, ActionListene
 		wizard.setNextEnabled(true);
 	}
 
-	private final void deployAllow() {
-		if (!((Communication) getBean(Beans.COMMUNICATION)).isUserInRole(UserRights.DEPLOY)) {
+	private final void deployAllow(Integer unitId) {
+		Communication com = ((Communication) getBean(Beans.COMMUNICATION));
+		boolean deployPossible = true;
+		if (unitId != null) {
+			try {
+				deployPossible = com.isViewComponentPublishable(com.getViewComponent4Unit(unitId).getViewComponentId());
+			} catch (Exception e) {
+
+			}
+		}
+
+		if (!(com.isUserInRole(UserRights.DEPLOY) && deployPossible)) {
 			try {
 				this.removeAll();
 				this.setLayout(new BorderLayout());

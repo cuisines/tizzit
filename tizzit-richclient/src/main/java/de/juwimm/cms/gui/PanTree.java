@@ -1481,13 +1481,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 	private PageNode loadTree2View(int targetViewId) {
 		try {
-			String[] vec = comm.getParents4ViewComponent(targetViewId);
-			String viewId;
+			Integer[] vec = comm.getParents4ViewComponent(targetViewId);
+			Integer viewId;
 			PageNode entry = null;
 
 			for (int i = 0; i < vec.length; i++) {
 				viewId = vec[i];
-				entry = treeModel.findEntry4Id((PageNode) treeModel.getRoot(), Integer.valueOf(viewId).intValue());
+				entry = treeModel.findEntry4Id((PageNode) treeModel.getRoot(), viewId);
 				/*if(!l_Entry.isInit()) {
 				 l_Entry.setView(m_Communication.getViewComponent(l_Entry.getViewId(), 1));
 				 l_Entry.removeAllChildren();

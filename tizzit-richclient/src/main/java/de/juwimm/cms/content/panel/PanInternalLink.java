@@ -320,7 +320,9 @@ public class PanInternalLink extends JPanel {
 				}
 			}
 		}
-		if (this.cbxPopup.isVisible()) { return (errMsg.equals("")) && this.panPopupDetails.isModuleValid(); }
+		if (this.cbxPopup.isVisible()) {
+			return (errMsg.equals("")) && this.panPopupDetails.isModuleValid();
+		}
 		return (errMsg.equals(""));
 	}
 
@@ -514,15 +516,15 @@ public class PanInternalLink extends JPanel {
 	private PageNode loadTree2View(int targetVId) {
 		if (log.isDebugEnabled()) log.debug("loadTree2View " + targetVId);
 		try {
-			String[] vec = comm.getParents4ViewComponent(targetVId);
-			String viewId;
+			Integer[] vec = comm.getParents4ViewComponent(targetVId);
+			Integer viewId;
 			PageNode pageNode = null;
 			for (int i = 0; i < vec.length; i++) {
 				viewId = vec[i];
-				pageNode = currentTreeModel.findEntry4Id((PageNode) currentTreeModel.getRoot(), new Integer(viewId).intValue());
+				pageNode = currentTreeModel.findEntry4Id((PageNode) currentTreeModel.getRoot(), viewId);
 				if (pageNode == null) {
 					// node may be located in another site?
-					ViewDocumentValue vdValue = this.comm.getViewDocument4ViewComponent(new Integer(viewId).intValue());
+					ViewDocumentValue vdValue = this.comm.getViewDocument4ViewComponent(viewId);
 					if (vdValue != null) {
 						DropDownHolder site = linkCache.getSiteDropDownHolder(vdValue.getSiteId());
 						DropDownHolder viewDocument = linkCache.getViewDocumentDropDownHolder(vdValue.getSiteId(), vdValue.getViewDocumentId());

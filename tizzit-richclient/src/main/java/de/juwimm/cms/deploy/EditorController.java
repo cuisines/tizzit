@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.deploy;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -25,7 +25,12 @@ import org.apache.log4j.Logger;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.deploy.frame.FrmWizard;
-import de.juwimm.cms.deploy.panel.wizard.*;
+import de.juwimm.cms.deploy.panel.wizard.PanAuthorChooseEditor;
+import de.juwimm.cms.deploy.panel.wizard.PanEditorApproveMessage;
+import de.juwimm.cms.deploy.panel.wizard.PanEditorEditions;
+import de.juwimm.cms.deploy.panel.wizard.PanEditorStart;
+import de.juwimm.cms.deploy.panel.wizard.PanFinally;
+import de.juwimm.cms.deploy.panel.wizard.WizardPanel;
 import de.juwimm.cms.util.UIConstants;
 
 /**
@@ -52,14 +57,13 @@ public class EditorController implements ActionListener {
 	private PanFinally panFinally = null;
 
 	private int stage = 0;
-	private int unitId;
+	private final int unitId;
 	private int latestStageEver = 0;
 
 	public EditorController(Integer unitId) {
 		this.unitId = unitId.intValue();
-		aPanStart = new PanEditorStart();
-		wiz = new FrmWizard(this, UIConstants.WIZARD_ICON_INSTALL, Constants.rb.getString("wizard.editor.start.title"),
-				Constants.rb.getString("wizard.editor.start.introMessage"), aPanStart);
+		aPanStart = new PanEditorStart(unitId);
+		wiz = new FrmWizard(this, UIConstants.WIZARD_ICON_INSTALL, Constants.rb.getString("wizard.editor.start.title"), Constants.rb.getString("wizard.editor.start.introMessage"), aPanStart);
 		wiz.showWizard();
 		wiz.setNextEnabled(false);
 	}
