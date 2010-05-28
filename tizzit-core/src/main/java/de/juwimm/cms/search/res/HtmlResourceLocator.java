@@ -73,13 +73,19 @@ public class HtmlResourceLocator {
 				resource.addProperty("unitName", unit.getName());
 			}
 		} catch (Exception exe) {
+			if (log.isDebugEnabled()) log.debug("unitId could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
 		try {
 			ContentHbm content = contentHbmDao.load(new Integer(vcl.getReference()));
 			resource.addProperty("template", content.getTemplate());
 		} catch (Exception exe) {
+			if (log.isDebugEnabled()) log.debug("template could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
-
+		try {
+			//
+		} catch (Exception exe) {
+			if (log.isDebugEnabled()) log.debug("realms could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
+		}
 		HTMLParser parser = new HTMLParser(new FileInputStream(file));
 		return parseHtml(resource, parser);
 	}
