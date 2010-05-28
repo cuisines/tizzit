@@ -2588,4 +2588,11 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 		return true;
 	}
+
+	@Override
+	protected void handleSetViewComponentOnline(Integer viewComponentId) throws Exception {
+		ViewComponentHbm viewComponentHbm = getViewComponentHbmDao().load(viewComponentId);
+		viewComponentHbm.setOnline((byte) 1);
+		getViewComponentHbmDao().update(viewComponentHbm);
+	}
 }

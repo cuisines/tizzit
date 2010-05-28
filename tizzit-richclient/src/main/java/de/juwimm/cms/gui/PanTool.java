@@ -139,7 +139,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 	}
 
 	public void unload() {
-
+		instance = null;
 	}
 
 	public void setTreeToEmpty() {

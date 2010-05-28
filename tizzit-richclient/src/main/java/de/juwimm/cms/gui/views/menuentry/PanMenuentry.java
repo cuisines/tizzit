@@ -277,23 +277,29 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 		this.add(panDefault, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
 
 		this.add(panOptPan, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(0, 0, 10, 0), 0, 0));
-		panStati.add(lblStateDeploy, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0));
-		panStati.add(lblStateDeployContent, gridBagConstraints);
-		panStati.add(lblStateOnline, new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 0), 0, 0));
 		final GridBagConstraints gridBagConstraints_1 = new GridBagConstraints();
 		gridBagConstraints_1.insets = new Insets(0, 5, 0, 10);
 		gridBagConstraints_1.anchor = GridBagConstraints.EAST;
 		gridBagConstraints_1.gridy = 1;
 		gridBagConstraints_1.gridx = 2;
-		if (communication.isUserInRole(UserRights.PAGE_CHANGE_SEARCH_INDEXED)) {
-			panStati.add(getBtnReindexPage(), gridBagConstraints_1);
+		boolean liveDeplomentActive = communication.isLiveDeploymentActive();
+		if (liveDeplomentActive) {
+			panStati.add(lblStateDeploy, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0));
+			panStati.add(lblStateDeployContent, gridBagConstraints);
+			panStati.add(lblStateOnline, new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 0), 0, 0));
+
+			if (communication.isUserInRole(UserRights.PAGE_CHANGE_SEARCH_INDEXED)) {
+				panStati.add(getBtnReindexPage(), gridBagConstraints_1);
+			}
 		}
 		panStati.add(optSelectShow, gridBagConstraints2);
 		panStati.add(chkOpenNewNavi, gridBagConstraints3);
 		panStati.add(chkSetInvisible, gridBagConstraints4);
 		panStati.add(chkSearchIndexed, new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4, 8, 6, 9), 0, 0));
 		panStati.add(chkXmlSearchIndexed, new GridBagConstraints(2, 5, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, new Insets(4, 8, 6, 9), 0, 0));
-		panStati.add(lblStateOnlineContent, gridBagConstraints1);
+		if (liveDeplomentActive) {
+			panStati.add(lblStateOnlineContent, gridBagConstraints1);
+		}
 		this.add(panStati, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(8, 8, 0, 8), 0, 0));
 	}
 

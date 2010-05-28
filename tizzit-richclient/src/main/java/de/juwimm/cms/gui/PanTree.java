@@ -1918,6 +1918,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			} else {
 				view.setStatus(Constants.DEPLOY_STATUS_APPROVED);
 				comm.updateStatus4ViewComponent(view);
+				view.setOnline((byte) 1);
+				comm.setViewComponentOnline(view.getViewComponentId());
 				ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
 				UIConstants.setStatusInfo("Content wurde freigegeben und kann deployed werden.");
 			}

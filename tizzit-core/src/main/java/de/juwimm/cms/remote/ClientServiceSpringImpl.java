@@ -1955,4 +1955,10 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected boolean handleIsViewComponentPublishable(Integer viewComponentId) throws Exception {
 		return getViewServiceSpring().isViewComponentPublishable(viewComponentId);
 	}
+
+	@Override
+	protected void handleSetViewComponentOnline(Integer viewComponentId) throws Exception {
+		getViewServiceSpring().setViewComponentOnline(viewComponentId);
+
+	}
 }

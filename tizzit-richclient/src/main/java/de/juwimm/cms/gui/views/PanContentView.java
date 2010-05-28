@@ -258,10 +258,10 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			if (lastIndex == 1) {
 				panContent.unload();
 			} /*else if (lastIndex == 0) {
-																																																																																																																																																							 panMenuentry.unload();
-																																																																																																																																																							 } else if (lastIndex == 2) {
-																																																																																																																																																							 panMetaData.unload();
-																																																																																																																																																							 }*/
+																																																																																																																																																																											 panMenuentry.unload();
+																																																																																																																																																																											 } else if (lastIndex == 2) {
+																																																																																																																																																																											 panMetaData.unload();
+																																																																																																																																																																											 }*/
 
 			String strTabName = "";
 			try {
@@ -402,6 +402,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 	public void unloadAll() {
 		this.unload();
 		this.panContent.unloadAll();
+		instance = null;
 	}
 
 	private void cmdCancelActionPerformed(ActionEvent e) {

@@ -2702,4 +2702,35 @@ public class Communication implements ExitListener, ActionListener {
 	public UnitValue getRootUnit4Site(Integer siteId) {
 		return getClientService().getRootUnit4Site(siteId);
 	}
+
+	/**
+	 * Get the status of live deployment from the configuration xml for the site
+	 * @return
+	 */
+	public boolean isLiveDeploymentActive() {
+		boolean flag = true;
+		SiteValue site = getCurrentSite();
+		String config = site.getConfigXML();
+		try {
+			Document doc = XercesHelper.string2Dom(config);
+			Iterator<Element> iterator = XercesHelper.findNodes(doc, "//liveDeploymentActive");
+			while (iterator.hasNext()) {
+				Element element = iterator.next();
+				String liveDeployment = element.getTextContent();
+				if (liveDeployment.equalsIgnoreCase("0")) {
+					return false;
+				}
+			}
+
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug("Error at converting string to xml for site cofiguration ", e);
+			}
+		}
+		return flag;
+	}
+
+	public void setViewComponentOnline(Integer viewComponentId) {
+		getClientService().setViewComponentOnline(viewComponentId);
+	}
 }
