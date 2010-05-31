@@ -4,6 +4,12 @@
     <xsl:include href="common.xsl"/>
 
     <!-- eigene Styles fuer dieses Template -->
-    <xsl:template match="styles" mode="template" priority="1"/>
+    <xsl:template match="styles" mode="template" priority="1">
+        
+        #middle {
+            width:650px;
+        }
+        
+    </xsl:template>
     
 </xsl:stylesheet>

@@ -448,7 +448,7 @@
 			margin:0;
 			padding:0;
 			list-style:none;
-			z-index:255;
+			z-index:254;
 		}
 		.sf-menu {
 			line-height:1.0;
@@ -476,7 +476,7 @@
 		.sf-menu li.sfHover ul {
 			left:0;
 			top:2.5em; /* match top ul list item height */
-			z-index:255;
+			z-index:254;
 		}
 		ul.sf-menu li:hover li ul,
 		ul.sf-menu li.sfHover li ul {
@@ -619,7 +619,7 @@
 			height: 100%;
 			background-color: #666;
 			display: none;
-			z-index: 30;
+			z-index: 255;
 		}
 		* html div#fancy_overlay {
 			position: absolute;
@@ -662,7 +662,7 @@
 			position: absolute;
 		    top: 0;
 		    left: 0;
-		    z-index: 90;
+		    z-index: 255;
 		    padding: 18px 18px 33px 18px;
 		    margin: 0;
 		    overflow: hidden;

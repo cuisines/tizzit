@@ -14,7 +14,7 @@
             <xsl:when test="$layout='popup'">popup</xsl:when>
             <xsl:when test="$layout='print'">print</xsl:when>
             <!-- template -->    
-            <!--<xsl:when test="$content-template='standard-without-teaser'">default-without-teaser</xsl:when>-->
+            <xsl:when test="$content-template='standard-without-teaser'">default-without-teaser</xsl:when>
             <xsl:when test="$content-template='home'">home</xsl:when>
             <xsl:when test="$content-template='sitemap' or $content-template='iframe'">default-without-leftnavi-and-teaser</xsl:when>
             <xsl:when test="$content-template='loginform'">login</xsl:when>
