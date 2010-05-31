@@ -347,10 +347,9 @@ public class SearchengineService {
 			CompassSession session = compass.openSession();
 
 			//per default searchItems get connected by AND (compare CompassSettings.java)
-			CompassQuery query = buildRatedWildcardQuery(session, siteId, searchItemEsc, searchUrlEsc);
-			if (log.isDebugEnabled()) {
-				log.debug("search for query: " + query.toString());
-			}
+			CompassQuery query = buildRatedWildcardQuery(session, siteId, searchItemEsc, searchUrlEsc, safeGuardCookieMap);
+			if (log.isDebugEnabled()) log.debug("search for query: " + query.toString());
+
 			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
 				@Override
 				protected void doProcessBeforeDetach(CompassSearchCommand searchCommand, CompassSession session, CompassHits hits, int from, int size) {
@@ -362,52 +361,51 @@ public class SearchengineService {
 
 			CompassSearchCommand command = null;
 
-			command = new CompassSearchCommand(query);
-
-			// doesn't work since the filtered results can have less pages
-
-			//			if (pageSize == null) {
-			//				command = new CompassSearchCommand(query);
-			//			} else {
-			//				command = new CompassSearchCommand(query, pageNumber);
-			//			}
+			if (pageSize == null) {
+				command = new CompassSearchCommand(query);
+			} else {
+				command = new CompassSearchCommand(query, pageNumber);
+			}
 
 			CompassSearchResults results = searchHelper.search(command);
 			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
 			CompassHit[] hits = results.getHits();
 			if (log.isDebugEnabled()) log.debug(hits.length + " results found");
-			// filtering starts here 
-			// to get the true number of results and pages 
-			Vector<CompassHit> hitVector = new Vector<CompassHit>();
-			for (int i = 0; i < hits.length; i++) {
-				String alias = hits[i].getAlias();
-				Resource resource = hits[i].getResource();
-				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
-					try {
-						if (log.isDebugEnabled()) log.debug("Filtering searchresults for rights management");
-						Integer vcId = new Integer(resource.getProperty("viewComponentId").getStringValue());
-						if (log.isDebugEnabled()) log.debug("Found vcId test safeguard for: " + resource.getProperty("viewComponentId").getStringValue());
-						if (vcId != null && safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
-							if (log.isDebugEnabled()) log.debug("Extra authentication neede - skipping this");
-							continue;
-						}
-						hitVector.add(hits[i]);
-					} catch (Exception e) {
-						if (log.isDebugEnabled()) log.debug("Error in compas result filtering - " + e.getMessage(), e);
-					}
-				}
-			}
-			if (log.isDebugEnabled()) log.debug("after filtering number of results: " + hitVector.size());
-			// calculate the page and results to return
-			int startIndex = (pageNumber == 0) ? 0 : (pageNumber + 1) * pageSize;
-			if (log.isDebugEnabled()) log.debug("returning results for page: " + pageNumber + " - from index: " + startIndex);
-			int endIndex = ((startIndex + pageSize) < hitVector.size()) ? (startIndex + pageSize) : hitVector.size();
-			if (log.isDebugEnabled()) log.debug("returning results to index: " + endIndex);
 
-			hits = new CompassHit[hitVector.size()];
-			hits = hitVector.toArray(hits);
-			if (log.isDebugEnabled()) log.debug("hits now contains: " + hits.length + " entries ");
-			for (int i = startIndex; i < endIndex; i++) {
+			//			// filtering starts here 
+			//			// to get the true number of results and pages 
+			//			Vector<CompassHit> hitVector = new Vector<CompassHit>();
+			//			for (int i = 0; i < hits.length; i++) {
+			//				String alias = hits[i].getAlias();
+			//				Resource resource = hits[i].getResource();
+			//				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
+			//					try {
+			//						if (log.isDebugEnabled()) log.debug("Filtering searchresults for rights management");
+			//						Integer vcId = new Integer(resource.getProperty("viewComponentId").getStringValue());
+			//						if (log.isDebugEnabled()) log.debug("Found vcId test safeguard for: " + resource.getProperty("viewComponentId").getStringValue());
+			//						if (vcId != null && safeguardServiceSpring.isSafeguardAuthenticationNeeded(vcId, safeGuardCookieMap)) {
+			//							if (log.isDebugEnabled()) log.debug("Extra authentication neede - skipping this");
+			//							continue;
+			//						}
+			//						hitVector.add(hits[i]);
+			//					} catch (Exception e) {
+			//						if (log.isDebugEnabled()) log.debug("Error in compas result filtering - " + e.getMessage(), e);
+			//					}
+			//				}
+			//			}
+			//			if (log.isDebugEnabled()) log.debug("after filtering number of results: " + hitVector.size());
+			//			// calculate the page and results to return
+			//			int startIndex = (pageNumber == 0) ? 0 : (pageNumber + 1) * pageSize;
+			//			if (log.isDebugEnabled()) log.debug("returning results for page: " + pageNumber + " - from index: " + startIndex);
+			//			int endIndex = ((startIndex + pageSize) < hitVector.size()) ? (startIndex + pageSize) : hitVector.size();
+			//			if (log.isDebugEnabled()) log.debug("returning results to index: " + endIndex);
+
+			//			hits = new CompassHit[hitVector.size()];
+			//			hits = hitVector.toArray(hits);
+			//			if (log.isDebugEnabled()) log.debug("hits now contains: " + hits.length + " entries ");
+
+			//			for (int i = startIndex; i < endIndex; i++) {
+			for (int i = 0; i < hits.length; i++) {
 				String alias = hits[i].getAlias();
 				Resource resource = hits[i].getResource();
 				SearchResultValue retVal = new SearchResultValue();
@@ -419,12 +417,14 @@ public class SearchengineService {
 				retVal.setPageSize(pageSize);
 				retVal.setPageNumber(pageNumber);
 				retVal.setDuration(Long.valueOf(results.getSearchTime()));
-				if (results.getPages() != null) {
-					retVal.setPageAmount(Math.round((hitVector.size() / pageSize) + 0.5f));
-				} else {
-					retVal.setPageAmount(new Integer(1));
-				}
-				retVal.setTotalHits(Integer.valueOf(hitVector.size()));
+				retVal.setPageAmount(results.getPages().length);
+				//				if (results.getPages() != null) {
+				//					retVal.setPageAmount(Math.round((hitVector.size() / pageSize) + 0.5f));
+				//				} else {
+				//					retVal.setPageAmount(new Integer(1));
+				//				}
+				//				retVal.setTotalHits(Integer.valueOf(hitVector.size()));
+				retVal.setTotalHits(results.getTotalHits());
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
 					String url = resource.getProperty("url").getStringValue();
 					if (url != null) {
@@ -478,7 +478,7 @@ public class SearchengineService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId, String searchItem, String searchUrl) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId, String searchItem, String searchUrl, Map safeGuard) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Analyzer analyzer = null;
 		CompassBooleanQueryBuilder queryBuilder = session.queryBuilder().bool();
 		IndexReader ir = LuceneHelper.getLuceneInternalSearch(session).getReader();
@@ -526,6 +526,20 @@ public class SearchengineService {
 			subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
 		}
 		queryBuilder.addMust(subQueryBuilder.toQuery());
+		subQueryBuilder = session.queryBuilder().bool();
+		if (safeGuard != null && !safeGuard.keySet().isEmpty()) {
+			if (log.isDebugEnabled()) log.debug("Safeguard found - adding realms to query.");
+			Iterator it = safeGuard.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				if (key.trim().equalsIgnoreCase("")) continue;
+				if (log.isDebugEnabled()) log.debug("adding realm: " + key);
+				parser = new QueryParser("realm", analyzer);
+				query = parser.parse(key);
+				subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
+			}
+			if (subQueryBuilder.toQuery() != null) queryBuilder.addMust(subQueryBuilder.toQuery());
+		}
 		return queryBuilder.toQuery();
 	}
 

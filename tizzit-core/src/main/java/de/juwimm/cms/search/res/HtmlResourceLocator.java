@@ -40,6 +40,12 @@ import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.UnitHbmDao;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbmDao;
+import de.juwimm.cms.safeguard.model.RealmJaasHbm;
+import de.juwimm.cms.safeguard.model.RealmJdbcHbm;
+import de.juwimm.cms.safeguard.model.RealmLdapHbm;
+import de.juwimm.cms.safeguard.model.RealmSimplePwHbm;
 import de.juwimm.cms.search.res.html.HTMLParser;
 
 /**
@@ -54,6 +60,8 @@ public class HtmlResourceLocator {
 	private UnitHbmDao unitHbmDao;
 	@Autowired
 	private ContentHbmDao contentHbmDao;
+	@Autowired
+	private Realm2viewComponentHbmDao realm2VcHbmDao;
 
 	public Resource getResource(CompassSession session, File file, String url, Date modifiedDate, ViewComponentHbm vcl, ViewDocumentHbm vdl) throws IOException, InterruptedException {
 		ResourceFactory resourceFactory = session.resourceFactory();
@@ -82,12 +90,30 @@ public class HtmlResourceLocator {
 			if (log.isDebugEnabled()) log.debug("template could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
 		try {
-			//
+			String realm = getRealm4Vc(vcl.getViewComponentId());
+			resource.addProperty("realm", realm);
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("realms could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
 		HTMLParser parser = new HTMLParser(new FileInputStream(file));
 		return parseHtml(resource, parser);
+	}
+
+	private String getRealm4Vc(Integer vcId) {
+		Realm2viewComponentHbm realm2vcHmb = realm2VcHbmDao.findByViewComponent(vcId);
+		RealmJdbcHbm jdbc = realm2vcHmb.getJdbcRealm();
+		if (jdbc != null) return "JDBC_" + jdbc.getJdbcRealmId();
+
+		RealmSimplePwHbm simple = realm2vcHmb.getSimplePwRealm();
+		if (simple != null) return "SIMPLEPW_" + simple.getSimplePwRealmId();
+
+		RealmLdapHbm ldap = realm2vcHmb.getLdapRealm();
+		if (ldap != null) return "LDAP_" + ldap.getLdapRealmId();
+
+		RealmJaasHbm jaas = realm2vcHmb.getJaasRealm();
+		if (jaas != null) return "JAAS_" + jaas.getJaasRealmId();
+
+		return null;
 	}
 
 	public Resource getExternalResource(CompassSession session, String url, Reader htmlContent) throws IOException, InterruptedException {
