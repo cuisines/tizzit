@@ -75,7 +75,9 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 
 	@Override
 	protected void handleDeletePictures(Integer[] ids) throws Exception {
-		if (ids == null || ids.length == 0) { return; }
+		if (ids == null || ids.length == 0) {
+			return;
+		}
 		for (Integer pictureId : ids) {
 			remove(pictureId);
 		}
@@ -94,6 +96,7 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 		newPicture.setPictureName(oldPicture.getPictureName());
 		newPicture.setPreview(oldPicture.getPreview());
 		newPicture.setThumbnail(oldPicture.getThumbnail());
+		newPicture.setThumbnailPopup(oldPicture.isThumbnailPopup());
 		/**set the new unit*/
 		newPicture.setUnit(newUnit);
 		newPicture.setTimeStamp(oldPicture.getTimeStamp());

@@ -46,12 +46,13 @@ import de.juwimm.cms.util.Communication;
 public class Picture extends AbstractModule {
 	private static Logger log = Logger.getLogger(Picture.class);
 	public static final String CLASS_NAME = "de.juwimm.cms.content.modules.Picture";
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	protected PanPicture panPicture = null;
 	private PanOnlyButton panBtn;
 	private boolean imEnabled = true;
 	private boolean customPreview = false;
 
+	@Override
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
 		if (methodname.equalsIgnoreCase("PreviewType")) {
@@ -102,6 +103,7 @@ public class Picture extends AbstractModule {
 			elm.setAttribute("type", getPanPicture().getType());
 			elm.setAttribute("height", "" + getPanPicture().getPictureHeight());
 			elm.setAttribute("width", "" + getPanPicture().getPictureWidth());
+			elm.setAttribute("popup", "" + getPanPicture().getPictureThumbnailPopup());
 			Element elmLegend = ContentManager.getDomDoc().createElement("legend");
 			String tmp = getPanPicture().getPictureText();
 			if (tmp == null) tmp = "";

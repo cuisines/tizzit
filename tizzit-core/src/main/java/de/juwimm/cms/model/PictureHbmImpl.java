@@ -49,6 +49,8 @@ public class PictureHbmImpl extends PictureHbm {
 		sb.append(this.getMimeType());
 		sb.append("\" unitId=\"");
 		sb.append(this.getUnit().getUnitId());
+		sb.append("\" popup=\"");
+		sb.append(this.isThumbnailPopup());
 		sb.append("\">\n");
 		sb.append("<thumbnail>").append(Base64.encodeBytes(this.getThumbnail())).append("</thumbnail>\n");
 		sb.append("<file>").append(Base64.encodeBytes(this.getPicture())).append("</file>\n");
