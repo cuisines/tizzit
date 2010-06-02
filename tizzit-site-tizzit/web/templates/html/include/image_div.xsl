@@ -9,87 +9,44 @@
         <xsl:choose>
             <xsl:when test="name(../..)='a' or name(../..)='internalLink'">
                 <xsl:apply-templates select="." mode="newimage"/>
-                <br/>
                 <xsl:apply-templates select="legend" mode="format"/>
             </xsl:when>
-            <!--wenn Bildtyp auf center steht, mittig anzeigen-->
-            <xsl:when test="@type='center'">
-                <xsl:apply-templates select="." mode="center_image"/>
-            </xsl:when>
-            <!--Wenn Bildtyp auf right -->
-            <xsl:when test="@type='right'">
-                <xsl:apply-templates select="." mode="right_image"/>
-            </xsl:when>     
-            <!--Sonst Bild linksbuendig darstellen mit BU rechts daneben -->
             <xsl:otherwise>
-                <xsl:apply-templates select="." mode="left_image"/>   
+                <xsl:apply-templates select="." mode="image"/>   
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template match="image" mode="left_image">        
-        <div class="left_image">
-            <xsl:attribute name="style">
-                <xsl:text>width:</xsl:text>
-                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
+    <xsl:template match="image" mode="image">
+        <div>
+            <xsl:attribute name="class">
+                <xsl:text>image </xsl:text>
+                <xsl:text>image_</xsl:text>
+                <xsl:value-of select="@type"/>
+                <xsl:if test="@popup='true'">
+                    <xsl:text> image_popup</xsl:text>
+                </xsl:if>
             </xsl:attribute>
-            <xsl:apply-templates select="." mode="newimage"/>
-            <xsl:apply-templates select="legend" mode="format"/>
+            <xsl:choose>
+                <xsl:when test="@popup='true'">
+                    <a href="/img/ejbimage/{filename}?id={@src}" rel="group" id="single_3" title="{alttext}">
+                        <xsl:apply-templates select="." mode="imageBuilder"/>
+                    </a>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="." mode="imageBuilder"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:if test="legend!=''">
+                <div class="bu">
+                    <xsl:value-of select="."/>
+                </div>
+            </xsl:if>
         </div>
     </xsl:template>
     
-    <xsl:template match="image" mode="center_image">
-        <div class="center_image">
-            <xsl:attribute name="style">
-                <xsl:text>width:</xsl:text>
-                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
-                <!--  <xsl:text>height:</xsl:text>
-                    <xsl:apply-templates select="@height"/><xsl:text>px;</xsl:text>-->
-            </xsl:attribute>
-            <xsl:apply-templates select="." mode="newimage"/>
-            <xsl:apply-templates select="legend" mode="format"/>
-        </div>
-    </xsl:template>
-    
-    <xsl:template match="image" mode="right_image">        
-        <div class="right_image">
-            <xsl:attribute name="style">
-                <xsl:text>width:</xsl:text>
-                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
-            </xsl:attribute>
-            <xsl:apply-templates select="." mode="newimage"/>
-            <xsl:apply-templates select="legend" mode="format"/>
-        </div>
-    </xsl:template>
-    
-    <xsl:template match="image" mode="newimage">
-        <img style="border:0px;">
-            <xsl:attribute name="src">/img/ejbimage<xsl:if test="filename != ''">/<xsl:value-of select="filename"/></xsl:if>?id=<xsl:apply-templates select="@src"/>&amp;typ=s</xsl:attribute>
-            <xsl:attribute name="alt">
-                <xsl:choose>
-                    <xsl:when test="alttext !=''">
-                        <xsl:apply-templates select="alttext"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>AlternativeText</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <xsl:attribute name="style">
-                <xsl:text>width:</xsl:text>
-                <xsl:apply-templates select="@width"/><xsl:text>px;</xsl:text>
-                <xsl:text>height:</xsl:text>
-                <xsl:apply-templates select="@height"/><xsl:text>px;</xsl:text>
-            </xsl:attribute>
-        </img>
-    </xsl:template>
-    
-    <xsl:template match="legend" mode="format">
-        <xsl:if test="not(.='')">
-            <div class="bu">
-                <xsl:value-of select="."/>
-            </div>
-        </xsl:if>
+    <xsl:template match="image" mode="imageBuilder">
+        <img style="border:0px;" src="/img/ejbimage/{filename}?id={@src}" alt="{alttext}" title="{alttext}"/>
     </xsl:template>
     
     <xsl:template match="image" mode="teaser" priority="2">      

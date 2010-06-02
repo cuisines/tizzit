@@ -267,6 +267,19 @@
 			font-size:13px;
 			font-family:Tahoma;
 		}
+		<!--Images-->
+		.image_popup img {
+			width:130px;
+		}
+		.image_left {
+			float:left;
+			padding:0 10px 10px 0;
+		}
+		.image_right {
+			float:right;
+			padding:0 0 10px 10px;
+		}
+		<!--Ende Images-->
 		.secondlevel, #search_area, #search_button, #search_container, .copyright,
 		.firstlevel2 .firstlink, .firstlevel2 .last-of-firstlink, .secondlevel .firstlink, .secondlevel .first-of-firstlink,
 		.fl_bg_l, .fl_bg, .flm_bg, #leftmenue, #right, #middle, .footer_item, .first-item, .breadcrumb-item,
