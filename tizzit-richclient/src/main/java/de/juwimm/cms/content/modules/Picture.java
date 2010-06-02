@@ -84,6 +84,11 @@ public class Picture extends AbstractModule {
 				retVal = false;
 			}
 
+			if (getPanPicture().getPictureAltText() == null || getPanPicture().getPictureAltText().trim().isEmpty()) {
+				appendValidationError(rb.getString("exception.AltTextRequired"));
+				retVal = false;
+			}
+
 			return retVal;
 		}
 		return true;

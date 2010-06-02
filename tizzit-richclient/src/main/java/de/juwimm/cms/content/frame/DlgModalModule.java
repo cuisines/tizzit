@@ -45,9 +45,9 @@ import de.juwimm.cms.util.UIConstants;
  */
 public class DlgModalModule extends JDialog {
 	private static Logger log = Logger.getLogger(DlgModalModule.class);
-	private JPanel panButtons = new JPanel();
-	private JButton btnOk = new JButton();
-	private JButton btnCancel = new JButton();
+	private final JPanel panButtons = new JPanel();
+	private final JButton btnOk = new JButton();
+	private final JButton btnCancel = new JButton();
 	private Module module;
 	private JPanel rootPanel;
 
