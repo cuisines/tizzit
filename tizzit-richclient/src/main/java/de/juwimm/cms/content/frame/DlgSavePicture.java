@@ -39,17 +39,17 @@ public class DlgSavePicture extends JDialog {
 	private static final long serialVersionUID = -84852827972953607L;
 	private static Logger log = Logger.getLogger(DlgPictureBrowser.class);
 	protected Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private ResourceBundle rb = Constants.rb;
-	private JRadioButton btnFileOverwrite = new JRadioButton();
-	private JRadioButton btnFileNew = new JRadioButton();
-	private JTextField txtFileName = new JTextField();
-	private JPanel panButtonPanel = new JPanel();
-	private JButton btnSave = new JButton();
-	private JButton btnCancel = new JButton();
-	private PictureSlimValue pictureValue;
-	private byte[] pictureData;
-	private byte[] pictureThumbnail;
-	private EventListenerList listenerList = new EventListenerList();
+	private final ResourceBundle rb = Constants.rb;
+	private final JRadioButton btnFileOverwrite = new JRadioButton();
+	private final JRadioButton btnFileNew = new JRadioButton();
+	private final JTextField txtFileName = new JTextField();
+	private final JPanel panButtonPanel = new JPanel();
+	private final JButton btnSave = new JButton();
+	private final JButton btnCancel = new JButton();
+	private final PictureSlimValue pictureValue;
+	private final byte[] pictureData;
+	private final byte[] pictureThumbnail;
+	private final EventListenerList listenerList = new EventListenerList();
 
 	public DlgSavePicture(PictureSlimValue psValue, byte[] picData, byte[] thumbnail) {
 		pictureValue = psValue;
@@ -146,7 +146,7 @@ public class DlgSavePicture extends JDialog {
 			int unitId = ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getActUnitId();
 			if (!fileName.isEmpty() && Pattern.matches(filePattern, fileName) && validateFileName(unitId, fileName)) {
 				try {
-					pictureId = comm.addPicture2Unit(unitId, pictureThumbnail, pictureData, "image/png", pictureValue.getAltText(), fileName);
+					pictureId = comm.addPicture2Unit(unitId, pictureThumbnail, pictureData, "image/png", pictureValue.getAltText(), fileName, pictureValue.getTitle());
 				} catch (Exception ex) {
 					log.error("Could not create Picture for unit: " + unitId, ex);
 				}

@@ -894,7 +894,7 @@ public class ViewServiceTest extends AbstractServiceTest {
 		EasyMock.replay(viewComponentDaoMock);
 
 		try {
-			String[] values = viewService.getParents4ViewComponent(1);
+			Integer[] values = viewService.getParents4ViewComponent(1);
 			Assert.assertEquals(values.length, 2);
 		} catch (Exception e) {
 			Assert.assertTrue(false);

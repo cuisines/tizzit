@@ -61,7 +61,7 @@ public class Picture extends AbstractModule {
 	}
 
 	public JDialog viewModalUI(boolean modal) {
-		int frameHeight = 400;
+		int frameHeight = 500;
 		int frameWidth = 440;
 		DlgModalModule frm = new DlgModalModule(this, getPanPicture(), frameHeight, frameWidth, modal);
 		frm.setVisible(true);
@@ -109,6 +109,7 @@ public class Picture extends AbstractModule {
 			elm.setAttribute("height", "" + getPanPicture().getPictureHeight());
 			elm.setAttribute("width", "" + getPanPicture().getPictureWidth());
 			elm.setAttribute("popup", "" + getPanPicture().getPictureThumbnailPopup());
+			elm.setAttribute("title", getPanPicture().getPictureTitle());
 			Element elmLegend = ContentManager.getDomDoc().createElement("legend");
 			String tmp = getPanPicture().getPictureText();
 			if (tmp == null) tmp = "";

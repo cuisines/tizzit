@@ -70,7 +70,7 @@ public class DlgModalModule extends JDialog {
 		int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		this.setSize(width, height);
 		this.setMinimumSize(new Dimension(440, 440));
-		this.setPreferredSize(new Dimension(440, 440));
+		this.setPreferredSize(new Dimension(width, height));
 		this.setLocation((screenWidth / 2) - (width / 2), (screenHeight / 2) - (height / 2));
 		this.setTitle(Messages.getString("panel.content.DlgModalModule", module.getLabel(), module.getDescription()));
 		this.getRootPane().setDefaultButton(btnOk);

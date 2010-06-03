@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.content.panel;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Cursor;
 import java.awt.Image;
@@ -46,7 +46,7 @@ import de.juwimm.cms.util.UIConstants;
  * @version $Id$
  */
 public class PanPictureCustomPreview extends PanPicture {
-	private Logger log = Logger.getLogger(PanPictureCustomPreview.class);
+	private final Logger log = Logger.getLogger(PanPictureCustomPreview.class);
 
 	public PanPictureCustomPreview() {
 		super();
@@ -56,6 +56,7 @@ public class PanPictureCustomPreview extends PanPicture {
 		super(module);
 	}
 
+	@Override
 	protected void upload(String prosa, int unit) {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		File picFull = null;
@@ -72,7 +73,7 @@ public class PanPictureCustomPreview extends PanPicture {
 		fc.setAccessory(new ImagePreview(fc));
 		fc.setMultiSelectionEnabled(false);
 		fc.setCurrentDirectory(Constants.LAST_LOCAL_UPLOAD_DIR);
-		
+
 		// get Picture in full size
 		fc.setDialogTitle(rb.getString("panel.content.picture.addPictureFull"));
 		int returnVal = fc.showDialog(PanPictureCustomPreview.this, rb.getString("panel.content.picture.addPictureFull"));
@@ -83,14 +84,13 @@ public class PanPictureCustomPreview extends PanPicture {
 			Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
 			if (picFull.length() > 4000000) {
 				this.setCursor(Cursor.getDefaultCursor());
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + picFull.getName(),
-						rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + picFull.getName(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			// get Picture in Preview size
 			fc.setDialogTitle(rb.getString("panel.content.picture.addPicturePreview"));
 			returnVal = fc.showDialog(PanPictureCustomPreview.this, rb.getString("panel.content.picture.addPicturePreview"));
-	
+
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				picPreview = fc.getSelectedFile();
 				this.lblFile.setVisible(true);
@@ -98,15 +98,13 @@ public class PanPictureCustomPreview extends PanPicture {
 				Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
 				if (picPreview.length() > 4000000) {
 					this.setCursor(Cursor.getDefaultCursor());
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + picPreview.getName(),
-							rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + picPreview.getName(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				// user selected two pictures to upload
-				FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"),
-						rb.getString("panel.content.upload.ParseFile"), 100);
+				FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"), rb.getString("panel.content.upload.ParseFile"), 100);
 				prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-	
+
 				try {
 					byte[] btyPicFull = getBytesFromFile(picFull);
 					byte[] btyPicPre = getBytesFromFile(picPreview);
@@ -129,10 +127,10 @@ public class PanPictureCustomPreview extends PanPicture {
 					} else if (fext.equals(Utils.TIF) || fext.equals(Utils.TIFF)) {
 						mimetype = "image/tif";
 					}
-	
+
 					prog.setProgress(rb.getString("panel.content.upload.Uploading"), 50);
-					retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), btyPicFull, btyPicPre, mimetype, "", picFull.getName());
-	
+					retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), btyPicFull, btyPicPre, mimetype, "", picFull.getName(), "");
+
 					setPictureId(retInt);
 				} catch (Exception exe) {
 					log.error("Error during the upload of the picture " + picFull.getName(), exe);

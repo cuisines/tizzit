@@ -1444,12 +1444,12 @@ public class Communication implements ExitListener, ActionListener {
 		}
 	}
 
-	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
-		return getClientService().addPicture2Unit(Integer.valueOf(unitId), thumbnail, picture, mimeType, altText, pictureName);
+	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		return getClientService().addPicture2Unit(Integer.valueOf(unitId), thumbnail, picture, mimeType, altText, pictureName, title);
 	}
 
-	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName) throws Exception {
-		return getClientService().addPictureWithPreview2Unit(Integer.valueOf(unitId), thumbnail, picture, preview, mimeType, altText, pictureName);
+	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName, String title) throws Exception {
+		return getClientService().addPictureWithPreview2Unit(Integer.valueOf(unitId), thumbnail, picture, preview, mimeType, altText, pictureName, title);
 	}
 
 	public void setPicture4Unit(int unitId, int pictureId) throws Exception {
@@ -2709,24 +2709,24 @@ public class Communication implements ExitListener, ActionListener {
 	 */
 	public boolean isLiveDeploymentActive() {
 		boolean flag = true;
-		SiteValue site = getCurrentSite();
-		String config = site.getConfigXML();
-		try {
-			Document doc = XercesHelper.string2Dom(config);
-			Iterator<Element> iterator = XercesHelper.findNodes(doc, "//liveDeploymentActive");
-			while (iterator.hasNext()) {
-				Element element = iterator.next();
-				String liveDeployment = element.getTextContent();
-				if (liveDeployment.equalsIgnoreCase("0")) {
-					return false;
-				}
-			}
-
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) {
-				log.debug("Error at converting string to xml for site cofiguration ", e);
-			}
-		}
+		//		SiteValue site = getCurrentSite();
+		//		String config = site.getConfigXML();
+		//		try {
+		//			Document doc = XercesHelper.string2Dom(config);
+		//			Iterator<Element> iterator = XercesHelper.findNodes(doc, "//liveDeploymentActive");
+		//			while (iterator.hasNext()) {
+		//				Element element = iterator.next();
+		//				String liveDeployment = element.getTextContent();
+		//				if (liveDeployment.equalsIgnoreCase("0")) {
+		//					return false;
+		//				}
+		//			}
+		//
+		//		} catch (Exception e) {
+		//			if (log.isDebugEnabled()) {
+		//				log.debug("Error at converting string to xml for site cofiguration ", e);
+		//			}
+		//		}
 		return flag;
 	}
 

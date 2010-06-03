@@ -746,13 +746,13 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected int handleAddPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
-		return getContentServiceSpring().addPicture2Unit(Integer.valueOf(unitId), thumbnail, picture, mimeType, altText, pictureName).intValue();
+	protected int handleAddPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		return getContentServiceSpring().addPicture2Unit(Integer.valueOf(unitId), thumbnail, picture, mimeType, altText, pictureName, title).intValue();
 	}
 
 	@Override
-	protected int handleAddPictureWithPreview2Unit(int unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName) throws Exception {
-		return getContentServiceSpring().addPictureWithPreview2Unit(Integer.valueOf(unitId), thumbnail, picture, preview, mimeType, altText, pictureName).intValue();
+	protected int handleAddPictureWithPreview2Unit(int unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName, String title) throws Exception {
+		return getContentServiceSpring().addPictureWithPreview2Unit(Integer.valueOf(unitId), thumbnail, picture, preview, mimeType, altText, pictureName, title).intValue();
 	}
 
 	@Override

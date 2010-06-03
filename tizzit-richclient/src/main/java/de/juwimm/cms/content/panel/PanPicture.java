@@ -81,24 +81,26 @@ import de.juwimm.cms.vo.PictureSlimValue;
 public class PanPicture extends JPanel {
 	private static Logger log = Logger.getLogger(PanPicture.class);
 	protected Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JButton btnUploadRoot = new JButton();
+	private final JButton btnUploadRoot = new JButton();
 	protected JButton btnPreview = new JButton();
-	private JButton btnUpload = new JButton();
-	private JPanel pnlPreview = new JPanel();
-	private JButton btnChoose = new JButton();
-	private JButton btnEdit = new JButton();
-	private JLabel lblPreview = new JLabel();
+	private final JButton btnUpload = new JButton();
+	private final JPanel pnlPreview = new JPanel();
+	private final JButton btnChoose = new JButton();
+	private final JButton btnEdit = new JButton();
+	private final JLabel lblPreview = new JLabel();
 	protected JLabel lblPictId = new JLabel();
-	private JLabel lblPictNo = new JLabel();
+	private final JLabel lblPictNo = new JLabel();
 	protected JLabel lblFile = new JLabel();
 	protected JLabel lblFileName = new JLabel();
-	private JTextField txtPictureSubtext = new JTextField();
-	private JLabel lblPictureSubtext = new JLabel();
+	private final JTextField txtPictureSubtext = new JTextField();
+	private final JLabel lblPictureSubtext = new JLabel();
 	protected JTextField txtAltText = new JTextField();
-	private JLabel lblAltText = new JLabel();
-	private JLabel lblDirection = new JLabel();
-	private JComboBox cboDirection = new JComboBox();
-	private JCheckBox ckbThumbnailPopup = new JCheckBox();
+	protected JTextField txtTitle = new JTextField();
+	private final JLabel lblAltText = new JLabel();
+	private final JLabel lblTitle = new JLabel();
+	private final JLabel lblDirection = new JLabel();
+	private final JComboBox cboDirection = new JComboBox();
+	private final JCheckBox ckbThumbnailPopup = new JCheckBox();
 	private int pictureWidth = -1;
 	private int pictureHeight = -1;
 	private int pictureId = -1;
@@ -139,8 +141,8 @@ public class PanPicture extends JPanel {
 	 * 
 	 */
 	public final class CboModel {
-		private String strView;
-		private String val;
+		private final String strView;
+		private final String val;
 
 		public CboModel(String view, String val) {
 			this.strView = view;
@@ -155,6 +157,7 @@ public class PanPicture extends JPanel {
 			return this.val;
 		}
 
+		@Override
 		public String toString() {
 			return this.strView;
 		}
@@ -180,6 +183,7 @@ public class PanPicture extends JPanel {
 			this.lblPictId.setText(" ");
 			this.lblFileName.setText(" ");
 			this.txtAltText.setText(" ");
+			this.txtTitle.setText(" ");
 			this.txtPictureSubtext.setText(" ");
 			btnEdit.setEnabled(false);
 		}
@@ -191,6 +195,14 @@ public class PanPicture extends JPanel {
 
 	public String getPictureText() {
 		return this.txtPictureSubtext.getText();
+	}
+
+	public void setPictureTitle(String text) {
+		this.txtTitle.setText(text);
+	}
+
+	public String getPictureTitle() {
+		return this.txtTitle.getText();
 	}
 
 	public void setType(String type) {
@@ -281,6 +293,7 @@ public class PanPicture extends JPanel {
 		lblPictNo.setText(rb.getString("panel.content.picture.PicNumber"));
 		lblPictureSubtext.setText(rb.getString("panel.content.picture.PicSubline"));
 		lblAltText.setText(rb.getString("panel.content.picture.altText"));
+		lblTitle.setText(rb.getString("panel.content.picture.title"));
 		lblDirection.setText(rb.getString("panel.content.picture.Direction"));
 		pnlPreview.add(btnPreview, BorderLayout.CENTER);
 		btnPreview.setTransferHandler(new FileTransferHandler(this));
@@ -307,6 +320,8 @@ public class PanPicture extends JPanel {
 		this.add(txtPictureSubtext, new GridBagConstraints(2, 9, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 6), 188, 2));
 		this.add(lblAltText, new GridBagConstraints(0, 10, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
 		this.add(txtAltText, new GridBagConstraints(2, 10, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
+		this.add(lblTitle, new GridBagConstraints(0, 11, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(9, 15, 10, 0), 7, 0));
+		this.add(txtTitle, new GridBagConstraints(2, 11, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 10, 6), 307, 2));
 
 	}
 
@@ -417,7 +432,7 @@ public class PanPicture extends JPanel {
 						log.error("Error during getting getPictureIdForUnitAndName");
 					}
 					if (existingPicId == 0) {
-						retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName());
+						retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName(), "");
 					} else {
 						/**picture name already exists=>dialog message*/
 						PictureSlimValue picSlimVal = comm.getPicture(existingPicId);

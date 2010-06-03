@@ -89,8 +89,10 @@ public class HtmlResourceLocator {
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("template could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
+		if (log.isInfoEnabled()) log.info("looking for realm now: ");
 		try {
 			String realm = getRealm4Vc(vcl.getViewComponentId());
+			if (realm != null) log.info("realm is: " + realm);
 			resource.addProperty("realm", realm);
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("realms could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
@@ -113,7 +115,7 @@ public class HtmlResourceLocator {
 		RealmJaasHbm jaas = realm2vcHmb.getJaasRealm();
 		if (jaas != null) return "JAAS_" + jaas.getJaasRealmId();
 
-		return null;
+		return "";
 	}
 
 	public Resource getExternalResource(CompassSession session, String url, Reader htmlContent) throws IOException, InterruptedException {

@@ -117,8 +117,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#addPicture2Unit(java.lang.Integer, byte[], byte[], java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected Integer handleAddPicture2Unit(Integer unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, null);
+	protected Integer handleAddPicture2Unit(Integer unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null);
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
@@ -126,9 +126,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	@Override
-	protected Integer handleAddPictureWithPreview2Unit(Integer unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName) throws Exception {
+	protected Integer handleAddPictureWithPreview2Unit(Integer unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName, String title) throws Exception {
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, false, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, false, title, null);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
@@ -389,8 +389,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#createPicture(byte[], byte[], java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected Integer handleCreatePicture(byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, null);
+	protected Integer handleCreatePicture(byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
 	}
