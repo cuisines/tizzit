@@ -13,6 +13,7 @@
         <resource-property name="viewtype" store="yes" index="un_tokenized" />
         <resource-property name="template" store="yes" index="un_tokenized" />
         <resource-property name="modified" store="yes" index="un_tokenized" />
+        <resource-property name="realm" store="yes" index="tokenized" />
 		<resource-property name="viewComponentId" store="yes" index="un_tokenized" />
         <resource-property name="contents" store="compress" index="tokenized" />
         <resource-property name="metadata" store="yes" index="tokenized" />

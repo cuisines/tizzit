@@ -538,6 +538,10 @@ public class SearchengineService {
 				query = parser.parse(key);
 				subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
 			}
+			// adding null representation to find pages without security
+			parser = new QueryParser("realm", analyzer);
+			query = parser.parse(Constants.SEARCH_INDEX_NULL);
+			subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
 			if (subQueryBuilder.toQuery() != null) queryBuilder.addMust(subQueryBuilder.toQuery());
 		}
 		return queryBuilder.toQuery();

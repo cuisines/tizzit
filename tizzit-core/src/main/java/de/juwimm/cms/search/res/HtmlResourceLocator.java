@@ -34,6 +34,7 @@ import org.compass.core.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.XercesHelper;
 
+import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.UnitHbm;
@@ -92,8 +93,13 @@ public class HtmlResourceLocator {
 		if (log.isInfoEnabled()) log.info("looking for realm now: ");
 		try {
 			String realm = getRealm4Vc(vcl.getViewComponentId());
-			if (realm != null) log.info("realm is: " + realm);
-			resource.addProperty("realm", realm);
+			if (realm != null) {
+				log.info("realm is: " + realm);
+				resource.addProperty("realm", realm);
+			} else {
+				log.info("page not protected - adding 'nullValue' for the search query.");
+				resource.addProperty("realm", Constants.SEARCH_INDEX_NULL);
+			}
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("realms could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
@@ -103,6 +109,7 @@ public class HtmlResourceLocator {
 
 	private String getRealm4Vc(Integer vcId) {
 		Realm2viewComponentHbm realm2vcHmb = realm2VcHbmDao.findByViewComponent(vcId);
+		if (realm2vcHmb == null) return null;
 		RealmJdbcHbm jdbc = realm2vcHmb.getJdbcRealm();
 		if (jdbc != null) return "JDBC_" + jdbc.getJdbcRealmId();
 
@@ -114,8 +121,7 @@ public class HtmlResourceLocator {
 
 		RealmJaasHbm jaas = realm2vcHmb.getJaasRealm();
 		if (jaas != null) return "JAAS_" + jaas.getJaasRealmId();
-
-		return "";
+		return null;
 	}
 
 	public Resource getExternalResource(CompassSession session, String url, Reader htmlContent) throws IOException, InterruptedException {

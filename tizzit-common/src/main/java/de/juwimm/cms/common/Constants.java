@@ -101,6 +101,9 @@ public final class Constants {
 	public static final byte DEPLOY_STATUS_FOR_DEPLOY = 3;
 	public static final byte DEPLOY_STATUS_DEPLOYED = 4;
 
+	// null representation for pages without security in search index
+	public static final String SEARCH_INDEX_NULL = "searchindexnullvalue";
+
 	/* This is the Field from viewcomponent.view_type */
 	public static final byte VIEW_TYPE_UNIT = 1; // may be in use, but currently old parameter. Should be used again
 	public static final byte VIEW_TYPE_INTERNAL_LINK = 2; // INTERNER LINK
