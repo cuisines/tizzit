@@ -61,6 +61,9 @@ public class PictureHbmImpl extends PictureHbm {
 		String altText = this.getAltText();
 		if (altText == null) altText = "";
 		sb.append("<altText><![CDATA[").append(altText).append("]]></altText>\n");
+		String title = getTitle();
+		if (title == null) title = "";
+		sb.append("<title><![CDATA[").append(title).append("]]></title>\n");
 		String pictureName = this.getPictureName();
 		if (pictureName == null) pictureName = "";
 		sb.append("<pictureName><![CDATA[").append(pictureName).append("]]></pictureName>\n");

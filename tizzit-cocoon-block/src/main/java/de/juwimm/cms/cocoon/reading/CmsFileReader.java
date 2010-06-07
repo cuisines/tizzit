@@ -113,7 +113,9 @@ public class CmsFileReader extends CmsImageReader implements Poolable, Cacheable
 			setChgDate(getWebServiceSpring().getTimestamp4Document(getPrimaryKey()).longValue());
 		} catch (Exception exe) {
 		}
-		if (getChgDate() != 0) { return new TimeStampValidity(getChgDate()); }
+		if (getChgDate() != 0) {
+			return new TimeStampValidity(getChgDate());
+		}
 		return null;
 	}
 

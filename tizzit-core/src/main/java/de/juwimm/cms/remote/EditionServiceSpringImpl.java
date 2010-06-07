@@ -1122,6 +1122,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 					String strMimeType = el.getAttribute("mimeType");
 					String strPictureName = XercesHelper.getNodeValue(el, "./pictureName");
 					String strAltText = XercesHelper.getNodeValue(el, "./altText");
+					String title = XercesHelper.getNodeValue(el, "./title");
 
 					File fle = new File(directory.getParent() + File.separator + "f" + id);
 					byte[] file = new byte[(int) fle.length()];
@@ -1148,14 +1149,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 							Integer oldUnitId = new Integer(el.getAttribute("unitId"));
 							Integer newUnitId = mappingUnits.get(oldUnitId);
 							UnitHbm unitForPic = getUnitHbmDao().load(newUnitId);
-							pic = getPictureHbmDao().create(createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, strPictureName, null, unitForPic));
+							pic = getPictureHbmDao().create(createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, title, strPictureName, null, unitForPic));
 						} else {
-							pic = getPictureHbmDao().create(createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, strPictureName, null, ul));
+							pic = getPictureHbmDao().create(createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, title, strPictureName, null, ul));
 						}
 						if (log.isDebugEnabled()) log.debug("mappingPics OLD " + id + " NEW " + pic.getPictureId());
 						mappingPics.put(id, pic.getPictureId());
 					} else {
-						createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, strPictureName, id, ul);
+						createPictureHbm(thumbnail, file, preview, strMimeType, strAltText, title, strPictureName, id, ul);
 					}
 				}
 			}
@@ -1168,7 +1169,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		if (log.isInfoEnabled()) log.info("end importDocumentsAndPictures");
 	}
 
-	private PictureHbm createPictureHbm(byte[] thumbnail, byte[] file, byte[] preview, String strMimeType, String strAltText, String strPictureName, Integer id, UnitHbm unit) {
+	private PictureHbm createPictureHbm(byte[] thumbnail, byte[] file, byte[] preview, String strMimeType, String strAltText, String title, String strPictureName, Integer id, UnitHbm unit) {
 		PictureHbm picture;
 		boolean newPicture = (id != null && id == 0) ? true : false;
 		if (id == null) {
@@ -1186,6 +1187,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		picture.setPreview(preview);
 		picture.setMimeType(strMimeType);
 		picture.setAltText(strAltText);
+		picture.setTitle(title);
 		picture.setPictureName(strPictureName);
 		picture.setUnit(unit);
 
