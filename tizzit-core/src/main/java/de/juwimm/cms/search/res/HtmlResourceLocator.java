@@ -90,7 +90,7 @@ public class HtmlResourceLocator {
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("template could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
-		if (log.isInfoEnabled()) log.info("looking for realm now: ");
+		if (log.isDebugEnabled()) log.debug("looking for realm now: ");
 		try {
 			String realm = getRealm4Vc(vcl.getViewComponentId());
 			if (realm != null) {
