@@ -103,6 +103,7 @@ public final class Constants {
 
 	// null representation for pages without security in search index
 	public static final String SEARCH_INDEX_NULL = "searchindexnullvalue";
+	public static final String SAFEGUARD_ROLE_SEPARATOR = ",";
 
 	/* This is the Field from viewcomponent.view_type */
 	public static final byte VIEW_TYPE_UNIT = 1; // may be in use, but currently old parameter. Should be used again

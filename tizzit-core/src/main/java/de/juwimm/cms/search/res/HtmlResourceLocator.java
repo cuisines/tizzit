@@ -94,10 +94,10 @@ public class HtmlResourceLocator {
 		try {
 			String realm = getRealm4Vc(vcl.getViewComponentId());
 			if (realm != null) {
-				log.info("realm is: " + realm);
+				if (log.isDebugEnabled()) log.debug("realm is: " + realm);
 				resource.addProperty("realm", realm);
 			} else {
-				log.info("page not protected - adding 'nullValue' for the search query.");
+				if (log.isDebugEnabled()) log.debug("page not protected - adding 'nullValue' for the search query.");
 				resource.addProperty("realm", Constants.SEARCH_INDEX_NULL);
 			}
 		} catch (Exception exe) {
@@ -111,17 +111,26 @@ public class HtmlResourceLocator {
 		Realm2viewComponentHbm realm2vcHmb = realm2VcHbmDao.findByViewComponent(vcId);
 		if (realm2vcHmb == null) return null;
 		RealmJdbcHbm jdbc = realm2vcHmb.getJdbcRealm();
-		if (jdbc != null) return "JDBC_" + jdbc.getJdbcRealmId();
-
+		if (jdbc != null) return createRealmRoleCombo("JDBC_" + jdbc.getJdbcRealmId(), realm2vcHmb.getRoleNeeded());
 		RealmSimplePwHbm simple = realm2vcHmb.getSimplePwRealm();
-		if (simple != null) return "SIMPLEPW_" + simple.getSimplePwRealmId();
-
+		if (simple != null) return createRealmRoleCombo("SIMPLEPW_" + simple.getSimplePwRealmId(), realm2vcHmb.getRoleNeeded());
 		RealmLdapHbm ldap = realm2vcHmb.getLdapRealm();
-		if (ldap != null) return "LDAP_" + ldap.getLdapRealmId();
-
+		if (ldap != null) return createRealmRoleCombo("LDAP_" + ldap.getLdapRealmId(), realm2vcHmb.getRoleNeeded());
 		RealmJaasHbm jaas = realm2vcHmb.getJaasRealm();
-		if (jaas != null) return "JAAS_" + jaas.getJaasRealmId();
+		if (jaas != null) return createRealmRoleCombo("JAAS_" + jaas.getJaasRealmId(), realm2vcHmb.getRoleNeeded());
 		return null;
+	}
+
+	private String createRealmRoleCombo(String realm, String rolesNeeded) {
+		if (log.isDebugEnabled()) log.debug("createRealmRoleCombo realm: " + realm + " roles: " + rolesNeeded);
+		if (rolesNeeded == null) return realm;
+		String result = realm;
+		String[] roles = null;
+		roles = rolesNeeded.split(Constants.SAFEGUARD_ROLE_SEPARATOR);
+		for (int i = 0; i < roles.length; i++) {
+			if (!roles[i].isEmpty()) result = result + " " + realm + "_" + roles[i].trim();
+		}
+		return result;
 	}
 
 	public Resource getExternalResource(CompassSession session, String url, Reader htmlContent) throws IOException, InterruptedException {
