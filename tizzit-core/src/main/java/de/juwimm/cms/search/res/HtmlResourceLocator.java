@@ -92,7 +92,7 @@ public class HtmlResourceLocator {
 		}
 		if (log.isDebugEnabled()) log.debug("looking for realm now: ");
 		try {
-			String realm = getRealm4Vc(vcl.getViewComponentId());
+			String realm = getRealm4Vc(vcl);
 			if (realm != null) {
 				if (log.isDebugEnabled()) log.debug("realm is: " + realm);
 				resource.addProperty("realm", realm);
@@ -107,9 +107,12 @@ public class HtmlResourceLocator {
 		return parseHtml(resource, parser);
 	}
 
-	private String getRealm4Vc(Integer vcId) {
-		Realm2viewComponentHbm realm2vcHmb = realm2VcHbmDao.findByViewComponent(vcId);
-		if (realm2vcHmb == null) return null;
+	private String getRealm4Vc(ViewComponentHbm vc) {
+		if (vc == null) return null;
+		Realm2viewComponentHbm realm2vcHmb = realm2VcHbmDao.findByViewComponent(vc.getViewComponentId());
+		if (realm2vcHmb == null) {
+			return getRealm4Vc(vc.getParent());
+		}
 		RealmJdbcHbm jdbc = realm2vcHmb.getJdbcRealm();
 		if (jdbc != null) return createRealmRoleCombo("JDBC_" + jdbc.getJdbcRealmId(), realm2vcHmb.getRoleNeeded());
 		RealmSimplePwHbm simple = realm2vcHmb.getSimplePwRealm();
