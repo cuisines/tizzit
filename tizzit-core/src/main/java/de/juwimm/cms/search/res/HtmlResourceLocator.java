@@ -125,13 +125,18 @@ public class HtmlResourceLocator {
 	}
 
 	private String createRealmRoleCombo(String realm, String rolesNeeded) {
-		if (log.isDebugEnabled()) log.debug("createRealmRoleCombo realm: " + realm + " roles: " + rolesNeeded);
+		//if (log.isDebugEnabled()) 
+		log.info("createRealmRoleCombo realm: " + realm + " roles: " + rolesNeeded);
 		if (rolesNeeded == null) return realm;
-		String result = realm;
+		String result = "";
 		String[] roles = null;
 		roles = rolesNeeded.split(Constants.SAFEGUARD_ROLE_SEPARATOR);
 		for (int i = 0; i < roles.length; i++) {
-			if (!roles[i].isEmpty()) result = result + " " + realm + "_" + roles[i].trim();
+			log.info("found: >" + roles[i] + "<");
+			if (!roles[i].trim().isEmpty()) {
+				result = result + " " + realm + "_" + roles[i].trim();
+				log.info("result is now: >" + result + "<");
+			}
 		}
 		return result;
 	}
