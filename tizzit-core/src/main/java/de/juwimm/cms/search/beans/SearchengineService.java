@@ -329,7 +329,7 @@ public class SearchengineService {
 		try {
 			if (log.isDebugEnabled()) log.debug("searchurl is: " + searchUrl);
 			if (log.isDebugEnabled()) log.debug("search for: \"" + searchItem_iso + "\"");
-			if (log.isDebugEnabled()) log.debug("SonderZeicheVergleich (ae, oe, ue): ä ö ü");
+			if (log.isDebugEnabled()) log.debug("SonderZeicheVergleich (ae, oe, ue, ss): ä ö ü ß");
 
 			//TODO: find calls of searchWeb and ADD exception handling 
 			//special chars with a meaning in Lucene have to be escaped - there is a mechanism for
