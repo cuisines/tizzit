@@ -1,5 +1,7 @@
 package de.juwimm.cms.gui.tree;
 
+import static de.juwimm.cms.client.beans.Application.getBean;
+
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
@@ -20,28 +22,25 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.apache.log4j.Logger;
+
+import de.juwimm.cms.client.beans.Beans;
+import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.vo.ViewComponentValue;
+
 public class DnDTree extends JTree implements Autoscroll {
 
-	/**
-	 * 
-	 */
+	/**	 */
 	private static final long serialVersionUID = 1L;
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private static Logger log = Logger.getLogger(DnDTree.class);
 
 	private Insets insets;
 
@@ -85,18 +84,13 @@ public class DnDTree extends JTree implements Autoscroll {
 			// Can only drag leafs
 			JTree tree = (JTree) dragGestureEvent.getComponent();
 			TreePath path = tree.getSelectionPath();
-			if (path == null) {
-				// Nothing selected, nothing to drag
-				System.out.println("Nothing selected - beep");
-				tree.getToolkit().beep();
-			} else {
-				DefaultMutableTreeNode selection = (DefaultMutableTreeNode) path.getLastPathComponent();
-				if (selection.isLeaf()) {
-					TransferableTreeNode node = new TransferableTreeNode(selection);
+			if (path != null) {
+				TreeNode selection = (TreeNode) tree.getLastSelectedPathComponent();
+				PageNode entry = (PageNode) tree.getLastSelectedPathComponent();
+				Integer viewComponentId = entry.getViewComponent().getViewComponentId();
+				if (viewComponentId != null) {
+					TransferableDataNode node = new TransferableDataNode(viewComponentId);
 					dragGestureEvent.startDrag(DragSource.DefaultCopyDrop, node, new MyDragSourceListener());
-				} else {
-					System.out.println("Not a leaf - beep");
-					tree.getToolkit().beep();
 				}
 			}
 		}
@@ -123,55 +117,20 @@ public class DnDTree extends JTree implements Autoscroll {
 		}
 
 		public synchronized void drop(DropTargetDropEvent dropTargetDropEvent) {
-			/** Only support dropping over nodes that aren't leafs for now*/
-
 			Point location = dropTargetDropEvent.getLocation();
 			TreePath path = getPathForLocation(location.x, location.y);
 			Object node = path.getLastPathComponent();
-			if ((node != null) && (node instanceof TreeNode) && (!((TreeNode) node).isLeaf())) {
+
+			if ((node != null) && (node instanceof TreeNode) && (node instanceof PageNode)) {
 				try {
 					Transferable tr = dropTargetDropEvent.getTransferable();
-					if (tr.isDataFlavorSupported(TransferableTreeNode.DEFAULT_MUTABLE_TREENODE_FLAVOR)) {
+					if (tr != null) {
 						dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-						Object userObject = tr.getTransferData(TransferableTreeNode.DEFAULT_MUTABLE_TREENODE_FLAVOR);
-						addElement(path, userObject);
+						Object viewcomponentId = tr.getTransferData(DataFlavor.stringFlavor);
+						/**Drop the element to parent*/
+						dropNodeToParent((PageNode) node, Integer.parseInt(viewcomponentId.toString()));
 						dropTargetDropEvent.dropComplete(true);
-					} else if (tr.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-						dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-						String string = (String) tr.getTransferData(DataFlavor.stringFlavor);
-						addElement(path, string);
-						dropTargetDropEvent.dropComplete(true);
-					} else if (tr.isDataFlavorSupported(DataFlavor.plainTextFlavor)) {
-						dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-						Object stream = tr.getTransferData(DataFlavor.plainTextFlavor);
-						if (stream instanceof InputStream) {
-							InputStreamReader isr = new InputStreamReader((InputStream) stream);
-							BufferedReader reader = new BufferedReader(isr);
-							String line;
-							while ((line = reader.readLine()) != null) {
-								addElement(path, line);
-							}
-							dropTargetDropEvent.dropComplete(true);
-						} else if (stream instanceof Reader) {
-							BufferedReader reader = new BufferedReader((Reader) stream);
-							String line;
-							while ((line = reader.readLine()) != null) {
-								addElement(path, line);
-							}
-							dropTargetDropEvent.dropComplete(true);
-						} else {
-							System.err.println("Unknown type: " + stream.getClass());
-							dropTargetDropEvent.rejectDrop();
-						}
-					} else if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-						dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-						List fileList = (List) tr.getTransferData(DataFlavor.javaFileListFlavor);
-						Iterator iterator = fileList.iterator();
-						while (iterator.hasNext()) {
-							File file = (File) iterator.next();
-							addElement(path, file.toURL());
-						}
-						dropTargetDropEvent.dropComplete(true);
+						System.out.println("Node transfered " + viewcomponentId);
 					} else {
 						System.err.println("Rejected");
 						dropTargetDropEvent.rejectDrop();
@@ -184,18 +143,65 @@ public class DnDTree extends JTree implements Autoscroll {
 					dropTargetDropEvent.rejectDrop();
 				}
 			} else {
-				System.out.println("Can't drop on a leaf");
+				System.out.println("Can't drop here");
 				dropTargetDropEvent.rejectDrop();
 			}
 		}
 
-		private void addElement(TreePath path, Object element) {
-			DefaultMutableTreeNode parent = (DefaultMutableTreeNode) path.getLastPathComponent();
-			DefaultMutableTreeNode node = new DefaultMutableTreeNode(element);
-			System.out.println("Added: " + node + " to " + parent);
-			DefaultTreeModel model = (DefaultTreeModel) (DnDTree.this.getModel());
-			model.insertNodeInto(node, parent, parent.getChildCount());
+		/**
+		 * Drop the node to parent and refresh the tree
+		 * @param parent
+		 * @param viewComponentId
+		 */
+		private void dropNodeToParent(PageNode entry, Integer viewComponentId) {
+			/**copy to new parent and delete from old one*/
+			//ViewComponentValue[] viewComponentArray = comm.copyViewComponentToParent(entry.getViewComponent().getViewComponentId(), new Integer[] {viewComponentId}, ViewComponentEvent.MOVE_LEFT);
+			ViewComponentValue[] viewComponentArray = null;
+			ViewComponentValue viewComponentValue = null;
+			try {
+				viewComponentValue = comm.getViewComponent(viewComponentId);
+				viewComponentArray = new ViewComponentValue[] {viewComponentValue};
+			} catch (Exception e) {
+				if (log.isDebugEnabled()) {
+					log.debug("Error in dropNodeToParent ", e);
+				}
+			}
+
+			//comm.getViewComponent4Unit(treeSelectionEventData.getUnitId(), -1);
+			CmsTreeModel treeModel = new CmsTreeModel(new PageContentNode(viewComponentValue));
+			DnDTree.this.setModel(treeModel);
+
+			for (ViewComponentValue viewComponent : viewComponentArray) {
+				PageNode temp = null;
+				switch (viewComponent.getViewType()) {
+					case Constants.VIEW_TYPE_EXTERNAL_LINK:
+						temp = new PageExternallinkNode(viewComponent, treeModel);
+						break;
+					case Constants.VIEW_TYPE_INTERNAL_LINK:
+						temp = new PageInternallinkNode(viewComponent, treeModel);
+						break;
+					case Constants.VIEW_TYPE_SYMLINK:
+						temp = new PageSymlinkNode(viewComponent, treeModel);
+						break;
+					case Constants.VIEW_TYPE_SEPARATOR:
+						temp = new PageSeparatorNode(viewComponent, treeModel);
+						break;
+					default:
+						temp = new PageContentNode(viewComponent, treeModel);
+						break;
+				}
+				entry.insert(temp, 0);
+			}
+			treeModel.nodeStructureChanged(entry);
 		}
+		//private void addElement(TreePath path, Object element) {
+		/** add new subnode to drop_node, update viewComponent */
+		//PageNode entry = (PageNode)DnDTree.this.getLastSelectedPathComponent();
+		///TreeNode node = new TreeNode();
+		//System.out.println("Added: " + node + " to " + parent);
+		//TreeModel model = (TreeModel) (DnDTree.this.getModel());
+		//((DefaultTreeModel) model).insertNodeInto(node, parent, parent.getChildCount()); ddd
+		//}
 	}
 
 	private static class MyDragSourceListener implements DragSourceListener {
@@ -232,71 +238,35 @@ public class DnDTree extends JTree implements Autoscroll {
 
 }
 
-class TransferableTreeNode extends DefaultMutableTreeNode implements Transferable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+class TransferableDataNode implements Transferable {
 
-	final static int TREE = 0;
+	private Integer data;
 
-	final static int STRING = 1;
-
-	final static int PLAIN_TEXT = 1;
-
-	final public static DataFlavor DEFAULT_MUTABLE_TREENODE_FLAVOR = new DataFlavor(DefaultMutableTreeNode.class, "Default Mutable Tree Node");
-
-	static DataFlavor flavors[] = {DEFAULT_MUTABLE_TREENODE_FLAVOR, DataFlavor.stringFlavor, DataFlavor.plainTextFlavor};
-
-	private DefaultMutableTreeNode data;
-
-	public TransferableTreeNode(DefaultMutableTreeNode data) {
+	public TransferableDataNode(Integer data) {
 		this.data = data;
 	}
 
-	public DataFlavor[] getTransferDataFlavors() {
-		return flavors;
-	}
-
 	public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-		Object returnObject;
-		if (flavor.equals(flavors[TREE])) {
-			Object userObject = data.getUserObject();
-			if (userObject == null) {
-				returnObject = data;
-			} else {
-				returnObject = userObject;
-			}
-		} else if (flavor.equals(flavors[STRING])) {
-			Object userObject = data.getUserObject();
+		Object returnObject = null;
+		if (flavor.equals(DataFlavor.stringFlavor)) {
+			Object userObject = data;
 			if (userObject == null) {
 				returnObject = data.toString();
 			} else {
 				returnObject = userObject.toString();
 			}
-		} else if (flavor.equals(flavors[PLAIN_TEXT])) {
-			Object userObject = data.getUserObject();
-			String string;
-			if (userObject == null) {
-				string = data.toString();
-			} else {
-				string = userObject.toString();
-			}
-			returnObject = new ByteArrayInputStream(string.getBytes("Unicode"));
-		} else {
-			throw new UnsupportedFlavorException(flavor);
 		}
 		return returnObject;
 	}
 
+	public DataFlavor[] getTransferDataFlavors() {
+		return new DataFlavor[] {DataFlavor.stringFlavor};
+	}
+
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		boolean returnValue = false;
-		for (int i = 0, n = flavors.length; i < n; i++) {
-			if (flavor.equals(flavors[i])) {
-				returnValue = true;
-				break;
-			}
+		if (flavor.equals(DataFlavor.stringFlavor)) {
+			return true;
 		}
-		return returnValue;
+		return false;
 	}
 }
