@@ -12,7 +12,7 @@
 	    <property name="ignoreResourceNotFound" value="true"/>
 	    <property name="locations">
 	      <list>
-	        <value>classpath:/tizzit-liveserver.properties</value>
+	        <value>classpath:/tizzit.properties</value>
 	      </list>
 	    </property>
 	    <property name="systemPropertiesModeName">
