@@ -106,7 +106,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 		panSymlink = new PanSymlinkView();
 
 		pnlLeft.setLayout(new BorderLayout());
-		pnlLeft.add(panTree.createParameterPanel(), BorderLayout.NORTH);
+		pnlLeft.add(panTree.getParametersPanel(), BorderLayout.NORTH);
 		pnlLeft.add(panTree, BorderLayout.CENTER);
 
 		splitPane.setBorder(null);
@@ -139,7 +139,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 	}
 
 	public void unload() {
-		instance = null;
+		//instance = null;
 	}
 
 	public void setTreeToEmpty() {
@@ -214,14 +214,15 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_DONE)) {
 			updateRightComponent(panInit);
 		} else if (e.getActionCommand().equals(Constants.ACTION_SHOW_TASK)) {
+			try {
+				pnlLeft.remove(panTree.getParametersPanel());
+				pnlLeft.remove(panTree);
+			} catch (Exception exe) {
+			}
 			if (panTask == null) {
 				panTask = new PanTaskTable();
 			}
 			panTask.reload();
-			try {
-				pnlLeft.remove(panTree);
-			} catch (Exception exe) {
-			}
 			pnlLeft.add(panTask, BorderLayout.CENTER);
 			updateRightComponent(panInit);
 		} else if (e.getActionCommand().equals(Constants.ACTION_SHOW_CONTENT) || e.getActionCommand().equals(Constants.ACTION_VIEW_EDITOR)) {
@@ -229,6 +230,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 				pnlLeft.remove(panTask);
 			} catch (Exception exe) {
 			}
+			pnlLeft.add(panTree.getParametersPanel(), BorderLayout.NORTH);
 			pnlLeft.add(panTree, BorderLayout.CENTER);
 		}
 	}

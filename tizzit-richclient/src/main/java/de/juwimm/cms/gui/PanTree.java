@@ -134,6 +134,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private static final long serialVersionUID = 3043995794146652569L;
 	private static Logger log = Logger.getLogger(PanTree.class);
 	private static JTree tree = new JTree();
+	//private static DnDTree tree = new DnDTree();
 	private boolean blockExpand = false;
 	private CmsTreeModel treeModel;
 	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
@@ -426,6 +427,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			 DropTarget dropTarget = new DropTarget(m_Tree, this);
 			 m_Tree.setDropTarget(dropTarget);
 			 */
+			createParameterPanel();
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
@@ -519,7 +521,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		tree.setExpandsSelectedPaths(true);
 	}
 
-	public JPanel createParameterPanel() {
+	private JPanel createParameterPanel() {
 		panelParameters = treeParametersPanel();
 		panelParameters.setPreferredSize(new Dimension(250, 90));
 		panelParameters.setMinimumSize(new Dimension(250, 90));
@@ -527,7 +529,16 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	}
 
 	public JPanel getParametersPanel() {
+		if (panelParameters == null) {
+			createParameterPanel();
+		}
 		return panelParameters;
+	}
+
+	public void removeParameterPanel() {
+		if (panelParameters != null) {
+			this.remove(panelParameters);
+		}
 	}
 
 	/**
@@ -2020,24 +2031,28 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		*/
 		@Override
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-
-			ViewDocumentValue selectedIndex = (ViewDocumentValue) ((DropDownHolder) value).getObject();
-			if (isSelected) {
-				setBackground(list.getSelectionBackground());
-				setForeground(list.getSelectionForeground());
-			} else {
-				setBackground(list.getBackground());
-				setForeground(list.getForeground());
+			ViewDocumentValue selectedIndex = null;
+			if (value != null) {
+				selectedIndex = (ViewDocumentValue) ((DropDownHolder) value).getObject();
+				if (isSelected) {
+					setBackground(list.getSelectionBackground());
+					setForeground(list.getSelectionForeground());
+				} else {
+					setBackground(list.getBackground());
+					setForeground(list.getForeground());
+				}
 			}
 			JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			ImageIcon icon = UIConstants.getViewIcons(selectedIndex.getLanguage());
-			String language = rb.getString("panel.tree.language." + selectedIndex.getLanguage());
-			label.setIcon(icon);
-			if (icon != null) {
-				setText(language + ", " + selectedIndex.getViewType());
-				setFont(list.getFont());
-			} else {
-				setUhOhText("no image available", list.getFont());
+			if (value != null) {
+				ImageIcon icon = UIConstants.getViewIcons(selectedIndex.getLanguage());
+				String language = rb.getString("panel.tree.language." + selectedIndex.getLanguage());
+				label.setIcon(icon);
+				if (icon != null) {
+					setText(language + ", " + selectedIndex.getViewType());
+					setFont(list.getFont());
+				} else {
+					setUhOhText("no image available", list.getFont());
+				}
 			}
 			return label;
 

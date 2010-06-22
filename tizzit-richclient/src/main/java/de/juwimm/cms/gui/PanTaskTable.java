@@ -15,15 +15,25 @@
  */
 package de.juwimm.cms.gui;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -91,15 +101,12 @@ public class PanTaskTable extends JPanel implements ActionListener {
 				btnDeleteActionPerformed(e);
 			}
 		});
-		this.add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
-		this.add(panel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+		this.add(scrollPane, new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		this.add(panel, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
 
 		btnDelete.setIcon(UIConstants.MODULE_DATABASECOMPONENT_DELETE);
 
-		panel.add(btnDelete, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.NONE, new Insets(3, 0, 3, 5), 0, 0));
+		panel.add(btnDelete, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(3, 0, 3, 5), 0, 0));
 	}
 
 	protected void fillTable() {
@@ -110,7 +117,7 @@ public class PanTaskTable extends JPanel implements ActionListener {
 				table.setModel(tableModel);
 			} else {
 				DefaultTableModel tm = new DefaultTableModel();
-				
+
 				table.setModel(tm);
 				tm.fireTableDataChanged();
 			}
@@ -131,15 +138,17 @@ public class PanTaskTable extends JPanel implements ActionListener {
 			column = table.getColumnModel().getColumn(3);
 			column.setPreferredWidth(60);
 		} catch (Exception ex) {
+			if (log.isDebugEnabled()) {
+				log.debug("Error in setEditor in PanTask ", ex);
+			}
 		}
 	}
-	
+
 	/**
 	 * @version $Id$
 	 */
 	private class MyTableCellRenderer extends DefaultTableCellRenderer {
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-				boolean hasFocus, int row, int column) {
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			this.setHorizontalAlignment(JLabel.CENTER);
 			if (value instanceof Calendar) {
@@ -176,7 +185,7 @@ public class PanTaskTable extends JPanel implements ActionListener {
 				TaskValue task = (TaskValue) tableModel.getValueAt(table.getSelectedRow(), 4);
 				try {
 					ActionHub.fireActionPerformed(new ActionEvent(task, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TASK_SELECT));
-					viewedTaskId = task.getTaskId();					
+					viewedTaskId = task.getTaskId();
 					if (task.getStatus() == Constants.TASK_STATUS_NEW) {
 						comm.setTaskViewed(task.getTaskId());
 					}
@@ -211,7 +220,7 @@ public class PanTaskTable extends JPanel implements ActionListener {
 				int deleteId = deleteIds[j];
 				TaskValue task = (TaskValue) tableModel.getValueAt(deleteId, 4);
 				try {
-					comm.removeTask(task.getTaskId());					
+					comm.removeTask(task.getTaskId());
 				} catch (Exception ex) {
 					String errorMessage = null;
 					if (delRowsCount == 1) {
@@ -235,7 +244,7 @@ public class PanTaskTable extends JPanel implements ActionListener {
 				} else {
 					successMessage = rb.getString("panel.task.delete.success.multiple");
 				}
-				UIConstants.setStatusInfo(successMessage);				
+				UIConstants.setStatusInfo(successMessage);
 			}
 		}
 	}
@@ -246,10 +255,10 @@ public class PanTaskTable extends JPanel implements ActionListener {
 			table.clearSelection();
 		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_DONE)) {
 			btnDelete.doClick();
-		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_VIEW_COMPONENT_REFRESH)){
-			TaskValue source = (TaskValue)e.getSource();
-			for(int i=0;i<tableModel.getRowCount();i++){
-				if(((TaskValue)tableModel.getValueAt(i, 4)).getTaskId().equals(source.getTaskId())){
+		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_VIEW_COMPONENT_REFRESH)) {
+			TaskValue source = (TaskValue) e.getSource();
+			for (int i = 0; i < tableModel.getRowCount(); i++) {
+				if (((TaskValue) tableModel.getValueAt(i, 4)).getTaskId().equals(source.getTaskId())) {
 					tableModel.setValueAt(source, i, 4);
 				}
 			}

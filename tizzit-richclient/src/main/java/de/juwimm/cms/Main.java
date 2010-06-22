@@ -356,7 +356,7 @@ public class Main extends JFrame implements ActionListener {
 	private void showAdminPanel() throws Exception {
 		Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_ADMIN;
 		panRibbon.setView(false);
-
+ 		
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			try {
 				if (panRoot == null) {
