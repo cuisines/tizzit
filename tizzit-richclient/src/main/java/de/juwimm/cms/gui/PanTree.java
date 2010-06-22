@@ -427,7 +427,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			 DropTarget dropTarget = new DropTarget(m_Tree, this);
 			 m_Tree.setDropTarget(dropTarget);
 			 */
-			createParameterPanel();
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}

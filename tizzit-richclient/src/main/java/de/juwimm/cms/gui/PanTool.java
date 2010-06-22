@@ -215,7 +215,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 			updateRightComponent(panInit);
 		} else if (e.getActionCommand().equals(Constants.ACTION_SHOW_TASK)) {
 			try {
-				pnlLeft.remove(panTree.getParametersPanel());
+				//pnlLeft.remove(panTree.getParametersPanel());
 				pnlLeft.remove(panTree);
 			} catch (Exception exe) {
 			}
@@ -230,7 +230,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 				pnlLeft.remove(panTask);
 			} catch (Exception exe) {
 			}
-			pnlLeft.add(panTree.getParametersPanel(), BorderLayout.NORTH);
+			//pnlLeft.add(panTree.getParametersPanel(), BorderLayout.NORTH);
 			pnlLeft.add(panTree, BorderLayout.CENTER);
 		}
 	}
