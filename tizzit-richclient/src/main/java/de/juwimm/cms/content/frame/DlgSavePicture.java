@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.content.ContentManager;
+import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
@@ -35,7 +36,7 @@ import de.juwimm.cms.vo.PictureSlimstValue;
  * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a> 
  * @version $Id: DlgPictureEditor.java 6 2009-07-30 14:05:05Z skulawik@gmail.com $
  */
-public class DlgSavePicture extends JDialog {
+public class DlgSavePicture extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -84852827972953607L;
 	private static Logger log = Logger.getLogger(DlgPictureBrowser.class);
 	protected Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
@@ -59,6 +60,7 @@ public class DlgSavePicture extends JDialog {
 	}
 
 	private void init() {
+		ActionHub.addActionListener(this);
 		btnFileNew.setMaximumSize(new Dimension(200, 27));
 		btnFileNew.setMinimumSize(new Dimension(200, 27));
 		btnFileNew.setPreferredSize(new Dimension(200, 27));
@@ -162,6 +164,7 @@ public class DlgSavePicture extends JDialog {
 			} catch (Exception ex) {
 				log.error("Could not update Picture: " + pictureValue.getPictureId(), ex);
 			}
+			ActionHub.fireActionPerformed(new ActionEvent(pictureValue, ActionEvent.ACTION_PERFORMED, Constants.ACTION_REFRESH_TEXT_EDITOR));
 		}
 		this.fireSaveActionListener(new ActionEvent(this, pictureId, "" + pictureId));
 		this.setVisible(false);
@@ -194,5 +197,10 @@ public class DlgSavePicture extends JDialog {
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			((ActionListener) listeners[i + 1]).actionPerformed(e);
 		}
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }

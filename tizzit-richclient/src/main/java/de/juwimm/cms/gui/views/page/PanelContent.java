@@ -543,7 +543,20 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 			if (!isEdit && !getIsCheckedOut() && e.getID() == 1) { // we save here in the ID, if it should switch
 				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_SHOW_TASK));
 			}
+		} else if (e.getActionCommand().equals(Constants.ACTION_REFRESH_TEXT_EDITOR)) {
+			//refreshTextEditor();
 		}
+	}
+
+	private void refreshTextEditor() {
+		String text = txtEditor.getText();
+		//		contentManager.setEnabled(false);
+		txtEditor.setCaretPosition(0);
+		txtEditor.setText("");
+		txtEditor.setText(text);
+		contentManager.setEnabled(true);
+		System.out.println("-------------------------->Refreshed text editor");
+
 	}
 
 	public void setContent(String strContent) {
