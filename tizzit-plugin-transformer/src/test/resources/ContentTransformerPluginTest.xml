@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page>
+	<resource>
+		<preInclude xmlns:tizzit="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:ContentTransformerPlugin">
+			<tizzit:contentInclude>
+				<byUnit/>
+				<byViewComponent>94</byViewComponent>
+			</tizzit:contentInclude>
+		</preInclude>
+	</resource>
+</page>
+
