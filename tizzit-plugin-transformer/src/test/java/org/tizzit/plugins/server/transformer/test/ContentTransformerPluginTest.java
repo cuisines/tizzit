@@ -14,13 +14,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * This class helps to debug the Plugin and print the SAX output - not realy a JUnit test!
- * All exceptions are caught!
- *
- * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+ * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
- * @version $Id: ConfluenceContentPluginTest.java 453 2009-10-15 05:58:55Z eduard.siebert@online.de $
- * @since tizzit-plugin-sample 15.10.2009
+ * @version $Id: ContentTransformerPluginTest.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
 public class ContentTransformerPluginTest extends TestCase {
 	private static final Log log = LogFactory.getLog(ContentTransformerPluginTest.class);

@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page>
 	<resource>
-		<preInclude xmlns:tizzit="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:ContentTransformerPlugin">
-			<tizzit:contentInclude>
+		<preInclude xmlns:ContentTransformer="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:ContentTransformerPlugin">
+			<ContentTransformer:contentInclude>
 				<byUnit/>
 				<byViewComponent>94</byViewComponent>
-			</tizzit:contentInclude>
+			</ContentTransformer:contentInclude>
+		</preInclude>
+		<preInclude xmlns:TeaserTransformer="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:TeaserTransformerPlugin">
+			<TeaserTransformer:teaserInclude>
+				<teaserRandomized xpathTeaserElement="path1.bla" viewComponentId="1" count="1" unit="6"/>
+				<teaserRandomized xpathTeaserElement="path2.bla" viewComponentId="3" count="1" unit="8"/>
+				<teaserRandomized xpathTeaserElement="path3.bla" viewComponentId="1" count="1" unit="2"/>
+				<teaserRandomized xpathTeaserElement="path4.bla" viewComponentId="3" count="1" unit="23"/>
+				<teaserRandomized xpathTeaserElement="path5.bla" viewComponentId="1" count="1" unit="11"/>
+			</TeaserTransformer:teaserInclude>
 		</preInclude>
 	</resource>
 </page>

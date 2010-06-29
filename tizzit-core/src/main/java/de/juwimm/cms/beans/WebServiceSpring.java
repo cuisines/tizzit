@@ -48,6 +48,7 @@ import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.Attributes;
 
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.annotation.HourCache;
@@ -1504,6 +1505,84 @@ public class WebServiceSpring {
 		}
 		includeContent += "</contentInclude>";
 		return includeContent;
+	}
+
+	public String getIncludeTeaser(String teaserType, Attributes attributes, boolean getPublsVersion) throws Exception {
+		StringBuffer includeContent = new StringBuffer();
+		try {
+			if ("teaserRandomized".equalsIgnoreCase(teaserType)) {
+				String count = attributes.getValue("count");
+				String unitOrigin = attributes.getValue("unit");
+				String viewComponentId = attributes.getValue("viewComponentId");
+				String xpath = attributes.getValue("xpathTeaserElement");
+				if (xpath == null || xpath.length() == 0) {
+					if (log.isDebugEnabled()) {
+						log.debug("No xpath for teaser element specified for randomized teaser at viewComponent " + viewComponentId + " - skipping...");
+					}
+					return null;
+				}
+				Integer currentViewDocument = getViewDocument4ViewComponentId(Integer.decode(viewComponentId)).getViewDocumentId();
+				Integer targetUnitId = getTargetUnitId(Integer.decode(viewComponentId), currentViewDocument, unitOrigin);
+				XmlSearchValue[] searchResults = searchengineService.searchXmlByUnit(targetUnitId, currentViewDocument, xpath, false);
+				int iCount = Integer.parseInt(count);
+				if (searchResults != null && iCount > 0) {
+					HashSet<XmlSearchValue> resultSet = new HashSet<XmlSearchValue>(iCount);
+					if (iCount >= searchResults.length) {
+						resultSet.addAll(Arrays.asList(searchResults));
+					} else {
+						while (resultSet.size() < iCount) {
+							int index = new Double(Math.random() * searchResults.length).intValue();
+							resultSet.add(searchResults[index]);
+						}
+					}
+					Iterator it = resultSet.iterator();
+					while (it.hasNext()) {
+						XmlSearchValue value = (XmlSearchValue) it.next();
+						String content = this.getContent(value.getViewComponentId(), getPublsVersion);
+
+						org.w3c.dom.Document contentDoc = XercesHelper.string2Dom(content);
+						Iterator itContent = XercesHelper.findNodes(contentDoc, xpath);
+						while (itContent.hasNext()) {
+							Node result = (Node) itContent.next();
+							includeContent.append("<teaser>").append(XercesHelper.node2string(result)).append("</teaser>");
+						}
+					}
+				}
+			} else if ("teaserRef".equalsIgnoreCase(teaserType)) {
+				String viewComponentId, teaserIdentifier, xpathTeaserElement, xpathTeaserIdentifier, xPathQuery = null;
+				viewComponentId = attributes.getValue("viewComponentId");
+				teaserIdentifier = attributes.getValue("teaserIdentifier");
+				xpathTeaserElement = attributes.getValue("xpathTeaserElement");
+				xpathTeaserIdentifier = attributes.getValue("xpathTeaserIdentifier");
+
+				String content = null;
+				try {
+					content = this.getContent(Integer.valueOf(viewComponentId), getPublsVersion);
+				} catch (Exception e) {
+					log.warn("teaser's referenced viewComponentId " + viewComponentId + " does not exist");
+					return null;
+				}
+				xPathQuery = xpathTeaserElement;
+				if (!"".equalsIgnoreCase(xpathTeaserIdentifier) && !"".equalsIgnoreCase(teaserIdentifier)) {
+					if (!xPathQuery.endsWith("/") && !xpathTeaserElement.startsWith("/")) xPathQuery += "/";
+					xPathQuery += "[" + xpathTeaserIdentifier + "=" + teaserIdentifier + "]";
+				}
+				if (log.isDebugEnabled()) log.debug("xPathQuery: " + xPathQuery);
+
+				org.w3c.dom.Document contentDoc = XercesHelper.string2Dom(content);
+				Iterator it = XercesHelper.findNodes(contentDoc, xPathQuery);
+				while (it.hasNext()) {
+					Node result = (Node) it.next();
+					includeContent.append("<teaser>").append(XercesHelper.node2string(result)).append("</teaser>");
+				}
+			} else {
+				log.warn("unknown teaserIncludeType " + teaserType + " - skipping...");
+			}
+
+		} catch (Exception e) {
+			log.warn("Error getting teaserInclude: " + e.getMessage(), e);
+		}
+		return includeContent.toString();
 	}
 
 	public String getIncludeTeaser(Integer currentViewComponentId, boolean getPublsVersion, String teaserRequest) throws Exception {

@@ -200,9 +200,7 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 		String xPathQuery = null;
 		try {
 			log.debug("viewComponentId is : " + viewComponentId);
-			Document unitXmlDoc = XercesHelper.string2Dom(webSpringBean.getIncludeContent(viewComponentId, contentSearchBy.contains("unit"), value, iAmTheLiveserver, xPathQuery));
-			String result;
-			result = XercesHelper.doc2String(unitXmlDoc);
+			String result = webSpringBean.getIncludeContent(viewComponentId, contentSearchBy.contains("unit"), value, iAmTheLiveserver, xPathQuery);
 			contentHandler.characters(result.toCharArray(), 0, result.length());
 		} catch (Exception e) {
 			log.warn("Error getting includeContent: " + e.getMessage(), e);
@@ -220,93 +218,11 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 			contentSearchBy = null;
 			super.endElement(uri, localName, qName);
 		} else if ((localName.compareToIgnoreCase("byUnit") == 0 && inContentInclude) || (localName.compareToIgnoreCase("byViewComponent") == 0 && inContentInclude)) {
-			
-		} else{
+
+		} else {
 			super.endElement(uri, localName, qName);
 		}
 	}
-
-	//	public Document generate() throws SAXException, ProcessingException {
-	//		if (log.isDebugEnabled()) log.debug("begin generate");
-	//		//		if (viewComponentId == null) {
-	//		//			throw new ResourceNotFoundException("Could not find " + request.getRequestURI());
-	//		//		}
-	//
-	//		Document doc = null;
-	//		InputSource in = null;
-	//
-	//		if (this.inputSource != null) {
-	//			if (log.isDebugEnabled()) log.debug("loading xml from file");
-	//			try {
-	//				in = new InputSource(this.inputSource.getInputStream());
-	//			} catch (Exception exe) {
-	//			}
-	//		} else {
-	//			if (log.isDebugEnabled()) log.debug("loading xml from database");
-	//			try {
-	//				String content = webSpringBean.getContent(viewComponentId, iAmTheLiveserver);
-	//				//	enterlogger.debug(content);
-	//				in = new InputSource(new StringReader(content));
-	//			} catch (Exception exe) {
-	//				log.warn("Error getting content for \"" + this.requestUrl + "\": " + exe.getMessage(), exe);
-	//			}
-	//		}
-	//		if (in == null) {
-	//			throw new ResourceNotFoundException("Could not find resource with ");
-	//		}
-	//		try {
-	//			doc = XercesHelper.inputSource2Dom(in);
-	//		} catch (Exception exe) {
-	//			throw new ProcessingException("Error parsing the content", exe);
-	//		}
-	//
-	//		try {
-	//			if (!disableContentInclude) {
-	//				this.fillContentInclude(doc);
-	//				this.fillTeaserInclude(doc);
-	//			}
-	//			if (!disableUnitInformation) // has to be before fulltext, because fulltext will fill its own
-	//				this.fillUnitInformation(doc, null);
-	//			if (!disableFulltext) // has to be at the beginning, because it can contain other tags as well
-	//				this.fillFulltext(doc);
-	//			if (!disableMeta) this.fillMeta(doc);
-	//			if (!disableAuthentication) // hast to be after unitInformation, because it will put in some units maybe
-	//				this.fillAuthentication(doc);
-	//			if (!disableHeadLine) this.fillHeadLine(doc);
-	//			if (!disableAggregations) this.fillAggregations(doc);
-	//			if (!disableMembersList) this.fillMembersList(doc);
-	//			if (!disableUnitList) // im filling also unitInformations
-	//				this.fillUnitList(doc);
-	//			if (!disableInternalLinks) this.solveInternalLinks(doc);
-	//			if (!disableNavigation) this.fillNavigation(doc);
-	//			if (!disableLastModifiedPages) this.fillLastModifiedPages(doc);
-	//			if (!disableNavigationBackward) this.fillNavigationBackward(doc);
-	//			if (!disableLanguageVersions) this.fillLanguageVersions(doc);
-	//			if (!disableHtmlSearch && this.webSearchquery != null && this.webSearchquery.length() > 0) {
-	//				this.fillWebSearch(doc);
-	//			}
-	//		} catch (Exception e) {
-	//			String errMsg = "An error occured while processing the content";
-	//			log.error(errMsg, e);
-	//			throw new ProcessingException(errMsg, e);
-	//		}
-	//
-	//		//		if (doc != null && contentHandler != null) {
-	//		//			if (log.isDebugEnabled()) log.debug("start streaming to sax");
-	//		//			try {
-	//		//				ContentHandler contentHandlerWrapper = new PluginContentHandler(pluginManagement, contentHandler, new RequestImpl(request), new ResponseImpl(response), viewComponentId, siteValue.getSiteId());
-	//		//				contentHandlerWrapper.startDocument();
-	//		//				DOMStreamer ds = new DOMStreamer(contentHandlerWrapper);
-	//		//				ds.stream(doc.getDocumentElement());
-	//		//				contentHandlerWrapper.endDocument();
-	//		//			} catch (Exception exe) {
-	//		//				log.error("An error occured", exe);
-	//		//			}
-	//		//		}
-	//		if (log.isDebugEnabled()) log.debug("end generate");
-	//
-	//		return doc;
-	//	}
 
 	private void fillWebSearch(Document doc) throws Exception {
 		Node head = XercesHelper.findNode(doc, "//source/head");

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.tizzit.util.xml.SAXHelper;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -14,6 +14,7 @@ import de.juwimm.cms.plugins.Constants;
 import de.juwimm.cms.plugins.server.Request;
 import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
+import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
  * <h5>Usage / Configuration:</h5>
@@ -79,15 +80,10 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "UnitInformationTransformerPlugin";
 	private ContentHandler parent;
-	private final boolean inContentInclude = false;
-	private final boolean inSearchByUnit = false;
-	private final boolean inSearchByViewComponent = false;
-	private final String contentSearchBy = null;
-	private final boolean iAmTheLiveserver = true;
-
+	private final String UNITINFORMATION = "unitInformation";
+	private boolean inUnitInformation = false;
 	//private final WebServiceSpring webSpringBean = null;
 	private final Integer viewComponentId = null;
-	private final Integer unitId = null;
 
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
@@ -127,6 +123,9 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
+		if (localName.compareTo(UNITINFORMATION) == 0) {
+			inUnitInformation = true;
+		}
 		parent.startElement(uri, localName, qName, attrs);
 
 	}
@@ -140,33 +139,36 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 
 	}
 
-	/*
-	 * BUG 3452
-	 * <contentInclude >
-	 * 	<byUnit></byUnit>
-	 * 	<!--
-	 * 		unit kann sein: root
-	 *      this
-	 *      parent
-	 *      entweder BYUNIT ODER BYVIEWCOMPONENT
-	 *  -->
-	 *  <byViewComponent>234342</byViewComponent>
-	 *  <xpathElement>//</xpathElement><!-- Wenn nicht angegeben, immer der ganze Content -->
-	 * </contentInclude>
-	 */
-	private void charactersFillContentInclude(char[] ch, int start, int length) throws Exception {
-		log.debug("charactersFillContentInclude: " + length + " long");
-		String value = new String(ch, start, length).trim();
-		if (log.isDebugEnabled() && value != null) log.debug("value is : " + value);
-		String xPathQuery = null;
-		try {
-			log.debug("viewComponentId is : " + viewComponentId);
-			//String result = webSpringBean.getIncludeContent(viewComponentId, contentSearchBy.contains("unit"), value, iAmTheLiveserver, xPathQuery);
-			String result = "<tvViewComponent><showyType>123</showyType><viewType>321</viewType><visible>true</visible><searchIndexed>true</searchIndexed><statusInfo>Standard</statusInfo><linkName>test und test</linkName><urlLinkName>test-und-test-1</urlLinkName><viewLevel>3</viewLevel><viewIndex>3</viewIndex><displaySettings>0</displaySettings><viewDocumentId>8</viewDocumentId><viewDocumentViewType>browser</viewDocumentViewType><language>de</language><userModifiedDate>1272987064423</userModifiedDate><url>test-und-test-1</url><template>standard</template></tvViewComponent>";
-			SAXHelper.string2sax(result, this.parent);
-		} catch (Exception e) {
-			log.warn("Error getting includeContent: " + e.getMessage(), e);
-		}
+	private void fillUnitInformation(Node nde, ViewComponentValue vcl) throws Exception {
+		ViewComponentValue myVcl = null;
+		//		if (vcl != null) {
+		//			myVcl = vcl;
+		//		} else {
+		//			myVcl = viewComponentValue;
+		//		}
+		//		Iterator it = XercesHelper.findNodes(nde, ".//unitInformation");
+		//
+		//		while (it.hasNext()) {
+		//			Element el = (Element) it.next();
+		//			String strUn = el.getAttribute("unitId");
+		//
+		//			UnitValue uv = null;
+		//			if (strUn != null && !strUn.equals("")) {
+		//				uv = webSpringBean.getUnit(new Integer(strUn));
+		//			} else {
+		//				uv = webSpringBean.getUnit4ViewComponent(myVcl.getViewComponentId());
+		//				el.setAttribute("unitId", uv.getUnitId().toString());
+		//			}
+		//
+		//			Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(myVcl.getViewComponentId()).getViewDocumentId();
+		//			try {
+		//				String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
+		//				el.setAttribute("url", unitPath);
+		//			} catch (Exception exe) {
+		//			}
+		//
+		//			el.setAttribute("unitName", uv.getName());
+		//		}
 	}
 
 	/* (non-Javadoc)
@@ -174,6 +176,9 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
+		if (localName.compareTo(UNITINFORMATION) == 0) {
+			inUnitInformation = false;
+		}
 		parent.endElement(uri, localName, qName);
 	}
 

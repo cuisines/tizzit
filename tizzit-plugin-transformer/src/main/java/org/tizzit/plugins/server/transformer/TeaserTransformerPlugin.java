@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.tizzit.util.xml.SAXHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -15,73 +16,19 @@ import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
 
 /**
- * <h5>Usage / Configuration:</h5>
- * <p>
- * <b>tizzit-plugins.conf:</b><br/>
- * <code>http://plugins.tizzit.org/ConfluenceContentPlugin=org.tizzit.plugins.server.confluence.ConfluenceContentPlugin</code>
- * </p>
- * <b>XML:</b>
- * <pre> &lt;getPage xmlns="http://plugins.tizzit.org/ConfluenceContentPlugin"&gt;
- *   &lt;pageId dcfname="pageId" label="Page ID"&gt;557129&lt;/pageId&gt;
- *   &lt;confluenceURLs dcfname="confluenceURL" label="Confluence URLs"&gt;
- *     &lt;value&gt;http://wiki.tizzit.org&lt;/value&gt;
- *   &lt;/confluenceURLs&gt;
- *   &lt;xmlRpcMethodsPrefix dcfname="xmlRpcMethodsPrefix" label="XML-RPC methods prefix"&gt;confluence1&lt;/xmlRpcMethodsPrefix&gt;
- *   &lt;useStyles dcfname="useStyles" label="Render content with styles?"&gt;
- *     &lt;value&gt;true&lt;/value&gt;
- *   &lt;/useStyles&gt;
- * &lt;/getPage&gt;</pre>
- *
- * <h5>Element description:</h5>
- * <b>mandatory:</b>
- * <ul>
- * 	<li><b>pageId</b> - The id of the Confluence page.</li>
- * 	<li><b>confluenceURLs/value</b> - The base URL to Confluence (<code>http://&lt;&lt;confluence-install&gt;&gt;</code>). This URL will be appended with {@link org.tizzit.plugins.server.confluence.DEFAULT_RPC_PATH}</li>
- * </ul>
- * <b>optional:</b>
- * <ul>
- * 	<li><b>xmlRpcMethodsPrefix</b> - default: <code>confluence1</code> - XML-RPC methods prefix.</li>
- * 	<li><b>useStyles/value</b> - default: <code>false</code> - Renders the Confluence content with styles if <code>true</code>.</li>
- * </ul>
- *
- * <h5>Output:</h5>
- * <pre> &lt;confluencePage contentStatus="current" created="1246447786000" creator="ckulawik"
- *                 current="true" homePage="false" id="557129" modified="1255086937000"
- *                 modifier="msimon" parentId="557083" permissions="0" space="userdoc" title="Menu bar"
- *                 url="http://wiki.tizzit.org/display/userdoc/Menu+bar" version="12"&gt;
- *   &lt;renderedContent&gt;
- *     &lt;div id="ConfluenceContent"&gt;
- *       &lt;h1&gt;&lt;a name="Menubar-MenuBar" /&gt;Menu Bar&lt;/h1&gt;
- *
- *       &lt;p&gt;The menu bar is one of the tree main functional areas in the tizzit &lt;a href="/display/userdoc/User+Interface" title="User Interface"&gt;user interface&lt;/a&gt;.&lt;br /&gt; It provides buttons/icons and drop down menus to manage your tizzit website.&lt;br /&gt; The buttons are grouped by their functions:&lt;/p&gt;
- *       &lt;ul&gt;
- *         &lt;li&gt;
- *           &lt;a href="#Menubar-Edit"&gt;Edit&lt;/a&gt;
- *         &lt;/li&gt;
- *       &lt;/ul&gt;
- *       ...
- *     &lt;/div&gt;
- *   &lt;/renderedContent&gt;
- * &lt;/confluencePage&gt;</pre>
- *
- * <p>
- * <b>Namespace: <code>http://plugins.tizzit.org/ConfluenceContentPlugin</code></b>
- * </p>
- *
- * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+ * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
- * @version $Id: ConfluenceContentPlugin.java 543 2009-10-23 11:33:02Z eduard.siebert@online.de $
- * @since tizzit-plugin-sample 15.10.2009
+ * @version $Id: TeaserTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
 public class TeaserTransformerPlugin implements TizzitPlugin {
 	private static final Log log = LogFactory.getLog(TeaserTransformerPlugin.class);
 
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "TeaserTransformerPlugin";
 	private ContentHandler parent;
-	private final boolean inContentInclude = false;
-	private final boolean inSearchByUnit = false;
-	private final boolean inSearchByViewComponent = false;
-	private final String contentSearchBy = null;
+	private final String INCLUDETEASER = "includeTeaser";
+	private final String TEASERREF = "teaserRef";
+	private final String TEASERRANDOMIZED = "teaserRandomized";
+	private boolean inIncludeTeaser = false;
 	private final boolean iAmTheLiveserver = true;
 
 	//private final WebServiceSpring webSpringBean = null;
@@ -126,8 +73,18 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		parent.startElement(uri, localName, qName, attrs);
-
+		if (localName.equalsIgnoreCase(INCLUDETEASER)) {
+			inIncludeTeaser = true;
+			parent.startElement(uri, localName, qName, attrs);
+		} else if (localName.equalsIgnoreCase(TEASERRANDOMIZED) || localName.equalsIgnoreCase(TEASERREF)) {
+			if (log.isDebugEnabled()) log.debug("found a teaser include request...");
+			//			String teaser = webSpringBean.getIncludeTeaser(localName, attrs, iAmTheLiveserver);
+			// FIXME debug only
+			String teaser = new StringBuffer("<teaser><teaserName>cooler teaser</teaserName>").append("<path>").append(attrs.getValue("xpathTeaserElement")).append("</path>").append("<viewComponent>").append(attrs.getValue("viewComponentId")).append("</viewComponent>").append("<unit>").append(attrs.getValue("unit")).append("</unit>").append("</teaser>").toString();
+			if (teaser != null) {
+				SAXHelper.string2sax(teaser, parent);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -135,13 +92,8 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 	 */
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("characters: " + length + " long");
-		if (inContentInclude && contentSearchBy != null && !(inSearchByUnit || inSearchByViewComponent)) {
-			try {
-				charactersFillTeaserInclude(ch, start, length);
-			} catch (Exception e) {
-				if (log.isDebugEnabled()) log.debug("error in charactersFillContentInclude ", e);
-			}
-		}
+		//should be empty anyway...
+		parent.characters(ch, start, length);
 	}
 
 	/* (non-Javadoc)
@@ -149,29 +101,12 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
+		if (localName.equalsIgnoreCase(INCLUDETEASER)) {
+			inIncludeTeaser = false;
+		} else if (localName.equalsIgnoreCase(TEASERRANDOMIZED) || localName.equalsIgnoreCase(TEASERREF)) {
+			return;
+		}
 		parent.endElement(uri, localName, qName);
-	}
-
-	private void charactersFillTeaserInclude(char[] ch, int start, int length) throws Exception {
-		//			try {
-		//				Document teaserDoc = XercesHelper.string2Dom(webSpringBean.getIncludeTeaser(viewComponentId, iAmTheLiveserver, XercesHelper.node2string(elm)));
-		//				Node teaserInclude = XercesHelper.findNode(teaserDoc, "//teaserInclude/teaserInclude");
-		//				if (teaserInclude == null) {
-		//					teaserInclude = XercesHelper.findNode(teaserDoc, "//teaserInclude");
-		//				}
-		//				if (teaserInclude != null) {
-		//					Node xd = document.importNode(teaserInclude, true);
-		//					// remove all children
-		//					Node node = elm.getFirstChild();
-		//					while (node != null) {
-		//						elm.removeChild(node);
-		//						node = elm.getFirstChild();
-		//					}
-		//					elm.appendChild(xd);
-		//				}
-		//			} catch (Exception e) {
-		//				log.warn("Error getting teaserInclude: " + e.getMessage(), e);
-		//			}
 	}
 
 	/* (non-Javadoc)

@@ -72,9 +72,9 @@ import de.juwimm.swing.SortableListModel;
 public class PanTeaser extends JPanel {
 
 	private Communication communication;
-	private Logger log = Logger.getLogger(PanTeaser.class);
+	private final Logger log = Logger.getLogger(PanTeaser.class);
 
-	private JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+	private final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	private JPanel pnlDefinedTeaser;
 	private JPanel pnlHeaderLeft;
@@ -84,13 +84,13 @@ public class PanTeaser extends JPanel {
 	private JPanel pnlHeaderRight;
 	private JPanel pnlRandomChoice;
 
-	private Dimension minDefinedTeaserDim = new Dimension(250, 210);
-	private Dimension prefDefinedTeaserDim = new Dimension(280, 250);
-	private Dimension maxDefinedTeaserDim = new Dimension(800, 600);
+	private final Dimension minDefinedTeaserDim = new Dimension(250, 210);
+	private final Dimension prefDefinedTeaserDim = new Dimension(280, 250);
+	private final Dimension maxDefinedTeaserDim = new Dimension(800, 600);
 
-	private Dimension minRandomTeaserDim = new Dimension(100, 210);
-	private Dimension prefRandomTeaserDim = new Dimension(170, 250);
-	private Dimension maxRandomTeaserDim = new Dimension(800, 600);
+	private final Dimension minRandomTeaserDim = new Dimension(100, 210);
+	private final Dimension prefRandomTeaserDim = new Dimension(170, 250);
+	private final Dimension maxRandomTeaserDim = new Dimension(800, 600);
 
 	private ButtonGroup buttonGroup;
 	private PickListData pickListData;
@@ -98,17 +98,17 @@ public class PanTeaser extends JPanel {
 	private boolean isInitialized = false;
 
 	/** All search scopes (defined by the dcfConfig for this mandator). */
-	private ArrayList<String> searchScopes = new ArrayList<String>();
+	private final ArrayList<String> searchScopes = new ArrayList<String>();
 
 	/** All {@link JRadioButton}s that are displayed for the available search scopes. 
 	 * Each JRadioButton has an {@code ActionCommand} named after the search scope the JRadioButton represents. */
-	private ArrayList<JRadioButton> radioButtonList = new ArrayList<JRadioButton>();
+	private final ArrayList<JRadioButton> radioButtonList = new ArrayList<JRadioButton>();
 
 	/** All random teaser's {@link JComboBox}es that are displayed for the available search scopes */
-	private ArrayList<JComboBox> comboBoxList = new ArrayList<JComboBox>();
+	private final ArrayList<JComboBox> comboBoxList = new ArrayList<JComboBox>();
 
 	/** A container for all teaser properties (defined by the dcfConfig's {@code <properties>} element for this mandator).  */
-	private Hashtable<String, Teaser.TeaserProperties> hshTeaserProps = new Hashtable<String, Teaser.TeaserProperties>();
+	private final Hashtable<String, Teaser.TeaserProperties> hshTeaserProps = new Hashtable<String, Teaser.TeaserProperties>();
 
 	/**
 	 * Default constructor.
@@ -472,6 +472,8 @@ public class PanTeaser extends JPanel {
 			if (chosenValue > 0) {
 				JComboBox comboBox = this.comboBoxList.get(i);
 				String comboBoxName = comboBox.getName(); // name = search scope
+				TeaserValue teaserValue = (TeaserValue) ((DropDownHolder) selectedTeasers.getElementAt(i)).getObject();
+
 				String xpathTeaserElement = null;
 
 				Enumeration teaserPropsEnumeration = this.hshTeaserProps.elements();
@@ -489,17 +491,23 @@ public class PanTeaser extends JPanel {
 				}
 
 				Element elmRandomTeaser = ContentManager.getDomDoc().createElement("teaserRandomized");
+
+				// mandatory attribute
+				Attr attrViewComponentId = ContentManager.getDomDoc().createAttribute("viewComponentId");
+				attrViewComponentId.setValue(Integer.toString(teaserValue.getViewComponentId()));
+				elmRandomTeaser.setAttributeNode(attrViewComponentId);
+
 				Attr attrXPath = ContentManager.getDomDoc().createAttribute("xpathTeaserElement");
 				attrXPath.setValue(xpathTeaserElement);
 				elmRandomTeaser.setAttributeNode(attrXPath);
 
-				Element elmRandomCount = ContentManager.getDomDoc().createElement("count");
-				elmRandomCount.appendChild(ContentManager.getDomDoc().createTextNode(Integer.toString(chosenValue)));
-				elmRandomTeaser.appendChild(elmRandomCount);
+				Attr attrRandomCount = ContentManager.getDomDoc().createAttribute("count");
+				attrRandomCount.setValue(Integer.toString(chosenValue));
+				elmRandomTeaser.setAttributeNode(attrRandomCount);
 
-				Element elmUnit = ContentManager.getDomDoc().createElement("unit");
-				elmUnit.appendChild(ContentManager.getDomDoc().createTextNode(comboBox.getName()));
-				elmRandomTeaser.appendChild(elmUnit);
+				Attr attrUnit = ContentManager.getDomDoc().createAttribute("unit");
+				attrUnit.setValue(comboBox.getName());
+				elmRandomTeaser.appendChild(attrUnit);
 
 				teaserIncludeNode.appendChild(elmRandomTeaser);
 			}
@@ -605,6 +613,7 @@ public class PanTeaser extends JPanel {
 		return null;
 	}
 
+	@Override
 	public void setEnabled(boolean enabling) {
 		super.setEnabled(enabling);
 		this.splitPane.setOneTouchExpandable(enabling);
@@ -911,12 +920,12 @@ public class PanTeaser extends JPanel {
 	 *
 	 */
 	public class TeaserValue {
-		private int viewComponentId;
-		private String teaserName;
-		private String xpathTeaserName;
-		private String teaserIdentifier;
-		private String xpathTeaserElement;
-		private String xpathTeaserIdentifier;
+		private final int viewComponentId;
+		private final String teaserName;
+		private final String xpathTeaserName;
+		private final String teaserIdentifier;
+		private final String xpathTeaserElement;
+		private final String xpathTeaserIdentifier;
 
 		/**
 		 * Value constructor.
