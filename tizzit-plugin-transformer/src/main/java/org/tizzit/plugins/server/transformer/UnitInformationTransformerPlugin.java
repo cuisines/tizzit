@@ -4,76 +4,27 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Node;
+import org.tizzit.util.xml.SAXHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import de.juwimm.cms.plugins.Constants;
 import de.juwimm.cms.plugins.server.Request;
 import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
-import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.UnitValue;
 
 /**
- * <h5>Usage / Configuration:</h5>
  * <p>
- * <b>tizzit-plugins.conf:</b><br/>
- * <code>http://plugins.tizzit.org/ConfluenceContentPlugin=org.tizzit.plugins.server.confluence.ConfluenceContentPlugin</code>
- * </p>
- * <b>XML:</b>
- * <pre> &lt;getPage xmlns="http://plugins.tizzit.org/ConfluenceContentPlugin"&gt;
- *   &lt;pageId dcfname="pageId" label="Page ID"&gt;557129&lt;/pageId&gt;
- *   &lt;confluenceURLs dcfname="confluenceURL" label="Confluence URLs"&gt;
- *     &lt;value&gt;http://wiki.tizzit.org&lt;/value&gt;
- *   &lt;/confluenceURLs&gt;
- *   &lt;xmlRpcMethodsPrefix dcfname="xmlRpcMethodsPrefix" label="XML-RPC methods prefix"&gt;confluence1&lt;/xmlRpcMethodsPrefix&gt;
- *   &lt;useStyles dcfname="useStyles" label="Render content with styles?"&gt;
- *     &lt;value&gt;true&lt;/value&gt;
- *   &lt;/useStyles&gt;
- * &lt;/getPage&gt;</pre>
- *
- * <h5>Element description:</h5>
- * <b>mandatory:</b>
- * <ul>
- * 	<li><b>pageId</b> - The id of the Confluence page.</li>
- * 	<li><b>confluenceURLs/value</b> - The base URL to Confluence (<code>http://&lt;&lt;confluence-install&gt;&gt;</code>). This URL will be appended with {@link org.tizzit.plugins.server.confluence.DEFAULT_RPC_PATH}</li>
- * </ul>
- * <b>optional:</b>
- * <ul>
- * 	<li><b>xmlRpcMethodsPrefix</b> - default: <code>confluence1</code> - XML-RPC methods prefix.</li>
- * 	<li><b>useStyles/value</b> - default: <code>false</code> - Renders the Confluence content with styles if <code>true</code>.</li>
- * </ul>
- *
- * <h5>Output:</h5>
- * <pre> &lt;confluencePage contentStatus="current" created="1246447786000" creator="ckulawik"
- *                 current="true" homePage="false" id="557129" modified="1255086937000"
- *                 modifier="msimon" parentId="557083" permissions="0" space="userdoc" title="Menu bar"
- *                 url="http://wiki.tizzit.org/display/userdoc/Menu+bar" version="12"&gt;
- *   &lt;renderedContent&gt;
- *     &lt;div id="ConfluenceContent"&gt;
- *       &lt;h1&gt;&lt;a name="Menubar-MenuBar" /&gt;Menu Bar&lt;/h1&gt;
- *
- *       &lt;p&gt;The menu bar is one of the tree main functional areas in the tizzit &lt;a href="/display/userdoc/User+Interface" title="User Interface"&gt;user interface&lt;/a&gt;.&lt;br /&gt; It provides buttons/icons and drop down menus to manage your tizzit website.&lt;br /&gt; The buttons are grouped by their functions:&lt;/p&gt;
- *       &lt;ul&gt;
- *         &lt;li&gt;
- *           &lt;a href="#Menubar-Edit"&gt;Edit&lt;/a&gt;
- *         &lt;/li&gt;
- *       &lt;/ul&gt;
- *       ...
- *     &lt;/div&gt;
- *   &lt;/renderedContent&gt;
- * &lt;/confluencePage&gt;</pre>
- *
- * <p>
- * <b>Namespace: <code>http://plugins.tizzit.org/ConfluenceContentPlugin</code></b>
+ * <b>Namespace: <code>http://plugins.tizzit.org/UnitInformationTransformerPlugin</code></b>
  * </p>
  *
- * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+ * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
- * @version $Id: ConfluenceContentPlugin.java 543 2009-10-23 11:33:02Z eduard.siebert@online.de $
- * @since tizzit-plugin-sample 15.10.2009
+ * @version $Id: ContentTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
 public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	private static final Log log = LogFactory.getLog(UnitInformationTransformerPlugin.class);
@@ -81,9 +32,9 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "UnitInformationTransformerPlugin";
 	private ContentHandler parent;
 	private final String UNITINFORMATION = "unitInformation";
-	private boolean inUnitInformation = false;
-	//private final WebServiceSpring webSpringBean = null;
 	private final Integer viewComponentId = null;
+
+	//private WebServiceSpring webSpringBean = null;
 
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
@@ -124,9 +75,10 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
 		if (localName.compareTo(UNITINFORMATION) == 0) {
-			inUnitInformation = true;
+			startUnitInformationElement(uri, localName, qName, attrs);
+		} else {
+			parent.startElement(uri, localName, qName, attrs);
 		}
-		parent.startElement(uri, localName, qName, attrs);
 
 	}
 
@@ -139,36 +91,41 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 
 	}
 
-	private void fillUnitInformation(Node nde, ViewComponentValue vcl) throws Exception {
-		ViewComponentValue myVcl = null;
-		//		if (vcl != null) {
-		//			myVcl = vcl;
-		//		} else {
-		//			myVcl = viewComponentValue;
-		//		}
-		//		Iterator it = XercesHelper.findNodes(nde, ".//unitInformation");
-		//
-		//		while (it.hasNext()) {
-		//			Element el = (Element) it.next();
-		//			String strUn = el.getAttribute("unitId");
-		//
-		//			UnitValue uv = null;
-		//			if (strUn != null && !strUn.equals("")) {
-		//				uv = webSpringBean.getUnit(new Integer(strUn));
-		//			} else {
-		//				uv = webSpringBean.getUnit4ViewComponent(myVcl.getViewComponentId());
-		//				el.setAttribute("unitId", uv.getUnitId().toString());
-		//			}
-		//
-		//			Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(myVcl.getViewComponentId()).getViewDocumentId();
-		//			try {
-		//				String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
-		//				el.setAttribute("url", unitPath);
-		//			} catch (Exception exe) {
-		//			}
-		//
-		//			el.setAttribute("unitName", uv.getName());
-		//		}
+	// FIXME: debug strings only
+	// needs to be called for start element
+	private void startUnitInformationElement(String uri, String localName, String qName, Attributes attrs) {
+		try {
+			String strUn = attrs.getValue("unitId");
+			UnitValue uv = null;
+
+			AttributesImpl newAttrs = new AttributesImpl();
+
+			if (strUn != null && !strUn.equals("")) {
+				//uv = webSpringBean.getUnit(Integer.decode(strUn));
+			} else {
+				//uv = webSpringBean.getUnit4ViewComponent(viewComponentId);
+				//SAXHelper.setSAXAttr(newAttrs, "unitId", uv.getUnitId().toString());
+				SAXHelper.setSAXAttr(newAttrs, "unitId", "123");
+			}
+
+			if (uv != null) {
+				//Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(viewComponentId).getViewDocumentId();
+				try {
+					//String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
+					String unitPath = "1, 12, 124, 33";
+					SAXHelper.setSAXAttr(newAttrs, "url", unitPath);
+				} catch (Exception exe) {
+				}
+
+				//SAXHelper.setSAXAttr(newAttrs, "unitName", uv.getName());
+				SAXHelper.setSAXAttr(newAttrs, "unitName", "debug");
+			}
+
+			parent.startElement(uri, localName, qName, newAttrs);
+
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("error while transforming unitInformationTag ", e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -176,9 +133,6 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
-		if (localName.compareTo(UNITINFORMATION) == 0) {
-			inUnitInformation = false;
-		}
 		parent.endElement(uri, localName, qName);
 	}
 

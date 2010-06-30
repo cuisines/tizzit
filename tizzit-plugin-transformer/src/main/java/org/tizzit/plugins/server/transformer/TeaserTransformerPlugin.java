@@ -16,6 +16,10 @@ import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
 
 /**
+ * <p>
+ * <b>Namespace: <code>http://plugins.tizzit.org/TeaserTransformerPlugin</code></b>
+ * </p>
+ * 
  * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: TeaserTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
