@@ -4,37 +4,39 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.tizzit.util.xml.SAXHelper;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
+import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.plugins.Constants;
 import de.juwimm.cms.plugins.server.Request;
 import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
-import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
  * <p>
- * <b>Namespace: <code>http://plugins.tizzit.org/UnitInformationTransformerPlugin</code></b>
+ * <b>Namespace: <code>http://plugins.tizzit.org/HeadlineTransformerPlugin</code></b>
  * </p>
  *
  * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
- * @version $Id: UnitInformationTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
+ * @version $Id: HeadlineTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class UnitInformationTransformerPlugin implements TizzitPlugin {
-	private static final Log log = LogFactory.getLog(UnitInformationTransformerPlugin.class);
+public class HeadlineTransformerPlugin implements TizzitPlugin {
+	private static final Log log = LogFactory.getLog(HeadlineTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "UnitInformationTransformerPlugin";
+	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "HeadlineTransformerPlugin";
 	private ContentHandler parent;
 	private final String UNITINFORMATION = "unitInformation";
 	private final Integer viewComponentId = null;
+	private final boolean iAmTheLiveserver = true;
 
-	//private WebServiceSpring webSpringBean = null;
+	private final WebServiceSpring webSpringBean = null;
+	private final ViewComponentValue viewComponentValue = null;
 
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
@@ -75,7 +77,7 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
 		if (localName.compareTo(UNITINFORMATION) == 0) {
-			startUnitInformationElement(uri, localName, qName, attrs);
+			//startUnitInformationElement(uri, localName, qName, attrs);
 		} else {
 			parent.startElement(uri, localName, qName, attrs);
 		}
@@ -91,42 +93,29 @@ public class UnitInformationTransformerPlugin implements TizzitPlugin {
 
 	}
 
-	// FIXME: debug strings only
-	// needs to be called for start element
-	private void startUnitInformationElement(String uri, String localName, String qName, Attributes attrs) {
-		try {
-			String strUn = attrs.getValue("unitId");
-			UnitValue uv = null;
-
-			AttributesImpl newAttrs = new AttributesImpl();
-
-			if (strUn != null && !strUn.equals("")) {
-				SAXHelper.setSAXAttr(newAttrs, "unitId", strUn);
-				//uv = webSpringBean.getUnit(Integer.decode(strUn));
-			} else {
-				//uv = webSpringBean.getUnit4ViewComponent(viewComponentId);
-				//SAXHelper.setSAXAttr(newAttrs, "unitId", uv.getUnitId().toString());
-				SAXHelper.setSAXAttr(newAttrs, "unitId", "123");
-			}
-
-			//if (uv != null) {
-			//Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(viewComponentId).getViewDocumentId();
-			try {
-				//String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
-				String unitPath = "1, 12, 124, 33";
-				SAXHelper.setSAXAttr(newAttrs, "url", unitPath);
-			} catch (Exception exe) {
-			}
-
-			//SAXHelper.setSAXAttr(newAttrs, "unitName", uv.getName());
-			SAXHelper.setSAXAttr(newAttrs, "unitName", "debug");
-			//}
-
-			parent.startElement(uri, localName, qName, newAttrs);
-
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) log.debug("error while transforming unitInformationTag ", e);
-		}
+	private void fillHeadLine(Document doc) throws Exception {
+		//		Iterator it = XercesHelper.findNodes(doc, "//headLine");
+		//		Integer contentId = null;
+		//
+		//		while (it.hasNext()) {
+		//			Element headLine = (Element) it.next();
+		//			try {
+		//				if (contentId == null) {
+		//					if (viewComponentValue.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
+		//						ViewComponentValue vclSym = webSpringBean.getViewComponent4Id(new Integer(viewComponentValue.getReference()));
+		//						contentId = new Integer(vclSym.getReference());
+		//					} else {
+		//						contentId = new Integer(viewComponentValue.getReference());
+		//					}
+		//				}
+		//				try {
+		//					Node txtNde = doc.createTextNode(webSpringBean.getHeading(contentId, iAmTheLiveserver));
+		//					headLine.appendChild(txtNde);
+		//				} catch (Exception exe) {
+		//				}
+		//			} catch (NumberFormatException nfe) {
+		//			}
+		//		}
 	}
 
 	/* (non-Javadoc)

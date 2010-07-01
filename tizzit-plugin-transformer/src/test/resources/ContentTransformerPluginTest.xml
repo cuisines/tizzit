@@ -16,7 +16,7 @@
 				<teaserRandomized xpathTeaserElement="path5.bla" viewComponentId="1" count="1" unit="11"/>
 			</TeaserTransformer:teaserInclude>
 		</preInclude>
-		<preInclude xmlns:UnitInformation="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:UnitInformationPlugin">
+		<preInclude xmlns:UnitInformation="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:UnitInformationTransformerPlugin">
 			<UnitInformation:unitInformation unitId="321">
 			</UnitInformation:unitInformation>
 			<UnitInformation:unitInformation>

@@ -19,17 +19,17 @@ import de.juwimm.cms.vo.UnitValue;
 
 /**
  * <p>
- * <b>Namespace: <code>http://plugins.tizzit.org/UnitInformationTransformerPlugin</code></b>
+ * <b>Namespace: <code>http://plugins.tizzit.org/AgregationTransformerPlugin</code></b>
  * </p>
  *
  * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
- * @version $Id: UnitInformationTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
+ * @version $Id: AgregationTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class UnitInformationTransformerPlugin implements TizzitPlugin {
-	private static final Log log = LogFactory.getLog(UnitInformationTransformerPlugin.class);
+public class AgregationTransformerPlugin implements TizzitPlugin {
+	private static final Log log = LogFactory.getLog(AgregationTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "UnitInformationTransformerPlugin";
+	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "AgregationTransformerPlugin";
 	private ContentHandler parent;
 	private final String UNITINFORMATION = "unitInformation";
 	private final Integer viewComponentId = null;

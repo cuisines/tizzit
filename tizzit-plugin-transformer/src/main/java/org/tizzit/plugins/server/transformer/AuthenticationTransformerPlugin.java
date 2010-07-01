@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.tizzit.util.xml.SAXHelper;
+import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -16,63 +16,13 @@ import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
 
 /**
- * <h5>Usage / Configuration:</h5>
  * <p>
- * <b>tizzit-plugins.conf:</b><br/>
- * <code>http://plugins.tizzit.org/ConfluenceContentPlugin=org.tizzit.plugins.server.confluence.ConfluenceContentPlugin</code>
+ * <b>Namespace: <code>http://plugins.tizzit.org/AuthenticationTransformerPlugin</code></b>
  * </p>
- * <b>XML:</b>
- * <pre> &lt;getPage xmlns="http://plugins.tizzit.org/ConfluenceContentPlugin"&gt;
- *   &lt;pageId dcfname="pageId" label="Page ID"&gt;557129&lt;/pageId&gt;
- *   &lt;confluenceURLs dcfname="confluenceURL" label="Confluence URLs"&gt;
- *     &lt;value&gt;http://wiki.tizzit.org&lt;/value&gt;
- *   &lt;/confluenceURLs&gt;
- *   &lt;xmlRpcMethodsPrefix dcfname="xmlRpcMethodsPrefix" label="XML-RPC methods prefix"&gt;confluence1&lt;/xmlRpcMethodsPrefix&gt;
- *   &lt;useStyles dcfname="useStyles" label="Render content with styles?"&gt;
- *     &lt;value&gt;true&lt;/value&gt;
- *   &lt;/useStyles&gt;
- * &lt;/getPage&gt;</pre>
- *
- * <h5>Element description:</h5>
- * <b>mandatory:</b>
- * <ul>
- * 	<li><b>pageId</b> - The id of the Confluence page.</li>
- * 	<li><b>confluenceURLs/value</b> - The base URL to Confluence (<code>http://&lt;&lt;confluence-install&gt;&gt;</code>). This URL will be appended with {@link org.tizzit.plugins.server.confluence.DEFAULT_RPC_PATH}</li>
- * </ul>
- * <b>optional:</b>
- * <ul>
- * 	<li><b>xmlRpcMethodsPrefix</b> - default: <code>confluence1</code> - XML-RPC methods prefix.</li>
- * 	<li><b>useStyles/value</b> - default: <code>false</code> - Renders the Confluence content with styles if <code>true</code>.</li>
- * </ul>
- *
- * <h5>Output:</h5>
- * <pre> &lt;confluencePage contentStatus="current" created="1246447786000" creator="ckulawik"
- *                 current="true" homePage="false" id="557129" modified="1255086937000"
- *                 modifier="msimon" parentId="557083" permissions="0" space="userdoc" title="Menu bar"
- *                 url="http://wiki.tizzit.org/display/userdoc/Menu+bar" version="12"&gt;
- *   &lt;renderedContent&gt;
- *     &lt;div id="ConfluenceContent"&gt;
- *       &lt;h1&gt;&lt;a name="Menubar-MenuBar" /&gt;Menu Bar&lt;/h1&gt;
- *
- *       &lt;p&gt;The menu bar is one of the tree main functional areas in the tizzit &lt;a href="/display/userdoc/User+Interface" title="User Interface"&gt;user interface&lt;/a&gt;.&lt;br /&gt; It provides buttons/icons and drop down menus to manage your tizzit website.&lt;br /&gt; The buttons are grouped by their functions:&lt;/p&gt;
- *       &lt;ul&gt;
- *         &lt;li&gt;
- *           &lt;a href="#Menubar-Edit"&gt;Edit&lt;/a&gt;
- *         &lt;/li&gt;
- *       &lt;/ul&gt;
- *       ...
- *     &lt;/div&gt;
- *   &lt;/renderedContent&gt;
- * &lt;/confluencePage&gt;</pre>
- *
- * <p>
- * <b>Namespace: <code>http://plugins.tizzit.org/ConfluenceContentPlugin</code></b>
- * </p>
- *
- * @author <a href="mailto:eduard.siebert@juwimm.com">Eduard Siebert</a>
+ * 
+ * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
- * @version $Id: ConfluenceContentPlugin.java 543 2009-10-23 11:33:02Z eduard.siebert@online.de $
- * @since tizzit-plugin-sample 15.10.2009
+ * @version $Id: AuthenticationTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
 public class AuthenticationTransformerPlugin implements TizzitPlugin {
 	private static final Log log = LogFactory.getLog(AuthenticationTransformerPlugin.class);
@@ -141,33 +91,136 @@ public class AuthenticationTransformerPlugin implements TizzitPlugin {
 
 	}
 
-	/*
-	 * BUG 3452
-	 * <contentInclude >
-	 * 	<byUnit></byUnit>
-	 * 	<!--
-	 * 		unit kann sein: root
-	 *      this
-	 *      parent
-	 *      entweder BYUNIT ODER BYVIEWCOMPONENT
-	 *  -->
-	 *  <byViewComponent>234342</byViewComponent>
-	 *  <xpathElement>//</xpathElement><!-- Wenn nicht angegeben, immer der ganze Content -->
-	 * </contentInclude>
-	 */
-	private void charactersFillContentInclude(char[] ch, int start, int length) throws Exception {
-		log.debug("charactersFillContentInclude: " + length + " long");
-		String value = new String(ch, start, length).trim();
-		if (log.isDebugEnabled() && value != null) log.debug("value is : " + value);
-		String xPathQuery = null;
-		try {
-			log.debug("viewComponentId is : " + viewComponentId);
-			//String result = webSpringBean.getIncludeContent(viewComponentId, contentSearchBy.contains("unit"), value, iAmTheLiveserver, xPathQuery);
-			String result = "<tvViewComponent><showyType>123</showyType><viewType>321</viewType><visible>true</visible><searchIndexed>true</searchIndexed><statusInfo>Standard</statusInfo><linkName>test und test</linkName><urlLinkName>test-und-test-1</urlLinkName><viewLevel>3</viewLevel><viewIndex>3</viewIndex><displaySettings>0</displaySettings><viewDocumentId>8</viewDocumentId><viewDocumentViewType>browser</viewDocumentViewType><language>de</language><userModifiedDate>1272987064423</userModifiedDate><url>test-und-test-1</url><template>standard</template></tvViewComponent>";
-			SAXHelper.string2sax(result, this.parent);
-		} catch (Exception e) {
-			log.warn("Error getting includeContent: " + e.getMessage(), e);
-		}
+	private void fillAuthentication(Document doc) throws Exception {
+		//		Node head = XercesHelper.findNode(doc, "//source/head");
+		//		if (head != null) {
+		//			// If no context then user has not logged on
+		//			if (sessContext == null) {
+		//				if (log.isDebugEnabled()) log.debug("No Logged-in User");
+		//			} else {
+		//				Node authentication = doc.createElement("authentication");
+		//				try {
+		//					Node idN = sessContext.getXML("/authentication/ID");
+		//					Node id = doc.createElement("id");
+		//					id.appendChild(doc.importNode(idN, true));
+		//					authentication.appendChild(id);
+		//				} catch (Exception exe) {
+		//					log.error("An error occured", exe);
+		//				}
+		//				DocumentFragment df = sessContext.getXML("/authentication/roles");
+		//				if (df != null) {
+		//					NodeList nl = df.getChildNodes();
+		//					for (int i = 0; i < nl.getLength(); i++) {
+		//						Node role = nl.item(i);
+		//						if (XercesHelper.getNodeValue(role).startsWith("unit_")) {
+		//							Element unitInformation = doc.createElement("unitInformation");
+		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+		//							if (st.hasMoreTokens()) {
+		//								// skip "unit"
+		//								st.nextToken();
+		//								if (st.hasMoreTokens()) {
+		//									String unitId = st.nextToken();
+		//									unitInformation.setAttribute("id", unitId);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									String unitName = st.nextToken();
+		//									Element unitNameElem = doc.createElement("unitname");
+		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(unitName));
+		//									unitNameElem.appendChild(cData);
+		//									unitInformation.appendChild(unitNameElem);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									// skip "site"
+		//									st.nextToken();
+		//									if (st.hasMoreTokens()) {
+		//										String siteId = st.nextToken();
+		//										unitInformation.setAttribute("siteId", siteId);
+		//									}
+		//								}
+		//							}
+		//							authentication.appendChild(unitInformation);
+		//						} else if (XercesHelper.getNodeValue(role).startsWith("group_")) {
+		//							Element groupInformation = doc.createElement("groupInformation");
+		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+		//							if (st.hasMoreTokens()) {
+		//								// skip "group"
+		//								st.nextToken();
+		//								if (st.hasMoreTokens()) {
+		//									String groupId = st.nextToken();
+		//									groupInformation.setAttribute("id", groupId);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									String groupName = st.nextToken();
+		//									Element groupNameElem = doc.createElement("groupname");
+		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(groupName));
+		//									groupNameElem.appendChild(cData);
+		//									groupInformation.appendChild(groupNameElem);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									// skip "site"
+		//									st.nextToken();
+		//									if (st.hasMoreTokens()) {
+		//										String siteId = st.nextToken();
+		//										groupInformation.setAttribute("siteId", siteId);
+		//									}
+		//								}
+		//							}
+		//							authentication.appendChild(groupInformation);
+		//						} else if (XercesHelper.getNodeValue(role).startsWith("site_")) {
+		//							Element siteInformation = doc.createElement("siteInformation");
+		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+		//							if (st.hasMoreTokens()) {
+		//								// skip "site"
+		//								st.nextToken();
+		//								if (st.hasMoreTokens()) {
+		//									String siteId = st.nextToken();
+		//									siteInformation.setAttribute("id", siteId);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									String siteName = st.nextToken();
+		//									Element siteNameElem = doc.createElement("sitename");
+		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(siteName));
+		//									siteNameElem.appendChild(cData);
+		//									siteInformation.appendChild(siteNameElem);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									String siteShort = st.nextToken();
+		//									Element siteShortElem = doc.createElement("siteshort");
+		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(siteShort));
+		//									siteShortElem.appendChild(cData);
+		//									siteInformation.appendChild(siteShortElem);
+		//								}
+		//							}
+		//							authentication.appendChild(siteInformation);
+		//						} else if (XercesHelper.getNodeValue(role).startsWith("role_")) {
+		//							Element roleInformation = doc.createElement("roleInformation");
+		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+		//							if (st.hasMoreTokens()) {
+		//								// skip "role"
+		//								st.nextToken();
+		//								if (st.hasMoreTokens()) {
+		//									String roleId = st.nextToken();
+		//									roleInformation.setAttribute("id", roleId);
+		//								}
+		//								if (st.hasMoreTokens()) {
+		//									// skip "site"
+		//									// trash = st.nextToken();
+		//									if (st.hasMoreTokens()) {
+		//										String siteId = st.nextToken();
+		//										roleInformation.setAttribute("siteId", siteId);
+		//									}
+		//								}
+		//							}
+		//							authentication.appendChild(roleInformation);
+		//						} else {
+		//							role = doc.importNode(role, true);
+		//							authentication.appendChild(role);
+		//						}
+		//					}
+		//				}
+		//				head.appendChild(authentication);
+		//			}
+		//		}
 	}
 
 	/* (non-Javadoc)
