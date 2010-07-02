@@ -222,6 +222,7 @@ public final class Constants {
 	public static final String PROPERTY_CONFIGURATION = "PROPERTY_CONFIGURATION";
 
 	public static final String ACTION_MAKE_VIEW_OFFLINE = "makeViewOffline";
+	public static final String ACTION_REFRESH_TEXT_EDITOR = "arte";
 	public static String VIEW_COMPONENT_TO_COPY = null;
 
 	public static final int ADD_BEFORE = 0;
