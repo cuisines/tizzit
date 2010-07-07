@@ -358,14 +358,14 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>ujac</groupId>
+			<groupId>org.ujac</groupId>
 			<artifactId>ujac</artifactId>
-			<version>0.9.25a</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>itext</groupId>
-			<artifactId>itext-ujac</artifactId>
-			<version>0.9.25a</version>
+			<groupId>org.ujac</groupId>
+			<artifactId>ujac-itext</artifactId>
+			<version>1.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
