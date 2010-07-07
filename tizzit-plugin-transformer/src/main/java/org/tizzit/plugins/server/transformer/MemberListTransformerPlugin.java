@@ -1,10 +1,15 @@
 package org.tizzit.plugins.server.transformer;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.SAXHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -26,13 +31,14 @@ import de.juwimm.cms.vo.UnitValue;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: MemeberListTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class MemeberListTransformerPlugin implements TizzitPlugin {
-	private static final Log log = LogFactory.getLog(MemeberListTransformerPlugin.class);
+public class MemberListTransformerPlugin implements TizzitPlugin {
+	private static final Log log = LogFactory.getLog(MemberListTransformerPlugin.class);
 
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "MemeberListTransformerPlugin";
+	private final String MEMBERLIST = "memberList";
+	private final String UNITMEMBERLIST = "unitMemberList";
 	private ContentHandler parent;
-	private final String UNITINFORMATION = "unitInformation";
-	private final Integer viewComponentId = null;
+	private Integer viewComponentId = null;
 
 	//private WebServiceSpring webSpringBean = null;
 
@@ -42,6 +48,7 @@ public class MemeberListTransformerPlugin implements TizzitPlugin {
 	public void configurePlugin(Request req, Response resp, ContentHandler ch, Integer uniquePageId) {
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> begin");
 		this.parent = ch;
+		this.viewComponentId = uniquePageId;
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
 	}
@@ -74,8 +81,36 @@ public class MemeberListTransformerPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		if (localName.compareTo(UNITINFORMATION) == 0) {
-			startUnitInformationElement(uri, localName, qName, attrs);
+		if (localName.compareTo(MEMBERLIST) == 0 || localName.compareTo(UNITMEMBERLIST) == 0) {
+			Integer unitId = null;
+			String unitAttr = attrs.getValue("unitId");
+			if (unitAttr == null || unitAttr.trim().isEmpty()) {
+				//FIXME: muss wieder rein
+				//unitId = unitValue.getUnitId();
+			} else if (unitAttr.equalsIgnoreCase("all")) {
+				unitId = null;
+			} else {
+				unitId = new Integer(unitAttr);
+			}
+			if (Integer.valueOf(0).equals(unitId)) {
+				return;
+			}
+
+			String firstname = attrs.getValue("firstname");
+			if (firstname == null || firstname.trim().isEmpty()) {
+				firstname = "*";
+			}
+			firstname = firstname.replaceAll("[*]", "%");
+
+			String lastname = attrs.getValue("lastname");
+			if (lastname == null || lastname.trim().isEmpty()) {
+				lastname = "*";
+			}
+			lastname = lastname.replaceAll("[*]", "%");
+			//FIXME: string just for testing
+			//String ml = webSpringBean.getMembersList(siteId, unitId, firstname, lastname);
+			String ml = "<memberList>viele viele Members</memberList>";
+			SAXHelper.string2sax(ml, parent);
 		} else {
 			parent.startElement(uri, localName, qName, attrs);
 		}
@@ -91,50 +126,16 @@ public class MemeberListTransformerPlugin implements TizzitPlugin {
 
 	}
 
-	// FIXME: debug strings only
-	// needs to be called for start element
-	private void startUnitInformationElement(String uri, String localName, String qName, Attributes attrs) {
-		try {
-			String strUn = attrs.getValue("unitId");
-			UnitValue uv = null;
-
-			AttributesImpl newAttrs = new AttributesImpl();
-
-			if (strUn != null && !strUn.equals("")) {
-				SAXHelper.setSAXAttr(newAttrs, "unitId", strUn);
-				//uv = webSpringBean.getUnit(Integer.decode(strUn));
-			} else {
-				//uv = webSpringBean.getUnit4ViewComponent(viewComponentId);
-				//SAXHelper.setSAXAttr(newAttrs, "unitId", uv.getUnitId().toString());
-				SAXHelper.setSAXAttr(newAttrs, "unitId", "123");
-			}
-
-			//if (uv != null) {
-			//Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(viewComponentId).getViewDocumentId();
-			try {
-				//String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
-				String unitPath = "1, 12, 124, 33";
-				SAXHelper.setSAXAttr(newAttrs, "url", unitPath);
-			} catch (Exception exe) {
-			}
-
-			//SAXHelper.setSAXAttr(newAttrs, "unitName", uv.getName());
-			SAXHelper.setSAXAttr(newAttrs, "unitName", "debug");
-			//}
-
-			parent.startElement(uri, localName, qName, newAttrs);
-
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) log.debug("error while transforming unitInformationTag ", e);
-		}
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
-		parent.endElement(uri, localName, qName);
+		if (localName.compareTo(MEMBERLIST) != 0 && localName.compareTo(UNITMEMBERLIST) != 0) {
+			parent.endElement(uri, localName, qName);
+		}
 	}
 
 	/* (non-Javadoc)

@@ -1,10 +1,15 @@
 package org.tizzit.plugins.server.transformer;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.SAXHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -31,8 +36,9 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "UnitListTransformerPlugin";
 	private ContentHandler parent;
-	private final String UNITINFORMATION = "unitInformation";
-	private final Integer viewComponentId = null;
+	private final String UNITLIST = "unitList";
+	private Integer siteId = null;
+	private Integer viewComponentId = null;
 
 	//private WebServiceSpring webSpringBean = null;
 
@@ -42,6 +48,7 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 	public void configurePlugin(Request req, Response resp, ContentHandler ch, Integer uniquePageId) {
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> begin");
 		this.parent = ch;
+		this.viewComponentId = uniquePageId;
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
 	}
@@ -74,12 +81,10 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		if (localName.compareTo(UNITINFORMATION) == 0) {
-			startUnitInformationElement(uri, localName, qName, attrs);
-		} else {
-			parent.startElement(uri, localName, qName, attrs);
-		}
-
+		parent.startElement(uri, localName, qName, attrs);
+		if (localName.compareTo(UNITLIST) == 0) {
+			fillUnitList();
+		} 
 	}
 
 	/* (non-Javadoc)
@@ -88,45 +93,13 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("characters: " + length + " long");
 		parent.characters(ch, start, length);
-
 	}
 
-	// FIXME: debug strings only
-	// needs to be called for start element
-	private void startUnitInformationElement(String uri, String localName, String qName, Attributes attrs) {
-		try {
-			String strUn = attrs.getValue("unitId");
-			UnitValue uv = null;
-
-			AttributesImpl newAttrs = new AttributesImpl();
-
-			if (strUn != null && !strUn.equals("")) {
-				SAXHelper.setSAXAttr(newAttrs, "unitId", strUn);
-				//uv = webSpringBean.getUnit(Integer.decode(strUn));
-			} else {
-				//uv = webSpringBean.getUnit4ViewComponent(viewComponentId);
-				//SAXHelper.setSAXAttr(newAttrs, "unitId", uv.getUnitId().toString());
-				SAXHelper.setSAXAttr(newAttrs, "unitId", "123");
-			}
-
-			//if (uv != null) {
-			//Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(viewComponentId).getViewDocumentId();
-			try {
-				//String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
-				String unitPath = "1, 12, 124, 33";
-				SAXHelper.setSAXAttr(newAttrs, "url", unitPath);
-			} catch (Exception exe) {
-			}
-
-			//SAXHelper.setSAXAttr(newAttrs, "unitName", uv.getName());
-			SAXHelper.setSAXAttr(newAttrs, "unitName", "debug");
-			//}
-
-			parent.startElement(uri, localName, qName, newAttrs);
-
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) log.debug("error while transforming unitInformationTag ", e);
-		}
+	private void fillUnitList() {
+		//String unitXmlString = webSpringBean.getUnitListXml(siteId);
+		//FIXME: string for testing only
+		String unitXmlString = "<unit unitId=\"123\">lots of unit stuff</unit>";
+		SAXHelper.string2sax(unitXmlString, parent);
 	}
 
 	/* (non-Javadoc)

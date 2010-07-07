@@ -22,6 +22,24 @@
 			<UnitInformation:unitInformation>
 			</UnitInformation:unitInformation>
 		</preInclude>
+		<preInclude xmlns:InternalLink="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:InternalLinksTransformerPlugin">
+			<InternalLink:internalLink>
+				<internalLink viewid="123">
+				</internalLink>
+			</InternalLink:internalLink>
+		</preInclude>
+		<preInclude xmlns:Headline="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:HeadlineTransformerPlugin">
+			<Headline:headline>
+			</Headline:headline>
+		</preInclude>
+		<preInclude xmlns:UnitList="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:UnitListTransformerPlugin">
+			<UnitList:unitList>
+			</UnitList:unitList>
+		</preInclude>
+		<preInclude xmlns:MemberList="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:MemberListTransformerPlugin">
+			<MemberList:memberList unitId="12" firstname="Kai" lastname="Pflaume">
+			</MemberList:memberList>
+		</preInclude>
 	</resource>
 </page>
 

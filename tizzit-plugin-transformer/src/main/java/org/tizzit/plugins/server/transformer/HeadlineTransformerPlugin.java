@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.tizzit.util.xml.SAXHelper;
 import org.w3c.dom.Document;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -31,11 +32,11 @@ public class HeadlineTransformerPlugin implements TizzitPlugin {
 
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "HeadlineTransformerPlugin";
 	private ContentHandler parent;
-	private final String UNITINFORMATION = "unitInformation";
-	private final Integer viewComponentId = null;
+	private final String HEADLINE = "headline";
+	private Integer viewComponentId = null;
 	private final boolean iAmTheLiveserver = true;
 
-	private final WebServiceSpring webSpringBean = null;
+//	private WebServiceSpring webSpringBean = null;
 	private final ViewComponentValue viewComponentValue = null;
 
 	/* (non-Javadoc)
@@ -44,6 +45,7 @@ public class HeadlineTransformerPlugin implements TizzitPlugin {
 	public void configurePlugin(Request req, Response resp, ContentHandler ch, Integer uniquePageId) {
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> begin");
 		this.parent = ch;
+		this.viewComponentId = uniquePageId;
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
 	}
@@ -76,10 +78,9 @@ public class HeadlineTransformerPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		if (localName.compareTo(UNITINFORMATION) == 0) {
-			//startUnitInformationElement(uri, localName, qName, attrs);
-		} else {
-			parent.startElement(uri, localName, qName, attrs);
+		parent.startElement(uri, localName, qName, attrs);
+		if (localName.compareTo(HEADLINE) == 0) {
+			fillHeadLine();
 		}
 
 	}
@@ -93,29 +94,28 @@ public class HeadlineTransformerPlugin implements TizzitPlugin {
 
 	}
 
-	private void fillHeadLine(Document doc) throws Exception {
-		//		Iterator it = XercesHelper.findNodes(doc, "//headLine");
-		//		Integer contentId = null;
-		//
-		//		while (it.hasNext()) {
-		//			Element headLine = (Element) it.next();
-		//			try {
-		//				if (contentId == null) {
-		//					if (viewComponentValue.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
-		//						ViewComponentValue vclSym = webSpringBean.getViewComponent4Id(new Integer(viewComponentValue.getReference()));
-		//						contentId = new Integer(vclSym.getReference());
-		//					} else {
-		//						contentId = new Integer(viewComponentValue.getReference());
-		//					}
-		//				}
-		//				try {
-		//					Node txtNde = doc.createTextNode(webSpringBean.getHeading(contentId, iAmTheLiveserver));
-		//					headLine.appendChild(txtNde);
-		//				} catch (Exception exe) {
-		//				}
-		//			} catch (NumberFormatException nfe) {
-		//			}
-		//		}
+	private void fillHeadLine() {
+		Integer contentId = null;		
+		try {
+//			if (contentId == null) {
+//				if (viewComponentValue.getViewType() == de.juwimm.cms.common.Constants.VIEW_TYPE_SYMLINK) {
+//					ViewComponentValue vclSym = webSpringBean.getViewComponent4Id(new Integer(viewComponentValue.getReference()));
+//					contentId = new Integer(vclSym.getReference());
+//				} else {
+//					contentId = new Integer(viewComponentValue.getReference());
+//				}
+//			}
+			try {
+				//String headline = webSpringBean.getHeading(contentId, iAmTheLiveserver);
+				//FIXME: string for testing only
+				String headline = "Header - fantastic new header...";
+				parent.characters(headline.toCharArray(), 0, headline.length());
+			} catch (Exception exe) {
+			}
+		} catch (NumberFormatException nfe) {
+			if(log.isInfoEnabled()) log.info("NumberFormatException in HeadlinTransformatorPlugin" + nfe);
+		}
+				
 	}
 
 	/* (non-Javadoc)

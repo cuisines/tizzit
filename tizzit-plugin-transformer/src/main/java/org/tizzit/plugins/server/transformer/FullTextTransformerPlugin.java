@@ -131,59 +131,59 @@ public class FullTextTransformerPlugin implements TizzitPlugin {
 	 * </ul>
 	 */
 	private void fillFulltext(Document doc) throws Exception {
-		//		boolean ifOnlyUnit = true;
-		//		Integer myUnitId = null;
-		//		Iterator itFulltext = XercesHelper.findNodes(doc, "//fulltextsearch");
-		//		while (itFulltext.hasNext()) {
-		//			Element fulltextsearch = (Element) itFulltext.next();
-		//			ifOnlyUnit = Boolean.valueOf(fulltextsearch.getAttribute("searchOnlyInThisUnit")).booleanValue();
-		//			if (ifOnlyUnit && myUnitId == null) {
-		//				myUnitId = this.webSpringBean.getUnit4ViewComponent(viewComponentValue.getViewComponentId()).getUnitId();
-		//			}
-		//			String xpath = "//" + fulltextsearch.getAttribute("nodename").trim();
-		//			if (log.isDebugEnabled()) log.debug("STARTING FULLTEXT with XPATH: " + xpath);
-		//
-		//			XmlSearchValue[] foundArr = searchengineService.searchXML(siteValue.getSiteId(), xpath);
-		//
-		//			if (foundArr != null) {
-		//				if (log.isDebugEnabled()) log.debug("GOT FULLTEXT RETURN WITH " + foundArr.length + " ITEMS");
-		//				for (int i = 0; i < foundArr.length; i++) {
-		//					Integer foundUnitId = Integer.valueOf(0);
-		//					try {
-		//						foundUnitId = foundArr[i].getUnitId();
-		//					} catch (Exception exe) {
-		//						log.debug("Cannot catch unitId: " + foundArr[i].getUnitId());
-		//					}
-		//					if ((ifOnlyUnit && foundUnitId.equals(myUnitId)) || !ifOnlyUnit) {
-		//						String foundContent = foundArr[i].getContent();
-		//						//String foundInfoText = foundArr[i][1];
-		//						//String foundText = foundArr[i][2];
-		//
-		//						if (foundContent != null && !foundContent.equalsIgnoreCase("")) {
-		//							Document docContent = XercesHelper.string2Dom(foundContent);
-		//							Node newNode = doc.importNode(docContent.getFirstChild(), true);
-		//							fulltextsearch.appendChild(newNode);
-		//
-		//							Integer foundVcId = null;
-		//							try {
-		//								foundVcId = foundArr[i].getViewComponentId();
-		//							} catch (Exception exe) {
-		//								log.warn("fillFulltext: Could not find vcId: " + foundArr[i].getViewComponentId());
-		//							}
-		//							if (foundVcId != null) {
-		//								ViewComponentValue foundVc = null;
-		//								try {
-		//									foundVc = webSpringBean.getViewComponent4Id(foundVcId);
-		//								} catch (Exception e) {
-		//									if (log.isDebugEnabled()) log.debug("Can't find viewComponentId " + foundVcId + "!\n" + e.getMessage());
-		//								}
-		//								if (foundVc != null) this.fillUnitInformation(newNode, foundVc);
-		//							}
-		//						}
-		//					}
-		//				}
-		//			}
-		//		}
+//				boolean ifOnlyUnit = true;
+//				Integer myUnitId = null;
+//				Iterator itFulltext = XercesHelper.findNodes(doc, "//fulltextsearch");
+//				while (itFulltext.hasNext()) {
+//					Element fulltextsearch = (Element) itFulltext.next();
+//					ifOnlyUnit = Boolean.valueOf(fulltextsearch.getAttribute("searchOnlyInThisUnit")).booleanValue();
+//					if (ifOnlyUnit && myUnitId == null) {
+//						myUnitId = this.webSpringBean.getUnit4ViewComponent(viewComponentValue.getViewComponentId()).getUnitId();
+//					}
+//					String xpath = "//" + fulltextsearch.getAttribute("nodename").trim();
+//					if (log.isDebugEnabled()) log.debug("STARTING FULLTEXT with XPATH: " + xpath);
+//		
+//					XmlSearchValue[] foundArr = searchengineService.searchXML(siteValue.getSiteId(), xpath);
+//		
+//					if (foundArr != null) {
+//						if (log.isDebugEnabled()) log.debug("GOT FULLTEXT RETURN WITH " + foundArr.length + " ITEMS");
+//						for (int i = 0; i < foundArr.length; i++) {
+//							Integer foundUnitId = Integer.valueOf(0);
+//							try {
+//								foundUnitId = foundArr[i].getUnitId();
+//							} catch (Exception exe) {
+//								log.debug("Cannot catch unitId: " + foundArr[i].getUnitId());
+//							}
+//							if ((ifOnlyUnit && foundUnitId.equals(myUnitId)) || !ifOnlyUnit) {
+//								String foundContent = foundArr[i].getContent();
+//								//String foundInfoText = foundArr[i][1];
+//								//String foundText = foundArr[i][2];
+//		
+//								if (foundContent != null && !foundContent.equalsIgnoreCase("")) {
+//									Document docContent = XercesHelper.string2Dom(foundContent);
+//									Node newNode = doc.importNode(docContent.getFirstChild(), true);
+//									fulltextsearch.appendChild(newNode);
+//		
+//									Integer foundVcId = null;
+//									try {
+//										foundVcId = foundArr[i].getViewComponentId();
+//									} catch (Exception exe) {
+//										log.warn("fillFulltext: Could not find vcId: " + foundArr[i].getViewComponentId());
+//									}
+//									if (foundVcId != null) {
+//										ViewComponentValue foundVc = null;
+//										try {
+//											foundVc = webSpringBean.getViewComponent4Id(foundVcId);
+//										} catch (Exception e) {
+//											if (log.isDebugEnabled()) log.debug("Can't find viewComponentId " + foundVcId + "!\n" + e.getMessage());
+//										}
+//										if (foundVc != null) this.fillUnitInformation(newNode, foundVc);
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
 	}
 
 	/* (non-Javadoc)

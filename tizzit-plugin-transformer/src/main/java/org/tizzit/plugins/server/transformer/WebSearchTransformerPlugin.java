@@ -32,7 +32,7 @@ public class WebSearchTransformerPlugin implements TizzitPlugin {
 	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "WebSearchTransformerPlugin";
 	private ContentHandler parent;
 	private final String UNITINFORMATION = "unitInformation";
-	private final Integer viewComponentId = null;
+	private Integer viewComponentId = null;
 
 	//private WebServiceSpring webSpringBean = null;
 
@@ -42,6 +42,7 @@ public class WebSearchTransformerPlugin implements TizzitPlugin {
 	public void configurePlugin(Request req, Response resp, ContentHandler ch, Integer uniquePageId) {
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> begin");
 		this.parent = ch;
+		this.viewComponentId = uniquePageId;
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
 	}

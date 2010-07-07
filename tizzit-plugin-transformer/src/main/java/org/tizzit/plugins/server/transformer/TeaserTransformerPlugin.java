@@ -36,7 +36,7 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 	private final boolean iAmTheLiveserver = true;
 
 	//private final WebServiceSpring webSpringBean = null;
-	private final Integer viewComponentId = null;
+	private Integer viewComponentId = null;
 	private final Integer unitId = null;
 
 	/* (non-Javadoc)
@@ -45,6 +45,7 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 	public void configurePlugin(Request req, Response resp, ContentHandler ch, Integer uniquePageId) {
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> begin");
 		this.parent = ch;
+		this.viewComponentId = uniquePageId;
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
 	}
