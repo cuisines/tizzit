@@ -1657,7 +1657,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected void handleDeployEdition(Integer editionId) throws Exception {
 		try {
 			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
-			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
+			if(log.isDebugEnabled()) log.debug("Start creating Edition");
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			PrintStream out = createEditionOutputStream(edition);
@@ -1693,7 +1693,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
+			if(log.isDebugEnabled()) log.debug("Finished creating Edition");
 		} catch (Exception e) {
+			if(log.isDebugEnabled()) log.debug("Error while creating Edition", e);
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}
@@ -1702,11 +1704,13 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleDeployUnitEdition(Integer editionId, Integer unitId) throws Exception {
 		try {
+			if(log.isDebugEnabled()) log.debug("Start creating unitEdition");
 			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
 			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			PrintStream out = createEditionOutputStream(edition);
+			if(log.isDebugEnabled()) log.debug("creating outputstream for unitEdition");
 			// site info is needed to connect to the live server
 			if (log.isDebugEnabled()) log.debug("siteToXml");
 			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
@@ -1742,7 +1746,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
+			if(log.isDebugEnabled()) log.debug("Finished creating unitEdition");
 		} catch (Exception e) {
+			if(log.isDebugEnabled()) log.debug("error while creating unitEdition", e);
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}
@@ -1944,7 +1950,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected void handleDeployRootUnitEdition(Integer editionId) throws Exception {
 		try {
 			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
-			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
+			if(log.isDebugEnabled()) log.debug("Start creating RootEdition");
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			PrintStream out = createEditionOutputStream(edition);
@@ -1988,7 +1994,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
+			if(log.isDebugEnabled()) log.debug("Finished creating Edition");
 		} catch (Exception e) {
+			if(log.isDebugEnabled()) log.debug("Error while creating RootEdition");
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}

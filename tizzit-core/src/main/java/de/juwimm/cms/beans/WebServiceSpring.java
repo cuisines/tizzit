@@ -1201,6 +1201,25 @@ public class WebServiceSpring {
 		sb.append("</units>");
 		return sb.toString();
 	}
+	
+	/**
+	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllUnitsXml(java.lang.Integer)
+	 */
+
+	public String getUnitListXml(Integer siteId) throws Exception {
+		StringBuilder sb = new StringBuilder();
+		try {
+			Collection<UnitHbm> query = unitHbmDao.findBySite(siteId);
+			Iterator<UnitHbm> unitsIterator = query.iterator();
+			while (unitsIterator.hasNext()) {
+				UnitHbm unit = unitsIterator.next();
+				sb.append(unit.toXml(0));
+			}
+		} catch (Exception e) {
+			log.error("Error getting all units for site " + siteId + ": ", e);
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#hasPublishContentVersion(java.lang.Integer)
