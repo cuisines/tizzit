@@ -53,9 +53,10 @@ public final class UJACPdfSerializer extends AbstractSerializer implements Confi
 	@Override
 	public void setOutputStream(OutputStream out) {
 		DocumentHandler dh = null;
+		DocumentPrinter dp = new DocumentPrinter();
 
 		if (this.supportToc) {
-			DocumentPrinter dp = new DocumentPrinter();
+
 			dp.setXmlReaderClass("org.apache.xerces.parsers.SAXParser"); //$NON-NLS-1$
 			dp.setResourceLoader(new HttpResourceLoader());
 
@@ -64,12 +65,12 @@ public final class UJACPdfSerializer extends AbstractSerializer implements Confi
 			} catch (Exception e) {
 				log.error("could not create DocumentHandler by dp.printDocument(), using DocumentHandler directly\n" + e.getMessage()); //$NON-NLS-1$
 
-				dh = new DocumentHandler(out, new TemplateContext(new HashMap()));
+				dh = new DocumentHandler(out, new TemplateContext(new HashMap()), dp.getTagFactory());
 				dh.setXmlReaderClass("org.apache.xerces.parsers.SAXParser"); //$NON-NLS-1$
 				dh.setResourceLoader(new HttpResourceLoader());
 			}
 		} else {
-			dh = new DocumentHandler(out, new TemplateContext(new HashMap()));
+			dh = new DocumentHandler(out, new TemplateContext(new HashMap()), dp.getTagFactory());
 			dh.setXmlReaderClass("org.apache.xerces.parsers.SAXParser"); //$NON-NLS-1$
 			dh.setResourceLoader(new HttpResourceLoader());
 		}
