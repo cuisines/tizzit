@@ -4,13 +4,13 @@
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
-      <version>3.1.3-SNAPSHOT</version>
+      <version>3.1.3</version>
       <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
 
    <groupId>org.tizzit</groupId>
    <artifactId>tizzit-plugin-impl</artifactId>
-   <version>3.1.3-SNAPSHOT</version>
+   <version>3.1.3</version>
 
    <packaging>jar</packaging>
    <name>tizzit plugin impl</name>
@@ -19,12 +19,12 @@
       <dependency>
          <groupId>org.tizzit</groupId>
          <artifactId>tizzit-common</artifactId>
-         <version>3.1.3-SNAPSHOT</version>
+         <version>3.1.3</version>
       </dependency>
       <dependency>
          <groupId>org.tizzit</groupId>
          <artifactId>tizzit-plugin-api</artifactId>
-         <version>3.1.3-SNAPSHOT</version>
+         <version>3.1.3</version>
       </dependency>
 
       <dependency>
