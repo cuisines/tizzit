@@ -8,3 +8,4 @@ this is ugly buggy. Therefor you MUST delete the file andromda/jars/andromda-spr
 Other changes as the xsl transformation and in hibernate the merge location is just because of this two bugs in Chads catridge.
 
 
+
