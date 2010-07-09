@@ -6,3 +6,5 @@ it will have following features / changes:
 Actually we still have problems using different Entity Names e.g. UnitHbm and different Service Names e.g. ViewServiceSpring in AndroMDA;
 this is ugly buggy. Therefor you MUST delete the file andromda/jars/andromda-spring-cartridge-3.1.jar and let it download from the build server.
 Other changes as the xsl transformation and in hibernate the merge location is just because of this two bugs in Chads catridge.
+
+
