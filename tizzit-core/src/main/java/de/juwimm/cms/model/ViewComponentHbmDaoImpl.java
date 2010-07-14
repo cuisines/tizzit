@@ -94,7 +94,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 
 		// if it's a deploy - the status has to be 'approved' and will be set to 'for_deploy'
 		if (deployType != -1) {
-			if (current.getStatus() == Constants.DEPLOY_STATUS_APPROVED) {
+			if (current.getStatus() == Constants.DEPLOY_STATUS_APPROVED || current.getStatus() != Constants.DEPLOY_STATUS_DEPLOYED) {
 				current.setStatus(Constants.DEPLOY_STATUS_FOR_DEPLOY);
 				this.update(current);
 			} else {
