@@ -262,10 +262,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * S T E P 0.5 create/update Site 
 			 * ####################################################################################
 			 */
-			SiteHbm importSite = getSiteHbmDao().load(siteId);
+			SiteHbm importSite = null;
+			try{
+				importSite = getSiteHbmDao().load(siteId);
+			} catch(Exception e){
+				if(log.isDebugEnabled()) log.debug("Could not find site with Id: " + siteId + " will create it now"); 
+			}
 			boolean siteIsNew = false;
 			if (importSite == null) {
-				if (log.isDebugEnabled()) log.debug("Site with id: " + siteId + " cound not be found - creating it now");
 				importSite = SiteHbm.Factory.newInstance();
 				siteIsNew = true;
 				importSite.setSiteId(siteId);
@@ -309,6 +313,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			if (siteIsNew) {
 				getSiteHbmDao().create(importSite);
 			}
+			// set this site as active site for user 
+			// in case the site was new it could not be done at login
+			getUserHbmDao().load(AuthenticationHelper.getUserName()).setActiveSite(importSite);
 			if (rootUnit != null) {
 				// if provided a unit import, we will fillup the mapping for this unit
 				Integer newUnitId = rootUnit.getUnitId();
@@ -328,7 +335,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			this.editionCronService.logEditionStatusInfo(LiveserverDeployStatus.ImportCleanDatabase, editionId);
 			if (log.isDebugEnabled()) log.debug("Starting with STEP 1/6");
 
-			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_FULL) == 0) {
 				Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
 				Iterator vdocsIt = vdocs.iterator();
 				while (vdocsIt.hasNext()) {
@@ -344,7 +351,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				getUnitHbmDao().remove(units);
 			}
 
-			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
+			if (edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_UNIT) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_FULL) == 0 || edition.getDeployType().compareTo(Constants.DEPLOY_TYPE_ROOT) == 0) {
 				ViewComponentHbm rootViewComponent = getViewComponentHbmDao().find4Unit(edition.getUnitId(), edition.getViewDocumentId());
 				if (rootViewComponent != null) {
 					Collection vComps = rootViewComponent.getChildren();
@@ -637,7 +644,6 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			}
 			log.error("Error occured processFileImport", exe);
 			throw exe;
-			// this.createUserTask(context.getCallerPrincipal().getName(), "Error importing edition: " + exe.getMessage(), rootVcId, Constants.TASK_SYSTEMMESSAGE_ERROR, true);
 		} finally {
 			//			try {
 			//				new File(editionFileName).delete();
@@ -1802,6 +1808,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				if (log.isInfoEnabled()) log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
 				setViewComponentsOnline(edition);
+				edition.setNeedsDeploy(false);
 			} catch (Exception exe) {
 				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
 				throw new UserException(exe.getMessage());
@@ -1812,7 +1819,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage());
 		}
-		editionCronService.logEditionStatusInfo(LiveserverDeployStatus.FileDeployedOnLiveServer, editionId);
+		//editionCronService.logEditionStatusInfo(LiveserverDeployStatus.FileDeployedOnLiveServer, editionId);
 	}
 
 	@SuppressWarnings("unchecked")

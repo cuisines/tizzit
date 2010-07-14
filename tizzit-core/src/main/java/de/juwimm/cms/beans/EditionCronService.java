@@ -320,9 +320,9 @@ public class EditionCronService {
 	public void logEditionStatusInfo(LiveserverDeployStatus status, Integer editionId) {
 		String statusValue = status.name();
 		EditionHbm edition = getEditionHbmDao().load(editionId);
-		if (status == LiveserverDeployStatus.FileDeployedOnLiveServer) {
-			edition.setNeedsDeploy(false);
-		}
+//		if (status == LiveserverDeployStatus.FileDeployedOnLiveServer) {
+//			edition.setNeedsDeploy(false);
+//		}
 		edition.setDeployStatus(statusValue.getBytes());
 		edition.setStartActionTimestamp(System.currentTimeMillis());
 		edition.setEndActionTimestamp(null);
