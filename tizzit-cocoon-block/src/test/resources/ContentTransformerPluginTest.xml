@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page>
+	<resource>
+		<preInclude xmlns:ContentTransformer="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:ContentTransformerPlugin">
+			<ContentTransformer:contentInclude>
+				<byUnit/>
+				<byViewComponent>94</byViewComponent>
+			</ContentTransformer:contentInclude>
+		</preInclude>
+		<preInclude xmlns:TeaserTransformer="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:TeaserTransformerPlugin">
+			<TeaserTransformer:teaserInclude>
+				<teaserRandomized xpathTeaserElement="path1.bla" viewComponentId="1" count="1" unit="6"/>
+				<teaserRandomized xpathTeaserElement="path2.bla" viewComponentId="3" count="1" unit="8"/>
+				<teaserRandomized xpathTeaserElement="path3.bla" viewComponentId="1" count="1" unit="2"/>
+				<teaserRandomized xpathTeaserElement="path4.bla" viewComponentId="3" count="1" unit="23"/>
+				<teaserRandomized xpathTeaserElement="path5.bla" viewComponentId="1" count="1" unit="11"/>
+			</TeaserTransformer:teaserInclude>
+		</preInclude>
+		<preInclude xmlns:UnitInformation="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:UnitInformationTransformerPlugin">
+			<UnitInformation:unitInformation unitId="321">
+			</UnitInformation:unitInformation>
+			<UnitInformation:unitInformation>
+			</UnitInformation:unitInformation>
+		</preInclude>
+		<preInclude xmlns:InternalLink="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:InternalLinksTransformerPlugin">
+			<InternalLink:internalLink>
+				<internalLink viewid="123">
+				</internalLink>
+			</InternalLink:internalLink>
+		</preInclude>
+		<preInclude xmlns:Headline="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:HeadlineTransformerPlugin">
+			<Headline:headline>
+			</Headline:headline>
+		</preInclude>
+		<preInclude xmlns:UnitList="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:UnitListTransformerPlugin">
+			<UnitList:unitList>
+			</UnitList:unitList>
+		</preInclude>
+		<preInclude xmlns:MemberList="http://plugins.tizzit.org/org.tizzit.cocoon.transformation:MemberListTransformerPlugin">
+			<MemberList:memberList unitId="12" firstname="Kai" lastname="Pflaume">
+			</MemberList:memberList>
+		</preInclude>
+	</resource>
+</page>
+
