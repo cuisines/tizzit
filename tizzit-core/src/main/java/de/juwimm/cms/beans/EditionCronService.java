@@ -167,7 +167,7 @@ public class EditionCronService {
 		}
 		if (log.isInfoEnabled()) log.info("start cronCreateEditionFromDeployFile");
 		cronCreateEditionFromDeployFileIsRunning = true;
-		File deployDir = new File(tizzitProperties.getDeployDir());
+		File deployDir = new File(tizzitProperties.getDatadir()+ File.separatorChar + "edition");
 		File[] files = null;
 		if (deployDir != null && deployDir.exists() && deployDir.isDirectory()) {
 			files = deployDir.listFiles();

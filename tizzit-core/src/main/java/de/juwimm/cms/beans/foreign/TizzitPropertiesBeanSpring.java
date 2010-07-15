@@ -38,10 +38,6 @@ public class TizzitPropertiesBeanSpring {
 	private String jnlpPort;
 	private boolean liveserver;
 	private String statsDir;
-	private String deployDir;
-	private String deployUser;
-
-	private String deployPassword;
 
 	private String mailDS;
 	private int version;
@@ -86,47 +82,6 @@ public class TizzitPropertiesBeanSpring {
 		System.setProperty("tizzit.mailDS", mailDS);
 	}
 
-	/**
-	 * @return the deployDir
-	 */
-	public String getDeployDir() {
-		return deployDir;
-	}
-
-	/**
-	 * @param deployDir the deployDir to set
-	 */
-	public void setDeployDir(String deployDir) {
-		this.deployDir = deployDir;
-	}
-
-	/**
-	 * @return the deployUser
-	 */
-	public String getDeployUser() {
-		return deployUser;
-	}
-
-	/**
-	 * @param deployUser the deployUser to set
-	 */
-	public void setDeployUser(String deployUser) {
-		this.deployUser = deployUser;
-	}
-
-	/**
-	 * @return the deployPassword
-	 */
-	public String getDeployPassword() {
-		return deployPassword;
-	}
-
-	/**
-	 * @param deployPassword the deployPassword to set
-	 */
-	public void setDeployPassword(String deployPassword) {
-		this.deployPassword = deployPassword;
-	}
 
 	public String getHibernateSqlDialect() {
 		return hibernateSqlDialect;

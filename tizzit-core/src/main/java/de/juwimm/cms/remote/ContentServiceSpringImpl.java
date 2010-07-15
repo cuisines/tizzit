@@ -1237,7 +1237,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	}
 
 	private String storeEditionFile(InputStream in) throws IOException {
-		String dir = getTizzitPropertiesBeanSpring().getDeployDir();
+		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "edition";
 		if(log.isInfoEnabled()) log.info("Storing Edition File in: " + dir);
 		File fDir = new File(dir);
 		fDir.mkdirs();
