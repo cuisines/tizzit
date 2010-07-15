@@ -433,20 +433,23 @@ public class PanPicture extends JPanel {
 					}
 					if (existingPicId == 0) {
 						retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName(), "");
+						setPictureId(retInt);
 					} else {
 						/**picture name already exists=>dialog message*/
 						PictureSlimValue picSlimVal = comm.getPicture(existingPicId);
 						retInt = picSlimVal.getPictureId();
 						DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, bty, out.toByteArray());
+						saveDialog.addSaveActionListener(new ActionListener(){
+							public void actionPerformed(ActionEvent e) {
+								setPictureId(e.getID());								
+							}});
 						int frameHeight = 180;
 						int frameWidth = 250;
 						saveDialog.setSize(frameWidth, frameHeight);
 						saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
 						saveDialog.setModal(true);
 						saveDialog.setVisible(true);
-
 					}
-					setPictureId(retInt);
 				} catch (Exception exe) {
 					log.error("Error during the upload of the picture " + files[i].getName(), exe);
 				} finally {
