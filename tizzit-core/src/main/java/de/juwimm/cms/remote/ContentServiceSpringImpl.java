@@ -1630,17 +1630,20 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 	private PrintStream createEditionOutputStream(EditionHbm edition) throws IOException {
 		//create dir for deploys
+		log.info("Start creating edition output file");
 		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
+		log.info("deployDir: "+dir);
 		File fDir = new File(dir);
 		fDir.mkdirs();
-
+		log.info("outputdir created");
 		String fileName = fDir.getAbsolutePath() + File.separatorChar + "deploy_file_edition_" + edition.getEditionId() + "_byUser_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate() + ".xml.gz";
+		log.info("fileName: "+fileName);
 		File fle = new File(fileName);
 		edition.setEditionFileName(fle.getAbsolutePath());
+		log.info("output file opend: " + fle.getAbsolutePath());
 		FileOutputStream fout = new FileOutputStream(fle);
 		GZIPOutputStream gzoudt = new GZIPOutputStream(fout);
 		PrintStream out = new PrintStream(gzoudt, true, "UTF-8");
-
 		//if (log.isDebugEnabled()) log.debug("Invoker is: " + edition.getCreator() + " within Site " + site.getName());
 		if (log.isDebugEnabled()) log.debug("Dummy-Editon create");
 		out.println("<edition>");
@@ -1993,10 +1996,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 			out.flush();
 			out.close();
+			log.info("output file closed.");
 			out = null;
 			if(log.isDebugEnabled()) log.debug("Finished creating Edition");
 		} catch (Exception e) {
-			if(log.isDebugEnabled()) log.debug("Error while creating RootEdition");
+			if(log.isWarnEnabled()) log.warn("Error while creating RootEdition");
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}

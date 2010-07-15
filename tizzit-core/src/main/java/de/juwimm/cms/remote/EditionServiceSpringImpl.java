@@ -1745,18 +1745,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			org.w3c.dom.Document doc = null;
 			try {
 				site = getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
-				//if(log.isDebugEnabled()) 
-				log.info("siteId: "+site.getSiteId());
+				if(log.isDebugEnabled()) log.debug("siteId: "+site.getSiteId());
 				doc = XercesHelper.string2Dom(site.getConfigXML());
 				liveServerIP = XercesHelper.getNodeValue(doc, "/config/default/liveServer/url");
-				//if(log.isDebugEnabled()) 
-				log.info("liveserverIp: "+liveServerIP);
+				if(log.isDebugEnabled()) log.debug("liveserverIp: "+liveServerIP);
 				liveUserName = XercesHelper.getNodeValue(doc, "/config/default/liveServer/username");
-				//if(log.isDebugEnabled()) 
-				log.info("liveUserName: "+liveUserName);
+				if(log.isDebugEnabled()) log.debug("liveUserName: "+liveUserName);
 				livePassword = XercesHelper.getNodeValue(doc, "/config/default/liveServer/password");
-				//if(log.isDebugEnabled()) 
-				log.info("livePassword: "+livePassword);
+				if(log.isDebugEnabled()) log.debug("livePassword: "+livePassword);
 			} catch (Exception exe) {
 				log.error("Error occured reading siteConfig: ", exe);
 			} finally {
