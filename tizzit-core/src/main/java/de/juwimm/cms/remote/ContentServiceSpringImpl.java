@@ -1238,16 +1238,20 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 	private String storeEditionFile(InputStream in) throws IOException {
 		String dir = getTizzitPropertiesBeanSpring().getDeployDir();
+		if(log.isInfoEnabled()) log.info("Storing Edition File in: " + dir);
 		File fDir = new File(dir);
 		fDir.mkdirs();
+		if(log.isInfoEnabled()) log.info("deploy dir created");
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 		String date = dateFormat.format(new Date());
 		File storedEditionFile = new File(fDir.getAbsolutePath() + File.separatorChar + "edition_import_" + date + ".xml.gz");
+		if(log.isInfoEnabled()) log.info("edition file is named: " + storedEditionFile.getAbsolutePath());
 		//File.createTempFile("edition_import_" + date, ".xml.gz", fDir);
 		FileOutputStream out = new FileOutputStream(storedEditionFile);
 		IOUtils.copyLarge(in, out);
 		IOUtils.closeQuietly(out);
 		IOUtils.closeQuietly(in);
+		if(log.isInfoEnabled()) log.info("Storing Edition File finished");
 		return storedEditionFile.getAbsolutePath();
 	}
 

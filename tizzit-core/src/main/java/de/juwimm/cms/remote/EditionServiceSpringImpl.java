@@ -1795,9 +1795,12 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				InputStream fis = new BufferedInputStream(new FileInputStream(edition.getEditionFileName()));
 
-				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
+				if (log.isInfoEnabled()) log.info("Try to get bean clientServiceSpring ");
 
 				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceDeploySpring");
+				
+				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
+				
 				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false, editionId);
 
 				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
