@@ -125,7 +125,7 @@ public class PanSimpleDate extends JPanel {
 			return;
 		}
 		try {
-			dateChooser.setDate(new SimpleDateFormat().parse(date));
+			dateChooser.setDate(new SimpleDateFormat("dd.MM.yyyy").parse(date));
 		} catch (ParseException e) {			
 			e.printStackTrace();
 		}
