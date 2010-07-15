@@ -17,6 +17,7 @@ package de.juwimm.cms.content.modules;
 
 import static de.juwimm.cms.common.Constants.*;
 
+import java.awt.Dimension;
 import java.util.Properties;
 
 import javax.swing.JDialog;
