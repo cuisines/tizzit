@@ -276,39 +276,34 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			} else {
 				if (log.isDebugEnabled()) log.debug("Site with id: " + siteId + " found - updating it now");
 			}
-			try {
-				Element node = (Element) XercesHelper.findNode(doc, "/edition/site");
-				importSite.setName(getNValNotNull(node, "name"));
-				importSite.setShortName(getNValNotNull(node, "shortName"));
-				importSite.setConfigXML(getNValNotNull(node, "siteConfig"));
-				importSite.setMandatorDir(getNValNotNull(node, "mandatorDir"));
-				importSite.setCacheExpire(new Integer(getNVal(node, "cacheExpire")));
-				importSite.setWysiwygImageUrl(getNValNotNull(node, "wysiwygImageUrl"));
-				importSite.setHelpUrl(getNValNotNull(node, "helpUrl"));
-				importSite.setDcfUrl(getNValNotNull(node, "dcfUrl"));
-				importSite.setPreviewUrl(getNValNotNull(node, "previewUrl"));
-				importSite.setPageNameFull(getNValNotNull(node, "pageNameFull"));
-				importSite.setPageNameContent(getNValNotNull(node, "pageNameContent"));
-				importSite.setPageNameSearch(getNValNotNull(node, "pageNameSearch"));
-				importSite.setLastModifiedDate(new Long(getNVal(node, "lastModifiedDate")));
+			Element node = (Element) XercesHelper.findNode(doc, "/edition/site");
+			importSite.setName(getNValNotNull(node, "name"));
+			importSite.setShortName(getNValNotNull(node, "shortName"));
+			importSite.setConfigXML(getNValNotNull(node, "siteConfig"));
+			importSite.setMandatorDir(getNValNotNull(node, "mandatorDir"));
+			importSite.setCacheExpire(new Integer(getNVal(node, "cacheExpire")));
+			importSite.setWysiwygImageUrl(getNValNotNull(node, "wysiwygImageUrl"));
+			importSite.setHelpUrl(getNValNotNull(node, "helpUrl"));
+			importSite.setDcfUrl(getNValNotNull(node, "dcfUrl"));
+			importSite.setPreviewUrl(getNValNotNull(node, "previewUrl"));
+			importSite.setPageNameFull(getNValNotNull(node, "pageNameFull"));
+			importSite.setPageNameContent(getNValNotNull(node, "pageNameContent"));
+			importSite.setPageNameSearch(getNValNotNull(node, "pageNameSearch"));
+			importSite.setLastModifiedDate(new Long(getNVal(node, "lastModifiedDate")));
 
-				String str = getNVal(node, "rootUnitId");
-				Integer defaultViewDocumentId_import = null;
-				Integer siteGroupId_import = null;
-				if (str != null) {
-					rootUnitId = Integer.decode(str);
-				}
-				str = getNVal(node, "defaultViewDocumentId");
-				if (str != null) {
-					defaultViewDocumentId_import = Integer.decode(str);
-				}
-				str = getNVal(node, "siteGroupId");
-				if (str != null) {
-					siteGroupId_import = new Integer(str);
-				}
-			} catch (Exception e) {
-				log.error("Error in Import while creating/updating site: " + siteId, e);
-				throw new UserException("Error in Import while creating/updating site: " + siteId);
+			String str = getNVal(node, "rootUnitId");
+			Integer defaultViewDocumentId_import = null;
+			Integer siteGroupId_import = null;
+			if (str != null) {
+				rootUnitId = Integer.decode(str);
+			}
+			str = getNVal(node, "defaultViewDocumentId");
+			if (str != null) {
+				defaultViewDocumentId_import = Integer.decode(str);
+			}
+			str = getNVal(node, "siteGroupId");
+			if (str != null) {
+				siteGroupId_import = new Integer(str);
 			}
 			if (siteIsNew) {
 				getSiteHbmDao().create(importSite);
@@ -921,7 +916,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		}
 		talktime.setTalkTimeType(getNVal(ael, "talkTimeType"));
 		if (!useNewIds) {
-			talktime.setTalkTimeId(Integer.getInteger(getNVal(ael, "id")).longValue());
+			talktime.setTalkTimeId(Integer.decode(ael.getAttribute("id")).longValue());
 		}
 		talktime = getTalktimeHbmDao().create(talktime);
 		return talktime;
@@ -930,7 +925,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	private DepartmentHbm createDepartmentHbm(Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingDepartments2, Hashtable<Integer, Long> mappingPersons2, Hashtable<Integer, Long> mappingAddresses2, Hashtable<Integer, Long> mappingTalktime2) {
 		DepartmentHbm department = DepartmentHbm.Factory.newInstance();
 		if (!useNewIds) {
-			department.setDepartmentId(Integer.getInteger(getNVal(ael, "id")).longValue());
+			department.setDepartmentId(Integer.decode(getNVal(ael, "id")).longValue());
 		}
 		department.setName(ael.getAttribute("name"));
 		department = getDepartmentHbmDao().create(department);
@@ -940,7 +935,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	private PersonHbm createPersonHbm(UnitHbm unit, Element ael, boolean useNewIds, Hashtable<Integer, Long> mappingPersons2, Hashtable<Integer, Long> mappingAddresses2, Hashtable<Integer, Long> mappingTalktime2) throws Exception {
 		PersonHbm person = PersonHbm.Factory.newInstance();
 		try {
-			person.setImageId(Integer.getInteger(ael.getAttribute("imageid")));
+			person.setImageId(Integer.decode(ael.getAttribute("imageid")));
 		} catch (Exception exe) {
 		}
 		try {
@@ -1017,7 +1012,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		address.setStreetNr(getNVal(ael, "streetNr"));
 		address.setZipCode(getNVal(ael, "zipCode"));
 		if (!useNewIds) {
-			address.setAddressId(Integer.getInteger(ael.getAttribute("id")).longValue());
+			address.setAddressId(Integer.decode(ael.getAttribute("id")).longValue());
 			log.info("AddressID: " + address.getAddressId());
 		}
 		address = getAddressHbmDao().create(address);
