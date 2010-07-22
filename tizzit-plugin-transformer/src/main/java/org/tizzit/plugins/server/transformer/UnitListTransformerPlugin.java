@@ -31,10 +31,9 @@ import de.juwimm.cms.vo.UnitValue;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: UnitListTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class UnitListTransformerPlugin implements TizzitPlugin {
+public class UnitListTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(UnitListTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "UnitListTransformerPlugin";
 	private ContentHandler parent;
 	private final String UNITLIST = "unitList";
 	private Integer siteId = null;
@@ -42,6 +41,14 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 
 	//private WebServiceSpring webSpringBean = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */
@@ -52,7 +59,7 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#getLastModifiedDate()
 	 */
@@ -98,8 +105,8 @@ public class UnitListTransformerPlugin implements TizzitPlugin {
 	private void fillUnitList() {
 		//String unitXmlString = webSpringBean.getUnitListXml(siteId);
 		//FIXME: string for testing only
-		String unitXmlString = "<unit unitId=\"123\">lots of unit stuff</unit>";
-		SAXHelper.string2sax(unitXmlString, parent);
+		String unitXmlString = "<unit unitId=\"123\">lots of unit stuff <memberList xmlns=\"http://plugins.tizzit.org/MemberListTransformer\" unitId=\"12\" firstname=\"Kai\" lastname=\"Pflaume\"></memberList></unit>";
+		SAXHelper.string2sax(unitXmlString, manager);
 	}
 
 	/* (non-Javadoc)

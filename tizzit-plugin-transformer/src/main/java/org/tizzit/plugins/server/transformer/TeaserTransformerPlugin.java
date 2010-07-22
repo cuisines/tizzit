@@ -24,10 +24,9 @@ import de.juwimm.cms.plugins.server.TizzitPlugin;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: TeaserTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class TeaserTransformerPlugin implements TizzitPlugin {
+public class TeaserTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(TeaserTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "TeaserTransformerPlugin";
 	private ContentHandler parent;
 	private final String INCLUDETEASER = "includeTeaser";
 	private final String TEASERREF = "teaserRef";
@@ -39,6 +38,14 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 	private Integer viewComponentId = null;
 	private final Integer unitId = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */
@@ -87,7 +94,7 @@ public class TeaserTransformerPlugin implements TizzitPlugin {
 			// FIXME debug only
 			String teaser = new StringBuffer("<teaser><teaserName>cooler teaser</teaserName>").append("<path>").append(attrs.getValue("xpathTeaserElement")).append("</path>").append("<viewComponent>").append(attrs.getValue("viewComponentId")).append("</viewComponent>").append("<unit>").append(attrs.getValue("unit")).append("</unit>").append("</teaser>").toString();
 			if (teaser != null) {
-				SAXHelper.string2sax(teaser, parent);
+				SAXHelper.string2sax(teaser, manager);
 			}
 		}
 	}

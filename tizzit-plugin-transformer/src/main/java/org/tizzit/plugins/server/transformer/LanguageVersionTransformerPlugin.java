@@ -26,16 +26,23 @@ import de.juwimm.cms.vo.UnitValue;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: LanguageVersionTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class LanguageVersionTransformerPlugin implements TizzitPlugin {
+public class LanguageVersionTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(LanguageVersionTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "LanguageVersionTransformerPlugin";
 	private ContentHandler parent;
 	private final String UNITINFORMATION = "unitInformation";
 	private final Integer viewComponentId = null;
 
 	//private WebServiceSpring webSpringBean = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */

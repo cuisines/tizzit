@@ -24,21 +24,24 @@ import de.juwimm.cms.plugins.server.TizzitPlugin;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: AuthenticationTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class AuthenticationTransformerPlugin implements TizzitPlugin {
+public class AuthenticationTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(AuthenticationTransformerPlugin.class);
-
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "AuthenticationTransformerPlugin";
+	
 	private ContentHandler parent;
-	private final boolean inContentInclude = false;
-	private final boolean inSearchByUnit = false;
-	private final boolean inSearchByViewComponent = false;
-	private final String contentSearchBy = null;
 	private final boolean iAmTheLiveserver = true;
 
 	//private final WebServiceSpring webSpringBean = null;
 	private final Integer viewComponentId = null;
 	private final Integer unitId = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */

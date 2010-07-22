@@ -27,10 +27,9 @@ import de.juwimm.cms.vo.ViewComponentValue;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: HeadlineTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class HeadlineTransformerPlugin implements TizzitPlugin {
+public class HeadlineTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(HeadlineTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "HeadlineTransformerPlugin";
 	private ContentHandler parent;
 	private final String HEADLINE = "headline";
 	private Integer viewComponentId = null;
@@ -39,6 +38,14 @@ public class HeadlineTransformerPlugin implements TizzitPlugin {
 //	private WebServiceSpring webSpringBean = null;
 	private final ViewComponentValue viewComponentValue = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */
@@ -78,7 +85,7 @@ public class HeadlineTransformerPlugin implements TizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		parent.startElement(uri, localName, qName, attrs);
+		parent.startElement(null, localName, qName, attrs);
 		if (localName.compareTo(HEADLINE) == 0) {
 			fillHeadLine();
 		}

@@ -24,10 +24,9 @@ import de.juwimm.cms.plugins.server.TizzitPlugin;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: ContentTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class ContentTransformerPlugin implements TizzitPlugin {
+public class ContentTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(ContentTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "ContentTransformerPlugin";
 	private static final String BYUNIT = "byUnit";
 	private static final String CONTENTINCLUDE = "contentInclude";
 	private static final String BYVIEWCOMPONENT = "byViewComponent";
@@ -42,6 +41,14 @@ public class ContentTransformerPlugin implements TizzitPlugin {
 	private Integer viewComponentId = null;
 	private Integer unitId = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */
@@ -142,7 +149,7 @@ public class ContentTransformerPlugin implements TizzitPlugin {
 			//FIXME: string just for testing
 			//String result = webSpringBean.getIncludeContent(viewComponentId, contentSearchBy.contains("unit"), value, iAmTheLiveserver, xPathQuery);
 			String result = "<tvViewComponent><showyType>123</showyType><viewType>321</viewType><visible>true</visible><searchIndexed>true</searchIndexed><statusInfo>Standard</statusInfo><linkName>test und test</linkName><urlLinkName>test-und-test-1</urlLinkName><viewLevel>3</viewLevel><viewIndex>3</viewIndex><displaySettings>0</displaySettings><viewDocumentId>8</viewDocumentId><viewDocumentViewType>browser</viewDocumentViewType><language>de</language><userModifiedDate>1272987064423</userModifiedDate><url>test-und-test-1</url><template>standard</template></tvViewComponent>";
-			SAXHelper.string2sax(result, this.parent);
+			SAXHelper.string2sax(result, this.manager);
 		} catch (Exception e) {
 			log.warn("Error getting includeContent: " + e.getMessage(), e);
 		}

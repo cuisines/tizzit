@@ -245,7 +245,7 @@ public class EditionCronService {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
-	///@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	//@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void cronEditionDeploy() throws Exception {
 		if (cronEditionDeployIsRunning) {
@@ -259,27 +259,7 @@ public class EditionCronService {
 			Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
 			if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
 			for (EditionHbm edition : editionsToDeploy) {
-				String fileName = edition.getEditionFileName();
-				if (fileName != null) {
-					edFile = new File(fileName);
-				}
-				if (edFile == null || !edFile.exists()) {
-					//create deploy than
-					if (edition.getDeployType() != null && edition.getDeployType() == 0) {
-						getContentServiceSpring().deployEdition(edition.getEditionId());
-					} else if (edition.getDeployType() != null && edition.getDeployType() == 1) {
-						getContentServiceSpring().deployUnitEdition(edition.getEditionId(), edition.getUnitId());
-					} else if (edition.getDeployType() != null && edition.getDeployType() == 3) {
-						getContentServiceSpring().deployRootUnitEdition(edition.getEditionId());
-					}
-				}
-				UserHbm creator = edition.getCreator();
-				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
-				getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
-				edition.setNeedsDeploy(false);
-				if (edFile != null) {
-					edFile.delete();
-				}
+				createEditionFileAndSendToLive(edition) ;
 			}
 			editionsToDeploy.clear();
 			File deployDir = new File(tizzitProperties.getDatadir() + "deploys");
@@ -299,6 +279,40 @@ public class EditionCronService {
 			cronEditionDeployIsRunning = false;
 		}
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void createEditionFileAndSendToLive(EditionHbm edition) {
+		File edFile = null;
+		if(log.isInfoEnabled()) log.info("starting deploy of edition: " + edition.getEditionId() + " - " + edition.getComment());
+		try{
+			String fileName = edition.getEditionFileName();
+			if (fileName != null) {
+				edFile = new File(fileName);
+			}
+			if (edFile == null || !edFile.exists()) {
+				//create deploy than
+				if (edition.getDeployType() != null && edition.getDeployType() == 0) {
+					getContentServiceSpring().deployEdition(edition.getEditionId());
+				} else if (edition.getDeployType() != null && edition.getDeployType() == 1) {
+					getContentServiceSpring().deployUnitEdition(edition.getEditionId(), edition.getUnitId());
+				} else if (edition.getDeployType() != null && edition.getDeployType() == 3) {
+					getContentServiceSpring().deployRootUnitEdition(edition.getEditionId());
+				}
+			}
+			UserHbm creator = edition.getCreator();
+			SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
+			getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
+			edition.setNeedsDeploy(false);
+			editionHbmDao.update(edition);
+			if (edFile != null) {
+				edFile.delete();
+			}
+			if(log.isInfoEnabled()) log.info("finished deploy of edition: " + edition.getEditionId());
+		}catch(Exception ex){
+			log.warn("Error while creating edition and sending to live server: "+edition.getEditionId());
+		}
+	}
+	
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_UNCOMMITTED)
 	public void logEditionStatusException(Integer editionId, String errorMessage) {
@@ -320,9 +334,6 @@ public class EditionCronService {
 	public void logEditionStatusInfo(LiveserverDeployStatus status, Integer editionId) {
 		String statusValue = status.name();
 		EditionHbm edition = getEditionHbmDao().load(editionId);
-//		if (status == LiveserverDeployStatus.FileDeployedOnLiveServer) {
-//			edition.setNeedsDeploy(false);
-//		}
 		edition.setDeployStatus(statusValue.getBytes());
 		edition.setStartActionTimestamp(System.currentTimeMillis());
 		edition.setEndActionTimestamp(null);

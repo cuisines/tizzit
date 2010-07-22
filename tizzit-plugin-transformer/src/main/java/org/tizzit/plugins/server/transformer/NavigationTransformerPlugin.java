@@ -31,10 +31,9 @@ import de.juwimm.cms.vo.ViewComponentValue;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: NavigationTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class NavigationTransformerPlugin implements TizzitPlugin {
+public class NavigationTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(NavigationTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "NavigationTransformerPlugin";
 	private ContentHandler parent;
 	private final String NAVIGATION = "navigation";
 	private Integer viewComponentId = null;
@@ -44,6 +43,15 @@ public class NavigationTransformerPlugin implements TizzitPlugin {
 
 	//private WebServiceSpring webSpringBean = null;
 
+	
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */
@@ -139,7 +147,7 @@ public class NavigationTransformerPlugin implements TizzitPlugin {
 					//String unitInfo = this.webSpringBean.getUnitInfoXml(this.unitValue.getUnitId());
 					//FIXME: string for test only
 					String unitInfo = "<unit id=\"5\" siteId=\"4\"><unitName>rootUnit tizzit</unitName><lastModified>09.11.2009 15:01:53</lastModified><unitImage/><unitLogo/></unit>";
-					SAXHelper.string2sax(unitInfo, parent);
+					SAXHelper.string2sax(unitInfo, this.manager);
 				} catch (Exception e) {
 					if (log.isDebugEnabled()) log.debug(e.getMessage(), e);
 				}

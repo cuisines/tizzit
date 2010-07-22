@@ -8,10 +8,13 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.io.XMLWriter;
+import org.tizzit.core.classloading.ExternalLibClassLoaderInitializeListener;
 import org.tizzit.plugins.server.transformer.BaseContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import de.juwimm.cms.beans.PluginManagement;
 
 /**
  * @author <a href="mailto:rene.hertzfeldt@juwimm.com">Rene Hertzfeldt</a>
@@ -32,8 +35,11 @@ public class ContentTransformerPluginTest extends TestCase {
 
 			StringWriter sw = new StringWriter();
 			XMLWriter xw = new XMLWriter(sw);
+			
+			PluginManagement pm = new PluginManagement();
+			
 
-			BaseContentHandler transformer = new BaseContentHandler(xw);
+			BaseContentHandler transformer = new BaseContentHandler(pm, xw);
 
 			//			ctp.configurePlugin(null, null, xw, null);
 

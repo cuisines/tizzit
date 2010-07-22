@@ -1,194 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <page>
-	<head>
-		<include name="meta"/>
-		<include name="css">
-			<param name="filename" value="styles_global"/>
-			<param name="filename" value="styles_fancybox-1.3.0"/>
-		</include>
-		<include name="js">
-			<param name="file" value="/httpd/js/lib/jquery-1.4.2.min.js"/>
-			<param name="file" value="/httpd/js/plugins/jquery.fancybox-1.3.0.pack.js"/>
-			
-			<param name="filename" value="custom"/>
-		</include>
-
-		<include name="title"/>
-
-	</head>
-	<body>
-		<div class="page">
-			<include name="pageHeadline"/>
-			<include name="generalContent"/>
-		</div>
-		<include name="tools"/>
-		<include name="disclaimer"/>
-	</body>
-
 	<resource>
-		<preInclude xmlns:tizzit="http://plugins.tizzit.org/org.tizzit.plugins.server.transformer:ContentTransformerPlugin" name="content">
-			<tizzit:contentInclude>
+			<contentInclude xmlns="http://plugins.tizzit.org/ContentTransformer">
 				<byUnit/>
 				<byViewComponent>94</byViewComponent>
-			</tizzit:contentInclude>
-		</preInclude>
-		<preInclude xmlns:cinclude="http://apache.org/cocoon/include/1.0" name="navigation-root-3">
-			<navigation-root-3>
-				<navigation since="lastNavigationRoot" depth="3" viewComponentId="94" liveserver="false" languageCode="de" safeguardUsername="TODO">
-					<viewcomponent hasChild="true" id="92" onAxisToRoot="true" unitId="8">
-						<showType>1</showType>
-						<viewType>1</viewType>
-						<visible>true</visible>
-						<searchIndexed>true</searchIndexed>
-						<statusInfo>root</statusInfo>
-						<linkName>root</linkName>
-						<urlLinkName>root</urlLinkName>
-						<viewLevel>null</viewLevel>
-						<viewIndex>3</viewIndex>
-						<displaySettings>0</displaySettings>
-						<viewDocumentId>8</viewDocumentId>
-						<viewDocumentViewType>browser</viewDocumentViewType>
-						<language>de</language>
-						<userModifiedDate>1272873100644</userModifiedDate>
-						<url/>
-						<template>standard</template>
-						<viewcomponent hasChild="false" id="94" next="93" onAxisToRoot="true" parent="92" unitId="8">
-							<showType>1</showType>
-							<viewType>1</viewType>
-							<visible>true</visible>
-							<searchIndexed>true</searchIndexed>
-							<statusInfo>Standard</statusInfo>
-							<linkName>Standard und  1</linkName>
-							<urlLinkName>standard-und-1</urlLinkName>
-							<viewLevel>3</viewLevel>
-							<viewIndex>3</viewIndex>
-							<displaySettings>0</displaySettings>
-							<viewDocumentId>8</viewDocumentId>
-							<viewDocumentViewType>browser</viewDocumentViewType>
-							<language>de</language>
-							<userModifiedDate>1272875980807</userModifiedDate>
-							<url>standard-und-1</url>
-							<template>standard</template>
-						</viewcomponent>
-						<viewcomponent hasChild="false" id="93" next="95" parent="92" prev="94" unitId="8">
-							<showType>1</showType>
-							<viewType>1</viewType>
-							<visible>true</visible>
-							<searchIndexed>true</searchIndexed>
-							<statusInfo>Standard</statusInfo>
-							<linkName>New und Publikationen</linkName>
-							<urlLinkName>new-und-publikationen</urlLinkName>
-							<viewLevel>3</viewLevel>
-							<viewIndex>3</viewIndex>
-							<displaySettings>0</displaySettings>
-							<viewDocumentId>8</viewDocumentId>
-							<viewDocumentViewType>browser</viewDocumentViewType>
-							<language>de</language>
-							<userModifiedDate>1272875961638</userModifiedDate>
-							<url>new-und-publikationen</url>
-							<template>standard</template>
-						</viewcomponent>
-						<viewcomponent hasChild="false" id="95" next="98" parent="92" prev="93" unitId="8">
-							<showType>1</showType>
-							<viewType>1</viewType>
-							<visible>true</visible>
-							<searchIndexed>true</searchIndexed>
-							<statusInfo>Seiteneinstellungen</statusInfo>
-							<linkName>Site Settings</linkName>
-							<urlLinkName>sitesettings</urlLinkName>
-							<viewLevel>3</viewLevel>
-							<viewIndex>3</viewIndex>
-							<displaySettings>0</displaySettings>
-							<viewDocumentId>8</viewDocumentId>
-							<viewDocumentViewType>browser</viewDocumentViewType>
-							<language>de</language>
-							<userModifiedDate>1272876420088</userModifiedDate>
-							<url>sitesettings</url>
-							<template>siteSettings</template>
-						</viewcomponent>
-						<viewcomponent hasChild="false" id="98" next="97" parent="92" prev="95" unitId="8">
-							<showType>1</showType>
-							<viewType>1</viewType>
-							<visible>true</visible>
-							<searchIndexed>true</searchIndexed>
-							<statusInfo>Standard</statusInfo>
-							<linkName>test und test</linkName>
-							<urlLinkName>test-und-test-1</urlLinkName>
-							<viewLevel>3</viewLevel>
-							<viewIndex>3</viewIndex>
-							<displaySettings>0</displaySettings>
-							<viewDocumentId>8</viewDocumentId>
-							<viewDocumentViewType>browser</viewDocumentViewType>
-							<language>de</language>
-							<userModifiedDate>1272987064423</userModifiedDate>
-							<url>test-und-test-1</url>
-							<template>standard</template>
-						</viewcomponent>
-						<viewcomponent hasChild="true" id="97" parent="92" prev="98" unitId="8">
-							<showType>1</showType>
-							<viewType>1</viewType>
-							<visible>true</visible>
-							<searchIndexed>true</searchIndexed>
-							<statusInfo>Standard</statusInfo>
-							<linkName>test und test</linkName>
-							<urlLinkName>test-und-test</urlLinkName>
-							<viewLevel>3</viewLevel>
-							<viewIndex>3</viewIndex>
-							<displaySettings>0</displaySettings>
-							<viewDocumentId>8</viewDocumentId>
-							<viewDocumentViewType>browser</viewDocumentViewType>
-							<language>de</language>
-							<userModifiedDate>1272987018615</userModifiedDate>
-							<url>test-und-test</url>
-							<template>standard</template>
-							<viewcomponent hasChild="true" id="99" parent="97" unitId="8">
-								<showType>0</showType>
-								<viewType>1</viewType>
-								<visible>true</visible>
-								<searchIndexed>true</searchIndexed>
-								<statusInfo>Standard</statusInfo>
-								<linkName>[new Content]</linkName>
-								<urlLinkName>new-content</urlLinkName>
-								<viewLevel>3</viewLevel>
-								<viewIndex>2</viewIndex>
-								<displaySettings>1</displaySettings>
-								<viewDocumentId>8</viewDocumentId>
-								<viewDocumentViewType>browser</viewDocumentViewType>
-								<language>de</language>
-								<userModifiedDate>1273046429927</userModifiedDate>
-								<url>test-und-test/new-content</url>
-								<template>standard</template>
-								<viewcomponent hasChild="true" id="100" parent="99" unitId="8">
-									<showType>0</showType>
-									<viewType>1</viewType>
-									<visible>true</visible>
-									<searchIndexed>true</searchIndexed>
-									<statusInfo>Standard</statusInfo>
-									<linkName>[new Content]</linkName>
-									<urlLinkName>new-content</urlLinkName>
-									<viewLevel>3</viewLevel>
-									<viewIndex>3</viewIndex>
-									<displaySettings>0</displaySettings>
-									<viewDocumentId>8</viewDocumentId>
-									<viewDocumentViewType>browser</viewDocumentViewType>
-									<language>de</language>
-									<userModifiedDate>1273067762932</userModifiedDate>
-									<url>test-und-test/new-content/new-content</url>
-									<template>standard</template>
-								</viewcomponent>
-							</viewcomponent>
-						</viewcomponent>
-					</viewcomponent>
-				</navigation>
-			</navigation-root-3>
-		</preInclude>
-		<preInclude xmlns:tci="http://cocoon.tizzit.org/contentInclude/1.0" name="siteSettings"><tci:contentInclude src="cocoon://3/de/siteSettings/content.xml" xpath="//source/all/content"/></preInclude>
+			</contentInclude>
+			<teaserInclude xmlns="http://plugins.tizzit.org/TeaserTransformer">
+				<teaserRandomized xpathTeaserElement="path1.bla" viewComponentId="1" count="1" unit="6"/>
+				<teaserRandomized xpathTeaserElement="path2.bla" viewComponentId="3" count="1" unit="8"/>
+				<teaserRandomized xpathTeaserElement="path3.bla" viewComponentId="1" count="1" unit="2"/>
+				<teaserRandomized xpathTeaserElement="path4.bla" viewComponentId="3" count="1" unit="23"/>
+				<teaserRandomized xpathTeaserElement="path5.bla" viewComponentId="1" count="1" unit="11"/>
+			</teaserInclude>
+
+			<unitInformation xmlns="http://plugins.tizzit.org/UnitInformationTransformer" unitId="321">
+			</unitInformation>
+			<unitInformation>
+			</unitInformation>
+
+
+			<internalLink xmlns="http://plugins.tizzit.org/InternalLinksTransformer">
+				<internalLink viewid="123">
+				</internalLink>
+			</internalLink>
+
+			<headline xmlns="http://plugins.tizzit.org/HeadlineTransformer"/>
+
+			<unitList xmlns="http://plugins.tizzit.org/UnitListTransformer"/>
+			
+			<memberList xmlns="http://plugins.tizzit.org/MemberListTransformer" unitId="12" firstname="Kai" lastname="Pflaume">
+			</memberList>
 	</resource>
 </page>
-<!--
-	  <contentInclude >
-	  	<byUnit></byUnit>
-	   <byViewComponent>234342</byViewComponent>
-	   <xpathElement>//</xpathElement>
-	  </contentInclude>
--->
+

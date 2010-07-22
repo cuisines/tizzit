@@ -31,10 +31,9 @@ import de.juwimm.cms.vo.UnitValue;
  * company Juwi MacMillan Group GmbH, Walsrode, Germany
  * @version $Id: MemeberListTransformerPlugin.java 759 2010-05-05 13:34:28Z rene.hertzfeldt $
  */
-public class MemberListTransformerPlugin implements TizzitPlugin {
+public class MemberListTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(MemberListTransformerPlugin.class);
 
-	public static final String PLUGIN_NAMESPACE = Constants.PLUGIN_NAMESPACE + "MemeberListTransformerPlugin";
 	private final String MEMBERLIST = "memberList";
 	private final String UNITMEMBERLIST = "unitMemberList";
 	private ContentHandler parent;
@@ -42,6 +41,14 @@ public class MemberListTransformerPlugin implements TizzitPlugin {
 
 	//private WebServiceSpring webSpringBean = null;
 
+	private ContentHandler manager;
+	private String nameSpace;
+	
+	public void setup(ContentHandler pluginManager, String nameSpace) {
+		this.manager = pluginManager;
+		this.nameSpace = nameSpace;
+	}
+	
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.plugins.server.ConquestPlugin#configurePlugin(de.juwimm.cms.plugins.server.Request, de.juwimm.cms.plugins.server.Response, org.xml.sax.ContentHandler, java.lang.Integer)
 	 */

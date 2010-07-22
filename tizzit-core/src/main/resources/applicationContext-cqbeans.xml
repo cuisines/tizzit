@@ -26,6 +26,7 @@
 		<aop:advisor advice-ref="hourCacheInterceptor" pointcut-ref="hourCachePointcut" />
 		<aop:advisor advice-ref="noTxAdvice" pointcut-ref="webserviceSpring" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="clientService" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="editionCronServicePointcut" />
 		<aop:advisor advice-ref="txAdviceRemoteLogin" pointcut-ref="authorizationServicePointcut" />
 		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="contentService" />
 		<aop:advisor advice-ref="txTimeoutAdvice" pointcut-ref="editionCronServicePointcut" />
