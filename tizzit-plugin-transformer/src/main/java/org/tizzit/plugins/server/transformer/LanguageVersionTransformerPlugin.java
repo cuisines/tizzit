@@ -1,21 +1,28 @@
 package org.tizzit.plugins.server.transformer;
 
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.SAXHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.plugins.Constants;
 import de.juwimm.cms.plugins.server.Request;
 import de.juwimm.cms.plugins.server.Response;
 import de.juwimm.cms.plugins.server.TizzitPlugin;
 import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
  * <p>
@@ -30,13 +37,17 @@ public class LanguageVersionTransformerPlugin implements ManagedTizzitPlugin {
 	private static final Log log = LogFactory.getLog(LanguageVersionTransformerPlugin.class);
 
 	private ContentHandler parent;
-	private final String UNITINFORMATION = "unitInformation";
 	private final Integer viewComponentId = null;
+	private boolean hasData = false;
+	private boolean iAmTheLiveserver = true;
+	private Integer siteId = null;
+	private String language = null;
 
-	//private WebServiceSpring webSpringBean = null;
+	private WebServiceSpring webSpringBean = null;
 
 	private ContentHandler manager;
 	private String nameSpace;
+	
 	
 	public void setup(ContentHandler pluginManager, String nameSpace) {
 		this.manager = pluginManager;
@@ -49,8 +60,10 @@ public class LanguageVersionTransformerPlugin implements ManagedTizzitPlugin {
 	public void configurePlugin(Request req, Response resp, ContentHandler ch, Integer uniquePageId) {
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> begin");
 		this.parent = ch;
+		this.siteId = uniquePageId;
 		//webSpringBean = (WebServiceSpring) PluginSpringHelper.getBean(objectModel, PluginSpringHelper.WEB_SERVICE_SPRING);
 		if (log.isDebugEnabled()) log.debug("configurePlugin() -> end");
+		
 	}
 
 	/* (non-Javadoc)
@@ -81,11 +94,14 @@ public class LanguageVersionTransformerPlugin implements ManagedTizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		if (localName.compareTo(UNITINFORMATION) == 0) {
-			startUnitInformationElement(uri, localName, qName, attrs);
-		} else {
-			parent.startElement(uri, localName, qName, attrs);
+		if(!uri.equalsIgnoreCase(nameSpace)){
+			manager.startElement(uri, localName, qName, attrs);
 		}
+		if(qName.equalsIgnoreCase("language")){
+			hasData = true;
+		}
+		parent.startElement(uri, localName, qName, attrs);
+
 
 	}
 
@@ -98,41 +114,39 @@ public class LanguageVersionTransformerPlugin implements ManagedTizzitPlugin {
 
 	}
 
-	// FIXME: debug strings only
-	// needs to be called for start element
-	private void startUnitInformationElement(String uri, String localName, String qName, Attributes attrs) {
+	/**
+	 * creates langName and langUrl Elements under languageVersions Element
+	 */
+	private void fillLanguageVersions() {
 		try {
-			String strUn = attrs.getValue("unitId");
-			UnitValue uv = null;
-
-			AttributesImpl newAttrs = new AttributesImpl();
-
-			if (strUn != null && !strUn.equals("")) {
-				SAXHelper.setSAXAttr(newAttrs, "unitId", strUn);
-				//uv = webSpringBean.getUnit(Integer.decode(strUn));
-			} else {
-				//uv = webSpringBean.getUnit4ViewComponent(viewComponentId);
-				//SAXHelper.setSAXAttr(newAttrs, "unitId", uv.getUnitId().toString());
-				SAXHelper.setSAXAttr(newAttrs, "unitId", "123");
+			ViewDocumentValue[] vdd = webSpringBean.getViewDocuments4Site(this.siteId);
+			for (int i = 0; i < vdd.length; i++) {
+				String lang = vdd[i].getLanguage();
+				if (!lang.equals(language)) { // give me only those vc's from other languages
+					try {
+						Integer unitId = webSpringBean.getUnit4ViewComponent(viewComponentId).getUnitId();
+						Integer viewDocumentId = vdd[i].getViewDocumentId();
+						ViewComponentValue vcl = webSpringBean.getViewComponent4Unit(unitId, viewDocumentId);
+						if (vcl != null) {
+							// Maybe for this language there is no page for this unit
+							if (webSpringBean.isVisibleForLanguageVersion(vcl, iAmTheLiveserver)) {
+								String langpath = webSpringBean.getPath4ViewComponent(vcl.getViewComponentId());
+								StringBuffer langua = new StringBuffer("<language>");
+								langua.append("<langName>").append(lang).append("</langName>");
+								langua.append("<langUrl>").append(langpath).append("</langUrl>");
+								langua.append("/language");
+								SAXHelper.string2sax(langua.toString(), parent);
+							}
+						}
+					} catch (Exception exe) { //if the vcl wont be found. thats ok :)
+						if (log.isDebugEnabled()) {
+							log.warn("An error occured", exe);
+						}
+					}
+				}
 			}
-
-			//if (uv != null) {
-			//Integer viewDocumentId = webSpringBean.getViewDocument4ViewComponentId(viewComponentId).getViewDocumentId();
-			try {
-				//String unitPath = webSpringBean.getPath4Unit(uv.getUnitId(), viewDocumentId);
-				String unitPath = "1, 12, 124, 33";
-				SAXHelper.setSAXAttr(newAttrs, "url", unitPath);
-			} catch (Exception exe) {
-			}
-
-			//SAXHelper.setSAXAttr(newAttrs, "unitName", uv.getName());
-			SAXHelper.setSAXAttr(newAttrs, "unitName", "debug");
-			//}
-
-			parent.startElement(uri, localName, qName, newAttrs);
-
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) log.debug("error while transforming unitInformationTag ", e);
+		} catch (Exception exe) {
+			log.warn("An error occured", exe);
 		}
 	}
 
@@ -141,6 +155,9 @@ public class LanguageVersionTransformerPlugin implements ManagedTizzitPlugin {
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
+		if(localName.equalsIgnoreCase("languageVersions") && !hasData){
+			fillLanguageVersions();
+		}
 		parent.endElement(uri, localName, qName);
 	}
 

@@ -37,6 +37,8 @@ public class AuthenticationTransformerPlugin implements ManagedTizzitPlugin {
 	private ContentHandler manager;
 	private String nameSpace;
 	
+//	private SessionContext sessContext = null;
+	
 	public void setup(ContentHandler pluginManager, String nameSpace) {
 		this.manager = pluginManager;
 		this.nameSpace = nameSpace;
@@ -82,6 +84,12 @@ public class AuthenticationTransformerPlugin implements ManagedTizzitPlugin {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
 		parent.startElement(uri, localName, qName, attrs);
 
+//		XercesHelper.findNode(doc, "//source/head");
+//		if (head != null) {
+//			if (sessContext == null) {
+//				if (log.isDebugEnabled()) log.debug("No Logged-in User");
+//			} 
+//		}
 	}
 
 	/* (non-Javadoc)
@@ -94,136 +102,129 @@ public class AuthenticationTransformerPlugin implements ManagedTizzitPlugin {
 
 	}
 
-	private void fillAuthentication(Document doc) throws Exception {
-		//		Node head = XercesHelper.findNode(doc, "//source/head");
-		//		if (head != null) {
-		//			// If no context then user has not logged on
-		//			if (sessContext == null) {
-		//				if (log.isDebugEnabled()) log.debug("No Logged-in User");
-		//			} else {
-		//				Node authentication = doc.createElement("authentication");
-		//				try {
-		//					Node idN = sessContext.getXML("/authentication/ID");
-		//					Node id = doc.createElement("id");
-		//					id.appendChild(doc.importNode(idN, true));
-		//					authentication.appendChild(id);
-		//				} catch (Exception exe) {
-		//					log.error("An error occured", exe);
-		//				}
-		//				DocumentFragment df = sessContext.getXML("/authentication/roles");
-		//				if (df != null) {
-		//					NodeList nl = df.getChildNodes();
-		//					for (int i = 0; i < nl.getLength(); i++) {
-		//						Node role = nl.item(i);
-		//						if (XercesHelper.getNodeValue(role).startsWith("unit_")) {
-		//							Element unitInformation = doc.createElement("unitInformation");
-		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
-		//							if (st.hasMoreTokens()) {
-		//								// skip "unit"
-		//								st.nextToken();
-		//								if (st.hasMoreTokens()) {
-		//									String unitId = st.nextToken();
-		//									unitInformation.setAttribute("id", unitId);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									String unitName = st.nextToken();
-		//									Element unitNameElem = doc.createElement("unitname");
-		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(unitName));
-		//									unitNameElem.appendChild(cData);
-		//									unitInformation.appendChild(unitNameElem);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									// skip "site"
-		//									st.nextToken();
-		//									if (st.hasMoreTokens()) {
-		//										String siteId = st.nextToken();
-		//										unitInformation.setAttribute("siteId", siteId);
-		//									}
-		//								}
-		//							}
-		//							authentication.appendChild(unitInformation);
-		//						} else if (XercesHelper.getNodeValue(role).startsWith("group_")) {
-		//							Element groupInformation = doc.createElement("groupInformation");
-		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
-		//							if (st.hasMoreTokens()) {
-		//								// skip "group"
-		//								st.nextToken();
-		//								if (st.hasMoreTokens()) {
-		//									String groupId = st.nextToken();
-		//									groupInformation.setAttribute("id", groupId);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									String groupName = st.nextToken();
-		//									Element groupNameElem = doc.createElement("groupname");
-		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(groupName));
-		//									groupNameElem.appendChild(cData);
-		//									groupInformation.appendChild(groupNameElem);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									// skip "site"
-		//									st.nextToken();
-		//									if (st.hasMoreTokens()) {
-		//										String siteId = st.nextToken();
-		//										groupInformation.setAttribute("siteId", siteId);
-		//									}
-		//								}
-		//							}
-		//							authentication.appendChild(groupInformation);
-		//						} else if (XercesHelper.getNodeValue(role).startsWith("site_")) {
-		//							Element siteInformation = doc.createElement("siteInformation");
-		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
-		//							if (st.hasMoreTokens()) {
-		//								// skip "site"
-		//								st.nextToken();
-		//								if (st.hasMoreTokens()) {
-		//									String siteId = st.nextToken();
-		//									siteInformation.setAttribute("id", siteId);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									String siteName = st.nextToken();
-		//									Element siteNameElem = doc.createElement("sitename");
-		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(siteName));
-		//									siteNameElem.appendChild(cData);
-		//									siteInformation.appendChild(siteNameElem);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									String siteShort = st.nextToken();
-		//									Element siteShortElem = doc.createElement("siteshort");
-		//									CDATASection cData = doc.createCDATASection(Base64.decodeToString(siteShort));
-		//									siteShortElem.appendChild(cData);
-		//									siteInformation.appendChild(siteShortElem);
-		//								}
-		//							}
-		//							authentication.appendChild(siteInformation);
-		//						} else if (XercesHelper.getNodeValue(role).startsWith("role_")) {
-		//							Element roleInformation = doc.createElement("roleInformation");
-		//							StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
-		//							if (st.hasMoreTokens()) {
-		//								// skip "role"
-		//								st.nextToken();
-		//								if (st.hasMoreTokens()) {
-		//									String roleId = st.nextToken();
-		//									roleInformation.setAttribute("id", roleId);
-		//								}
-		//								if (st.hasMoreTokens()) {
-		//									// skip "site"
-		//									// trash = st.nextToken();
-		//									if (st.hasMoreTokens()) {
-		//										String siteId = st.nextToken();
-		//										roleInformation.setAttribute("siteId", siteId);
-		//									}
-		//								}
-		//							}
-		//							authentication.appendChild(roleInformation);
-		//						} else {
-		//							role = doc.importNode(role, true);
-		//							authentication.appendChild(role);
-		//						}
-		//					}
-		//				}
-		//				head.appendChild(authentication);
-		//			}
-		//		}
+	private void fillAuthentication() throws Exception {		
+//		StringBuffer auth = new StringBuffer("<authentication>");
+//		try {
+//			Node idN = sessContext.getXML("/authentication/ID");
+//			Node id = doc.createElement("id");
+//			id.appendChild(doc.importNode(idN, true));
+//			authentication.appendChild(id);
+//		} catch (Exception exe) {
+//			log.error("An error occured", exe);
+//		}
+//		
+//		
+//		DocumentFragment df = sessContext.getXML("/authentication/roles");
+//		if (df != null) {
+//			NodeList nl = df.getChildNodes();
+//			for (int i = 0; i < nl.getLength(); i++) {
+//				Node role = nl.item(i);
+//				if (XercesHelper.getNodeValue(role).startsWith("unit_")) {
+//					Element unitInformation = doc.createElement("unitInformation");
+//					StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+//					if (st.hasMoreTokens()) {
+//						// skip "unit"
+//						st.nextToken();
+//						if (st.hasMoreTokens()) {
+//							String unitId = st.nextToken();
+//							unitInformation.setAttribute("id", unitId);
+//						}
+//						if (st.hasMoreTokens()) {
+//							String unitName = st.nextToken();
+//							Element unitNameElem = doc.createElement("unitname");
+//							CDATASection cData = doc.createCDATASection(Base64.decodeToString(unitName));
+//							unitNameElem.appendChild(cData);
+//							unitInformation.appendChild(unitNameElem);
+//						}
+//						if (st.hasMoreTokens()) {
+//							// skip "site"
+//							st.nextToken();
+//							if (st.hasMoreTokens()) {
+//								String siteId = st.nextToken();
+//								unitInformation.setAttribute("siteId", siteId);
+//							}
+//						}
+//					}
+//					authentication.appendChild(unitInformation);
+//				} else if (XercesHelper.getNodeValue(role).startsWith("group_")) {
+//					Element groupInformation = doc.createElement("groupInformation");
+//					StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+//					if (st.hasMoreTokens()) {
+//						// skip "group"
+//						st.nextToken();
+//						if (st.hasMoreTokens()) {
+//							String groupId = st.nextToken();
+//							groupInformation.setAttribute("id", groupId);
+//						}
+//						if (st.hasMoreTokens()) {
+//							String groupName = st.nextToken();
+//							Element groupNameElem = doc.createElement("groupname");
+//							CDATASection cData = doc.createCDATASection(Base64.decodeToString(groupName));
+//							groupNameElem.appendChild(cData);
+//							groupInformation.appendChild(groupNameElem);
+//						}
+//						if (st.hasMoreTokens()) {
+//							// skip "site"
+//							st.nextToken();
+//							if (st.hasMoreTokens()) {
+//								String siteId = st.nextToken();
+//								groupInformation.setAttribute("siteId", siteId);
+//							}
+//						}
+//					}
+//					authentication.appendChild(groupInformation);
+//				} else if (XercesHelper.getNodeValue(role).startsWith("site_")) {
+//					Element siteInformation = doc.createElement("siteInformation");
+//					StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+//					if (st.hasMoreTokens()) {
+//						// skip "site"
+//						st.nextToken();
+//						if (st.hasMoreTokens()) {
+//							String siteId = st.nextToken();
+//							siteInformation.setAttribute("id", siteId);
+//						}
+//						if (st.hasMoreTokens()) {
+//							String siteName = st.nextToken();
+//							Element siteNameElem = doc.createElement("sitename");
+//							CDATASection cData = doc.createCDATASection(Base64.decodeToString(siteName));
+//							siteNameElem.appendChild(cData);
+//							siteInformation.appendChild(siteNameElem);
+//						}
+//						if (st.hasMoreTokens()) {
+//							String siteShort = st.nextToken();
+//							Element siteShortElem = doc.createElement("siteshort");
+//							CDATASection cData = doc.createCDATASection(Base64.decodeToString(siteShort));
+//							siteShortElem.appendChild(cData);
+//							siteInformation.appendChild(siteShortElem);
+//						}
+//					}
+//					authentication.appendChild(siteInformation);
+//				} else if (XercesHelper.getNodeValue(role).startsWith("role_")) {
+//					Element roleInformation = doc.createElement("roleInformation");
+//					StringTokenizer st = new StringTokenizer(XercesHelper.getNodeValue(role), "_");
+//					if (st.hasMoreTokens()) {
+//						// skip "role"
+//						st.nextToken();
+//						if (st.hasMoreTokens()) {
+//							String roleId = st.nextToken();
+//							roleInformation.setAttribute("id", roleId);
+//						}
+//						if (st.hasMoreTokens()) {
+//							// skip "site"
+//							// trash = st.nextToken();
+//							if (st.hasMoreTokens()) {
+//								String siteId = st.nextToken();
+//								roleInformation.setAttribute("siteId", siteId);
+//							}
+//						}
+//					}
+//					authentication.appendChild(roleInformation);
+//				} else {
+//					role = doc.importNode(role, true);
+//					authentication.appendChild(role);
+//				}
+//			}
+//		}
 	}
 
 	/* (non-Javadoc)
