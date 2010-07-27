@@ -156,7 +156,7 @@ public class EditionCronService {
 		return null;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED)
+	//@Transactional(propagation = Propagation.REQUIRED)
 	public void cronCreateEditionFromDeployFile() {
 		if (!tizzitProperties.isLiveserver()) {
 			return;
@@ -245,23 +245,21 @@ public class EditionCronService {
 	 * @see de.juwimm.cms.remote.EditionServiceSpring#processFileImport(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@SuppressWarnings("unchecked")
-	//@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	@Transactional(propagation = Propagation.REQUIRED)
+	//@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void cronEditionDeploy() throws Exception {
 		if (cronEditionDeployIsRunning) {
 			if (log.isInfoEnabled()) log.info("Cron already running, ignoring crontask");
+			return;
+		}
+		if (tizzitProperties.isLiveserver()) {
+			if (log.isInfoEnabled()) log.info("Deploy doesn't run from liveServer...");
 			return;
 		}
 		if (log.isInfoEnabled()) log.info("start cronEditionDeploy");
 		cronEditionDeployIsRunning = true;
 		File edFile = null;
 		try {
-			Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
-			if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
-			for (EditionHbm edition : editionsToDeploy) {
-				createEditionFileAndSendToLive(edition) ;
-			}
-			editionsToDeploy.clear();
+			getEditionServiceSpring().deployAll();
 			File deployDir = new File(tizzitProperties.getDatadir() + "deploys");
 			if (deployDir.exists() && deployDir.isDirectory()) {
 				File deployes[] = deployDir.listFiles();
@@ -280,7 +278,7 @@ public class EditionCronService {
 		}
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
 	public void createEditionFileAndSendToLive(EditionHbm edition) {
 		File edFile = null;
 		if(log.isInfoEnabled()) log.info("starting deploy of edition: " + edition.getEditionId() + " - " + edition.getComment());
@@ -303,7 +301,7 @@ public class EditionCronService {
 			SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(creator.getUserId(), creator.getPasswd()));
 			getEditionServiceSpring().publishEditionToLiveserver(edition.getEditionId());
 			edition.setNeedsDeploy(false);
-			editionHbmDao.update(edition);
+			getEditionHbmDao().update(edition);
 			if (edFile != null) {
 				edFile.delete();
 			}

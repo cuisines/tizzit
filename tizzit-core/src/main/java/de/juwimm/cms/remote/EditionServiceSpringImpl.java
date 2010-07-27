@@ -58,6 +58,9 @@ import org.springframework.security.SpringSecurityException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Document;
@@ -1803,6 +1806,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				if (log.isInfoEnabled()) log.info("Setting the ViewComponents on Work-Server to \"Online\" - " + info);
 				setViewComponentsOnline(edition);
 				edition.setNeedsDeploy(false);
+				getEditionHbmDao().update(edition);
 			} catch (Exception exe) {
 				if (log.isDebugEnabled()) log.debug("Rolling back because of error on Liveserver");
 				throw new UserException(exe.getMessage());
@@ -3112,6 +3116,16 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleImportUnit(Integer editionId, String editionFileName) throws Exception {
 		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	protected void handleDeployAll() throws Exception {
+		// TODO Auto-generated method stub
+		Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
+		if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
+		for (EditionHbm edition : editionsToDeploy) {
+			this.editionCronService.createEditionFileAndSendToLive(edition) ;
+		}
 	}
 }

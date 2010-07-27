@@ -40,9 +40,6 @@ public class TizzitPropertiesBeanSpring {
 	private String statsDir;
 	
 	private String deployDir;
-	private String deployUser;
-	 
-	private String deployPassword;
 
 
 	private String mailDS;
@@ -569,8 +566,8 @@ public class TizzitPropertiesBeanSpring {
 	public void setExternalLib(ExternalLib externalLib) {
 		this.externalLib = externalLib;
 	}
-	
-	/**
+	 
+	 	/**
 	 	 * @return the deployDir
 	 	 */
 	 	public String getDeployDir() {
@@ -578,39 +575,9 @@ public class TizzitPropertiesBeanSpring {
 	 	}
 	 
 	 	/**
-	 	 * @param deployDir the deployDir to set
+	 	 * @param deployUser the deployDir to set
 	 	 */
 	 	public void setDeployDir(String deployDir) {
 	 		this.deployDir = deployDir;
 	 	}
-	 
-	 	/**
-	 	 * @return the deployUser
-	 	 */
-	 	public String getDeployUser() {
-	 		return deployUser;
-	 	}
-	 
-	 	/**
-	 	 * @param deployUser the deployUser to set
-	 	 */
-	 	public void setDeployUser(String deployUser) {
-	 		this.deployUser = deployUser;
-	 	}
-	 
-	 	/**
-	 	 * @return the deployPassword
-	 	 */
-	 	public String getDeployPassword() {
-	 		return deployPassword;
-	 	}
-	 
-	 	/**
-	 	 * @param deployPassword the deployPassword to set
-	 	 */
-	 	public void setDeployPassword(String deployPassword) {
-	 		this.deployPassword = deployPassword;
-	 	}
-
-
 }
