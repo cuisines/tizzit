@@ -616,7 +616,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			}
 			return pvArr;
 		} catch (Exception e) {
-			throw new UserException(e.getMessage());
+			throw new UserException(e.getMessage(), e);
 		}
 	}
 
