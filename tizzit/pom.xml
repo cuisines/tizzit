@@ -430,44 +430,61 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring</artifactId>
-				<version>${spring.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>servlet-api</artifactId>
-						<groupId>javax.servlet</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>jta</artifactId>
-						<groupId>javax.transaction</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>connector</artifactId>
-						<groupId>javax.resource</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>xjavadoc</artifactId>
-						<groupId>xdoclet</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>cos</artifactId>
-						<groupId>com.servlets</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>jstl</artifactId>
-						<groupId>javax.servlet</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>standard</artifactId>
-						<groupId>taglibs</groupId>
-					</exclusion>
-					<exclusion>
-						<artifactId>quartz</artifactId>
-						<groupId>quartz</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>${spring.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>quartz</groupId>
+          <artifactId>quartz</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-oxm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
 			<dependency>
 				<groupId>oro</groupId>
 				<artifactId>oro</artifactId>
@@ -707,7 +724,7 @@
 		<!-- JIRA: TIZZIT-249 - The version is used in the pom.xml files of tizzit-richclient and tizzit-web-admin. -->
 		<javax.activation.version>1.0.2</javax.activation.version>
 
-		<spring.version>2.5.6</spring.version>
+		<spring.version>3.0.3.RELEASE</spring.version>
 		<spring.security.version>2.0.4</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
 

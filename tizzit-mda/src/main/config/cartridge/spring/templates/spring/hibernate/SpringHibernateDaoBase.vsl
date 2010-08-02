@@ -21,8 +21,6 @@ package $entity.packageName;
 #set ($rootDaoType = $entity.fullyQualifiedDaoName)
 #end
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * <p>
  * Base Spring DAO Class: is able to create, update, remove, load, and find
@@ -41,12 +39,13 @@ public abstract class $entity.daoBaseName
 {
 
 #foreach($entityRef in $entity.entityReferences)
-    @Autowired private $entityRef.targetElement.fullyQualifiedDaoName $entityRef.daoName;
+    private $entityRef.targetElement.fullyQualifiedDaoName $entityRef.daoName;
 
     /**
      * Sets the reference to <code>$entityRef.daoName</code>.
      */
-    public void ${entityRef.daoSetterName}($entityRef.targetElement.fullyQualifiedDaoName $entityRef.daoName) {
+    public void ${entityRef.daoSetterName}($entityRef.targetElement.fullyQualifiedDaoName $entityRef.daoName)
+    {
         this.$entityRef.daoName = $entityRef.daoName;
     }
 
@@ -80,7 +79,7 @@ public abstract class $entity.daoBaseName
 #set ($xmlIndent = "    ")
         if (transform == TRANSFORM_XML)
         {
-            final java.lang.Object entity = this.getHibernateTemplate().execute(
+            final java.lang.Object entity = this.getHibernateTemplate().executeWithNativeSession(
                     new org.springframework.orm.hibernate3.HibernateCallback()
                     {
                         public java.lang.Object doInHibernate(org.hibernate.Session hibernateSession)
@@ -89,8 +88,7 @@ public abstract class $entity.daoBaseName
                             org.hibernate.Session xmlSession = hibernateSession.getSession(org.hibernate.EntityMode.DOM4J);
                             return xmlSession.get(${entity.fullyQualifiedEntityImplementationName}.class, $argument);
                         }
-                    },
-                    true);
+                    });
             return entity;
         }
         else
@@ -165,7 +163,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
             throw new IllegalArgumentException(
                 "${entity.name}.create - '$argumentName' can not be null");
         }
-        java.lang.Object newID = this.getHibernateTemplate().execute(
+        java.lang.Object newID = this.getHibernateTemplate().executeWithNativeSession(
                 new org.springframework.orm.hibernate3.HibernateCallback()
                 {
                     public java.lang.Object doInHibernate(org.hibernate.Session hibernateSession)
@@ -174,8 +172,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
                         org.hibernate.Session xmlSession = hibernateSession.getSession(org.hibernate.EntityMode.DOM4J);
                         return xmlSession.save("$entity.fullyQualifiedEntityImplementationName", $argumentName);
                     }
-                },
-                true);
+                });
         
         return this.load(transform, ($identifier.type.fullyQualifiedName)newID);
         
@@ -231,7 +228,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
             throw new IllegalArgumentException(
                 "${entity.name}.create - 'entities' can not be null");
         }
-        this.getHibernateTemplate().execute(
+        this.getHibernateTemplate().executeWithNativeSession(
             new ${hibernateUtils.springHibernatePackage}.HibernateCallback()
             {
                 public java.lang.Object doInHibernate(${hibernateUtils.basePackage}.Session session)
@@ -243,8 +240,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
                     }
                     return null;
                 }
-            },
-            true);
+            });
         return entities;
     }
 
@@ -339,7 +335,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
             throw new IllegalArgumentException(
                 "${entity.name}.update - '$argumentName' can not be null");
         }
-        this.getHibernateTemplate().execute(
+        this.getHibernateTemplate().executeWithNativeSession(
                 new org.springframework.orm.hibernate3.HibernateCallback()
                 {
                     public java.lang.Object doInHibernate(org.hibernate.Session hibernateSession)
@@ -349,8 +345,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
                         xmlSession.update("$entity.fullyQualifiedEntityImplementationName", $argumentName);
                         return null;
                     }
-                },
-                true);
+                });
     }
 
 #end
@@ -364,7 +359,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
             throw new IllegalArgumentException(
                 "${entity.name}.update - 'entities' can not be null");
         }
-        this.getHibernateTemplate().execute(
+        this.getHibernateTemplate().executeWithNativeSession(
             new ${hibernateUtils.springHibernatePackage}.HibernateCallback()
             {
                 public java.lang.Object doInHibernate(${hibernateUtils.basePackage}.Session session)
@@ -376,8 +371,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
                     }
                     return null;
                 }
-            },
-            true);
+            });
     }
 
     /**
@@ -404,7 +398,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
             throw new IllegalArgumentException(
                 "${entity.name}.remove - '$argumentName' can not be null");
         }
-        this.getHibernateTemplate().execute(
+        this.getHibernateTemplate().executeWithNativeSession(
                 new org.springframework.orm.hibernate3.HibernateCallback()
                 {
                     public java.lang.Object doInHibernate(org.hibernate.Session hibernateSession)
@@ -414,8 +408,7 @@ $xmlIndent        return transformEntity(transform, ($entity.fullyQualifiedName)
                         xmlSession.delete($argumentName);
                         return null;
                     }
-                },
-                true);
+                });
     }
 
 #end

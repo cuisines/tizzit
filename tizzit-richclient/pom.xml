@@ -33,8 +33,50 @@
 			<version>3.1.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring</artifactId>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-beans</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-context-support</artifactId>
+		  <exclusions>
+			<exclusion>
+			  <groupId>quartz</groupId>
+			  <artifactId>quartz</artifactId>
+			</exclusion>
+		  </exclusions>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-jdbc</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-orm</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-oxm</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-tx</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-webmvc</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -207,7 +249,16 @@
 							<include>org.tizzit:tizzit-common</include>
 							<include>org.tizzit:tizzit-plugin-api</include>
 							<include>org.tizzit:tizzit-loginmodules</include>
-							<include>org.springframework:spring</include>
+							<include>org.springframework:spring-beans</include>
+							<include>org.springframework:spring-context-support</include>
+							<include>org.springframework:spring-core</include>
+							<include>org.springframework:spring-jdbc</include>
+							<include>org.springframework:spring-test</include>
+							<include>org.springframework:spring-orm</include>
+							<include>org.springframework:spring-oxm</include>
+							<include>org.springframework:spring-tx</include>
+							<include>org.springframework:spring-web</include>
+							<include>org.springframework:spring-webmvc</include>
 							<include>org.springframework.security:spring-security-core-tiger</include>
 							<include>org.springframework.security:spring-security-acl</include>
 							<include>org.springframework.security:spring-security-core</include>

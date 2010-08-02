@@ -304,7 +304,6 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getNavigationAge(java.lang.Integer,
 	 *      java.lang.String, int, boolean)
 	 */
-
 	public Date getNavigationAge(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
 		return viewComponentHbmDao.getNavigationAge(refVcId, since, depth, getPUBLSVersion);
 	}
@@ -1201,7 +1200,7 @@ public class WebServiceSpring {
 		sb.append("</units>");
 		return sb.toString();
 	}
-	
+
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllUnitsXml(java.lang.Integer)
 	 */
