@@ -15,7 +15,6 @@
  */
 package de.juwimm.cms.gui;
 
-import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.SwingUtilities;
@@ -76,33 +75,16 @@ public final class LookAndFeel {
 	 */
 	public static boolean switchTo(String lookAndFeel) {
 		try {
-		/*	if (Constants.isClientOS(Constants.OS_MACOSX)) { 
-				UIManager.put("Label.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("Button.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("Component.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("CheckBox.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("OptionPane.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("RadioButton.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("TextField.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("ComboBox.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("MenuItem.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("Menu.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("RadioButtonMenuItem.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("TitledBorder.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("TabbedPane.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.put("List.font", new Font("SansSerif", Font.PLAIN, 11));
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			} else {*/
-				//PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceRoyale());
-				//UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
-				lookAndFeel.getClass().getResource("YQSilver.theme");
-				UIManager.setLookAndFeel("de.muntjak.tinylookandfeel.TinyLookAndFeel");
-				//Thread.currentThread().getContextClassLoader().getResource("YQSilver.theme");
-	
-				// continuous layout on frame resize
-				Toolkit.getDefaultToolkit().setDynamicLayout(true);
-				// no flickering on resize
-				System.setProperty("sun.awt.noerasebackground", "true");
+			//PlasticLookAndFeel.setPlasticTheme(new com.jgoodies.looks.plastic.theme.ExperienceRoyale());
+			//UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+			lookAndFeel.getClass().getResource("YQSilver.theme");
+			UIManager.setLookAndFeel("de.muntjak.tinylookandfeel.TinyLookAndFeel");
+			//Thread.currentThread().getContextClassLoader().getResource("YQSilver.theme");
+
+			// continuous layout on frame resize
+			Toolkit.getDefaultToolkit().setDynamicLayout(true);
+			// no flickering on resize
+			System.setProperty("sun.awt.noerasebackground", "true");
 			//}
 			SwingUtilities.updateComponentTreeUI(UIConstants.getMainFrame());
 		} catch (Exception e) {
