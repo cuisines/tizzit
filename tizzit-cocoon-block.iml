@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/tizzit-cocoon-block/target/classes" />
+    <output-test url="file://$MODULE_DIR$/tizzit-cocoon-block/target/test-classes" />
+    <content url="file://$MODULE_DIR$/tizzit-cocoon-block">
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-cocoon-block/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-cocoon-block/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-cocoon-block/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-cocoon-block/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/tizzit-cocoon-block/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="tizzit-cocoon-components" />
+    <orderEntry type="module" module-name="tizzit-common" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:1.3.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.0.1" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.7" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-asm:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context-support:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-tx:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-test:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-orm:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-oxm:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-web:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core-tiger:2.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:2.0.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.ehcache:ehcache:1.3.0" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.jsr107cache:jsr107cache:1.0" level="project" />
+    <orderEntry type="library" name="Maven: backport-util-concurrent:backport-util-concurrent:3.0" level="project" />
+    <orderEntry type="library" name="Maven: jaxen:jaxen:1.1" level="project" />
+    <orderEntry type="library" name="Maven: dom4j:dom4j:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
+    <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.3.02" level="project" />
+    <orderEntry type="library" name="Maven: xerces:xercesImpl:2.7.1" level="project" />
+    <orderEntry type="library" name="Maven: xom:xom:1.0" level="project" />
+    <orderEntry type="library" name="Maven: xerces:xmlParserAPIs:2.6.2" level="project" />
+    <orderEntry type="library" name="Maven: xalan:xalan:2.7.0" level="project" />
+    <orderEntry type="library" name="Maven: com.ibm.icu:icu4j:3.4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.ujac:ujac:1.0.0" level="project" />
+    <orderEntry type="module" module-name="tizzit-core" />
+    <orderEntry type="module" module-name="tizzit-plugin-api" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-acl:2.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjrt:1.6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-snowball:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-highlighter:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.compass-project:compass:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate:3.2.5.ga" level="project" />
+    <orderEntry type="library" name="Maven: asm:asm-attrs:1.5.3" level="project" />
+    <orderEntry type="library" name="Maven: antlr:antlr:2.7.2" level="project" />
+    <orderEntry type="library" name="Maven: cglib:cglib:2.1_3" level="project" />
+    <orderEntry type="library" name="Maven: asm:asm:1.5.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:pdfbox:0.8.0-incubating" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:fontbox:0.8.0-incubator" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.pdfbox:jempbox:0.8.0-incubator" level="project" />
+    <orderEntry type="library" name="Maven: bouncycastle:bcmail-jdk14:136" level="project" />
+    <orderEntry type="library" name="Maven: bouncycastle:bcprov-jdk14:136" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.poi:poi:3.1-FINAL" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: log4j:log4j:1.2.13" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.poi:poi-scratchpad:3.1-FINAL" level="project" />
+    <orderEntry type="library" name="Maven: jboss:jbosssx-client:4.2.2.GA" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-jci-core:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-jci-fam:1.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging-api:1.1" level="project" />
+    <orderEntry type="module" module-name="tizzit-xmlsearch-xindice" />
+    <orderEntry type="library" name="Maven: xindice:xindice:1.1" level="project" />
+    <orderEntry type="library" name="Maven: xmldb:xmldb-api:20030701" level="project" />
+    <orderEntry type="library" name="Maven: xmldb:xmldb-api-sdk:20030701" level="project" />
+    <orderEntry type="library" name="Maven: xmldb:xmldb-common:20030701" level="project" />
+    <orderEntry type="library" name="Maven: xmldb:xmldb-xupdate:20040205" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-servlet-service-components:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-servlet-service-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-spring-configurator:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-configuration-api:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-sourceresolve:2.2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-linkrewriter-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-core:2.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-pipeline-components:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-pipeline-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-pipeline-api:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.avalon.framework:avalon-framework-api:4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-xmlutil:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-util:1.0.0-pl1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.avalon.framework:avalon-framework-impl:4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: jakarta-regexp:jakarta-regexp:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-xml-api:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-expression-language-api:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-pool-api:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-store:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: concurrent:concurrent:1.3.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.containerkit:excalibur-instrument-api:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-sitemap-components:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-xml-resolver:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-xml-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: xml-resolver:xml-resolver:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-thread-api:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-xml-util:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.containerkit:excalibur-logger:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-jexl:commons-jexl:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-store-impl:1.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.cocoon:cocoon-thread-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-sitemap-impl:1.0.0-pl4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-expression-language-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-jxpath:commons-jxpath:1.2" level="project" />
+    <orderEntry type="library" name="Maven: rhino:js:1.6R7" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-sitemap-api:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-template-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-flowscript-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-ajax-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-batik-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-awt-util:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-util:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-gui-util:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-ext:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-bridge:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-gvt:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-script:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-svg-dom:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-dom:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-css:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-xml:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-parser:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-extension:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-rasterizer-ext:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-rasterizer:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-transcoder:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: fop:fop:0.20.5" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-slideshow:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-squiggle:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-swing:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-svggen:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-svgpp:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: batik:batik-ttf2svg:1.6-1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-databases-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-databases-bridge:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-datasource:2.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-pool-instrumented:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.excalibur.components:excalibur-pool-impl:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-mail-impl:1.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.mail:mail:1.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.activation:activation:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-fop-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-forms-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.outerj.daisy:daisy-htmlcleaner:1.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.outerj.daisy:daisy-util:1.4.1" level="project" />
+    <orderEntry type="library" name="Maven: nekohtml:nekohtml:0.9.5" level="project" />
+    <orderEntry type="library" name="Maven: nekohtml:nekodtd:0.1.11" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: oro:oro:2.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.outerj.xreporter:xreporter-expression:1.2.1.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.outerj.xreporter:xreporter-grouping:1.2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-captcha-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-poi-impl:1.0.0-beta-1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.4" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-dom:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-dom4j:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-jdom:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-s9api:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-sql:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-xom:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-xpath:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.saxon:saxon-xqj:9.1.0.7B" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-auth-api:1.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.ujac:ujac-itext:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-profiler-impl:1.0.0-beta-1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-auth-impl:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-session-fw-impl:1.0.0-beta-2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-authentication-fw-impl:1.0.0-beta-1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.cocoon:cocoon-xsp-impl:1.0.0-beta-3" level="project" />
+    <orderEntry type="library" name="Maven: eclipse:jdtcore:3.1.0" level="project" />
+  </component>
+</module>
+

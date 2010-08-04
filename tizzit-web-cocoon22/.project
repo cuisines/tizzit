@@ -1,6 +1,6 @@
 <projectDescription>
   <name>tizzit-web-cocoon22</name>
-  <comment>The Tizzit Project.</comment>
+  <comment>The Tizzit Project. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
     <project>tizzit-cocoon-block</project>
     <project>tizzit-cocoon-components</project>
@@ -11,10 +11,14 @@
   </projects>
   <buildSpec>
     <buildCommand>
+      <name>org.eclipse.wst.common.project.facet.core.builder</name>
+    </buildCommand>
+    <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
     </buildCommand>
   </buildSpec>
   <natures>
     <nature>org.eclipse.jdt.core.javanature</nature>
+    <nature>org.eclipse.wst.common.project.facet.core.nature</nature>
   </natures>
 </projectDescription>

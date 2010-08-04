@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/tizzit-mda/target/classes" />
+    <output-test url="file://$MODULE_DIR$/tizzit-mda/target/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/tizzit-mda">
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-mda/src/uml" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-mda/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-mda/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-mda/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/tizzit-mda/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.andromda.cartridges:andromda-spring-cartridge:3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.andromda:andromda-core:3.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-digester:commons-digester:1.7" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-beanutils:commons-beanutils:1.7.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: commons-logging:commons-logging:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.andromda:andromda-utils:3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.andromda.translationlibraries:andromda-ocl-translation-core:3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: log4j:log4j:1.2.13" level="project" />
+    <orderEntry type="library" name="Maven: org.andromda.translationlibraries:andromda-ocl-validation-library:3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.andromda.metafacades:andromda-metafacades-uml:3.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.andromda.cartridges:andromda-hibernate-cartridge:3.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.andromda.cartridges:andromda-java-cartridge:3.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.andromda.translationlibraries:andromda-ocl-query-library:3.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.7" level="project" />
+  </component>
+</module>
+

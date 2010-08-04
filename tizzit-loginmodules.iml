@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/tizzit-loginmodules/target/classes" />
+    <output-test url="file://$MODULE_DIR$/tizzit-loginmodules/target/test-classes" />
+    <content url="file://$MODULE_DIR$/tizzit-loginmodules">
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-loginmodules/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-loginmodules/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-loginmodules/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tizzit-loginmodules/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/tizzit-loginmodules/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: log4j:log4j:1.2.13" level="project" />
+    <orderEntry type="library" name="Maven: jboss:jbosssx:4.2.2.GA" level="project" />
+    <orderEntry type="library" name="Maven: jboss:jboss-jmx:4.2.2.GA" level="project" />
+    <orderEntry type="library" name="Maven: jboss:jboss-system:4.2.2.GA" level="project" />
+    <orderEntry type="library" name="Maven: jboss:jboss-transaction:4.2.2.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: jboss:jboss-j2ee:4.2.2.GA" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.7" level="project" />
+  </component>
+</module>
+
