@@ -198,7 +198,13 @@ public class Main extends JFrame implements ActionListener {
 		Application.initializeContext();
 
 		splash.setStatusInfo("Getting Locale Settings...");
-		Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
+
+		try {
+			Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
+		} catch (Exception ex) {
+			log.warn("Could not find ResourceBundle for language: " + Constants.CMS_LOCALE + " - loading default");
+			Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
+		}
 
 		splash.setStatusInfo(Constants.rb.getString("splash.checkingSSL"));
 		HttpClientWrapper httpClientWrapper = HttpClientWrapper.getInstance();
@@ -356,7 +362,7 @@ public class Main extends JFrame implements ActionListener {
 	private void showAdminPanel() throws Exception {
 		Constants.CMS_CLIENT_VIEW = Constants.CLIENT_VIEW_ADMIN;
 		panRibbon.setView(false);
- 		
+
 		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			try {
 				if (panRoot == null) {

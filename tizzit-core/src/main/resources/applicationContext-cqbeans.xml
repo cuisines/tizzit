@@ -241,12 +241,4 @@
 		<property name="webSpringBean" ref="webServiceSpring" />
 	</bean>
 	
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
-	
-<!--	<bean class="de.juwimm.cms.beans.TizzitRestAPIController" id="tizzitRest">-->
-<!--		<property name="webSpringBean" ref="webServiceSpring" />-->
-<!--	</bean>-->
-	
-	<tx:annotation-driven/>
-	
 </beans>
