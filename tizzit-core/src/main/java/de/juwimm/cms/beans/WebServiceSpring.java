@@ -43,8 +43,6 @@ import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.tizzit.util.DateConverter;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
@@ -105,7 +103,7 @@ import de.juwimm.cms.vo.ViewDocumentValue;
  *         company Juwi|MacMillan Group Gmbh, Walsrode, Germany
  * @version $Id$
  */
-@RequestMapping("/webservicespring")
+
 public class WebServiceSpring {
 	private static Logger log = Logger.getLogger(WebServiceSpring.class);
 	private static final DateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -182,7 +180,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getMembersList(java.lang.Integer,
 	 *      java.lang.Integer, java.lang.String, java.lang.String)
 	 */
-	@RequestMapping(value = "/memberlist/{siteId}/{unitId}/{firstname}/{lastname}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/memberlist/{siteId}/{unitId}/{firstname}/{lastname}", method = RequestMethod.GET)
 	public String getMembersList(Integer siteId, Integer unitId, String firstname, String lastname) throws Exception {
 		StringBuffer sbPersons = new StringBuffer();
 		sbPersons.append("<membersList>");
@@ -281,7 +279,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getNavigationXml(java.lang.Integer,
 	 *      java.lang.String, int, boolean)
 	 */
-	@RequestMapping(value = "/navigationxml/{refVcId}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/navigationxml/{refVcId}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
 	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getNavigationXML start");
 		try {
@@ -306,7 +304,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getNavigationAge(java.lang.Integer,
 	 *      java.lang.String, int, boolean)
 	 */
-	@RequestMapping(value = "/navigationage/{refVcID}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/navigationage/{refVcID}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
 	public Date getNavigationAge(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
 		return viewComponentHbmDao.getNavigationAge(refVcId, since, depth, getPUBLSVersion);
 	}
@@ -315,7 +313,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getNavigationBackwardXml(java.lang.Integer,
 	 *      java.lang.String, int, boolean)
 	 */
-	@RequestMapping(value = "/navigationbackwardxml/{refVcId}/{since}/{dontShowFirst}/{getPUBLSVersion}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/navigationbackwardxml/{refVcId}/{since}/{dontShowFirst}/{getPUBLSVersion}", method = RequestMethod.GET)
 	public String getNavigationBackwardXml(Integer refVcId, String since, int dontShowFirst, boolean getPUBLSVersion) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getNavigationBackwardXML start");
 
@@ -382,7 +380,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getContent(java.lang.Integer,
 	 *      boolean)
 	 */
-	@RequestMapping(value = "/content/{vcId}/{getPUBLSVersion}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/content/{vcId}/{getPUBLSVersion}", method = RequestMethod.GET)
 	public String getContent(Integer vcId, boolean getPUBLSVersion) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getting content at " + sdf.format(new Date()) + "for vcId " + vcId);
 		StringBuilder sb = new StringBuilder();
@@ -434,7 +432,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getDocument(java.lang.Integer)
 	 */
-	//@RequestMapping(value="/document/{documentId}", method=RequestMethod.GET)
+	////@RequestMapping(value="/document/{documentId}", method=RequestMethod.GET)
 	public byte[] getDocument(Integer documentId) throws Exception {
 		byte[] ret = null;
 		try {
@@ -468,7 +466,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getMandatorDir(java.lang.String)
 	 */
-	@RequestMapping(value = "/mandatordir/{hostName}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/mandatordir/{hostName}", method = RequestMethod.GET)
 	@HourCache
 	public String getMandatorDir(String hostName) throws Exception {
 		try {
@@ -1088,7 +1086,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getDocumentName(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/documentname/{documentId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/documentname/{documentId}", method = RequestMethod.GET)
 	public String getDocumentName(Integer documentId) throws Exception {
 		String ret = null;
 		try {
@@ -1103,7 +1101,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getMimetype4Document(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/mimetypefordocument/{documentId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/mimetypefordocument/{documentId}", method = RequestMethod.GET)
 	public String getMimetype4Document(Integer documentId) throws Exception {
 		String ret = null;
 		try {
@@ -1133,7 +1131,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getSafeguardLoginPath(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/safegueardloginpath/{viewComponentId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/safegueardloginpath/{viewComponentId}", method = RequestMethod.GET)
 	public String getSafeguardLoginPath(Integer viewComponentId) throws Exception {
 		String loginPath = null;
 		try {
@@ -1147,7 +1145,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getSafeguardRealmIdAndType(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/safeguardrealmidandtype/{viewComponentId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/safeguardrealmidandtype/{viewComponentId}", method = RequestMethod.GET)
 	public String getSafeguardRealmIdAndType(Integer viewComponentId) throws Exception {
 		return safeguardServiceSpring.getRealmIdAndType(viewComponentId);
 	}
@@ -1187,7 +1185,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllUnitsXml(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/allunitsxml/{siteId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/allunitsxml/{siteId}", method = RequestMethod.GET)
 	public String getAllUnitsXml(Integer siteId) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<units>");
@@ -1208,7 +1206,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllUnitsXml(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/allunitlistxml/{siteId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/allunitlistxml/{siteId}", method = RequestMethod.GET)
 	public String getUnitListXml(Integer siteId) throws Exception {
 		StringBuilder sb = new StringBuilder();
 		try {
@@ -1243,7 +1241,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getHeading(java.lang.Integer,
 	 *      boolean)
 	 */
-	@RequestMapping(value = "/heading/{contentId}/{liveServer}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/heading/{contentId}/{liveServer}", method = RequestMethod.GET)
 	public String getHeading(Integer contentId, boolean liveServer) throws Exception {
 		String heading = "";
 		ContentHbm content = null;
@@ -1318,7 +1316,7 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getDefaultLanguage(java.lang.Integer)
 	 */
-	@RequestMapping(value = "/defaultLanguage/{siteId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/defaultLanguage/{siteId}", method = RequestMethod.GET)
 	public String getDefaultLanguage(Integer siteId) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getDefaultLanguage start");
 		String language = "deutsch";
@@ -1499,7 +1497,7 @@ public class WebServiceSpring {
 		return ("");
 	}
 
-	@RequestMapping(value = "/includecontent/{currentViewComponentId}/{includeUnit}/{includeBy}/{getPublsVersion}/{xPathQuery}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/includecontent/{currentViewComponentId}/{includeUnit}/{includeBy}/{getPublsVersion}/{xPathQuery}", method = RequestMethod.GET)
 	public String getIncludeContent(Integer currentViewComponentId, boolean includeUnit, String includeBy, boolean getPublsVersion, String xPathQuery) throws Exception {
 		String includeContent = "<contentInclude>";
 		try {
@@ -1530,7 +1528,7 @@ public class WebServiceSpring {
 		return includeContent;
 	}
 
-	@RequestMapping(value = "/includeTeaser/{currentViewComponentId}/{getPublsVersion}/{teaserRequest}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/includeTeaser/{currentViewComponentId}/{getPublsVersion}/{teaserRequest}", method = RequestMethod.GET)
 	public String getIncludeTeaser(Integer currentViewComponentId, boolean getPublsVersion, String teaserRequest) throws Exception {
 		StringBuffer includeContent = new StringBuffer("<teaserInclude>");
 		try {
@@ -1849,7 +1847,7 @@ public class WebServiceSpring {
 		return retVal;
 	}
 
-	@RequestMapping(value = "/unitinfoxml/{unitId}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/unitinfoxml/{unitId}", method = RequestMethod.GET)
 	public String getUnitInfoXml(Integer unitId) throws Exception {
 		StringBuffer sb = new StringBuffer("");
 		try {
@@ -1894,7 +1892,7 @@ public class WebServiceSpring {
 	 *
 	 * @param pictureId
 	 */
-	@RequestMapping(value = "/pictureinfoxml/{pictureid}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/pictureinfoxml/{pictureid}", method = RequestMethod.GET)
 	private String getPictureInfoXml(Integer pictureId) throws Exception {
 		StringBuffer sb = new StringBuffer("");
 		PictureHbm pic = pictureHbmDao.load(pictureId);
@@ -1912,7 +1910,7 @@ public class WebServiceSpring {
 		return sb.toString();
 	}
 
-	@RequestMapping(value = "/lastmodifiedpages/{viewComponentId}/{unitId}/{numberOfPages}/{getPublsVersion}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/lastmodifiedpages/{viewComponentId}/{unitId}/{numberOfPages}/{getPublsVersion}", method = RequestMethod.GET)
 	public String getLastModifiedPages(Integer viewComponentId, Integer unitId, int numberOfPages, boolean getPublsVersion) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getLastModifiedPages start");
 		try {
