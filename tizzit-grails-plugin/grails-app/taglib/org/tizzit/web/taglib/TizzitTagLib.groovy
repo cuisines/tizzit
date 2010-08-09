@@ -24,16 +24,16 @@ class TizzitTagLib {
 	def navigation = { attrs, body ->
 		def depth = attrs.depth
 		def since = attrs.since
-		def template = (attrs.template) ? attrs.template : "templates/navigation"
+		def template = (attrs.template) ? attrs.template : "navigation"
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
 		def xml = tizzitRestClientService.navigationXml(depth, since)
 		if (omitFirst) {
 			xml = xml.viewcomponent
 		}
 		try {
-			out << render(template: template, model: [navigation: xml, urlLinkName: "/de"])
+			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/de"])
 		} catch (e) {
-			out << render(template: template, model: [navigation: xml, urlLinkName: "/de"], plugin: "tizzitWeb")
+			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/de"], plugin: "tizzitWeb")
 		}
 	}
 
@@ -54,10 +54,8 @@ class TizzitTagLib {
 		}
 		return null;
 	}
-
+	
 	def content = { attrs, body ->
-
-
 		DefaultElement.metaClass.methodMissing = {
 			String name, def args ->
 			println name
@@ -85,9 +83,9 @@ class TizzitTagLib {
 				def xp = new XmlParser().parseText(n.asXML())
 				def i
 				try {
-					i = render(template: "templates/modules/${n.name}", model: [node: xp], contentType: 'text/xml')
+					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xml')
 				} catch (e) {
-					i = render(template: "templates/modules/${n.name}", model: [node: xp], contentType: 'text/xml', plugin: "tizzitWeb")
+					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xml', plugin: "tizzitWeb")
 				}
 				def da = DocumentHelper.parseText(i.toString())
 				replaceNode(n, da)
@@ -97,7 +95,7 @@ class TizzitTagLib {
 		if (node) {
 			xml = xml.selectSingleNode(node)
 		} else if (nodes) {
-			log.info "select multiple nodes $nodes"
+			log.debug "select multiple nodes $nodes"
 			xml = xml.selectNodes(nodes)
 		}
 
@@ -111,9 +109,9 @@ class TizzitTagLib {
 			}
 
 			try {
-				out << render(template: "${template}", model: model, contentType: 'text/xml')
+				out << render(template: "components/${template}", model: model, contentType: 'text/xml')
 			} catch (e) {
-				out << render(template: "${template}", model: model, contentType: 'text/xml', plugin: "tizzitWeb")
+				out << render(template: "components/${template}", model: model, contentType: 'text/xml', plugin: "tizzitWeb")
 			}
 		} else {
 			out << getStringFromXml(xml, omitFirst)
