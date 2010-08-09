@@ -20,20 +20,19 @@ log4j = {
 
 	warn 'org.mortbay.log'
 
-	debug 'grails.app.controller', 'grails.app.service'
+	debug 'grails.app.controller', 'grails.app.service', 'grails.app.tagLib'
 
 	info 'org.apache',
 		 'org.codehaus',
 		 'net.sf',
 		 'grails',
-		 'httpclient',
-		 'grails.app.service.de.cl.hmorder.VersacommerceService'
+		 'httpclient'
 
 	root {
 		debug 'stdout', 'file'
 		additivity = true
 	}
-}
+} 
 
 grails.rest.injectInto = ["Controller", "Service", "TagLib"]
 

@@ -863,45 +863,10 @@ public class WebServiceSpring {
 		}
 		return value;
 	}
-
-	/**
-	 * @see de.juwimm.cms.remote.WebServiceSpringBase#getSitemapParameters(java.util.Map,
-	 *      java.util.Map)
-	 */
-	public Map getSitemapParameters(Map parameterMap, Map safeguardMap) throws Exception {
-		if (log.isDebugEnabled()) log.debug("getSitemapParameters start");
-		Integer viewComponentId = null;
-		String language = null;
-		Integer siteId = null;
-		String path = null;
-		String viewType = null;
-		String safeguardUsername = null;
-		String safeguardPassword = null;
-
+ 
+	public Map getSitemapParameters(Integer viewComponentId, Integer siteId, String language, String path, String viewType, String safeguardUsername, String safeguardPassword, Map safeguardMap) throws Exception {
 		boolean needSafeguard = false;
 		Map<String, String> sitemapParams = new HashMap<String, String>();
-
-		try {
-			String vcId = (String) parameterMap.get("viewComponentId");
-			if (vcId != null && !"".equalsIgnoreCase(vcId)) viewComponentId = Integer.valueOf(vcId);
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) log.debug("Could not parse viewComponentId: " + e.getMessage());
-		}
-		try {
-			String sId = (String) parameterMap.get("siteId");
-			if (sId != null && !"".equalsIgnoreCase(sId)) siteId = Integer.valueOf(sId);
-		} catch (Exception e) {
-			if (log.isDebugEnabled()) log.debug("Could not parse siteId: " + e.getMessage());
-		}
-		{
-			// values may be null or are for sure not null
-			language = (String) parameterMap.get("language");
-			path = (String) parameterMap.get("path");
-			viewType = (String) parameterMap.get("viewType");
-			safeguardUsername = (String) parameterMap.get("safeguardUsername");
-			safeguardPassword = (String) parameterMap.get("safeguardPassword");
-			if (safeguardPassword == null) safeguardPassword = "";
-		}
 
 		if (viewComponentId != null) {
 			String templateName = this.getContentTemplateName(viewComponentId);
@@ -991,6 +956,45 @@ public class WebServiceSpring {
 
 		if (log.isDebugEnabled()) log.debug("getSitemapParameters end " + map2string(sitemapParams));
 		return sitemapParams;
+	}
+	/**
+	 * @see de.juwimm.cms.remote.WebServiceSpringBase#getSitemapParameters(java.util.Map,
+	 *      java.util.Map)
+	 * @deprecated use new getSitemapParameters now
+	 */
+	public Map getSitemapParameters(Map parameterMap, Map safeguardMap) throws Exception {
+		if (log.isDebugEnabled()) log.debug("getSitemapParameters start");
+		Integer viewComponentId = null;
+		String language = null;
+		Integer siteId = null;
+		String path = null;
+		String viewType = null;
+		String safeguardUsername = null;
+		String safeguardPassword = null;
+
+		try {
+			String vcId = (String) parameterMap.get("viewComponentId");
+			if (vcId != null && !"".equalsIgnoreCase(vcId)) viewComponentId = Integer.valueOf(vcId);
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Could not parse viewComponentId: " + e.getMessage());
+		}
+		try {
+			String sId = (String) parameterMap.get("siteId");
+			if (sId != null && !"".equalsIgnoreCase(sId)) siteId = Integer.valueOf(sId);
+		} catch (Exception e) {
+			if (log.isDebugEnabled()) log.debug("Could not parse siteId: " + e.getMessage());
+		}
+		{
+			// values may be null or are for sure not null
+			language = (String) parameterMap.get("language");
+			path = (String) parameterMap.get("path");
+			viewType = (String) parameterMap.get("viewType");
+			safeguardUsername = (String) parameterMap.get("safeguardUsername");
+			safeguardPassword = (String) parameterMap.get("safeguardPassword");
+			if (safeguardPassword == null) safeguardPassword = "";
+		}
+
+		return getSitemapParameters(viewComponentId, siteId, language, path, viewType, safeguardUsername, safeguardPassword, safeguardMap);
 	}
 
 	private String map2string(Map m) {

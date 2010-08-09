@@ -2,11 +2,10 @@
 <html>
 <head>
 	<meta name="layout" content="${(params.popup) ? 'popup' : 'main'}"/>
-	<title>Simple GSP page</title></head>
+	<title><tizzit:content node="//title" omitFirst="true"/></title>
+</head>
 <body>
-Standard Template
-Tizzit Navi:
-<tizzit:navigation since="root" depth="3"/>
+<tizzit:content node="//content" omitFirst="true" moduleTemplates="${[picture:"picture2"]}"/>
 
 </body>
 </html>

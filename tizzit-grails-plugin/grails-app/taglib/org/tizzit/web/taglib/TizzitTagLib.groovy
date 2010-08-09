@@ -14,7 +14,6 @@ import org.dom4j.io.XMLWriter
 import org.dom4j.io.OutputFormat
 import org.dom4j.DocumentHelper
 import org.dom4j.Element
-import org.dom4j.tree.DefaultElement
 
 class TizzitTagLib {
 	def tizzitRestClientService
@@ -26,95 +25,67 @@ class TizzitTagLib {
 		def since = attrs.since
 		def template = (attrs.template) ? attrs.template : "navigation"
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
-		def xml = tizzitRestClientService.navigationXml(depth, since)
+		def xml = tizzitRestClientService.navigationXml(depth, since, flash.tizzit.viewComponentId)
 		if (omitFirst) {
 			xml = xml.viewcomponent
 		}
 		try {
-			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/de"])
+			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.language"])
 		} catch (e) {
-			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/de"], plugin: "tizzitWeb")
+			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.language"], plugin: "tizzitWeb")
 		}
 	}
 
-	public static String xmlToString(Node node) {
-		try {
-			Source source = new DOMSource(node);
-			StringWriter stringWriter = new StringWriter();
-			Result result = new StreamResult(stringWriter);
-			TransformerFactory factory = TransformerFactory.newInstance();
-
-			Transformer transformer = factory.newTransformer();
-			transformer.transform(source, result);
-			return stringWriter.getBuffer().toString();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	def content = { attrs, body ->
-		DefaultElement.metaClass.methodMissing = {
-			String name, def args ->
-			println name
-		}
-
 		def node = (attrs.node) ? attrs.node : null
 		def nodes = (attrs.nodes) ? attrs.nodes : null
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
 		def template = (attrs.template) ? attrs.template : null
 		def preparseModules = (attrs.preparseModules) ? attrs.preparseModules.toBoolean() : true
 
-		def xml
-		if (flash.content) {
-			xml = flash.content.clone()
-		} else {
-			log.debug "fetching content from REST service"
-			def resp = tizzitRestClientService.contentText()
-			xml = DocumentHelper.parseText(resp)
-			flash.content = xml.clone()
+		def xmlDom = flash.tizzit.contentDom.clone()
+		def xmlSlurp = flash.contentXml // TODO: Use slurp xml for xpath stuff
+		/*GroovyShell gs = new GroovyShell()
+		gs.xmlSlurp = xmlSlurp
+		gs.evaluate("")*/
+
+		if (node) {
+			xmlDom = xmlDom.selectSingleNode(node)
+		} else if (nodes) {
+			log.debug "select multiple nodes $nodes"
+			xmlDom = xmlDom.selectNodes(nodes)
 		}
 
 		if (preparseModules) {
 			log.info "preparseModules for node $node nodes $nodes"
-			xml.selectNodes("//" + grailsApplication.config.tizzit.modules.list.join(' | //')).each { Element n ->
+			xmlDom.selectNodes("//" + grailsApplication.config.tizzit.modules.list.join(' | //')).each { Element n ->
 				def xp = new XmlParser().parseText(n.asXML())
 				def i
 				try {
-					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xml')
+					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xmlDom')
 				} catch (e) {
-					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xml', plugin: "tizzitWeb")
+					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xmlDom', plugin: "tizzitWeb")
 				}
 				def da = DocumentHelper.parseText(i.toString())
 				replaceNode(n, da)
 			}
 		}
 
-		if (node) {
-			xml = xml.selectSingleNode(node)
-		} else if (nodes) {
-			log.debug "select multiple nodes $nodes"
-			xml = xml.selectNodes(nodes)
-		}
-
 		if (template) {
 			def model = [:]
 			if (nodes) {
-				model.nodes = xml
+				model.nodes = xmlDom
 			} else {
-				def xp = new XmlParser().parseText(xml.asXML())
+				def xp = new XmlParser().parseText(xmlDom.asXML())
 				model.node = xp
 			}
-
 			try {
-				out << render(template: "components/${template}", model: model, contentType: 'text/xml')
+				out << render(template: "components/${template}", model: model, contentType: 'text/xmlDom')
 			} catch (e) {
-				out << render(template: "components/${template}", model: model, contentType: 'text/xml', plugin: "tizzitWeb")
+				out << render(template: "components/${template}", model: model, contentType: 'text/xmlDom', plugin: "tizzitWeb")
 			}
 		} else {
-			out << getStringFromXml(xml, omitFirst)
+			out << getStringFromXml(xmlDom, omitFirst)
 		}
 	}
 

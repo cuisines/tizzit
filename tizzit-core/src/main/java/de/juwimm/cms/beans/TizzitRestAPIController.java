@@ -20,15 +20,19 @@
  */
 package de.juwimm.cms.beans;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import de.juwimm.cms.exceptions.UserException;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.HostHbmDao;
 
 @Controller
 public class TizzitRestAPIController {
@@ -36,6 +40,8 @@ public class TizzitRestAPIController {
 
 	@Autowired
 	private WebServiceSpring webSpringBean;
+	@Autowired
+	private HostHbmDao hostHbmDao;
 
 	public void setWebSpringBean(WebServiceSpring webSpringBean) {
 		log.info("connecting webservice...");
@@ -341,6 +347,60 @@ public class TizzitRestAPIController {
 		return sb;
 	}
 
+	//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
+	@RequestMapping(value = "/action", method = RequestMethod.GET)
+	@ResponseBody
+	public String getAction(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath, @RequestParam(value = "safeguardUsername", required = false) String safeguardUsername, @RequestParam(value = "safeguardPassword", required = false) String safeguardPassword) throws Exception {
+
+		/*
+		// first check for some redirects for this host
+		String redirectUrl = this.webServiceSpring.resolveRedirect(host, requestPath, new HashSet<String>());
+		if (redirectUrl != null && !"".equalsIgnoreCase(redirectUrl)) {
+			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
+			sitemapParams.put(HostSelectorAction.REDIRECT_URL, redirectUrl);
+			return sitemapParams;
+		}
+		sitemapParams.put(HostSelectorAction.REDIRECT_URL, "0");
+
+		
+		String startPageUrl = this.webServiceSpring.getStartPage(host);
+		if (log.isDebugEnabled()) {
+			log.debug("found " + HostSelectorAction.MANDATOR_DIR + ": " + mandatorDir + " " + HostSelectorAction.STARTPAGE_URL + ": " + startPageUrl);
+		}
+		if ("".equalsIgnoreCase(startPageUrl)) {
+			startPageUrl = "0";
+		}
+		
+		sitemapParams.put(HostSelectorAction.STARTPAGE_URL, startPageUrl);
+		*/
+
+		StringBuffer sb = new StringBuffer();
+		//TODO correct mapping - even if only shortlink provided or only language
+		String path = requestPath.substring(requestPath.indexOf('/') + 1); // ded/blaa
+		String language = requestPath.substring(0, requestPath.indexOf('/')); // 0123456
+		String viewType = "browser"; // This can be browser for now 
+ 
+		sb.append("<root>");
+		sb.append("<params>");
+
+		HostHbm host = hostHbmDao.load(hostName);
+		Integer siteId = host.getSite().getSiteId();
+		
+		Map<String, String> r = webSpringBean.getSitemapParameters(null, siteId, language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
+		for (String name : r.keySet()) {
+			String val = r.get(name);
+			sb.append("<" + name + ">" + val + "</" + name + ">");
+		}
+
+		sb.append("</params>");
+		sb.append("<content>");
+		sb.append(webSpringBean.getContent(Integer.parseInt(r.get("viewComponentId")), host.isLiveserver()));
+		sb.append("</content>");
+		sb.append("</root>");
+
+		return sb.toString();
+	}
+
 	//	public String resolveRedirect(String hostName, String requestPath, Set<String> formerHostsSet) {
 	//
 	//	}
@@ -408,10 +468,6 @@ public class TizzitRestAPIController {
 	//	}
 	//
 	//	public TalktimeValue getTalktime(Long talktimeId){
-	//
-	//	}
-	//
-	//	public Map getSitemapParameters(Map parameterMap, Map safeguardMap){
 	//
 	//	}
 	//
