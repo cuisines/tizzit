@@ -450,7 +450,7 @@ public class TizzitRestAPIController {
 		sb.append("<siteShort>" + site.getShortName() + "</siteShort>");
 		sb.append("<hostIsLiveserver>" + host.isLiveserver() + "</hostIsLiveserver>");
 
-		Map<String, String> r = webSpringBean.getSitemapParameters(null, siteId, language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
+		Map<String, String> r = webSpringBean.getSitemapParameters(null, site.getSiteId(), language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
 		for (String name : r.keySet()) {
 			String val = r.get(name);
 			sb.append("<" + name + ">" + val + "</" + name + ">");
