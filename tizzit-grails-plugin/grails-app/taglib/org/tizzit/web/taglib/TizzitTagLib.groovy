@@ -30,9 +30,9 @@ class TizzitTagLib {
 			xml = xml.viewcomponent
 		}
 		try {
-			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.language"])
+			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.uri"])
 		} catch (e) {
-			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.language"], plugin: "tizzitWeb")
+			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.uri"], plugin: "tizzitWeb")
 		}
 	}
 

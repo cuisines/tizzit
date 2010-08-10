@@ -35,9 +35,4 @@ log4j = {
 } 
 
 grails.rest.injectInto = ["Controller", "Service", "TagLib"]
-
-tizzit {
-	modules {
-		list = ["internalLink", "picture"]
-	}
-}
+ 

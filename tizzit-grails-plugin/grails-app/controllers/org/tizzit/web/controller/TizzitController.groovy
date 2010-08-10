@@ -26,7 +26,7 @@ class TizzitController {
 			flash.tizzit.login = xml.params.login
 			flash.tizzit.redirect = xml.params.redirect
 			flash.tizzit.language = xml.params.language
-
+			flash.tizzit.uri = params.tizzituri
 			flash.tizzit.contentDom = DocumentHelper.parseText(resp)
 			//flash.contentXml = new XmlSlurper().parseText(xml.content)
 		}
