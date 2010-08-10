@@ -330,7 +330,7 @@ public class TizzitRestAPIController {
 	}
 
 	@RequestMapping(value = "/heading/{contentId}/{liveServer}", method = RequestMethod.GET)
-	@ResponseBody
+//	@ResponseBody
 	public String getHeading(@PathVariable int contentId, @PathVariable boolean liveServer) {
 		if (log.isDebugEnabled()) log.debug("/heading/" + contentId);
 		String sb = null;
@@ -543,9 +543,10 @@ public class TizzitRestAPIController {
 	//
 	//	}
 	//
-	//	public byte[] getPicture(Integer pictureId){
-	//
-	//	}
+		@ResponseBody
+		public byte[] getPicture(Integer pictureId) throws Exception {
+			return webSpringBean.getPicture(pictureId);
+		}
 	//
 	//	public Long getTimestamp4Picture(Integer pictureId){
 	//
@@ -603,27 +604,6 @@ public class TizzitRestAPIController {
 	//
 	//	}
 
-	@RequestMapping(value = "/simpleTest", method = RequestMethod.GET)
-	@ResponseBody
-	public String simpleTest() {
-		log.info("/simpleTest");
-		//		String sb = webSpringBean.getUnitInfoXml(unitid);
-		String sb = "<root>superuser</root>";
 
-		return sb;
-	}
-
-	@RequestMapping(value = "/hardTest", method = RequestMethod.GET)
-	public ModelAndView hardTest() {
-		log.info("/hardTest");
-		//		String sb = webSpringBean.getUnitInfoXml(unitid);
-		String sb = "<root>superuser</root>";
-
-		ModelAndView mav = new ModelAndView();
-		//tries to access the site /rest/content...
-		mav.setViewName("content");
-		mav.addObject("unitInfoXmlString", sb);
-		return mav;
-	}
 
 }
