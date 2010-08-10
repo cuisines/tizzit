@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.tizzit.plugins.server.transformer.BaseContentHandler;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
@@ -212,7 +211,6 @@ public class TizzitRestAPIController {
 				long parseTime = System.currentTimeMillis();
 
 				parser.parse(inputSource);
-
 				parseTime = System.currentTimeMillis() - parseTime;
 				log.debug("Parse time: " + parseTime + "ms");
 			} catch (SAXException saxe) {
@@ -221,7 +219,7 @@ public class TizzitRestAPIController {
 				log.warn("Error while parsing content of: " + vcId, ioe);
 			}
 		}
-		return sw.toString();
+		return sw.toString().substring(38);
 	}
 
 	@RequestMapping(value = "/mandatordir/{hostName}", method = RequestMethod.GET)
@@ -381,7 +379,7 @@ public class TizzitRestAPIController {
 	}
 
 	@RequestMapping(value = "/heading/{contentId}/{liveServer}", method = RequestMethod.GET)
-//	@ResponseBody
+	//	@ResponseBody
 	public String getHeading(@PathVariable int contentId, @PathVariable boolean liveServer) {
 		if (log.isDebugEnabled()) log.debug("/heading/" + contentId);
 		String sb = null;
@@ -594,11 +592,11 @@ public class TizzitRestAPIController {
 	//
 	//	}
 	//
-		@RequestMapping(value = "/picture", method = RequestMethod.GET)
-		@ResponseBody
-		public byte[] getPicture(Integer pictureId) throws Exception {
-			return webSpringBean.getPicture(pictureId);
-		}
+	@RequestMapping(value = "/picture", method = RequestMethod.GET)
+	@ResponseBody
+	public byte[] getPicture(Integer pictureId) throws Exception {
+		return webSpringBean.getPicture(pictureId);
+	}
 	//
 	//	public Long getTimestamp4Picture(Integer pictureId){
 	//
@@ -655,7 +653,5 @@ public class TizzitRestAPIController {
 	//	public Boolean getLiveserver(String hostName) {
 	//
 	//	}
-
-
 
 }
