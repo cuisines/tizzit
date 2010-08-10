@@ -37,6 +37,7 @@ import org.w3c.dom.Node;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.HostHbmDao;
+import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 @Controller
@@ -443,7 +444,10 @@ public class TizzitRestAPIController {
 		sb.append("<params>");
 
 		HostHbm host = hostHbmDao.load(hostName);
-		Integer siteId = host.getSite().getSiteId();
+		SiteHbm site = host.getSite();
+		sb.append("<siteId>" + site.getSiteId() + "</siteId>");
+		sb.append("<siteName>" + site.getName() + "</siteName>");
+		sb.append("<siteShort>" + site.getShortName() + "</siteShort>");
 		sb.append("<hostIsLiveserver>" + host.isLiveserver() + "</hostIsLiveserver>");
 
 		Map<String, String> r = webSpringBean.getSitemapParameters(null, siteId, language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
