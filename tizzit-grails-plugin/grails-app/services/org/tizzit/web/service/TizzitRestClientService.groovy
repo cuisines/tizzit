@@ -7,6 +7,14 @@ class TizzitRestClientService {
 	def grailsApplication
 	static transactional = false
 
+	def picture(pictureId) {
+		//http://localhost:8080/remote/picture/10153
+		withHttp(uri: grailsApplication.config.tizzit.restServer) {
+			def resp = get(path: "/$grailsApplication.config.tizzit.restServerContextPath/picture/$pictureId")
+			return resp
+		}
+	}
+
 	def navigationXml(depth, since, viewComponentId, isLiveserver) {
 		def xml
 

@@ -25,9 +25,9 @@ class TizzitTagLib {
 		def depth = attrs.depth
 		def since = attrs.since
 		def template = (attrs.template) ?: "navigation"
-		def viewComponentId = (attrs.viewComponentId) ?: flash.tizzit.viewComponentId
+		def viewComponentId = (attrs.viewComponentId) ?: params.tizzit.viewComponentId
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
-		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, flash.tizzit.isLiveserver)
+		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, params.tizzit.isLiveserver)
 		if (omitFirst) {
 			xml = xml.viewcomponent
 		}
@@ -46,7 +46,7 @@ class TizzitTagLib {
 		def moduleTemplates = (attrs.moduleTemplates) ?: [:]
 		def preparseModules = (attrs.preparseModules) ? attrs.preparseModules.toBoolean() : true
 
-		def xmlDom = flash.tizzit.contentDom.clone()
+		def xmlDom = params.tizzit.contentDom.clone()
 		def xmlSlurp = flash.contentXml // TODO: Use slurp xml for xpath stuff
 		/*GroovyShell gs = new GroovyShell()
 		gs.xmlSlurp = xmlSlurp

@@ -1,4 +1,4 @@
 <div>
-<!--<img src="${node.image.@src[0]}" alt=""/>-->
-Here comes an Image
+<!--<img src="" alt=""/>mimeType-->
+<img src="/picture/${node.image.@src[0]}" alt=""/>
 </div>

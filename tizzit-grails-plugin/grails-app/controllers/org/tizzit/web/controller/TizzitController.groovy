@@ -6,54 +6,69 @@ import groovy.xml.StreamingMarkupBuilder
 import grails.converters.XML
 
 class TizzitController {
-	def beforeInterceptor = [action: this.&tizzitAction]
+	 //def beforeInterceptor = [action: this.&tizzitAction]
 	def tizzitRestClientService
 
 	def tizzitAction() {
 		log.debug "starting tizzitAction"
 
-		flash.template = (params.template) ? params.template : "standard"
-
-		if (!flash.tizzit) {
-			flash.tizzit = new Expando()
+		if (!params.tizzit) {
+			params.tizzit = new Expando()
 			log.debug "fetching content from REST service"
 //http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
 			def resp = tizzitRestClientService.actionData("www.hsg-wennigsen-gehrden.de", params.tizzituri, params.safeguardUsername, params.safeguardPassword)
 			def xml = new XmlSlurper().parseText(resp)
-			flash.tizzit.viewComponentId = xml.params.viewComponentId
-			flash.tizzit.template = xml.params.template ?: "standard"
-			flash.tizzit.safeguard = xml.params.safeguard
-			flash.tizzit.path = xml.params.path
-			flash.tizzit.login = xml.params.login
-			flash.tizzit.redirect = xml.params.redirect
-			flash.tizzit.language = xml.params.language
-			flash.tizzit.isLiveserver = xml.params.hostIsLiveserver
-			flash.tizzit.uri = params.tizzituri
-			flash.tizzit.contentDom = DocumentHelper.parseText(resp)
-			flash.tizzit.contentRaw = resp                              // todo flash scope!
+			params.tizzit.viewComponentId = xml.params.viewComponentId
+			params.tizzit.template = xml.params.template ?: "standard"
+			params.tizzit.safeguard = xml.params.safeguard
+			params.tizzit.path = xml.params.path
+			params.tizzit.login = xml.params.login
+			params.tizzit.redirect = xml.params.redirect
+			params.tizzit.language = xml.params.language
+			params.tizzit.isLiveserver = xml.params.hostIsLiveserver
+			params.tizzit.uri = params.tizzituri
+			params.tizzit.contentDom = DocumentHelper.parseText(resp)
+			params.tizzit.contentRaw = resp                              // todo flash scope!
 			//flash.contentXml = new XmlSlurper().parseText(xml.content)
 		}
 	}
 
 	def index = {
 		log.debug "starting index"
+		tizzitAction()
 		def renderType = (params.renderType) ? params.renderType : "html"
 
 		if (renderType == "html") {
-			def fullUri = grailsAttributes.getTemplateUri("templates/$flash.tizzit.template", request)
+			def fullUri = grailsAttributes.getTemplateUri("templates/$params.tizzit.template", request)
 			def resource = grailsAttributes.pagesTemplateEngine.getResourceForUri(fullUri)
 
 			if (resource && resource.file && resource.exists()) {
-				log.debug "gathered local template $flash.tizzit.template"
-				render(template: "templates/$flash.tizzit.template")
+				log.debug "gathered local template $params.tizzit.template"
+				render(template: "templates/$params.tizzit.template")
 			} else {
-				log.debug "gathered plugin default template $flash.tizzit.template"
-				render(template: "templates/$flash.tizzit.template", plugin: "tizzitWeb")
+				log.debug "gathered plugin default template $params.tizzit.template"
+				render(template: "templates/$params.tizzit.template", plugin: "tizzitWeb")
 			}
 		} else if (renderType == "xml") {
-			render(text: flash.tizzit.contentRaw, contentType:"text/xml", encoding:"UTF-8")
+			render(text: params.tizzit.contentRaw, contentType:"text/xml", encoding:"UTF-8")
 		}
 		log.debug "finished index"
+	}
+
+
+	def picture = {
+		log.debug "starting picture"
+		//http://localhost:8080/remote/picture/10153
+		response.setHeader "Content-Disposition", "inline"
+		response.setContentType "image/jpg"
+		OutputStream out = response.getOutputStream()
+		out <<  tizzitRestClientService.picture(params.id)
+		out.close()
+		out.flush()
+	}
+
+	def favicon = {
+		render ""
 	}
 }
 
@@ -66,7 +81,7 @@ class TizzitController {
 			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
 			sitemapParams.put(HostSelectorAction.REDIRECT_URL, redirectUrl);
 			return sitemapParams;
-		}
+		}   
 		sitemapParams.put(HostSelectorAction.REDIRECT_URL, "0");
 
 		String startPageUrl = this.webServiceSpring.getStartPage(host);

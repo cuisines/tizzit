@@ -3,6 +3,10 @@ class TizzitWebPluginUrlMappings {
 
 	static mappings = {
 		"/$tizzituri**" (controller: "tizzit")
+		"/picture/$id" (controller: "tizzit", action: "picture")
+		"/picture/$mimeType/$id" (controller: "tizzit", action: "picture")
+		"/favicon*" (controller: "tizzit", action: "favicon")
+
 
 		"/"(controller: "tizzit")
 		"500"(view: '/error')
