@@ -592,9 +592,10 @@ public class TizzitRestAPIController {
 	//
 	//	}
 	//
-	@RequestMapping(value = "/picture", method = RequestMethod.GET)
+
+	@RequestMapping(value = "/picture/{pictureId}", method = RequestMethod.GET)
 	@ResponseBody
-	public byte[] getPicture(Integer pictureId) throws Exception {
+	public byte[] getPicture(@PathVariable Integer pictureId) throws Exception {
 		return webSpringBean.getPicture(pictureId);
 	}
 	//

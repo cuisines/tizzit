@@ -20,7 +20,7 @@
 	<aop:config proxy-target-class="false">
 		<aop:pointcut expression="@annotation(de.juwimm.cms.common.annotation.HourCache)" id="hourCachePointcut"/>
 		<aop:pointcut expression="execution(* de.juwimm.cms.beans.WebServiceSpring+.*(..))" id="webserviceSpring"/>
-		<aop:pointcut expression="execution(* de.juwimm.cms.beans.TizzitRestAPIController+.*(..))" id="tizzitRestAPIController"/>
+		
 		<aop:pointcut expression="execution(* de.juwimm.cms.remote.ClientServiceSpring+.*(..))" id="clientService"/>
 		<aop:pointcut expression="execution(* de.juwimm.cms.remote.ContentServiceSpring+.*(..))" id="contentService"/>
 		<aop:pointcut expression="execution(* de.juwimm.cms.beans.EditionCronService+.*(..))" id="editionCronServicePointcut"/>
@@ -28,7 +28,7 @@
 		<aop:advisor advice-ref="nanoCacheInterceptor" pointcut-ref="webserviceSpring"/>
 		<aop:advisor advice-ref="hourCacheInterceptor" pointcut-ref="hourCachePointcut"/>
 		<aop:advisor advice-ref="noTxAdvice" pointcut-ref="webserviceSpring"/>
-		<aop:advisor advice-ref="noTxAdvice" pointcut-ref="tizzitRestAPIController"/>
+		
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="clientService"/>
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="editionCronServicePointcut"/>
 		<aop:advisor advice-ref="txAdviceRemoteLogin" pointcut-ref="authorizationServicePointcut"/>
