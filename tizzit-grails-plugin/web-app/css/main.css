@@ -14,7 +14,7 @@ body {
 	color: #8A8A8A;
 }
 
-h1, h2, h3 {
+h1, h2, h3, a.level1  {
 	margin: 0;
 	text-transform: uppercase;
 	font-weight: normal;
@@ -23,7 +23,7 @@ h1, h2, h3 {
 
 h1 { font-size: 44px; }
 
-h2 { font-size: 18px; }
+a.level1, h2 { font-size: 18px; }
 
 h3 { }
 
@@ -353,7 +353,7 @@ hr { display: none; }
 	padding: 0px 14px;
 }
 
-#sidebar h2 {
+#sidebar li.level1 a.level1 {
 	height: 30px;
 	margin: 0 0 0px 0px;
 	padding: 0px 0 2px 14px;

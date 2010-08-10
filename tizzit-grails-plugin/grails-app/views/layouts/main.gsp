@@ -21,7 +21,7 @@
 <!-- end #logo -->
 <div id="header">
 	<div id="menu">
-		<tizzit:navigation since="root" depth="1" omitFirst="true"/>
+		<tizzit:navigation since="root" depth="1" omitFirst="true" showType="1"/>
 	</div>
 	<!-- end #menu -->
 	<div id="search">
@@ -43,14 +43,14 @@
 		</div>
 	</div><!-- end #content -->
 	<div id="sidebar">
-		<tizzit:navigation since="me" depth="2" omitFirst="true" template="navigationH1"/>
+		<tizzit:navigation since="me" depth="2" omitFirst="true"/>
 	</div>
 	<!-- end #sidebar -->
 	<div style="clear: both;">&nbsp;</div>
 </div>
 <!-- end #page -->
 <div id="footer">
-	<tizzit:navigation since="root" depth="1" omitFirst="true"/>
+	<tizzit:navigation since="root" depth="1" omitFirst="true" showType="2"/>
 </div>
 <!-- end #footer -->
 </body>

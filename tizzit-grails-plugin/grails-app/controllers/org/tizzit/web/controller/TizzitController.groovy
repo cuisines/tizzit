@@ -3,6 +3,7 @@ package org.tizzit.web.controller
 import org.dom4j.DocumentHelper
 import groovy.xml.XmlUtil
 import groovy.xml.StreamingMarkupBuilder
+import grails.converters.XML
 
 class TizzitController {
 	def beforeInterceptor = [action: this.&tizzitAction]
@@ -16,7 +17,7 @@ class TizzitController {
 		if (!flash.tizzit) {
 			flash.tizzit = new Expando()
 			log.debug "fetching content from REST service"
-
+//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
 			def resp = tizzitRestClientService.actionData("www.hsg-wennigsen-gehrden.de", params.tizzituri, params.safeguardUsername, params.safeguardPassword)
 			def xml = new XmlSlurper().parseText(resp)
 			flash.tizzit.viewComponentId = xml.params.viewComponentId
@@ -26,26 +27,32 @@ class TizzitController {
 			flash.tizzit.login = xml.params.login
 			flash.tizzit.redirect = xml.params.redirect
 			flash.tizzit.language = xml.params.language
+			flash.tizzit.isLiveserver = xml.params.hostIsLiveserver
 			flash.tizzit.uri = params.tizzituri
 			flash.tizzit.contentDom = DocumentHelper.parseText(resp)
+			flash.tizzit.contentRaw = resp                              // todo flash scope!
 			//flash.contentXml = new XmlSlurper().parseText(xml.content)
 		}
 	}
 
 	def index = {
 		log.debug "starting index"
+		def renderType = (params.renderType) ? params.renderType : "html"
 
-		def fullUri = grailsAttributes.getTemplateUri("templates/$flash.tizzit.template", request)
-		def resource = grailsAttributes.pagesTemplateEngine.getResourceForUri(fullUri)
+		if (renderType == "html") {
+			def fullUri = grailsAttributes.getTemplateUri("templates/$flash.tizzit.template", request)
+			def resource = grailsAttributes.pagesTemplateEngine.getResourceForUri(fullUri)
 
-		if (resource && resource.file && resource.exists()) {
-			log.debug "gathered local template $flash.tizzit.template"
-			render(template: "templates/$flash.tizzit.template")
-		} else {
-			log.debug "gathered plugin default template $flash.tizzit.template"
-			render(template: "templates/$flash.tizzit.template", plugin: "tizzitWeb")
+			if (resource && resource.file && resource.exists()) {
+				log.debug "gathered local template $flash.tizzit.template"
+				render(template: "templates/$flash.tizzit.template")
+			} else {
+				log.debug "gathered plugin default template $flash.tizzit.template"
+				render(template: "templates/$flash.tizzit.template", plugin: "tizzitWeb")
+			}
+		} else if (renderType == "xml") {
+			render(text: flash.tizzit.contentRaw, contentType:"text/xml", encoding:"UTF-8")
 		}
-
 		log.debug "finished index"
 	}
 }

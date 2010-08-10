@@ -20,32 +20,24 @@
  */
 package de.juwimm.cms.beans;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.tizzit.plugins.server.transformer.BaseContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.tizzit.util.XercesHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.HostHbmDao;
+import de.juwimm.cms.vo.ViewComponentValue;
 
 @Controller
 public class TizzitRestAPIController {
@@ -89,15 +81,69 @@ public class TizzitRestAPIController {
 
 	@RequestMapping(value = "/navigationxml/{refVcId}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
 	@ResponseBody
-	public String getNavigationXml(@PathVariable int refVcId, @PathVariable String since, @PathVariable int depth, @PathVariable boolean getPUBLSVersion) {
+	public String getNavigationXml(@PathVariable int refVcId, @PathVariable String since, @PathVariable int depth, @PathVariable boolean getPUBLSVersion) throws Exception {
 		if (log.isDebugEnabled()) log.debug("/navigationxml/" + refVcId);
 		String sb = null;
-		try {
+		/*try {
 			sb = webSpringBean.getNavigationXml(refVcId, since, depth, getPUBLSVersion);
 		} catch (Exception e) {
 			log.warn("Error calling getNavigationXml on webservicespring");
 		}
 		return sb;
+		 */
+		int ifDistanceToNavigationRoot = -1;
+		boolean showOnlyAuthorized = false;
+
+		if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(refVcId) >= ifDistanceToNavigationRoot) {
+			ViewComponentValue viewComponentValue = webSpringBean.getViewComponent4Id(refVcId);
+			String navigationXml = webSpringBean.getNavigationXml(refVcId, since, depth, getPUBLSVersion);
+			if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
+				Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
+				// add axis 
+				String viewComponentXPath = "//viewcomponent[@id=\"" + refVcId + "\"]";
+				if (log.isDebugEnabled()) log.debug("Resolving Navigation Axis: " + viewComponentXPath);
+				Node found = XercesHelper.findNode(docNavigationXml, viewComponentXPath);
+				if (found != null) {
+					if (log.isDebugEnabled()) log.debug("Found Axis in viewComponentId " + refVcId);
+					this.setAxisToRootAttributes(found);
+				} else {
+					ViewComponentValue axisVcl = webSpringBean.getViewComponent4Id(viewComponentValue.getParentId());
+					while (axisVcl != null) {
+						found = XercesHelper.findNode(docNavigationXml, "//viewcomponent[@id=\"" + axisVcl.getViewComponentId() + "\"]");
+						if (found != null) {
+							if (log.isDebugEnabled()) log.debug("Found Axis in axisVcl " + axisVcl.getViewComponentId());
+							this.setAxisToRootAttributes(found);
+							break;
+						}
+						axisVcl = axisVcl.getParentId() == null ? null : webSpringBean.getViewComponent4Id(axisVcl.getParentId());
+					}
+				}
+				// filter safeGuard
+				if (showOnlyAuthorized) {
+					/*try {
+						String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
+						String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
+						if (log.isDebugEnabled()) {
+							log.debug("allNavigationXml\n" + allNavigationXml);
+							log.debug("filteredNavigationXml\n" + filteredNavigationXml);
+						}
+						docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
+					} catch (Exception e) {
+						log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
+					}*/
+				}
+				sb = XercesHelper.doc2String(docNavigationXml);
+			}
+		}
+		return sb;
+	}
+
+	private void setAxisToRootAttributes(Node found) {
+		Node changeNode = found;
+		while (changeNode != null && changeNode instanceof Element && changeNode.getNodeName().equalsIgnoreCase("viewcomponent")) {
+			((Element) changeNode).setAttribute("onAxisToRoot", "true");
+			changeNode = changeNode.getParentNode();
+		}
 	}
 
 	@RequestMapping(value = "/navigationbackwardxml/{refVcId}/{since}/{dontShowFirst}/{getPUBLSVersion}", method = RequestMethod.GET)
@@ -124,45 +170,6 @@ public class TizzitRestAPIController {
 			log.warn("Error calling getContent on webservicespring");
 		}
 		return sb;
-	}
-
-	@RequestMapping(value = "/contentparsed/{vcId}/{getPUBLSVersion}", method = RequestMethod.GET)
-	@ResponseBody
-	public String getContentParsed(@PathVariable int vcId, @PathVariable boolean getPUBLSVersion) {
-		if (log.isDebugEnabled()) log.debug("/contentparsed/" + vcId);
-		String sb = null;
-		try {
-			sb = webSpringBean.getContent(vcId, getPUBLSVersion);
-		} catch (Exception e) {
-			log.warn("Error calling getContent on webservicespring");
-		}
-
-		StringWriter sw = new StringWriter();
-		if (sb != null) {
-			try {
-				XMLReader parser = XMLReaderFactory.createXMLReader();
-				XMLWriter xw = new XMLWriter(sw);
-				PluginManagement pm = new PluginManagement();
-				BaseContentHandler transformer = new BaseContentHandler(pm, xw, webSpringBean, vcId, getPUBLSVersion);
-
-				parser.setContentHandler(transformer);
-
-				InputStream stream = new ByteArrayInputStream(sb.getBytes());
-				InputSource inputSource = new InputSource(stream);
-
-				long parseTime = System.currentTimeMillis();
-
-				parser.parse(inputSource);
-
-				parseTime = System.currentTimeMillis() - parseTime;
-				log.debug("Parse time: " + parseTime + "ms");
-			} catch (SAXException saxe) {
-				log.warn("Error while parsing content of: " + vcId, saxe);
-			} catch (IOException ioe) {
-				log.warn("Error while parsing content of: " + vcId, ioe);
-			}
-		}
-		return sw.toString();
 	}
 
 	@RequestMapping(value = "/mandatordir/{hostName}", method = RequestMethod.GET)
@@ -353,7 +360,6 @@ public class TizzitRestAPIController {
 		if (log.isDebugEnabled()) log.debug("/includecontent/" + currentViewComponentId);
 		String sb = null;
 		try {
-			if (xPathQuery.equalsIgnoreCase("null")) xPathQuery = "";
 			sb = webSpringBean.getIncludeContent(currentViewComponentId, includeUnit, includeBy, getPublsVersion, xPathQuery);
 		} catch (Exception e) {
 			log.warn("Error calling getIncludeContent on webservicespring");
@@ -438,6 +444,7 @@ public class TizzitRestAPIController {
 
 		HostHbm host = hostHbmDao.load(hostName);
 		Integer siteId = host.getSite().getSiteId();
+		sb.append("<hostIsLiveserver>" + host.isLiveserver() + "</hostIsLiveserver>");
 
 		Map<String, String> r = webSpringBean.getSitemapParameters(null, siteId, language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
 		for (String name : r.keySet()) {
@@ -596,6 +603,7 @@ public class TizzitRestAPIController {
 	@ResponseBody
 	public String simpleTest() {
 		log.info("/simpleTest");
+		//		String sb = webSpringBean.getUnitInfoXml(unitid);
 		String sb = "<root>superuser</root>";
 
 		return sb;
@@ -604,6 +612,7 @@ public class TizzitRestAPIController {
 	@RequestMapping(value = "/hardTest", method = RequestMethod.GET)
 	public ModelAndView hardTest() {
 		log.info("/hardTest");
+		//		String sb = webSpringBean.getUnitInfoXml(unitid);
 		String sb = "<root>superuser</root>";
 
 		ModelAndView mav = new ModelAndView();
@@ -613,44 +622,4 @@ public class TizzitRestAPIController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/picTest/{picId}", method = RequestMethod.GET)
-	@ResponseBody
-	public byte[] picTest(@PathVariable int picId) {
-		log.info("/picTest");
-
-		byte[] pic = null;
-		try {
-			pic = webSpringBean.getPicture(picId);
-		} catch (Exception e) {
-			log.warn("could not load pic with id: " + picId);
-		}
-		return pic;
-	}
-
-	@RequestMapping(value = "/picTest2/{picId}", method = RequestMethod.GET)
-	@ResponseBody
-	public String picTest2(@PathVariable int picId) {
-		log.info("/picTest2");
-
-		byte[] pic = null;
-		String ret = null;
-		try {
-			pic = webSpringBean.getPicture(picId);
-			ret = new String(pic);
-		} catch (Exception e) {
-			log.warn("could not load pic with id: " + picId);
-		}
-		return ret;
-	}
-
-	@RequestMapping(value = "/picTest3/{picId}", method = RequestMethod.GET)
-	public void picTest3(@PathVariable int picId, OutputStream out) {
-		log.info("/picTest3");
-		log.info("where does the stream comes from?: " + out);
-		try {
-			out.write(webSpringBean.getPicture(picId));
-		} catch (Exception e) {
-			log.warn("could not load pic with id: " + picId);
-		}
-	}
 }

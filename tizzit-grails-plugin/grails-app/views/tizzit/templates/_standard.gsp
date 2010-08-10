@@ -5,7 +5,8 @@
 	<title><tizzit:content node="//title" omitFirst="true"/></title>
 </head>
 <body>
-<tizzit:content node="//content" omitFirst="true" moduleTemplates="${[picture:"picture2"]}"/>
+<h2>Standard Content Template</h2>
+<tizzit:content node="/root/content/source/all/content" omitFirst="true" moduleTemplates="[picture:'picture']"/>
 
 </body>
 </html>

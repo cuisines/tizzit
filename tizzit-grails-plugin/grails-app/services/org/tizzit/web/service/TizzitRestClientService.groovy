@@ -7,11 +7,11 @@ class TizzitRestClientService {
 	def grailsApplication
 	static transactional = false
 
-	def navigationXml(depth, since, viewComponentId) {
+	def navigationXml(depth, since, viewComponentId, isLiveserver) {
 		def xml
 
 		withHttp(uri: grailsApplication.config.tizzit.restServer) {
-			def resp = get(path: "/$grailsApplication.config.tizzit.restServerContextPath/navigationxml/$viewComponentId/$since/$depth/false")
+			def resp = get(path: "/$grailsApplication.config.tizzit.restServerContextPath/navigationxml/$viewComponentId/$since/$depth/$isLiveserver")
 			resp = "<root>$resp</root>"
 			xml = new XmlParser().parseText(resp)
 		}

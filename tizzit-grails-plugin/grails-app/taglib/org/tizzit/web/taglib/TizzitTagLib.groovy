@@ -14,6 +14,7 @@ import org.dom4j.io.XMLWriter
 import org.dom4j.io.OutputFormat
 import org.dom4j.DocumentHelper
 import org.dom4j.Element
+import org.dom4j.CDATA
 
 class TizzitTagLib {
 	def tizzitRestClientService
@@ -23,16 +24,17 @@ class TizzitTagLib {
 	def navigation = { attrs, body ->
 		def depth = attrs.depth
 		def since = attrs.since
-		def template = (attrs.template) ? attrs.template : "navigation"
+		def template = (attrs.template) ?: "navigation"
+		def viewComponentId = (attrs.viewComponentId) ?: flash.tizzit.viewComponentId
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
-		def xml = tizzitRestClientService.navigationXml(depth, since, flash.tizzit.viewComponentId)
+		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, flash.tizzit.isLiveserver)
 		if (omitFirst) {
 			xml = xml.viewcomponent
 		}
 		try {
-			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.uri"])
+			out << render(template: "components/${template}", model: [navigation: xml, level: 1])
 		} catch (e) {
-			out << render(template: "components/${template}", model: [navigation: xml, urlLinkName: "/$flash.tizzit.uri"], plugin: "tizzitWeb")
+			out << render(template: "components/${template}", model: [navigation: xml, level: 1], plugin: "tizzitWeb")
 		}
 	}
 
@@ -41,6 +43,7 @@ class TizzitTagLib {
 		def nodes = (attrs.nodes) ? attrs.nodes : null
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
 		def template = (attrs.template) ? attrs.template : null
+		def moduleTemplates = (attrs.moduleTemplates) ?: [:]
 		def preparseModules = (attrs.preparseModules) ? attrs.preparseModules.toBoolean() : true
 
 		def xmlDom = flash.tizzit.contentDom.clone()
@@ -50,7 +53,7 @@ class TizzitTagLib {
 		gs.evaluate("")*/
 
 		if (node) {
-			xmlDom = xmlDom.selectSingleNode(node)
+			xmlDom = xmlDom.selectSingleNode(node) 
 		} else if (nodes) {
 			log.debug "select multiple nodes $nodes"
 			xmlDom = xmlDom.selectNodes(nodes)
@@ -61,10 +64,11 @@ class TizzitTagLib {
 			xmlDom.selectNodes("//" + grailsApplication.config.tizzit.modules.list.join(' | //')).each { Element n ->
 				def xp = new XmlParser().parseText(n.asXML())
 				def i
+				def moduleTemplate = moduleTemplates."$n.name"?:n.name
 				try {
-					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xmlDom')
+					i = render(template: "modules/${moduleTemplate}", model: [node: xp], contentType: 'text/xmlDom')
 				} catch (e) {
-					i = render(template: "modules/${n.name}", model: [node: xp], contentType: 'text/xmlDom', plugin: "tizzitWeb")
+					i = render(template: "modules/${moduleTemplate}", model: [node: xp], contentType: 'text/xmlDom', plugin: "tizzitWeb")
 				}
 				def da = DocumentHelper.parseText(i.toString())
 				replaceNode(n, da)
