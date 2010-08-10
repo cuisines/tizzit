@@ -497,8 +497,8 @@ public class TizzitRestAPIController {
 		HostHbm host = hostHbmDao.load(hostName);
 		SiteHbm site = host.getSite();
 		sb.append("<siteId>" + site.getSiteId() + "</siteId>");
-		sb.append("<siteName>" + site.getName() + "</siteName>");
-		sb.append("<siteShort>" + site.getShortName() + "</siteShort>");
+		//sb.append("<siteName>" + site.getName() + "</siteName>");
+		//sb.append("<siteShort>" + site.getShortName() + "</siteShort>");
 		sb.append("<hostIsLiveserver>" + host.isLiveserver() + "</hostIsLiveserver>");
 
 		Map<String, String> r = webSpringBean.getSitemapParameters(null, site.getSiteId(), language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
@@ -509,7 +509,7 @@ public class TizzitRestAPIController {
 
 		sb.append("</params>");
 		sb.append("<content>");
-		sb.append(webSpringBean.getContent(Integer.parseInt(r.get("viewComponentId")), host.isLiveserver()));
+		sb.append(getContentParsed(Integer.parseInt(r.get("viewComponentId")), host.isLiveserver()));
 		sb.append("</content>");
 		sb.append("</root>");
 
@@ -594,6 +594,7 @@ public class TizzitRestAPIController {
 	//
 	//	}
 	//
+		@RequestMapping(value = "/picture", method = RequestMethod.GET)
 		@ResponseBody
 		public byte[] getPicture(Integer pictureId) throws Exception {
 			return webSpringBean.getPicture(pictureId);
