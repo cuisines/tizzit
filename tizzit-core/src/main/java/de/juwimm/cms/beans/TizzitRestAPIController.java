@@ -20,17 +20,30 @@
  */
 package de.juwimm.cms.beans;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.tizzit.plugins.server.transformer.BaseContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
-import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.HostHbmDao;
 
@@ -111,6 +124,45 @@ public class TizzitRestAPIController {
 			log.warn("Error calling getContent on webservicespring");
 		}
 		return sb;
+	}
+
+	@RequestMapping(value = "/contentparsed/{vcId}/{getPUBLSVersion}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getContentParsed(@PathVariable int vcId, @PathVariable boolean getPUBLSVersion) {
+		if (log.isDebugEnabled()) log.debug("/contentparsed/" + vcId);
+		String sb = null;
+		try {
+			sb = webSpringBean.getContent(vcId, getPUBLSVersion);
+		} catch (Exception e) {
+			log.warn("Error calling getContent on webservicespring");
+		}
+
+		StringWriter sw = new StringWriter();
+		if (sb != null) {
+			try {
+				XMLReader parser = XMLReaderFactory.createXMLReader();
+				XMLWriter xw = new XMLWriter(sw);
+				PluginManagement pm = new PluginManagement();
+				BaseContentHandler transformer = new BaseContentHandler(pm, xw, webSpringBean, vcId, getPUBLSVersion);
+
+				parser.setContentHandler(transformer);
+
+				InputStream stream = new ByteArrayInputStream(sb.getBytes());
+				InputSource inputSource = new InputSource(stream);
+
+				long parseTime = System.currentTimeMillis();
+
+				parser.parse(inputSource);
+
+				parseTime = System.currentTimeMillis() - parseTime;
+				log.debug("Parse time: " + parseTime + "ms");
+			} catch (SAXException saxe) {
+				log.warn("Error while parsing content of: " + vcId, saxe);
+			} catch (IOException ioe) {
+				log.warn("Error while parsing content of: " + vcId, ioe);
+			}
+		}
+		return sw.toString();
 	}
 
 	@RequestMapping(value = "/mandatordir/{hostName}", method = RequestMethod.GET)
@@ -301,6 +353,7 @@ public class TizzitRestAPIController {
 		if (log.isDebugEnabled()) log.debug("/includecontent/" + currentViewComponentId);
 		String sb = null;
 		try {
+			if (xPathQuery.equalsIgnoreCase("null")) xPathQuery = "";
 			sb = webSpringBean.getIncludeContent(currentViewComponentId, includeUnit, includeBy, getPublsVersion, xPathQuery);
 		} catch (Exception e) {
 			log.warn("Error calling getIncludeContent on webservicespring");
@@ -379,13 +432,13 @@ public class TizzitRestAPIController {
 		String path = requestPath.substring(requestPath.indexOf('/') + 1); // ded/blaa
 		String language = requestPath.substring(0, requestPath.indexOf('/')); // 0123456
 		String viewType = "browser"; // This can be browser for now 
- 
+
 		sb.append("<root>");
 		sb.append("<params>");
 
 		HostHbm host = hostHbmDao.load(hostName);
 		Integer siteId = host.getSite().getSiteId();
-		
+
 		Map<String, String> r = webSpringBean.getSitemapParameters(null, siteId, language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
 		for (String name : r.keySet()) {
 			String val = r.get(name);
@@ -543,7 +596,6 @@ public class TizzitRestAPIController {
 	@ResponseBody
 	public String simpleTest() {
 		log.info("/simpleTest");
-		//		String sb = webSpringBean.getUnitInfoXml(unitid);
 		String sb = "<root>superuser</root>";
 
 		return sb;
@@ -552,7 +604,6 @@ public class TizzitRestAPIController {
 	@RequestMapping(value = "/hardTest", method = RequestMethod.GET)
 	public ModelAndView hardTest() {
 		log.info("/hardTest");
-		//		String sb = webSpringBean.getUnitInfoXml(unitid);
 		String sb = "<root>superuser</root>";
 
 		ModelAndView mav = new ModelAndView();
@@ -562,4 +613,44 @@ public class TizzitRestAPIController {
 		return mav;
 	}
 
+	@RequestMapping(value = "/picTest/{picId}", method = RequestMethod.GET)
+	@ResponseBody
+	public byte[] picTest(@PathVariable int picId) {
+		log.info("/picTest");
+
+		byte[] pic = null;
+		try {
+			pic = webSpringBean.getPicture(picId);
+		} catch (Exception e) {
+			log.warn("could not load pic with id: " + picId);
+		}
+		return pic;
+	}
+
+	@RequestMapping(value = "/picTest2/{picId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String picTest2(@PathVariable int picId) {
+		log.info("/picTest2");
+
+		byte[] pic = null;
+		String ret = null;
+		try {
+			pic = webSpringBean.getPicture(picId);
+			ret = new String(pic);
+		} catch (Exception e) {
+			log.warn("could not load pic with id: " + picId);
+		}
+		return ret;
+	}
+
+	@RequestMapping(value = "/picTest3/{picId}", method = RequestMethod.GET)
+	public void picTest3(@PathVariable int picId, OutputStream out) {
+		log.info("/picTest3");
+		log.info("where does the stream comes from?: " + out);
+		try {
+			out.write(webSpringBean.getPicture(picId));
+		} catch (Exception e) {
+			log.warn("could not load pic with id: " + picId);
+		}
+	}
 }

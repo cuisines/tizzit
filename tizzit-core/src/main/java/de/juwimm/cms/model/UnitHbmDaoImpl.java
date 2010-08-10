@@ -27,7 +27,10 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.juwimm.cms.components.model.*;
+import de.juwimm.cms.components.model.AddressHbm;
+import de.juwimm.cms.components.model.DepartmentHbm;
+import de.juwimm.cms.components.model.PersonHbm;
+import de.juwimm.cms.components.model.TalktimeHbm;
 import de.juwimm.cms.components.vo.AddressValue;
 import de.juwimm.cms.components.vo.DepartmentValue;
 import de.juwimm.cms.components.vo.PersonValue;
@@ -85,7 +88,7 @@ public class UnitHbmDaoImpl extends UnitHbmDaoBase {
 			}
 		}
 		{
-			Collection<PersonHbm> persons = getPersonHbmDao().findByUnit(unit.getUnitId());
+			Collection<PersonHbm> persons = unit.getPersons();
 			for (PersonHbm person : persons) {
 				sb.append(person.toXmlRecursive(tabdepth + 1));
 			}
@@ -101,38 +104,43 @@ public class UnitHbmDaoImpl extends UnitHbmDaoBase {
 		{
 			Collection<TalktimeHbm> talktimes = getTalktimeHbmDao().findByUnit(unit.getUnitId());
 			for (TalktimeHbm talktime : talktimes) {
-				sb.append(talktime.toXml(tabdepth + 1));	
+				sb.append(talktime.toXml(tabdepth + 1));
 			}
 		}
 		sb.append("</unit>\n");
 		return sb.toString();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform) {
 		return this.findAll(transform, "from de.juwimm.cms.model.UnitHbm as unitHbm");
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform, final java.lang.Integer siteId) {
 		return this.findAll(transform, "from de.juwimm.cms.model.UnitHbm as unit where unit.site.siteId = ? order by unit.name", siteId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findBySite(final int transform, final java.lang.Integer siteId) {
 		return this.findBySite(transform, "from de.juwimm.cms.model.UnitHbm as unit where unit.site.siteId = ?", siteId);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByName(final int transform, final java.lang.Integer siteId, final java.lang.String name) {
 		return this.findByName(transform, "from de.juwimm.cms.model.UnitHbm as u where u.site.siteId = ? and u.name like ?", siteId, name);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByUserAndSite(final int transform, final java.lang.String userId, final java.lang.Integer siteId) {
 		return this.findByUserAndSite(transform, "select u from de.juwimm.cms.model.UnitHbm as u inner join u.users s where s.userId = ? and u.site.siteId = ?", userId, siteId);
 	}
-	
+
 	@Override
 	public UnitValue handleGetDao(UnitHbm unit) {
 		UnitValue value = new UnitValue();
@@ -161,7 +169,7 @@ public class UnitHbmDaoImpl extends UnitHbmDaoBase {
 			Collection<TalktimeHbm> talktimes = getTalktimeHbmDao().findByUnit(unit.getUnitId());
 			for (TalktimeHbm talktimeHbm : talktimes) {
 				vec.add(talktimeHbm.getData());
-			} 
+			}
 			if (vec.size() > 0) {
 				value.setTalkTimes((TalktimeValue[]) vec.toArray(new TalktimeValue[0]));
 				value.setHasChildren(true);
@@ -172,10 +180,10 @@ public class UnitHbmDaoImpl extends UnitHbmDaoBase {
 
 		try {
 			ArrayList vec = new ArrayList();
-			Collection<PersonHbm> persons = getPersonHbmDao().findByUnit(unit.getUnitId());
+			Collection<PersonHbm> persons = unit.getPersons();
 			for (PersonHbm person : persons) {
 				vec.add(person.getDao(0));
-			} 
+			}
 			if (vec.size() > 0) {
 				value.setPersons((PersonValue[]) vec.toArray(new PersonValue[0]));
 				value.setHasChildren(true);
