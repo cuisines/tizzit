@@ -20,21 +20,33 @@
  */
 package de.juwimm.cms.beans;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.tizzit.plugins.server.transformer.BaseContentHandler;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
-import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.HostHbmDao;
 import de.juwimm.cms.model.SiteHbm;
@@ -171,6 +183,45 @@ public class TizzitRestAPIController {
 			log.warn("Error calling getContent on webservicespring");
 		}
 		return sb;
+	}
+
+	@RequestMapping(value = "/contentparsed/{vcId}/{getPUBLSVersion}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getContentParsed(@PathVariable int vcId, @PathVariable boolean getPUBLSVersion) {
+		if (log.isDebugEnabled()) log.debug("/contentparsed/" + vcId);
+		String sb = null;
+		try {
+			sb = webSpringBean.getContent(vcId, getPUBLSVersion);
+		} catch (Exception e) {
+			log.warn("Error calling getContent on webservicespring");
+		}
+
+		StringWriter sw = new StringWriter();
+		if (sb != null) {
+			try {
+				XMLReader parser = XMLReaderFactory.createXMLReader();
+				XMLWriter xw = new XMLWriter(sw);
+				PluginManagement pm = new PluginManagement();
+				BaseContentHandler transformer = new BaseContentHandler(pm, xw, webSpringBean, vcId, getPUBLSVersion);
+
+				parser.setContentHandler(transformer);
+
+				InputStream stream = new ByteArrayInputStream(sb.getBytes());
+				InputSource inputSource = new InputSource(stream);
+
+				long parseTime = System.currentTimeMillis();
+
+				parser.parse(inputSource);
+
+				parseTime = System.currentTimeMillis() - parseTime;
+				log.debug("Parse time: " + parseTime + "ms");
+			} catch (SAXException saxe) {
+				log.warn("Error while parsing content of: " + vcId, saxe);
+			} catch (IOException ioe) {
+				log.warn("Error while parsing content of: " + vcId, ioe);
+			}
+		}
+		return sw.toString();
 	}
 
 	@RequestMapping(value = "/mandatordir/{hostName}", method = RequestMethod.GET)
