@@ -1,4 +1,4 @@
-<plugin name='tizzit-web' version='0.4' grailsVersion='1.3.2 &gt; *'>
+<plugin name='tizzit-web' version='0.5' grailsVersion='1.3.4 &gt; *'>
   <author>Sascha-Matthias Kulawik</author>
   <authorEmail>sascha-matthias.kulawik@juwimm.com</authorEmail>
   <title>Grails API to use Tizzit content in Grails applications</title>
