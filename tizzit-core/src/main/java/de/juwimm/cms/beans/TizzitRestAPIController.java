@@ -94,6 +94,12 @@ public class TizzitRestAPIController {
 	@RequestMapping(value = "/navigationxml/{refVcId}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
 	@ResponseBody
 	public String getNavigationXml(@PathVariable int refVcId, @PathVariable String since, @PathVariable int depth, @PathVariable boolean getPUBLSVersion) throws Exception {
+		return this.getNavigationXml(refVcId, since, depth, getPUBLSVersion, -1);
+	}
+
+	@RequestMapping(value = "/navigationxml/{refVcId}/{since}/{depth}/{getPUBLSVersion}/{showType}", method = RequestMethod.GET)
+	@ResponseBody
+	public String getNavigationXml(@PathVariable int refVcId, @PathVariable String since, @PathVariable int depth, @PathVariable boolean getPUBLSVersion, @PathVariable int showType) throws Exception {
 		if (log.isDebugEnabled()) log.debug("/navigationxml/" + refVcId);
 		String sb = null;
 		/*try {
@@ -108,8 +114,8 @@ public class TizzitRestAPIController {
 
 		if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(refVcId) >= ifDistanceToNavigationRoot) {
 			ViewComponentValue viewComponentValue = webSpringBean.getViewComponent4Id(refVcId);
-			String navigationXml = webSpringBean.getNavigationXml(refVcId, since, depth, getPUBLSVersion);
-			if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
+			String navigationXml = webSpringBean.getNavigationXml(refVcId, since, depth, getPUBLSVersion, showType);
+			if (navigationXml != null && !navigationXml.isEmpty()) {
 				Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
 				// add axis 
 				String viewComponentXPath = "//viewcomponent[@id=\"" + refVcId + "\"]";
@@ -461,27 +467,25 @@ public class TizzitRestAPIController {
 	@ResponseBody
 	public String getAction(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath, @RequestParam(value = "safeguardUsername", required = false) String safeguardUsername, @RequestParam(value = "safeguardPassword", required = false) String safeguardPassword) throws Exception {
 
-		/*
-		// first check for some redirects for this host
-		String redirectUrl = this.webServiceSpring.resolveRedirect(host, requestPath, new HashSet<String>());
-		if (redirectUrl != null && !"".equalsIgnoreCase(redirectUrl)) {
-			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
-			sitemapParams.put(HostSelectorAction.REDIRECT_URL, redirectUrl);
-			return sitemapParams;
-		}
-		sitemapParams.put(HostSelectorAction.REDIRECT_URL, "0");
-
-		
-		String startPageUrl = this.webServiceSpring.getStartPage(host);
-		if (log.isDebugEnabled()) {
-			log.debug("found " + HostSelectorAction.MANDATOR_DIR + ": " + mandatorDir + " " + HostSelectorAction.STARTPAGE_URL + ": " + startPageUrl);
-		}
-		if ("".equalsIgnoreCase(startPageUrl)) {
-			startPageUrl = "0";
-		}
-		
-		sitemapParams.put(HostSelectorAction.STARTPAGE_URL, startPageUrl);
-		*/
+		//		// first check for some redirects for this host
+		//		String redirectUrl = this.webSpringBean.resolveRedirect(hostName, requestPath, null);
+		//		if (redirectUrl != null && !redirectUrl.isEmpty()) {
+		//			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
+		//			sitemapParams.put(HostSelectorAction.REDIRECT_URL, redirectUrl);
+		//			return sitemapParams;
+		//		}
+		//		sitemapParams.put(HostSelectorAction.REDIRECT_URL, "0");
+		//
+		//		
+		//		String startPageUrl = this.webServiceSpring.getStartPage(host);
+		//		if (log.isDebugEnabled()) {
+		//			log.debug("found " + HostSelectorAction.MANDATOR_DIR + ": " + mandatorDir + " " + HostSelectorAction.STARTPAGE_URL + ": " + startPageUrl);
+		//		}
+		//		if ("".equalsIgnoreCase(startPageUrl)) {
+		//			startPageUrl = "0";
+		//		}
+		//		
+		//		sitemapParams.put(HostSelectorAction.STARTPAGE_URL, startPageUrl);
 
 		StringBuffer sb = new StringBuffer();
 		//TODO correct mapping - even if only shortlink provided or only language

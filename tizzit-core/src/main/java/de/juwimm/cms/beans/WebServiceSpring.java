@@ -280,8 +280,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getNavigationXml(java.lang.Integer,
 	 *      java.lang.String, int, boolean)
 	 */
-	//@RequestMapping(value = "/navigationxml/{refVcId}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
-	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
+	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion, int showType) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getNavigationXML start");
 		try {
 			String retVal = "";
@@ -291,7 +290,7 @@ public class WebServiceSpring {
 				ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(byteOut, true, "UTF-8");
 				ViewComponentHbm vcl = viewComponentHbmDao.load(vclpk);
-				viewComponentHbmDao.toXml(vcl, null, false, true, depth, getPUBLSVersion, true, out);
+				viewComponentHbmDao.toXml(vcl, null, false, false, false, true, depth, getPUBLSVersion, true, -1, showType, out);
 				retVal = byteOut.toString("UTF-8");
 			}
 			return retVal;
@@ -299,6 +298,11 @@ public class WebServiceSpring {
 			log.error("ERROR GET NAVIGATION XML ERROR " + e.getMessage());
 			throw new UserException();
 		}
+	}
+
+	// just for cocoon
+	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
+		return this.getNavigationXml(refVcId, since, depth, getPUBLSVersion, -1);
 	}
 
 	/**
