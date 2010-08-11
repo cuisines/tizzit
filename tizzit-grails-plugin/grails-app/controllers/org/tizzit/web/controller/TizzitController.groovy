@@ -4,6 +4,9 @@ import org.dom4j.DocumentHelper
 import groovy.xml.XmlUtil
 import groovy.xml.StreamingMarkupBuilder
 import grails.converters.XML
+import org.codehaus.groovy.grails.plugins.GrailsPlugin
+import org.codehaus.groovy.grails.plugins.GrailsPluginManager
+import org.springframework.context.ApplicationContext
 
 class TizzitController {
 	 //def beforeInterceptor = [action: this.&tizzitAction]
@@ -30,6 +33,9 @@ class TizzitController {
 			params.tizzit.contentDom = DocumentHelper.parseText(resp)
 			params.tizzit.contentRaw = resp                              // todo flash scope!
 			//flash.contentXml = new XmlSlurper().parseText(xml.content)
+			flash.tizzit = new Expando()
+			flash.tizzit.viewComponentId = xml.params.viewComponentId  // currently only for navigations in layout file
+			flash.tizzit.isLiveserver = xml.params.hostIsLiveserver
 		}
 	}
 
@@ -42,11 +48,12 @@ class TizzitController {
 			def fullUri = grailsAttributes.getTemplateUri("templates/$params.tizzit.template", request)
 			def resource = grailsAttributes.pagesTemplateEngine.getResourceForUri(fullUri)
 
+
 			if (resource && resource.file && resource.exists()) {
 				log.debug "gathered local template $params.tizzit.template"
 				render(template: "templates/$params.tizzit.template")
 			} else {
-				log.debug "gathered plugin default template $params.tizzit.template"
+				log.debug "gathered plugin defaul $resource.file template $params.tizzit.template"
 				render(template: "templates/$params.tizzit.template", plugin: "tizzitWeb")
 			}
 		} else if (renderType == "xml") {
@@ -54,7 +61,6 @@ class TizzitController {
 		}
 		log.debug "finished index"
 	}
-
 
 	def picture = {
 		log.debug "starting picture"

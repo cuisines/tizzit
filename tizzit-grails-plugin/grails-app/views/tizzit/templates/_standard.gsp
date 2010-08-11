@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta name="layout" content="${(params.popup) ? 'popup' : 'main'}"/>
+	<meta name="viewComponentId" content="${params.tizzit.viewComponentId}"/>
 	<title><tizzit:content node="//title" omitFirst="true"/></title>
 </head>
 <body>

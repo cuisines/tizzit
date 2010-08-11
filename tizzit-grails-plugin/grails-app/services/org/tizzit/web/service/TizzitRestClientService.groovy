@@ -17,9 +17,11 @@ class TizzitRestClientService {
 
 	def navigationXml(depth, since, viewComponentId, isLiveserver) {
 		def xml
+		def requrl = "/$grailsApplication.config.tizzit.restServerContextPath/navigationxml/$viewComponentId/$since/$depth/$isLiveserver"
+		if(log.isDebugEnabled()) log.debug requrl
 
 		withHttp(uri: grailsApplication.config.tizzit.restServer) {
-			def resp = get(path: "/$grailsApplication.config.tizzit.restServerContextPath/navigationxml/$viewComponentId/$since/$depth/$isLiveserver")
+			def resp = get(path: requrl)
 			resp = "<root>$resp</root>"
 			xml = new XmlParser().parseText(resp)
 		}
@@ -29,6 +31,7 @@ class TizzitRestClientService {
 	def actionData(host, requestPath, safeguardUsername, safeguardPassword) {
 		//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
 		def xml
+
 		withHttp(uri: grailsApplication.config.tizzit.restServer) {
 			def psafeguardUsername = (safeguardUsername) ?: "null"
 			def psafeguardPassword = (safeguardPassword) ?: "null"

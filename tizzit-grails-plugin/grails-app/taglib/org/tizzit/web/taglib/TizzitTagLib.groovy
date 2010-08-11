@@ -25,9 +25,9 @@ class TizzitTagLib {
 		def depth = attrs.depth
 		def since = attrs.since
 		def template = (attrs.template) ?: "navigation"
-		def viewComponentId = (attrs.viewComponentId) ?: params.tizzit.viewComponentId
+		def viewComponentId = (attrs.viewComponentId) ?: flash.tizzit.viewComponentId
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
-		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, params.tizzit.isLiveserver)
+		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, flash.tizzit.isLiveserver)
 		if (omitFirst) {
 			xml = xml.viewcomponent
 		}
@@ -60,7 +60,7 @@ class TizzitTagLib {
 		}
 
 		if (preparseModules) {
-			log.info "preparseModules for node $node nodes $nodes"
+			if(log.isDebugEnabled()) log.debug "preparseModules for node $node nodes $nodes"
 			xmlDom.selectNodes("//" + grailsApplication.config.tizzit.modules.list.join(' | //')).each { Element n ->
 				def xp = new XmlParser().parseText(n.asXML())
 				def i
@@ -104,7 +104,11 @@ class TizzitTagLib {
 
 		if (omitFirst) {
 			def r = s =~ /<\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)>(.*)<\/\w+>$/
-			s = r[0].last()
+			try {
+				s = r[0].last()
+			} catch(e){
+				s = ""
+			}
 		}
 		return s
 	}
