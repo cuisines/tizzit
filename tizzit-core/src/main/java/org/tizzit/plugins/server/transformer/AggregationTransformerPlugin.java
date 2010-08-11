@@ -90,7 +90,7 @@ public class AggregationTransformerPlugin implements ManagedTizzitPlugin {
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
 		AttributesImpl newAttrs = null;
-		if (localName.compareTo("include") == 0) {
+		if (localName.equalsIgnoreCase("include")) {
 			try {
 				Object o = null;
 				try {
@@ -159,7 +159,9 @@ public class AggregationTransformerPlugin implements ManagedTizzitPlugin {
 				lastOpenedObject.pop();
 			}
 		}
-		parent.endElement(uri, localName, qName);
+		if (!localName.equalsIgnoreCase("include")) {
+			parent.endElement(uri, localName, qName);
+		}
 	}
 
 	private void fillPerson(PersonValue value, String name) {

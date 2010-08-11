@@ -105,6 +105,7 @@ public class Picture extends AbstractModule {
 		if (getPanPicture().getPictureId() != null && getPanPicture().getPictureId().intValue() > 0) {
 			Element elm = ContentManager.getDomDoc().createElement("image");
 			elm.setAttribute("src", getPanPicture().getPictureId().toString());
+			elm.setAttribute("mimeType", getPanPicture().getPictureMimeType());
 			elm.setAttribute("type", getPanPicture().getType());
 			elm.setAttribute("height", "" + getPanPicture().getPictureHeight());
 			elm.setAttribute("width", "" + getPanPicture().getPictureWidth());

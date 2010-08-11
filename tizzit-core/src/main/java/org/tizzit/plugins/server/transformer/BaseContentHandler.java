@@ -109,11 +109,13 @@ public final class BaseContentHandler implements ContentHandler {
 		if (log.isDebugEnabled()) log.debug("startElement - uri: " + uri + " localName: " + localName + " qName: " + qName);
 		if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("aggregation") || qName.equalsIgnoreCase("aggregation"))) {
 			uri = "http://plugins.tizzit.org/AggregationTransformer";
-		}
-		if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("head") || qName.equalsIgnoreCase("head"))) {
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("head") || qName.equalsIgnoreCase("head"))) {
 			uri = "http://plugins.tizzit.org/HeadTransformer";
-		}
-		if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("teaserInclude") || qName.equalsIgnoreCase("teaserInclude"))) {
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("image") || qName.equalsIgnoreCase("image"))) {
+			uri = "http://plugins.tizzit.org/DocumentTransformer";
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("document") || qName.equalsIgnoreCase("document"))) {
+			uri = "http://plugins.tizzit.org/DocumentTransformer";
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("teaserInclude") || qName.equalsIgnoreCase("teaserInclude"))) {
 			uri = "http://plugins.tizzit.org/TeaserTransformer";
 			localName = "teaserInclude";
 		}
@@ -159,11 +161,13 @@ public final class BaseContentHandler implements ContentHandler {
 		this.pluginStack.peek().getContentHandler().endElement(uri, localName, qName);
 		if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("aggregation") || qName.equalsIgnoreCase("aggregation"))) {
 			uri = "http://plugins.tizzit.org/AggregationTransformer";
-		}
-		if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("head") || qName.equalsIgnoreCase("head"))) {
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("image") || qName.equalsIgnoreCase("image"))) {
+			uri = "http://plugins.tizzit.org/DocumentTransformer";
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("document") || qName.equalsIgnoreCase("document"))) {
+			uri = "http://plugins.tizzit.org/DocumentTransformer";
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("head") || qName.equalsIgnoreCase("head"))) {
 			uri = "http://plugins.tizzit.org/HeadTransformer";
-		}
-		if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("teaserInclude") || qName.equalsIgnoreCase("teaserInclude"))) {
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("teaserInclude") || qName.equalsIgnoreCase("teaserInclude"))) {
 			uri = "http://plugins.tizzit.org/TeaserTransformer";
 			localName = "teaserInclude";
 		}

@@ -102,6 +102,7 @@ public class PanPicture extends JPanel {
 	private final JComboBox cboDirection = new JComboBox();
 	private final JCheckBox ckbThumbnailPopup = new JCheckBox();
 	private int pictureWidth = -1;
+	private String mimeType = "";
 	private int pictureHeight = -1;
 	private int pictureId = -1;
 
@@ -168,6 +169,7 @@ public class PanPicture extends JPanel {
 		try {
 			inti = new Integer(this.lblPictId.getText());
 		} catch (Exception exe) {
+			log.warn("Could not convert pictureId to Integer: " + this.lblPictId.getText(), exe);
 		}
 		return inti;
 	}
@@ -439,10 +441,11 @@ public class PanPicture extends JPanel {
 						PictureSlimValue picSlimVal = comm.getPicture(existingPicId);
 						retInt = picSlimVal.getPictureId();
 						DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, bty, out.toByteArray());
-						saveDialog.addSaveActionListener(new ActionListener(){
+						saveDialog.addSaveActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent e) {
-								setPictureId(e.getID());								
-							}});
+								setPictureId(e.getID());
+							}
+						});
 						int frameHeight = 180;
 						int frameWidth = 250;
 						saveDialog.setSize(frameWidth, frameHeight);
@@ -549,6 +552,7 @@ public class PanPicture extends JPanel {
 		try {
 			pictureHeight = -1;
 			pictureWidth = -1;
+			mimeType = "";
 			{
 				PictureSlimValue pic = comm.getPicture(picture);
 				ImageIcon img = new ImageIcon(pic.getThumbnail());
@@ -566,6 +570,7 @@ public class PanPicture extends JPanel {
 				this.txtAltText.setText(pic.getAltText());
 				this.ckbThumbnailPopup.setSelected(pic.isThumbnailPopup());
 				setPictureHeight(pic.getHeight());
+				setPictureMimeType(pic.getMimeType());
 				setPictureWidth(pic.getWidth());
 				this.pictureId = picture;
 				btnEdit.setEnabled(true);
@@ -622,6 +627,20 @@ public class PanPicture extends JPanel {
 
 	public boolean getPictureThumbnailPopup() {
 		return this.ckbThumbnailPopup.isSelected();
+	}
+
+	/**
+	 * @return the mimeType
+	 */
+	public String getPictureMimeType() {
+		return mimeType;
+	}
+
+	/**
+	 * @param mimeType the mimeType to set
+	 */
+	public void setPictureMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 }

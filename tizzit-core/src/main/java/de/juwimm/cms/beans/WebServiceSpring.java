@@ -433,7 +433,6 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getDocument(java.lang.Integer)
 	 */
-	////@RequestMapping(value="/document/{documentId}", method=RequestMethod.GET)
 	public byte[] getDocument(Integer documentId) throws Exception {
 		byte[] ret = null;
 		try {
@@ -864,7 +863,7 @@ public class WebServiceSpring {
 		}
 		return value;
 	}
- 
+
 	public Map getSitemapParameters(Integer viewComponentId, Integer siteId, String language, String path, String viewType, String safeguardUsername, String safeguardPassword, Map safeguardMap) throws Exception {
 		boolean needSafeguard = false;
 		Map<String, String> sitemapParams = new HashMap<String, String>();
@@ -958,11 +957,13 @@ public class WebServiceSpring {
 		if (log.isDebugEnabled()) log.debug("getSitemapParameters end " + map2string(sitemapParams));
 		return sitemapParams;
 	}
+
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpringBase#getSitemapParameters(java.util.Map,
 	 *      java.util.Map)
 	 * @deprecated use new getSitemapParameters now
 	 */
+	@Deprecated
 	public Map getSitemapParameters(Map parameterMap, Map safeguardMap) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getSitemapParameters start");
 		Integer viewComponentId = null;
@@ -1091,7 +1092,6 @@ public class WebServiceSpring {
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getDocumentName(java.lang.Integer)
 	 */
-	//@RequestMapping(value = "/documentname/{documentId}", method = RequestMethod.GET)
 	public String getDocumentName(Integer documentId) throws Exception {
 		String ret = null;
 		try {
@@ -1099,6 +1099,20 @@ public class WebServiceSpring {
 			ret = docHbm.getDocumentName();
 		} catch (Exception e) {
 			log.warn("Error getting DocumentName for Document " + documentId + ": " + e.getMessage());
+		}
+		return ret;
+	}
+
+	/**
+	 * @see de.juwimm.cms.remote.WebServiceSpring#getDocumentName(java.lang.Integer)
+	 */
+	public String getDocumentMimeType(Integer documentId) throws Exception {
+		String ret = null;
+		try {
+			DocumentHbm docHbm = documentHbmDao.load(documentId);
+			ret = docHbm.getMimeType();
+		} catch (Exception e) {
+			log.warn("Error getting MimeType for Document " + documentId + ": " + e.getMessage());
 		}
 		return ret;
 	}
@@ -1900,6 +1914,16 @@ public class WebServiceSpring {
 			log.warn("Error getting Picture " + pictureId + ": " + e.getMessage());
 		}
 		return pictureValue;
+	}
+
+	public String getPictureMimeType(Integer pictureId) throws Exception {
+		String mimeType = null;
+		try {
+			mimeType = pictureHbmDao.load(pictureId).getMimeType();
+		} catch (Exception e) {
+			log.warn("Error getting mime type from Picture " + pictureId + ": " + e.getMessage());
+		}
+		return mimeType;
 	}
 
 	public String filterNavigation(String navigationXml, Map safeGuardMap) throws Exception {

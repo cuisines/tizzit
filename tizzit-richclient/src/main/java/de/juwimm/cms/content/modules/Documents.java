@@ -15,7 +15,7 @@
  */
 package de.juwimm.cms.content.modules;
 
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.event.ActionListener;
 import java.util.Properties;
@@ -49,6 +49,7 @@ public class Documents extends AbstractModule {
 	private boolean imEnabled = true;
 	private boolean displayTypeEditable = false;
 
+	@Override
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
 		if ("DisplayType".equalsIgnoreCase(methodname)) {
@@ -93,7 +94,7 @@ public class Documents extends AbstractModule {
 		}
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.content.modules.Module#save(org.xml.sax.ContentHandler)
 	 */
@@ -111,8 +112,11 @@ public class Documents extends AbstractModule {
 		Element root = ContentManager.getDomDoc().createElement("root");
 		if (pan.getDocumentId() != null) {
 			Element elm = ContentManager.getDomDoc().createElement("document");
-			if (pan.getDocumentId().intValue() > 0) elm.setAttribute("src", pan.getDocumentId() + "");
+			if (pan.getDocumentId().intValue() > 0) {
+				elm.setAttribute("src", pan.getDocumentId() + "");
+			}
 			elm.setAttribute("documentName", pan.getDocumentName());
+			elm.setAttribute("mimeType", pan.getMimeType());
 			if (pan.getCbxDisplayTypeInline().isSelected()) {
 				elm.setAttribute("displayType", "inline");
 			} else {
@@ -177,7 +181,7 @@ public class Documents extends AbstractModule {
 		if (panBtn != null) panBtn.setEnabled(enabling);
 		imEnabled = enabling;
 	}
-	
+
 	public void recycle() {
 		pan.setDocumentId(null);
 		pan.setDocumentDescription("");

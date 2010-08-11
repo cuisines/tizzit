@@ -76,29 +76,29 @@ import de.juwimm.cms.vo.DocumentSlimValue;
  */
 public class PanDocuments extends JPanel {
 	private static Logger log = Logger.getLogger(PanDocuments.class);
-	private ResourceBundle rb = Constants.rb;
+	private final ResourceBundle rb = Constants.rb;
 	private Integer intDocId;
-	private JPanel panBottom = new JPanel();
-	private JButton btnDelete = new JButton();
-	private JScrollPane scrollPane = new JScrollPane();
-	private JPanel panDocumentButtons = new JPanel();
-	private FlowLayout panDocumentsLayout = new FlowLayout();
-	private JPanel panFileAction = new JPanel();
+	private final JPanel panBottom = new JPanel();
+	private final JButton btnDelete = new JButton();
+	private final JScrollPane scrollPane = new JScrollPane();
+	private final JPanel panDocumentButtons = new JPanel();
+	private final FlowLayout panDocumentsLayout = new FlowLayout();
+	private final JPanel panFileAction = new JPanel();
 	private ButtonGroup bgrp = new ButtonGroup();
-	private Integer intActUnit;
-	private Integer intRootUnit;
+	private final Integer intActUnit;
+	private final Integer intRootUnit;
 	private int anzahlItems;
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private JComboBox cboRegion = new JComboBox();
-	private JButton btnAdd = new JButton();
-	private JButton btnUpdate = new JButton();
-	private JPanel panLinkName = new JPanel();
-	private JTextField txtDocumentDesc = new JTextField();
-	private JLabel lbLinkDescription = new JLabel();
-	private BorderLayout panLinkNameLayout = new BorderLayout();
-	private JCheckBox cbxDisplayTypeInline = new JCheckBox();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final JComboBox cboRegion = new JComboBox();
+	private final JButton btnAdd = new JButton();
+	private final JButton btnUpdate = new JButton();
+	private final JPanel panLinkName = new JPanel();
+	private final JTextField txtDocumentDesc = new JTextField();
+	private final JLabel lbLinkDescription = new JLabel();
+	private final BorderLayout panLinkNameLayout = new BorderLayout();
+	private final JCheckBox cbxDisplayTypeInline = new JCheckBox();
 
-	private JTable tblDocuments = new JTable();
+	private final JTable tblDocuments = new JTable();
 	private DocumentTableModel tblDocumentsModel = null;
 	private TableSorter tblDocumentSorter = null;
 	private PanViewSelect panViewSelect = null;
@@ -107,6 +107,7 @@ public class PanDocuments extends JPanel {
 	private int maxButtonWidth = 0;
 	private boolean isDataActualization = false;
 	private String selectedDocName;
+	private String mimeType = "";
 
 	public PanDocuments() {
 		try {
@@ -123,11 +124,13 @@ public class PanDocuments extends JPanel {
 			log.error("Initialization error", exe);
 		}
 		this.panDocumentButtons.addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				resizeScrollpane();
 			}
 		});
 		this.addComponentListener(new ComponentAdapter() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				resizeScrollpane();
 			}
@@ -162,8 +165,8 @@ public class PanDocuments extends JPanel {
 	/**
 	 */
 	public final class CboModel {
-		private String strView;
-		private Integer intRegionId;
+		private final String strView;
+		private final Integer intRegionId;
 
 		public CboModel(String view, Integer regionid) {
 			this.strView = view;
@@ -178,6 +181,7 @@ public class PanDocuments extends JPanel {
 			return this.intRegionId;
 		}
 
+		@Override
 		public String toString() {
 			return this.strView;
 		}
@@ -212,6 +216,7 @@ public class PanDocuments extends JPanel {
 	}
 
 	private void jbInit() throws Exception {
+		mimeType = "";
 		btnDelete.setText("Datei löschen");
 		panBottom.setLayout(new BorderLayout());
 		panDocumentButtons.setLayout(panDocumentsLayout);
@@ -237,7 +242,6 @@ public class PanDocuments extends JPanel {
 		this.add(getViewSelectPan(), BorderLayout.WEST);
 		scrollPane.getViewport().add(tblDocuments, null);
 		scrollPane.setTransferHandler(new FileTransferHandler(this));
-
 	}
 
 	private void loadThumbs(Integer unit) {
@@ -266,6 +270,7 @@ public class PanDocuments extends JPanel {
 				});
 				if (intDocId != null && (intDocId.intValue() == dsv.getDocumentId())) {
 					pan.getFileButton().doClick();
+					mimeType = dsv.getMimeType();
 					selectDocument(intDocId);
 				}
 				panDocumentButtons.add(pan, null);
@@ -509,6 +514,7 @@ public class PanDocuments extends JPanel {
 					linkDesc = linkDesc.substring(0, linkDesc.lastIndexOf("."));
 				}
 				txtDocumentDesc.setText(linkDesc);
+				mimeType = vo.getMimeType();
 			}
 			btnUpdate.setVisible(false);
 			if (intDocId != null) {
@@ -588,6 +594,13 @@ public class PanDocuments extends JPanel {
 
 	public void setDisplayTypeEditable(boolean editable) {
 		this.cbxDisplayTypeInline.setVisible(editable);
+	}
+
+	/**
+	 * @return the mimeType
+	 */
+	public String getMimeType() {
+		return mimeType;
 	}
 
 }
