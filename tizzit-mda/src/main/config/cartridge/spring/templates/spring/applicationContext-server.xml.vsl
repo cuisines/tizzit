@@ -40,6 +40,10 @@
             <value>org.springframework.security.providers.rcp.RemoteAuthenticationManager</value>
         </property>
     </bean>
+	
+	 <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
+    	<property name="order" value="1" />
+  	</bean>
 
 #end
 </beans>

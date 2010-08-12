@@ -248,6 +248,10 @@
 		<property name="webSpringBean" ref="webServiceSpring"/>
 	</bean>
 
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
- 
+<!--	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>-->
+	
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+    	<property name="order" value="0" />
+  	</bean>
+   
 </beans>
