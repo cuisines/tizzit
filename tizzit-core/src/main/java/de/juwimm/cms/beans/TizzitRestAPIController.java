@@ -467,25 +467,20 @@ public class TizzitRestAPIController {
 	@ResponseBody
 	public String getAction(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath, @RequestParam(value = "safeguardUsername", required = false) String safeguardUsername, @RequestParam(value = "safeguardPassword", required = false) String safeguardPassword) throws Exception {
 
-		//		// first check for some redirects for this host
-		//		String redirectUrl = this.webSpringBean.resolveRedirect(hostName, requestPath, null);
-		//		if (redirectUrl != null && !redirectUrl.isEmpty()) {
-		//			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
-		//			sitemapParams.put(HostSelectorAction.REDIRECT_URL, redirectUrl);
-		//			return sitemapParams;
-		//		}
-		//		sitemapParams.put(HostSelectorAction.REDIRECT_URL, "0");
-		//
-		//		
-		//		String startPageUrl = this.webServiceSpring.getStartPage(host);
-		//		if (log.isDebugEnabled()) {
-		//			log.debug("found " + HostSelectorAction.MANDATOR_DIR + ": " + mandatorDir + " " + HostSelectorAction.STARTPAGE_URL + ": " + startPageUrl);
-		//		}
-		//		if ("".equalsIgnoreCase(startPageUrl)) {
-		//			startPageUrl = "0";
-		//		}
-		//		
-		//		sitemapParams.put(HostSelectorAction.STARTPAGE_URL, startPageUrl);
+		// first check for some redirects for this host
+		Map<String, String> smP = new HashMap<String, String>();
+		String redirectUrl = this.webSpringBean.resolveRedirect(hostName, requestPath, null);
+		if (redirectUrl != null && !redirectUrl.isEmpty()) {
+			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
+			smP.put("redirectURL", redirectUrl);
+		}
+		smP.put("redirectURL", "0");
+
+		String startPageUrl = this.webSpringBean.getStartPage(hostName);
+		if (startPageUrl.isEmpty()) {
+			startPageUrl = "0";
+		}
+		smP.put("startpageURL", startPageUrl);
 
 		StringBuffer sb = new StringBuffer();
 		//TODO correct mapping - even if only shortlink provided or only language
@@ -504,6 +499,7 @@ public class TizzitRestAPIController {
 		sb.append("<hostIsLiveserver>" + host.isLiveserver() + "</hostIsLiveserver>");
 
 		Map<String, String> r = webSpringBean.getSitemapParameters(null, site.getSiteId(), language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
+		r.putAll(smP);
 		for (String name : r.keySet()) {
 			String val = r.get(name);
 			sb.append("<" + name + ">" + val + "</" + name + ">");
