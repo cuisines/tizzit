@@ -1846,8 +1846,9 @@ public class WebServiceSpring {
 			URL url = null;
 			String path = "";
 			if (requestPath != null) {
-				url = new URL(requestPath);
-				path = url.getPath();
+				//url = new URL(requestPath);
+				//path = url.getPath();
+				path = requestPath;
 			}
 			// check for shortlink
 			SiteHbm site = host.getSite();

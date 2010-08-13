@@ -6,3 +6,4 @@ eventCreateWarStart = {warname, stagingDir ->
 		entry(key: 'build.date', value: new Date())
 	}
 }
+ 

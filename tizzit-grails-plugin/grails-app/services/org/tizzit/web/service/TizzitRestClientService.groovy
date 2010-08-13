@@ -15,10 +15,14 @@ class TizzitRestClientService {
 		}
 	}
 
-	def navigationXml(depth, since, viewComponentId, isLiveserver) {
+	def navigationXml(depth, since, viewComponentId, isLiveserver, showType) {
 		def xml
 		def requrl = "/$grailsApplication.config.tizzit.restServerContextPath/navigationxml/$viewComponentId/$since/$depth/$isLiveserver"
-		if(log.isDebugEnabled()) log.debug requrl
+		if(showType) {
+			requrl += "/$showType"
+		}
+		log.info requrl
+ 		if(log.isDebugEnabled()) log.debug requrl
 
 		withHttp(uri: grailsApplication.config.tizzit.restServer) {
 			def resp = get(path: requrl)

@@ -16,8 +16,6 @@ This plugin provides the base functionality for Tizzit in Grails projects
     <resource>org.tizzit.web.service.TizzitRestClientService</resource>
     <resource>org.tizzit.web.taglib.TizzitTagLib</resource>
   </resources>
-  <dependencies>
-    <plugin name='rest' version='* &gt; 0.3' />
-  </dependencies>
+  <dependencies />
   <behavior />
 </plugin>

@@ -25,9 +25,10 @@ class TizzitTagLib {
 		def depth = attrs.depth
 		def since = attrs.since
 		def template = (attrs.template) ?: "navigation"
+		def showType = attrs.showType
 		def viewComponentId = (attrs.viewComponentId) ?: flash.tizzit.viewComponentId
 		def omitFirst = (attrs.omitFirst) ? attrs.omitFirst.toBoolean() : false
-		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, flash.tizzit.isLiveserver)
+		def xml = tizzitRestClientService.navigationXml(depth, since, viewComponentId, flash.tizzit.isLiveserver, showType)
 		if (omitFirst) {
 			xml = xml.viewcomponent
 		}
