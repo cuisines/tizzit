@@ -18,8 +18,8 @@
  */
 package de.juwimm.cms.gui.admin;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
@@ -31,7 +31,19 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -43,8 +55,16 @@ import de.juwimm.cms.gui.table.SiteTableModel;
 import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
-import de.juwimm.cms.vo.*;
-import de.juwimm.swing.*;
+import de.juwimm.cms.vo.HostValue;
+import de.juwimm.cms.vo.ShortLinkValue;
+import de.juwimm.cms.vo.SiteValue;
+import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
+import de.juwimm.swing.DropDownHolder;
+import de.juwimm.swing.NoResizeScrollPane;
+import de.juwimm.swing.PickListData;
+import de.juwimm.swing.PickListPanel;
+import de.juwimm.swing.SortingListModel;
 
 /**
  * Panel for managing hosts
@@ -57,7 +77,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	private static Logger log = Logger.getLogger(PanHost.class);
 	private JButton btnAddHost = null;
 	private JButton btnDeleteHost = null;
-	private SortingListModel hostListModel = new SortingListModel();
+	private final SortingListModel hostListModel = new SortingListModel();
 	private JPanel self = null;
 	private JTable tblSite = null;
 	private JScrollPane jScrollPane = null;
@@ -65,13 +85,13 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	private JScrollPane lstHostsScrollPane = null;
 	private JPanel panManageHosts = null;
 	private JPanel panAssignHosts = null;
-	private PickListData pickListData = new PickListData();
+	private final PickListData pickListData = new PickListData();
 	private PickListPanel pickListPanel = null;
 	private JButton btnSaveHosts = null;
 	private SiteTableModel tblSiteModel = new SiteTableModel();
 	private TableSorter tblSiteSorter = null;
 	private JButton btnEditHost = null;
-	private Communication communication = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication communication = ((Communication) getBean(Beans.COMMUNICATION));
 	private boolean isMasterRoot = false;
 
 	private JPanel panManageShortLinks = null;
@@ -81,10 +101,10 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	private TableSorter tblSitesShortLinksSorter = null;
 	private JList lstHostsShortLinks = null;
 	private JScrollPane spHostsShortLinks = null;
-	private SortingListModel hostsShortLinksListModel = new SortingListModel();
+	private final SortingListModel hostsShortLinksListModel = new SortingListModel();
 	private JList lstShortLinks = null;
 	private JScrollPane spShortLinks = null;
-	private SortingListModel shortLinksListModel = new SortingListModel();
+	private final SortingListModel shortLinksListModel = new SortingListModel();
 	private JPanel panHostUnit = null;
 	private JPanel panShortLink = null;
 	private JComboBox cbxUnits = null;
@@ -229,7 +249,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	 * @return Returns the hostListModel.
 	 */
 	public SortingListModel getHostListModel() {
-		return ((SortingListModel) this.hostListModel);
+		return (this.hostListModel);
 	}
 
 	/**
@@ -404,8 +424,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 			}
 			if (getTblSite().getSelectedRow() >= 0) {
 				if (pickListData.isModified()) {
-					int i = JOptionPane.showConfirmDialog(self, rb.getString("dialog.wantToSave"),
-							rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					int i = JOptionPane.showConfirmDialog(self, rb.getString("dialog.wantToSave"), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 					if (i == JOptionPane.YES_OPTION) {
 						setCursor(new Cursor(Cursor.WAIT_CURSOR));
 						save(e.getLastIndex());
@@ -510,7 +529,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	public void save(int row) {
 		SwingUtilities.invokeLater(new SaveRunner(row));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.gui.controls.UnloadablePanel#unload()
 	 */
@@ -557,7 +576,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	public PickListData getPickListData() {
 		return this.pickListData;
 	}
-	
+
 	/**
 	 * 
 	 * @author <a href="mailto:carsten.schalm@juwimm.com">Carsten Schalm</a>
@@ -566,7 +585,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	 */
 	private class SaveRunner implements Runnable {
 		private int rowToSave = -1;
-		
+
 		public SaveRunner(int row) {
 			this.rowToSave = row;
 		}
@@ -708,7 +727,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 							for (int i = (model.getSize() - 1); i >= 0; i--) {
 								UnitValue unit = (UnitValue) ((DropDownHolder) model.getElementAt(i)).getObject();
 								if (unit != null && unit.getUnitId() == selectedHost.getUnitId().intValue()) {
-									model.setSelectedItem((DropDownHolder) model.getElementAt(i));
+									model.setSelectedItem(model.getElementAt(i));
 									break;
 								}
 							}
@@ -748,7 +767,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 							for (int i = (model.getSize() - 1); i >= 0; i--) {
 								ViewDocumentValue viewDocument = (ViewDocumentValue) ((DropDownHolder) model.getElementAt(i)).getObject();
 								if (viewDocument != null && viewDocument.getViewDocumentId() == selectedShortLink.getViewDocumentId()) {
-									model.setSelectedItem((DropDownHolder) model.getElementAt(i));
+									model.setSelectedItem(model.getElementAt(i));
 									break;
 								}
 							}
@@ -1155,12 +1174,12 @@ public class PanHost extends JPanel implements ReloadablePanel {
 	private void deleteShortLink() {
 		if (!this.getLstShortLinks().isSelectionEmpty()) {
 			ShortLinkValue selectedShortLink = (ShortLinkValue) ((DropDownHolder) lstShortLinks.getSelectedValue()).getObject();
-			this.communication.deleteShortLink(selectedShortLink);
+			this.communication.deleteShortLink(selectedShortLink.getShortLinkId());
 			this.shortLinksListModel.removeElement(lstShortLinks.getSelectedValue());
 			this.getLstShortLinks().clearSelection();
 		}
 	}
-	
+
 	private JComboBox getCbViewDocuments() {
 		if (this.cbxViewDocuments == null) {
 			this.cbxViewDocuments = new JComboBox(new DefaultComboBoxModel());

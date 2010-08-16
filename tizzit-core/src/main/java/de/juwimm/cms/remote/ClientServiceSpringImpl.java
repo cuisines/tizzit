@@ -894,15 +894,6 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleDeleteShortLink(ShortLinkValue shortLinkValue) throws Exception {
-		try {
-			getMasterRootServiceSpring().deleteShortLink(shortLinkValue);
-		} catch (Exception e) {
-			log.error("Error deleting shortLinkValue " + shortLinkValue.getShortLink() + ": " + e.getMessage(), e);
-		}
-	}
-
-	@Override
 	protected boolean handleDeleteSimplePwRealmUser(Integer simplePwRealmUserId) throws Exception {
 		boolean del = false;
 		try {
@@ -1959,6 +1950,19 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected void handleSetViewComponentOnline(Integer viewComponentId) throws Exception {
 		getViewServiceSpring().setViewComponentOnline(viewComponentId);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleDeleteShortLink(java.lang.Integer)
+	 */
+	@Override
+	protected void handleDeleteShortLink(Integer shortLinkId) throws Exception {
+		try {
+			getMasterRootServiceSpring().deleteShortLink(shortLinkId);
+		} catch (Exception e) {
+			log.error("Error deleting shortLinkValue " + shortLinkId + ": " + e.getMessage(), e);
+		}
 
 	}
 }

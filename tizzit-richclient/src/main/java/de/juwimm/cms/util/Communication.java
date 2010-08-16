@@ -2509,11 +2509,11 @@ public class Communication implements ExitListener, ActionListener {
 		return shortLinkValue;
 	}
 
-	public void deleteShortLink(ShortLinkValue shortLinkValue) {
+	public void deleteShortLink(Integer shortLinkId) {
 		try {
-			getClientService().deleteShortLink(shortLinkValue);
+			getClientService().deleteShortLink(shortLinkId);
 		} catch (Exception e) {
-			log.error("Error deleting shortLinkValue " + shortLinkValue.getShortLink() + ": " + e.getMessage(), e);
+			log.error("Error deleting shortLinkValue " + shortLinkId + ": " + e.getMessage(), e);
 		}
 	}
 

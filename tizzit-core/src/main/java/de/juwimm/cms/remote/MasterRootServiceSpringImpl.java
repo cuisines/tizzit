@@ -319,18 +319,6 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 	}
 
 	@Override
-	protected void handleDeleteShortLink(ShortLinkValue shortLinkValue) throws Exception {
-		if (shortLinkValue != null) {
-			try {
-				super.getShortLinkHbmDao().remove(shortLinkValue.getShortLinkId());
-			} catch (Exception e) {
-				log.error("Error deleting ShortLink: " + e.getMessage(), e);
-				throw new UserException("Error deleting ShortLink: " + e.getMessage());
-			}
-		}
-	}
-
-	@Override
 	protected ShortLinkValue[] handleGetAllShortLinks4Site(Integer siteId) throws Exception {
 		try {
 			Collection shortLinks4Site = super.getShortLinkHbmDao().findAll(siteId);
@@ -377,6 +365,20 @@ public class MasterRootServiceSpringImpl extends MasterRootServiceSpringBase {
 			log.error("Error updating host " + hostValue.getHostName() + ": " + e.getMessage(), e);
 		}
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.MasterRootServiceSpringBase#handleDeleteShortLink(java.lang.Integer)
+	 */
+	@Override
+	protected void handleDeleteShortLink(Integer shortLinkId) throws Exception {
+		try {
+			getShortLinkHbmDao().remove(shortLinkId);
+		} catch (Exception e) {
+			log.error("Error deleting ShortLink: " + e.getMessage(), e);
+			throw new UserException("Error deleting ShortLink: " + e.getMessage());
+		}
+
 	}
 
 }
