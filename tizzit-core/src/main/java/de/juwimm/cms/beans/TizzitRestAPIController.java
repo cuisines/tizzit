@@ -462,6 +462,32 @@ public class TizzitRestAPIController {
 		return sb;
 	}
 
+	@RequestMapping(value = "/getmodifieddate4cache/{viewComponentId}", method = RequestMethod.GET)
+	@ResponseBody
+	public long getModifiedDate4Cache(@PathVariable int viewComponentId) {
+		if (log.isDebugEnabled()) log.debug("/getmodifieddate4cache/" + viewComponentId);
+		long date = 0;
+		try {
+			date = webSpringBean.getModifiedDate4Cache(viewComponentId);
+		} catch (Exception e) {
+			log.warn("Error calling getModifiedDate4Cache on webservicespring");
+		}
+		return date;
+	}
+
+	@RequestMapping(value = "/getmodifieddate4info/{viewComponentId}", method = RequestMethod.GET)
+	@ResponseBody
+	public long getModifiedDate4Info(@PathVariable int viewComponentId) {
+		if (log.isDebugEnabled()) log.debug("/getmodifieddate4info/" + viewComponentId);
+		long date = 0;
+		try {
+			date = webSpringBean.getModifiedDate4Info(viewComponentId);
+		} catch (Exception e) {
+			log.warn("Error calling getModifiedDate4Info on webservicespring");
+		}
+		return date;
+	}
+
 	//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
 	@RequestMapping(value = "/action", method = RequestMethod.GET)
 	@ResponseBody
@@ -607,9 +633,6 @@ public class TizzitRestAPIController {
 	//
 	//	}
 	//
-	//	public Date getModifiedDate4Cache(Integer viewComponentId){
-	//
-	//	}
 	//
 	//	public boolean hasPublishContentVersion(Integer viewComponentId){
 	//
@@ -643,9 +666,6 @@ public class TizzitRestAPIController {
 	//
 	//	}
 	//
-	//	public Date getModifiedDate4Info(Integer viewComponentId){
-	//
-	//	}
 	//
 	//	public long getMaxSiteLastModifiedDate(){
 	//

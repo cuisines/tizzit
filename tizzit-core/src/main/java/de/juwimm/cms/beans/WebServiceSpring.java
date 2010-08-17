@@ -148,13 +148,18 @@ public class WebServiceSpring {
 	 */
 
 	public Date getModifiedDate4Cache(Integer viewComponentId) throws Exception {
+		return new Date(getModifiedDate4Cache(viewComponentId.intValue()));
+	}
+
+	public long getModifiedDate4Cache(int viewComponentIdValue) throws Exception {
+		Integer viewComponentId = Integer.valueOf(viewComponentIdValue);
 		try {
 			if (log.isDebugEnabled()) log.debug("Start getModifiedDate4Cache");
 			ViewComponentHbm vc = viewComponentHbmDao.load(viewComponentId);
 			if (vc == null) throw new UserException("Error loading ViewComponent " + viewComponentId.toString() + "!");
 			long modlong = viewComponentHbmDao.getPageModifiedDate(vc);
 			if (log.isDebugEnabled()) log.debug("End getModifiedDate4Cache");
-			return new Date(modlong);
+			return modlong;
 		} catch (Exception e) {
 			log.warn("Error getting ModifiedDate4Cache for ViewComponent " + viewComponentId.toString() + ": " + e.getMessage());
 			throw new UserException("Error getting ModifiedDate4Cache for ViewComponent " + viewComponentId.toString() + ": " + e.getMessage());
@@ -166,11 +171,16 @@ public class WebServiceSpring {
 	 */
 
 	public Date getModifiedDate4Info(Integer viewComponentId) throws Exception {
+		return new Date(getModifiedDate4Info(viewComponentId.intValue()));
+	}
+
+	public long getModifiedDate4Info(int viewComponentIdValue) throws Exception {
+		Integer viewComponentId = Integer.valueOf(viewComponentIdValue);
 		try {
 			if (log.isDebugEnabled()) log.debug("Start getModifiedDate4Info");
 			ViewComponentHbm vc = viewComponentHbmDao.load(viewComponentId);
 			if (vc == null) throw new UserException("Error loading ViewComponent " + viewComponentId.toString() + "!");
-			return new Date(vc.getUserLastModifiedDate());
+			return vc.getUserLastModifiedDate();
 		} catch (Exception e) {
 			log.warn("Error getting ModifiedDate4Info for ViewComponent " + viewComponentId.toString() + ": " + e.getMessage());
 			throw new UserException("Error getting ModifiedDate4Info for ViewComponent " + viewComponentId.toString() + ": " + e.getMessage());
