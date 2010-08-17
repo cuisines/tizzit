@@ -30,7 +30,7 @@ public class InternalLinksTransformerPlugin implements ManagedTizzitPlugin {
 
 	private ContentHandler parent;
 	private final String INTERNALLINK = "internalLink";
-	private boolean inInternalLink = false;
+	private final boolean inInternalLink = false;
 	private final Integer viewComponentId = null;
 
 	private WebServiceSpring webSpringBean = null;
@@ -87,11 +87,10 @@ public class InternalLinksTransformerPlugin implements ManagedTizzitPlugin {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("startElement: " + localName + " in nameSpace: " + uri + " found " + attrs.getLength() + " attributes");
-		if (localName.compareTo(INTERNALLINK) == 0) {
-			if (inInternalLink) {
+		if (localName.equalsIgnoreCase(INTERNALLINK)) {
+			if (attrs.getValue("viewid") != null) {
 				startInternalLinkElement(uri, localName, qName, attrs);
 			} else {
-				inInternalLink = true;
 				parent.startElement(uri, localName, qName, attrs);
 			}
 		} else {
@@ -134,11 +133,6 @@ public class InternalLinksTransformerPlugin implements ManagedTizzitPlugin {
 	 */
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (log.isDebugEnabled()) log.debug("endElement: " + localName + " in nameSpace: " + uri);
-		if (localName.compareTo(INTERNALLINK) == 0) {
-			if (inInternalLink) {
-				inInternalLink = false;
-			}
-		}
 		parent.endElement(uri, localName, qName);
 	}
 

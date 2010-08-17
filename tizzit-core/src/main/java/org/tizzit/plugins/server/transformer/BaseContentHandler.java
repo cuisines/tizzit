@@ -118,6 +118,8 @@ public final class BaseContentHandler implements ContentHandler {
 		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("teaserInclude") || qName.equalsIgnoreCase("teaserInclude"))) {
 			uri = "http://plugins.tizzit.org/TeaserTransformer";
 			localName = "teaserInclude";
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("internalLink") || qName.equalsIgnoreCase("internalLink"))) {
+			uri = "http://plugins.tizzit.org/InternalLinksTransformer";
 		}
 		if ((uri != null && uri.startsWith(de.juwimm.cms.plugins.Constants.PLUGIN_NAMESPACE))) {
 			if (!this.pluginStack.peek().getNamespaceUri().equals(uri)) {
@@ -147,7 +149,7 @@ public final class BaseContentHandler implements ContentHandler {
 		String mid = name.substring(name.lastIndexOf("/") + 1);
 		String suf = "Plugin";
 		String className = pre + mid + suf;
-		log.info("gimme plugin for: " + className);
+		if (log.isDebugEnabled()) log.debug("searching plugin for: " + className);
 		ManagedTizzitPlugin retval = null;
 		try {
 			retval = (ManagedTizzitPlugin) Class.forName(className).newInstance();
@@ -170,6 +172,8 @@ public final class BaseContentHandler implements ContentHandler {
 		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("teaserInclude") || qName.equalsIgnoreCase("teaserInclude"))) {
 			uri = "http://plugins.tizzit.org/TeaserTransformer";
 			localName = "teaserInclude";
+		} else if ((uri == null || uri.isEmpty()) && (localName.equalsIgnoreCase("internalLink") || qName.equalsIgnoreCase("internalLink"))) {
+			uri = "http://plugins.tizzit.org/InternalLinksTransformer";
 		}
 		if (uri.startsWith(de.juwimm.cms.plugins.Constants.PLUGIN_NAMESPACE)) {
 			if (localName.equals(this.pluginStack.peek().getElementName())) {

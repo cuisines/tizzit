@@ -36,9 +36,9 @@ import de.juwimm.cms.content.panel.PanCheckBox;
  * @version $Id$
  */
 public class CheckBoxModule extends AbstractModule {
-	private PanCheckBox pan = new PanCheckBox();
-	private ArrayList<Properties> vec = new ArrayList<Properties>();
-	
+	private final PanCheckBox pan = new PanCheckBox();
+	private final ArrayList<Properties> vec = new ArrayList<Properties>();
+
 	public String getPaneImage() {
 		return "";
 	}
@@ -47,11 +47,13 @@ public class CheckBoxModule extends AbstractModule {
 		return "";
 	}
 
+	@Override
 	public Object clone() {
 		CheckBoxModule module = (CheckBoxModule) super.clone(false);
 		return module;
 	}
 
+	@Override
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
 		pan.setCustomProperties(methodname, parameters);
@@ -79,6 +81,7 @@ public class CheckBoxModule extends AbstractModule {
 	}
 
 	public void setProperties(Node node) {
+		if (node == null) return;
 		setDescription(XercesHelper.getNodeValue(node.getFirstChild()));
 		pan.setProperties(node);
 	}
@@ -99,7 +102,7 @@ public class CheckBoxModule extends AbstractModule {
 	public void setEnabled(boolean enabling) {
 		pan.setEnabled(enabling);
 	}
-	
+
 	public void recycle() {
 		pan.clear();
 	}
