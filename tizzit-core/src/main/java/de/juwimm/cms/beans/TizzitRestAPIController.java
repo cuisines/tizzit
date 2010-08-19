@@ -462,28 +462,15 @@ public class TizzitRestAPIController {
 		return sb;
 	}
 
-	@RequestMapping(value = "/getmodifieddate4cache/{viewComponentId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/getmodifieddate4cache/{viewComponentId}/{hostName}", method = RequestMethod.GET)
 	@ResponseBody
-	public long getModifiedDate4Cache(@PathVariable int viewComponentId) {
+	public long getModifiedDate4Cache(@PathVariable int viewComponentId, @PathVariable String hostName) {
 		if (log.isDebugEnabled()) log.debug("/getmodifieddate4cache/" + viewComponentId);
 		long date = 0;
 		try {
-			date = webSpringBean.getModifiedDate4Cache(viewComponentId);
+			date = webSpringBean.getModifiedDate4Cache(viewComponentId, hostName);
 		} catch (Exception e) {
 			log.warn("Error calling getModifiedDate4Cache on webservicespring");
-		}
-		return date;
-	}
-
-	@RequestMapping(value = "/getmodifieddate4info/{viewComponentId}", method = RequestMethod.GET)
-	@ResponseBody
-	public long getModifiedDate4Info(@PathVariable int viewComponentId) {
-		if (log.isDebugEnabled()) log.debug("/getmodifieddate4info/" + viewComponentId);
-		long date = 0;
-		try {
-			date = webSpringBean.getModifiedDate4Info(viewComponentId);
-		} catch (Exception e) {
-			log.warn("Error calling getModifiedDate4Info on webservicespring");
 		}
 		return date;
 	}

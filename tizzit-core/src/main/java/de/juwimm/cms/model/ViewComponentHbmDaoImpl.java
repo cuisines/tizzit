@@ -333,8 +333,11 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleGetPageModifiedDate(de.juwimm.cms.model.ViewComponentHbm, boolean)
+	 */
 	@Override
-	protected long handleGetPageModifiedDate(ViewComponentHbm me) {
+	protected long handleGetPageModifiedDate(ViewComponentHbm me, boolean liveServer) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getPageModifiedDate start");
 		long result = new Date().getTime();
 
@@ -351,7 +354,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 						if (refId != null) {
 							ContentVersionHbm contentVersion = null;
 							ContentHbm vc = (ContentHbm) getSessionFactory().getCurrentSession().load(ContentHbmImpl.class, refId);
-							if (getTizzitPropertiesBeanSpring().isLiveserver()) {
+							if (liveServer) {
 								contentVersion = vc.getContentVersionForPublish();
 							} else {
 								contentVersion = vc.getLastContentVersion();
@@ -389,6 +392,12 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		if (log.isDebugEnabled()) log.debug("LEAVING GET PAGE MODIFIED DATE");
 		return result;
+	}
+
+	@Override
+	protected long handleGetPageModifiedDate(ViewComponentHbm me) throws Exception {
+		boolean liveServer = getTizzitPropertiesBeanSpring().isLiveserver();
+		return handleGetPageModifiedDate(me, liveServer);
 	}
 
 	@Override

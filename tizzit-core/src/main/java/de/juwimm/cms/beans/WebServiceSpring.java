@@ -152,12 +152,23 @@ public class WebServiceSpring {
 	}
 
 	public long getModifiedDate4Cache(int viewComponentIdValue) throws Exception {
+		return getModifiedDate4Cache(viewComponentIdValue, null);
+	}
+
+	public long getModifiedDate4Cache(int viewComponentIdValue, String hostName) throws Exception {
 		Integer viewComponentId = Integer.valueOf(viewComponentIdValue);
 		try {
 			if (log.isDebugEnabled()) log.debug("Start getModifiedDate4Cache");
 			ViewComponentHbm vc = viewComponentHbmDao.load(viewComponentId);
 			if (vc == null) throw new UserException("Error loading ViewComponent " + viewComponentId.toString() + "!");
-			long modlong = viewComponentHbmDao.getPageModifiedDate(vc);
+			long modlong = 0;
+			if (hostName != null && !hostName.isEmpty()) {
+				HostHbm hv = hostHbmDao.load(hostName);
+				if (hv == null) throw new UserException("Error loading Host " + hostName + "!");
+				modlong = viewComponentHbmDao.getPageModifiedDate(vc, hv.isLiveserver());
+			} else {
+				modlong = viewComponentHbmDao.getPageModifiedDate(vc);
+			}
 			if (log.isDebugEnabled()) log.debug("End getModifiedDate4Cache");
 			return modlong;
 		} catch (Exception e) {
