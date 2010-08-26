@@ -473,18 +473,21 @@ public class TizzitRestAPIController {
 		return date;
 	}
 
-	//	@RequestMapping(value = "/getmodifieddate4cache", method = RequestMethod.GET)
-	//	@ResponseBody
-	//	public long getModifiedDate4Cache(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath, @RequestParam(value = "safeguardUsername", required = false) String safeguardUsername, @RequestParam(value = "safeguardPassword", required = false) String safeguardPassword) {
-	//		if (log.isDebugEnabled()) log.debug("/getmodifieddate4cache/");
-	//		long date = 0;
-	//		try {
-	//			date = webSpringBean.getModifiedDate4Cache(viewComponentId, hostName);
-	//		} catch (Exception e) {
-	//			log.warn("Error calling getModifiedDate4Cache on webservicespring");
-	//		}
-	//		return date;
-	//	}
+	@RequestMapping(value = "/getmodifieddate4cache", method = RequestMethod.GET)
+	@ResponseBody
+	public long getModifiedDate4Cache(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath) {
+		if (log.isDebugEnabled()) log.debug("/getmodifieddate4cache/");
+		long date = 0;
+		try {
+			String viewType = "browser";
+			Map<String, String> propertyMap = this.webSpringBean.getSitemapParameters(hostName, requestPath, viewType, null, null, new HashMap<String, String>());
+			Integer viewComponentId = Integer.getInteger(propertyMap.get("viewComponentId"));
+			date = webSpringBean.getModifiedDate4Cache(viewComponentId, propertyMap.get("hostName"));
+		} catch (Exception e) {
+			log.warn("Error calling getModifiedDate4Cache on webservicespring");
+		}
+		return date;
+	}
 
 	//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
 	@RequestMapping(value = "/action", method = RequestMethod.GET)

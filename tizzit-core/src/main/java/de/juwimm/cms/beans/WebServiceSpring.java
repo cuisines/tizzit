@@ -896,6 +896,7 @@ public class WebServiceSpring {
 		if (!redirect.isEmpty()) {
 			host = redirect;
 			sitemapParams.put("redirectURL", redirect);
+			sitemapParams.put("hostName", host);
 		} else {
 			sitemapParams.put("redirectURL", "0");
 		}
