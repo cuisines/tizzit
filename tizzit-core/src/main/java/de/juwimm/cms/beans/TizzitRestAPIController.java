@@ -46,9 +46,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import de.juwimm.cms.model.HostHbm;
 import de.juwimm.cms.model.HostHbmDao;
-import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 @Controller
@@ -475,52 +473,44 @@ public class TizzitRestAPIController {
 		return date;
 	}
 
+	//	@RequestMapping(value = "/getmodifieddate4cache", method = RequestMethod.GET)
+	//	@ResponseBody
+	//	public long getModifiedDate4Cache(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath, @RequestParam(value = "safeguardUsername", required = false) String safeguardUsername, @RequestParam(value = "safeguardPassword", required = false) String safeguardPassword) {
+	//		if (log.isDebugEnabled()) log.debug("/getmodifieddate4cache/");
+	//		long date = 0;
+	//		try {
+	//			date = webSpringBean.getModifiedDate4Cache(viewComponentId, hostName);
+	//		} catch (Exception e) {
+	//			log.warn("Error calling getModifiedDate4Cache on webservicespring");
+	//		}
+	//		return date;
+	//	}
+
 	//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
 	@RequestMapping(value = "/action", method = RequestMethod.GET)
 	@ResponseBody
 	public String getAction(@RequestParam(value = "host") String hostName, @RequestParam(value = "requestPath") String requestPath, @RequestParam(value = "safeguardUsername", required = false) String safeguardUsername, @RequestParam(value = "safeguardPassword", required = false) String safeguardPassword) throws Exception {
-
 		// first check for some redirects for this host
-		Map<String, String> redirectionMap = new HashMap<String, String>();
-		String redirectUrl = this.webSpringBean.resolveRedirect(hostName, requestPath, null);
-		if (redirectUrl != null && !redirectUrl.isEmpty()) {
-			if (log.isDebugEnabled()) log.debug("found redirectUrl: " + redirectUrl);
-			redirectionMap.put("redirectURL", redirectUrl);
-		}
-		redirectionMap.put("redirectURL", "0");
+		String viewType = "browser"; // This can be browser for now 
 
-		String startPageUrl = this.webSpringBean.getStartPage(hostName);
-		if (startPageUrl.isEmpty()) {
-			startPageUrl = "0";
-		}
-		redirectionMap.put("startpageURL", startPageUrl);
+		Map<String, String> propertyMap = this.webSpringBean.getSitemapParameters(hostName, requestPath, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
 
 		StringBuffer sb = new StringBuffer();
-		//TODO correct mapping - even if only shortlink provided or only language
-		String path = requestPath.substring(requestPath.indexOf('/') + 1); // ded/blaa
-		String language = requestPath.substring(0, requestPath.indexOf('/')); // 0123456
-		String viewType = "browser"; // This can be browser for now 
 
 		sb.append("<root>");
 		sb.append("<params>");
 
-		HostHbm host = hostHbmDao.load(hostName);
-		SiteHbm site = host.getSite();
-		sb.append("<siteId>" + site.getSiteId() + "</siteId>");
 		//sb.append("<siteName>" + site.getName() + "</siteName>");
 		//sb.append("<siteShort>" + site.getShortName() + "</siteShort>");
-		sb.append("<hostIsLiveserver>" + host.isLiveserver() + "</hostIsLiveserver>");
 
-		Map<String, String> r = webSpringBean.getSitemapParameters(null, site.getSiteId(), language, path, viewType, safeguardUsername, safeguardPassword, new HashMap<String, String>());
-		r.putAll(redirectionMap);
-		for (String name : r.keySet()) {
-			String val = r.get(name);
+		for (String name : propertyMap.keySet()) {
+			String val = propertyMap.get(name);
 			sb.append("<" + name + ">" + val + "</" + name + ">");
 		}
 
 		sb.append("</params>");
 		sb.append("<content>");
-		sb.append(getContentParsed(Integer.parseInt(r.get("viewComponentId")), host.isLiveserver()));
+		sb.append(getContentParsed(Integer.parseInt(propertyMap.get("viewComponentId")), Boolean.parseBoolean(propertyMap.get("hostIsLiveserver"))));
 		sb.append("</content>");
 		sb.append("</root>");
 

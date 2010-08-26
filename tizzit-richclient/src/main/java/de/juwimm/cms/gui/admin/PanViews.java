@@ -46,6 +46,7 @@ import javax.swing.table.TableColumn;
 import org.apache.log4j.Logger;
 
 import de.juwimm.cms.client.beans.Beans;
+import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.deploy.panel.wizard.PanEditorEditions;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
 import de.juwimm.cms.gui.table.ViewTableModel;
@@ -84,20 +85,13 @@ public class PanViews extends JPanel implements ReloadablePanel {
 		try {
 			setDoubleBuffered(true);
 			jbInit();
-			//this ones are hard coded... :(
-			cbxLanguage.addItem("en");
-			cbxLanguage.addItem("de");
-			cbxLanguage.addItem("es");
-			cbxLanguage.addItem("fr");
-			cbxLanguage.addItem("it");
-			cbxLanguage.addItem("ru");
-			cbxLanguage.addItem("tr");
-			cbxLanguage.addItem("nl"); //Holland
-			cbxLanguage.addItem("dk"); //Dänemark
-			cbxLanguage.addItem("se"); //Schweden
-			cbxLanguage.addItem("sa"); //Saudi-Arabien
-			cbxLanguage.addItem("pl"); //Polen
-			cbxLanguage.addItem("uae"); // Vereinigte Arabische Emirate
+
+			String[] lang = getLanguages();
+			if (lang != null) {
+				for (int i = 0; i < lang.length; i++) {
+					cbxLanguage.addItem(lang[i]);
+				}
+			}
 
 			cbxViewType.addItem("browser");
 			cbxViewType.addItem("WAP");
@@ -117,6 +111,17 @@ public class PanViews extends JPanel implements ReloadablePanel {
 		} catch (Exception exe) {
 			log.error("Initialization Error", exe);
 		}
+	}
+
+	private String[] getLanguages() {
+		String[] lang = null;
+		try {
+			lang = Constants.VIEWCOMPONENT_LANGUAGES.split("\\|");
+		} catch (Exception ex) {
+			log.warn("Could not load languages from constants file - ", ex);
+		}
+
+		return lang;
 	}
 
 	void jbInit() throws Exception {

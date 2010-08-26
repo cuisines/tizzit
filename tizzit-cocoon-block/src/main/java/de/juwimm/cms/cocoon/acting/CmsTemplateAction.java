@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 
 import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
-import de.juwimm.cms.exceptions.UserException;
 
 /**
  *
@@ -47,7 +46,7 @@ import de.juwimm.cms.exceptions.UserException;
  * @version $Id$
  */
 public class CmsTemplateAction extends AbstractAction implements SingleThreaded, Composable {
-	private Logger log = Logger.getLogger(CmsTemplateAction.class);
+	private final Logger log = Logger.getLogger(CmsTemplateAction.class);
 	private ComponentManager manager = null;
 	private WebServiceSpring webSpringBean = null;
 

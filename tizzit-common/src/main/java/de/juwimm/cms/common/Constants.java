@@ -225,6 +225,8 @@ public final class Constants {
 	public static final String ACTION_REFRESH_TEXT_EDITOR = "arte";
 	public static String VIEW_COMPONENT_TO_COPY = null;
 
+	public static final String VIEWCOMPONENT_LANGUAGES = "de|en|es|fr|it|ru|tr|nl|dk|se|sa|pl|uae";
+
 	public static final int ADD_BEFORE = 0;
 	public static final int ADD_AFTER = 1;
 	public static final int ADD_APPEND = 2;

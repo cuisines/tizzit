@@ -41,7 +41,7 @@ import de.juwimm.cms.util.Communication;
  */
 public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 	private static Logger log = Logger.getLogger(PanAdministrationRoot.class);
-	private JTabbedPane panTab = new JTabbedPane();
+	private final JTabbedPane panTab = new JTabbedPane();
 	private PanUser panUser;
 	private PanUnitGroupPerUser panUnitUser;
 	private PanViews panView;
@@ -54,7 +54,7 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 	private PanCmsResources panCmsResources;
 	private PanEditionView panEditionView;
 
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 
 	public PanAdministrationRoot() {
 		try {

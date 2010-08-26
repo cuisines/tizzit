@@ -247,8 +247,6 @@
 	<bean class="de.juwimm.cms.cocoon.support.ConquestMail" id="conquestMail" scope="prototype">
 		<property name="webSpringBean" ref="webServiceSpring"/>
 	</bean>
-
-<!--	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>-->
 	
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
     	<property name="order" value="0" />

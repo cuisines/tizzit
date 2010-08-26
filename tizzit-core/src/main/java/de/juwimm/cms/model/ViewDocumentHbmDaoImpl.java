@@ -20,6 +20,9 @@
  */
 package de.juwimm.cms.model;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -122,6 +125,24 @@ public class ViewDocumentHbmDaoImpl extends ViewDocumentHbmDaoBase {
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findByViewType(final int transform, final java.lang.String viewType, final java.lang.Integer siteId) {
 		return this.findByViewType(transform, "from de.juwimm.cms.model.ViewDocumentHbm as v where v.viewType = ? and v.site.siteId = ?", viewType, siteId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.model.ViewDocumentHbmDaoBase#handleGetLanguagesBySite(java.lang.Integer)
+	 */
+	@Override
+	protected String handleGetLanguagesBySite(Integer siteId) throws Exception {
+		Collection coll = findAll(siteId);
+		Iterator it = coll.iterator();
+		StringBuffer lang = new StringBuffer();
+		while (it.hasNext()) {
+			ViewDocumentHbm vd = (ViewDocumentHbm) it.next();
+			lang.append(vd.getLanguage()).append("|");
+		}
+		if (lang.length() != 0) {
+			return lang.substring(0, lang.length() - 1);
+		}
+		return "";
 	}
 
 }

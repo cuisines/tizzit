@@ -889,6 +889,155 @@ public class WebServiceSpring {
 		return value;
 	}
 
+	public Map<String, String> getSitemapParameters(String host, String path, String viewType, String safeguardUsername, String safeguardPassword, Map<String, String> safeguardMap) throws Exception {
+		Map<String, String> sitemapParams = new HashMap<String, String>();
+		// need to get the redirect host first - to find out which site to use
+		String redirect = this.resolveHost(host, null);
+		if (!redirect.isEmpty()) {
+			host = redirect;
+			sitemapParams.put("redirectURL", redirect);
+		} else {
+			sitemapParams.put("redirectURL", "0");
+		}
+		String startPageUrl = this.getStartPage(host);
+		if (startPageUrl.isEmpty()) {
+			sitemapParams.put("startpageURL", "0");
+		} else {
+			sitemapParams.put("startpageURL", startPageUrl);
+		}
+		// loading the site now - if it doesn't exist, no need to go on
+		SiteHbm site = null;
+		try {
+			site = this.hostHbmDao.load(host).getSite();
+		} catch (Exception ex) {
+			if (log.isDebugEnabled()) log.debug("Could not load host: " + host, ex);
+		}
+		if (site == null) return sitemapParams;
+		sitemapParams.put("hostIsLiveserver", Boolean.toString(this.hostHbmDao.load(host).isLiveserver()));
+		sitemapParams.put("siteId", site.getSiteId().toString());
+		// if path is a short link, get the referenced path to find out about language settings
+		redirect = this.resolveShortLink(host, path);
+		if (!redirect.isEmpty()) {
+			path = redirect;
+		}
+		// strip down leading and closing '/'
+		path = path.trim();
+		while (path.startsWith("/")) {
+			path = path.substring(1);
+		}
+		while (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		String language = "";
+		if (!path.isEmpty()) {
+			try {
+				//returns a string like "de|en|fr"
+				String lang = viewDocumentHbmDao.getLanguagesBySite(site.getSiteId());
+				boolean isStart = path.matches("^(" + lang + ").*");
+				boolean isEnd = path.matches(".*(" + lang + ")$");
+				// first case we only got the language
+				if (isStart && isEnd) {
+					language = path;
+					path = "";
+				} else if (isStart) {
+					int index = path.indexOf('/');
+					language = path.substring(0, index);
+					path = path.substring(index + 1);
+				} else if (isEnd) {
+					int index = path.lastIndexOf("/");
+					language = path.substring(index + 1, path.length());
+					path = path.substring(0, index);
+				}
+			} catch (Exception ex) {
+				if (log.isDebugEnabled()) log.debug("Could not load languages for site: " + site.getSiteId(), ex);
+			}
+		}
+
+		boolean isSymlink = false;
+		Integer viewComponentId = null;
+		String templateName = "";
+		{
+			// TODO this is NOT the final solution!
+			GrantedAuthority[] mockAuthorities = {new GrantedAuthorityImpl("*")};
+			Authentication mockUser = new UsernamePasswordAuthenticationToken("system", "pw", mockAuthorities);
+			SecurityContextHolder.getContext().setAuthentication(mockUser);
+		}
+		if (language == null || language.isEmpty()) {
+			// Fall: / (Startseite wird aufgerufen)
+			ViewDocumentValue vdd = viewServiceSpring.getDefaultViewDocument4Site(site.getSiteId());
+			viewComponentId = vdd.getViewId();
+			viewType = vdd.getViewType();
+			language = vdd.getLanguage();
+			path = "";
+		} else if (path == null || path.isEmpty()) {
+			// Fall: /deutsch/ (Startseite der Language wird aufgerufen)
+			if (viewType.endsWith("/")) {
+				viewType = viewType.substring(0, viewType.length() - 1);
+			}
+			ViewDocumentHbm vd = viewDocumentHbmDao.findByViewTypeAndLanguage(viewType, language, site.getSiteId());
+			viewComponentId = vd.getViewDocumentId();
+			path = vd.getViewComponent().getPath();
+			byte viewComponentIype = vd.getViewComponent().getViewType();
+			if (viewComponentIype == Constants.VIEW_TYPE_INTERNAL_LINK) {
+				isSymlink = true;
+			}
+		} else {
+			// Fall: /deutsch/joekel/
+			viewComponentId = viewServiceSpring.getViewComponentId4PathWithViewTypeAndLanguage(path, viewType, language, site.getSiteId());
+		}
+		if (viewComponentId == null) {
+			if ("favicon.ico".equals(path)) {
+				return null;
+			}
+			throw new ResourceNotFoundException("Could not read resource: " + path);
+		}
+		try {
+			if (log.isDebugEnabled()) log.debug("found viewComponentId " + viewComponentId + " for path");
+			sitemapParams.put("currentDate", DateConverter.getSql2String(new Date(System.currentTimeMillis())));
+			templateName = this.getContentTemplateName(viewComponentId);
+			sitemapParams.put("viewComponentId", viewComponentId.toString());
+			sitemapParams.put("template", templateName);
+			sitemapParams.put("language", language);
+			sitemapParams.put("viewType", viewType);
+			sitemapParams.put("redirect", Boolean.toString(isSymlink));
+			// path = URLEncoder.encode(path, "ISO-8859-1");
+			// path = path.replaceAll("[+]", "%20"); // replace "+" by %20
+			// Spaces
+			sitemapParams.put("path", path);
+		} catch (Exception e) {
+			throw new UserException("Error getting sitemap-parameters", e);
+		}
+		if (safeguardUsername != null) {
+			if (log.isDebugEnabled()) log.debug("logging in safeguard user: " + safeguardUsername);
+			byte login = safeguardServiceSpring.login(safeguardUsername, safeguardPassword, viewComponentId);
+			if (login == SafeguardLoginManager.LOGIN_SUCCESSFULLY) {
+				if (log.isDebugEnabled()) log.debug("Login of safeguard user successfully");
+				String[] realmKeys = safeguardServiceSpring.getRoles4UserAndRealm(safeguardUsername, safeguardPassword, viewComponentId);
+				if (realmKeys != null) {
+					for (int i = (realmKeys.length - 1); i >= 0; i--)
+						safeguardMap.put(realmKeys[i], Boolean.TRUE.toString());
+				}
+			}
+			sitemapParams.put("login", Byte.toString(login));
+		}
+		boolean needSafeguard = false;
+		needSafeguard = safeguardServiceSpring.isSafeguardAuthenticationNeeded(viewComponentId, safeguardMap);
+
+		sitemapParams.put("safeguard", new Boolean(needSafeguard).toString());
+		if (needSafeguard) {
+			String loginpage = this.getSafeguardLoginPath(viewComponentId);
+			if (log.isDebugEnabled()) log.debug("Safeguard needed; rediecting to login page: " + loginpage);
+			// loginpage = URLEncoder.encode(loginpage,
+			// "ISO-8859-1").replaceAll("[+]", "%20"); // replace "+" by %20
+			// Spaces
+			sitemapParams.put("redirecttologin", loginpage);
+		}
+
+		if (log.isDebugEnabled()) log.debug("getSitemapParameters end " + map2string(sitemapParams));
+		return sitemapParams;
+	}
+
+	@Deprecated
 	public Map getSitemapParameters(Integer viewComponentId, Integer siteId, String language, String path, String viewType, String safeguardUsername, String safeguardPassword, Map safeguardMap) throws Exception {
 		boolean needSafeguard = false;
 		Map<String, String> sitemapParams = new HashMap<String, String>();
@@ -1871,21 +2020,28 @@ public class WebServiceSpring {
 				//path = url.getPath();
 				path = requestPath;
 			}
-			// check for shortlink
+			// check for shortlink - but has to check for site of redirected host..
+			if (!returnHost.isEmpty()) {
+				try {
+					host = hostHbmDao.load(returnHost);
+				} catch (Exception e) {
+					if (log.isDebugEnabled()) log.debug("Could not find Host with name " + hostName, e);
+				}
+			}
 			SiteHbm site = host.getSite();
 			if (site != null) {
 				ShortLinkHbm shortlink = null;
 				try {
-					if (url != null) {
-						if (returnHost.length() > 0) {
-							// add protocol to the new host
-							returnHost = url.getProtocol() + "://" + returnHost;
-							// add port?
-							if (url.getPort() > 0 && url.getPort() != 80) returnHost += ":" + url.getPort();
-						}
-						if (path.startsWith("/")) path = path.substring(1, path.length());
-						if (path.length() > 0) shortlink = shortLinkHbmDao.findByShortLink(path, site.getSiteId());
-					}
+					//					if (url != null) {
+					//						if (returnHost.length() > 0) {
+					//							//add protocol to the new host
+					//							returnHost = url.getProtocol() + "://" + returnHost;
+					//							//add port?
+					//							if (url.getPort() > 0 && url.getPort() != 80) returnHost += ":" + url.getPort();
+					//						}
+					if (path.startsWith("/")) path = path.substring(1, path.length());
+					if (path.length() > 0) shortlink = shortLinkHbmDao.findByShortLink(path, site.getSiteId());
+					//					}
 				} catch (Exception e) {
 					if (log.isDebugEnabled()) log.debug("No ShortLink found for \"" + requestPath + "\": " + e.getMessage(), e);
 				}
@@ -1928,6 +2084,42 @@ public class WebServiceSpring {
 			return (returnHost);
 		} catch (Exception e) {
 			throw new UserException("unknown exception resolving host - " + hostName, e);
+		}
+	}
+
+	@HourCache
+	public String resolveHost(String hostName, Set formerHostsSet) throws Exception {
+		try {
+			if ((hostName == null || this.isIpAddress(hostName)) || ("".equalsIgnoreCase(hostName))) {
+				return ("");
+			}
+			HostHbm host = null;
+			try {
+				host = hostHbmDao.load(hostName);
+			} catch (Exception e) {
+				if (log.isDebugEnabled()) log.debug("Could not find Host with name " + hostName, e);
+			}
+			if (host == null) {
+				if (log.isInfoEnabled()) log.info("\"" + hostName + "\" is not configured in Hostmanagement");
+				return "";
+			}
+			if (host.getRedirectHostName() != null) {
+				// host points to a different host in tizzit
+				if (formerHostsSet == null) formerHostsSet = new HashSet<String>();
+				formerHostsSet.add(hostName);
+				if (formerHostsSet.contains(host.getRedirectHostName().getHostName())) {
+					log.fatal("Endless-Loop detected! " + hostName);
+					return "";
+				}
+				return resolveHost(host.getRedirectHostName().getHostName(), formerHostsSet);
+			}
+			String returnHost = "";
+			if (formerHostsSet != null && formerHostsSet.size() > 0) {
+				returnHost = hostName;
+			}
+			return returnHost;
+		} catch (Exception e) {
+			throw new UserException("Exception resolving host - " + hostName, e);
 		}
 	}
 

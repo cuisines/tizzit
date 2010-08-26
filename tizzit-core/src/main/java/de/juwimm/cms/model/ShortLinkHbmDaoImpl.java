@@ -36,7 +36,7 @@ public class ShortLinkHbmDaoImpl extends ShortLinkHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Override
 	public ShortLinkHbm create(ShortLinkHbm shortLinkHbm) {
 		if (shortLinkHbm.getShortLinkId() == null || shortLinkHbm.getShortLinkId().intValue() == 0) {
@@ -56,7 +56,7 @@ public class ShortLinkHbmDaoImpl extends ShortLinkHbmDaoBase {
 		shortLink.setRedirectUrl(shortLinkValue.getRedirectUrl());
 		try {
 			if (shortLinkValue.getSiteId() != null) {
-				SiteHbm site = getSiteHbmDao().load(shortLinkValue.getSiteId());
+				SiteHbm site = super.getSiteHbmDao().load(shortLinkValue.getSiteId());
 				shortLink.setSite(site);
 			}
 			if (shortLinkValue.getViewDocumentId() != null) {
@@ -64,15 +64,17 @@ public class ShortLinkHbmDaoImpl extends ShortLinkHbmDaoBase {
 				shortLink.setViewDocument(viewDocument);
 			}
 		} catch (Exception e) {
-			log.error("Error setting relations in setShortLinkValue: " + e.getMessage(), e);
+			log.warn("Error setting relations in setShortLinkValue: " + e.getMessage(), e);
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public java.util.Collection findAll(final int transform, final java.lang.Integer siteId) {
 		return this.findAll(transform, "from de.juwimm.cms.model.ShortLinkHbm as s where s.site.siteId = ?", siteId);
 	}
 
+	@Override
 	public java.lang.Object findByShortLink(final int transform, final java.lang.String shortLink, final java.lang.Integer siteId) {
 		return this.findByShortLink(transform, "from de.juwimm.cms.model.ShortLinkHbmImpl as sl where sl.shortLink = ? and sl.site.siteId = ?", shortLink, siteId);
 	}
