@@ -1,0 +1,92 @@
+@charset "utf-8";
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+:focus {
+	outline: 0;
+}
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* style begin */
+
+html, body {
+	height: 100%;
+}
+body {
+	background:url("images/background.png") repeat scroll top left;
+}
+.wrapper {
+	height: 100%;
+	background:url("images/wrapper_bg.gif") repeat-y center top;
+}
+.border_left, .border_right {
+	width:20px;
+	height:100%;
+}
+.border_left {
+	float:left;
+	background:url("images/border_left.png") repeat-y top left;
+}
+.border_right {
+	float:right;
+	background:url("images/border_right.png") repeat-y top left;
+}
+.wrapper_page {
+	width:944px;
+	height:100%;
+	margin:0 auto;
+}
+.wrapper_content {
+	float:left;
+	width:904px;
+	height:100%;
+}
+.content {
+	padding:0 10px;
+}
+.banner {
+	padding-bottom:4px;
+}
+.main_menu_wrapper {
+	padding:0px 0px 30px 3px;
+}
+.main_menu li {
+	float:left;
+	position:relative;
+	width:120px;
+	height:27px;
+	padding-right:8px;
+}
+.main_menu li.first {
+	width:108px;
+}
+.main_menu li.last {
+	padding-right:0px;
+}
