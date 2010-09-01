@@ -108,6 +108,7 @@ public class PanDocuments extends JPanel {
 	private boolean isDataActualization = false;
 	private String selectedDocName;
 	private String mimeType = "";
+	private long timeStamp = 0;
 
 	public PanDocuments() {
 		try {
@@ -217,6 +218,7 @@ public class PanDocuments extends JPanel {
 
 	private void jbInit() throws Exception {
 		mimeType = "";
+		timeStamp = 0;
 		btnDelete.setText("Datei löschen");
 		panBottom.setLayout(new BorderLayout());
 		panDocumentButtons.setLayout(panDocumentsLayout);
@@ -271,6 +273,7 @@ public class PanDocuments extends JPanel {
 				if (intDocId != null && (intDocId.intValue() == dsv.getDocumentId())) {
 					pan.getFileButton().doClick();
 					mimeType = dsv.getMimeType();
+					timeStamp = dsv.getTimeStamp();
 					selectDocument(intDocId);
 				}
 				panDocumentButtons.add(pan, null);
@@ -515,6 +518,7 @@ public class PanDocuments extends JPanel {
 				}
 				txtDocumentDesc.setText(linkDesc);
 				mimeType = vo.getMimeType();
+				timeStamp = vo.getTimeStamp();
 			}
 			btnUpdate.setVisible(false);
 			if (intDocId != null) {
@@ -601,6 +605,13 @@ public class PanDocuments extends JPanel {
 	 */
 	public String getMimeType() {
 		return mimeType;
+	}
+
+	/**
+	 * @return the timeStamp
+	 */
+	public long getTimeStamp() {
+		return timeStamp;
 	}
 
 }
