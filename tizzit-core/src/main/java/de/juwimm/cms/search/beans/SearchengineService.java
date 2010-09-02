@@ -511,29 +511,35 @@ public class SearchengineService {
 	public void indexPage(Integer contentId) {
 		ContentHbm content = getContentHbmDao().load(contentId);
 		ContentVersionHbm contentVersion = content.getLastContentVersion();
-		if (contentVersion == null) {
-			// liveserver?!
-			contentVersion = content.getContentVersionForPublish();
-		}
-		if (contentVersion == null) {
+		ContentVersionHbm contentLiveVersion = content.getContentVersionForPublish();
+		if (contentVersion == null && contentLiveVersion == null) {
 			log.error("ContentVersion not existing for content: " + content.getContentId());
 			return;
 		}
-		String contentText = contentVersion.getText();
+		String contentText = null;
+		String contentLiveText = null;
+		if (contentVersion != null) contentText = contentVersion.getText();
+		if (contentLiveVersion != null) contentLiveText = contentLiveVersion.getText();
 
 		Collection vclColl = getViewComponentHbmDao().findByReferencedContent(content.getContentId().toString());
 		Iterator it = vclColl.iterator();
 		while (it.hasNext()) {
 			ViewComponentHbm viewComponent = (ViewComponentHbm) it.next();
 			if (log.isDebugEnabled()) log.debug("Updating Indexes for VCID " + viewComponent.getDisplayLinkName());
-
+			boolean hasLivePreview = (viewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
+			boolean hasWorkPreview = (viewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
 			if (viewComponent.isSearchIndexed()) {
-				this.indexPage4Lucene(viewComponent, contentText);
+				if (hasLivePreview && contentText != null) this.indexPage4Lucene(viewComponent, contentText, true);
+				if (hasWorkPreview && contentLiveText != null) this.indexPage4Lucene(viewComponent, contentLiveText, false);
 			} else {
-				searchengineDeleteService.deletePage4Lucene(viewComponent);
+				if (hasLivePreview) searchengineDeleteService.deletePage4Lucene(viewComponent, true);
+				if (hasWorkPreview) searchengineDeleteService.deletePage4Lucene(viewComponent, false);
 			}
 			if (viewComponent.isXmlSearchIndexed()) {
-				this.indexPage4Xml(viewComponent, contentText);
+				if (contentText != null)
+					this.indexPage4Xml(viewComponent, contentText);
+				else
+					this.indexPage4Xml(viewComponent, contentLiveText);
 			} else {
 				searchengineDeleteService.deletePage4Xml(viewComponent);
 			}
@@ -542,16 +548,24 @@ public class SearchengineService {
 			Iterator itRef = referencingViewComponents.iterator();
 			while (itRef.hasNext()) {
 				ViewComponentHbm refViewComponent = (ViewComponentHbm) itRef.next();
+				hasLivePreview = (refViewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
+				hasWorkPreview = (refViewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
+
 				if (refViewComponent.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
 					// acts as normal content
 					if (log.isDebugEnabled()) log.debug("trying to index symLink " + refViewComponent.getDisplayLinkName());
 					if (refViewComponent.isSearchIndexed()) {
-						this.indexPage4Lucene(refViewComponent, contentText);
+						if (hasLivePreview && contentText != null) this.indexPage4Lucene(refViewComponent, contentText, true);
+						if (hasWorkPreview && contentLiveText != null) this.indexPage4Lucene(refViewComponent, contentLiveText, false);
 					} else {
-						searchengineDeleteService.deletePage4Lucene(refViewComponent);
+						if (hasLivePreview) searchengineDeleteService.deletePage4Lucene(refViewComponent, true);
+						if (hasWorkPreview) searchengineDeleteService.deletePage4Lucene(refViewComponent, false);
 					}
 					if (refViewComponent.isXmlSearchIndexed()) {
-						this.indexPage4Xml(refViewComponent, contentText);
+						if (contentText != null)
+							this.indexPage4Xml(refViewComponent, contentText);
+						else
+							this.indexPage4Xml(refViewComponent, contentLiveText);
 					} else {
 						searchengineDeleteService.deletePage4Xml(refViewComponent);
 					}
@@ -565,17 +579,20 @@ public class SearchengineService {
 		content.setUpdateSearchIndex(false);
 	}
 
-	private void indexPage4Lucene(ViewComponentHbm viewComponent, String contentText) {
+	private void indexPage4Lucene(ViewComponentHbm viewComponent, String contentText, boolean isLive) {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index create / update for VC " + viewComponent.getViewComponentId());
 		ViewDocumentHbm vdl = viewComponent.getViewDocument();
 		CompassSession session = null;
 		CompassTransaction tx = null;
 		File file = null;
 		try {
-			String currentUrl = searchengineDeleteService.getUrl(viewComponent);
+			String currentUrl = searchengineDeleteService.getUrl(viewComponent, isLive);
 			file = this.downloadFile(currentUrl);
 			if (file != null) {
 				String cleanUrl = viewComponent.getViewDocument().getSite().getPageNameSearch();
+				// cut of host name too - since it could be an other one
+				//String cleanUrl = viewComponent.getViewDocument().getLanguage() + "/" + viewComponent.getPath();
+
 				cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
 				session = compass.openSession();
 				Resource resource = htmlResourceLocator.getResource(session, file, cleanUrl, new Date(System.currentTimeMillis()), viewComponent, vdl);

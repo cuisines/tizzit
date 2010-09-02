@@ -66,8 +66,9 @@ public class HtmlResourceLocator {
 
 	public Resource getResource(CompassSession session, File file, String url, Date modifiedDate, ViewComponentHbm vcl, ViewDocumentHbm vdl) throws IOException, InterruptedException {
 		ResourceFactory resourceFactory = session.resourceFactory();
+		String cleanUrl = vdl.getLanguage() + "/" + vcl.getPath();
 		Resource resource = resourceFactory.createResource("HtmlSearchValue");
-		resource.addProperty("url", url);
+		resource.addProperty("url", cleanUrl);
 		resource.addProperty("siteId", vdl.getSite().getSiteId().toString());
 		resource.addProperty("language", vdl.getLanguage());
 		resource.addProperty("viewtype", vdl.getViewType());

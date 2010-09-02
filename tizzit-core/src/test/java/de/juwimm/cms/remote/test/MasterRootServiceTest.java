@@ -42,7 +42,8 @@ public class MasterRootServiceTest extends TestCase {
 		site.setPageNameContent("testPageNameContent");
 		site.setPageNameFull("testPageNameFull");
 		site.setPageNameSearch("testPageNameSearch");
-		site.setPreviewUrl("testPreviewUrl");
+		site.setPreviewUrlWorkServer("testPreviewUrlWorkServer");
+		site.setPreviewUrlLiveServer("testPreviewUrlLiveServer");
 		site.setShortName("testShortName");
 
 		SiteValue siteValue = new SiteValue();
@@ -57,7 +58,8 @@ public class MasterRootServiceTest extends TestCase {
 		siteValue.setPageNameContent("testPageNameContentValue");
 		siteValue.setPageNameFull("testPageNameFullValue");
 		siteValue.setPageNameSearch("testPageNameSearchValue");
-		siteValue.setPreviewUrl("testPreviewUrlValue");
+		siteValue.setPreviewUrlWorkServer("testPreviewUrlValueWorkServer");
+		siteValue.setPreviewUrlLiveServer("testPreviewUrlValueLiveServer");
 		siteValue.setShortName("testShortNameValue");
 
 		try {
@@ -79,7 +81,8 @@ public class MasterRootServiceTest extends TestCase {
 			Assert.assertEquals("testPageNameContentValue", site.getPageNameContent());
 			Assert.assertEquals("testPageNameFullValue", site.getPageNameFull());
 			Assert.assertEquals("testPageNameSearchValue", site.getPageNameSearch());
-			Assert.assertEquals("testPreviewUrlValue", site.getPreviewUrl());
+			Assert.assertEquals("testPreviewUrlValueWorkServer", site.getPreviewUrlWorkServer());
+			Assert.assertEquals("testPreviewUrlValueLiveServer", site.getPreviewUrlLiveServer());
 			Assert.assertEquals("testShortNameValue", site.getShortName());
 		} catch (Exception e) {
 			Assert.assertTrue(false);

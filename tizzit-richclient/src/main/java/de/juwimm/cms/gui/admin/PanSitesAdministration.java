@@ -107,7 +107,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private final JTextField txtImageUrl = new JTextField();
 	private final JLabel lblHelpUrl = new JLabel();
 	private final JTextField txtHelpUrl = new JTextField();
-	private final JTextField txtPreviewUrl = new JTextField();
+	private final JTextField txtPreviewUrlWorkServer = new JTextField();
+	private final JTextField txtPreviewUrlLiveServer = new JTextField();
 	private final JLabel lblWebURL = new JLabel();
 	private final JLabel lblDcfURL = new JLabel();
 	private final JTextField txtDcfUrl = new JTextField();
@@ -148,7 +149,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private JLabel jViewTypeLabel = null;
 	private JLabel jLanguageLabel = null;
 	private boolean isDirty = false;
-	private PanelDirtyInputListener dirtyInputListener = new PanelDirtyInputListener(this);
+	private final PanelDirtyInputListener dirtyInputListener = new PanelDirtyInputListener(this);
 	private FocusListener mandatoryFieldsFocusListener;
 
 	static {
@@ -497,7 +498,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		panDetails.add(lblHelpUrl, gridBagConstraints171);
 		panDetails.add(txtHelpUrl, gridBagConstraints23);
 		panDetails.add(lblWebURL, gridBagConstraints181);
-		panDetails.add(txtPreviewUrl, gridBagConstraints241);
+		panDetails.add(txtPreviewUrlWorkServer, gridBagConstraints241);
+		panDetails.add(txtPreviewUrlLiveServer, gridBagConstraints241);
 		panDetails.add(lblDcfURL, gridBagConstraints201);
 		this.add(btnCreateNew, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
 		this.add(btnDelete, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
@@ -715,7 +717,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				vo.setWysiwygImageUrl(txtImageUrl.getText());
 				vo.setHelpUrl(txtHelpUrl.getText());
 				vo.setDcfUrl(txtDcfUrl.getText());
-				vo.setPreviewUrl(txtPreviewUrl.getText());
+				vo.setPreviewUrlWorkServer(txtPreviewUrlWorkServer.getText());
+				vo.setPreviewUrlLiveServer(txtPreviewUrlLiveServer.getText());
 				vo.setPageNameContent(txtPageNameContent.getText());
 				vo.setPageNameFull(txtPageNameFull.getText());
 				vo.setExternalSiteSearch(cbxSearchOnly.isSelected());
@@ -845,7 +848,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		txtMandatorDir.setEnabled(state);
 		spCacheExpire.setEnabled(state);
 		txtDcfUrl.setEnabled(state);
-		txtPreviewUrl.setEnabled(state);
+		txtPreviewUrlWorkServer.setEnabled(state);
+		txtPreviewUrlLiveServer.setEnabled(state);
 		txtPageNameFull.setEnabled(state);
 		txtPageNameContent.setEnabled(state);
 		txtPageNameSearch.setEnabled(state);
@@ -885,7 +889,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtImageUrl.setText(vo.getWysiwygImageUrl());
 			txtHelpUrl.setText(vo.getHelpUrl());
 			txtDcfUrl.setText(vo.getDcfUrl());
-			txtPreviewUrl.setText(vo.getPreviewUrl());
+			txtPreviewUrlWorkServer.setText(vo.getPreviewUrlWorkServer());
+			txtPreviewUrlLiveServer.setText(vo.getPreviewUrlLiveServer());
 			txtPageNameFull.setText(vo.getPageNameFull());
 			txtPageNameContent.setText(vo.getPageNameContent());
 			txtPageNameSearch.setText(vo.getPageNameSearch());
@@ -920,7 +925,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtImageUrl.setText("http://");
 			txtHelpUrl.setText("http://wiki.tizzit.org/");
 			txtDcfUrl.setText("http://");
-			txtPreviewUrl.setText("http://");
+			txtPreviewUrlWorkServer.setText("http://");
+			txtPreviewUrlLiveServer.setText("http://");
 			txtPageNameFull.setText("html");
 			txtPageNameContent.setText("html");
 			txtPageNameSearch.setText("html?viewType=search");
@@ -989,7 +995,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		vo.setMandatorDir("");
 		vo.setPageNameContent("");
 		vo.setPageNameFull("");
-		vo.setPreviewUrl("");
+		vo.setPreviewUrlWorkServer("");
+		vo.setPreviewUrlLiveServer("");
 		vo.setShortName("");
 		vo.setSiteId(-1);
 		vo.setWysiwygImageUrl("");
@@ -1093,7 +1100,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtImageUrl.setText(cfg.getConfigNodeValue("wysiwygImageUrl"));
 			txtHelpUrl.setText(cfg.getConfigNodeValue("bugpageUrl"));
 			txtDcfUrl.setText(cfg.getConfigNodeValue("dcfUrl"));
-			txtPreviewUrl.setText(cfg.getConfigNodeValue("demoWebUrl"));
+			txtPreviewUrlWorkServer.setText(cfg.getConfigNodeValue("demoWebUrl"));
+			txtPreviewUrlLiveServer.setText(cfg.getConfigNodeValue("demoWebUrl"));
 			txtPageNameFull.setText(cfg.getConfigAttribute("demoWebUrl", "fullFrameset"));
 			txtPageNameContent.setText(cfg.getConfigAttribute("demoWebUrl", "contentOnly"));
 			txtPageNameSearch.setText(txtPageNameContent.getText());
@@ -1114,7 +1122,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	}
 
 	private boolean isMigrated(SiteValue vo) {
-		return (vo.getWysiwygImageUrl() != null && vo.getDcfUrl() != null && vo.getHelpUrl() != null && vo.getPreviewUrl() != null && vo.getPageNameContent() != null && vo.getPageNameFull() != null && vo.getPageNameSearch() != null);
+		return (vo.getWysiwygImageUrl() != null && vo.getDcfUrl() != null && vo.getHelpUrl() != null && vo.getPreviewUrlWorkServer() != null && vo.getPageNameContent() != null && vo.getPageNameFull() != null && vo.getPageNameSearch() != null);
 	}
 
 	/**
@@ -1176,7 +1184,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		initDirtyInputListeners(txtPageNameContent);
 		initDirtyInputListeners(txtPageNameFull);
 		initDirtyInputListeners(txtPageNameSearch);
-		initDirtyInputListeners(txtPreviewUrl);
+		initDirtyInputListeners(txtPreviewUrlWorkServer);
+		initDirtyInputListeners(txtPreviewUrlLiveServer);
 		initDirtyInputListeners(txtSiteName);
 		initDirtyInputListeners(txtSiteShort);
 		initDirtyInputListeners(cbxSearchOnly);

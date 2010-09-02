@@ -53,8 +53,8 @@ import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
-import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
+import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.NoSitesException;
 import de.juwimm.cms.gui.controls.UnloadablePanel;
 import de.juwimm.cms.util.ActionHub;
@@ -200,7 +200,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 		} catch (NoSitesException se) {
 			this.progressBar.setIndeterminate(false);
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n" + rb.getString("exception.NoSites"), rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
-		} catch (LocalizedException exe) {			
+		} catch (LocalizedException exe) {
 			this.progressBar.setIndeterminate(false);
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.login.loginError") + " \n\"" + exe.getLocalizedMessage() + "\"\n", rb.getString("msgbox.title.loginFailed"), JOptionPane.ERROR_MESSAGE);
 		} catch (Exception exe) {
@@ -291,7 +291,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 				Constants.CMS_PATH_WYSIWYGIMAGE = currentSite.getWysiwygImageUrl();
 				Parameters.loadRolesetForActiveSite();
 				Constants.CMS_PATH_DCF = currentSite.getDcfUrl();
-				Constants.CMS_PATH_DEMOPAGE = currentSite.getPreviewUrl();
+				Constants.CMS_PATH_DEMOPAGE = currentSite.getPreviewUrlWorkServer();
 				Constants.CMS_PATH_HELP = currentSite.getHelpUrl();
 			} catch (Exception exe) {
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Constants.rb.getString("exception.cantCatchConfigurationFromServer"));

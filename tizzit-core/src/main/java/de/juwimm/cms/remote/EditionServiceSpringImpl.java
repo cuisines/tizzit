@@ -58,9 +58,6 @@ import org.springframework.security.SpringSecurityException;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.rcp.RemoteAuthenticationManager;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Document;
@@ -266,10 +263,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			 * ####################################################################################
 			 */
 			SiteHbm importSite = null;
-			try{
+			try {
 				importSite = getSiteHbmDao().load(siteId);
-			} catch(Exception e){
-				if(log.isDebugEnabled()) log.debug("Could not find site with Id: " + siteId + " will create it now"); 
+			} catch (Exception e) {
+				if (log.isDebugEnabled()) log.debug("Could not find site with Id: " + siteId + " will create it now");
 			}
 			boolean siteIsNew = false;
 			if (importSite == null) {
@@ -288,7 +285,8 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			importSite.setWysiwygImageUrl(getNValNotNull(node, "wysiwygImageUrl"));
 			importSite.setHelpUrl(getNValNotNull(node, "helpUrl"));
 			importSite.setDcfUrl(getNValNotNull(node, "dcfUrl"));
-			importSite.setPreviewUrl(getNValNotNull(node, "previewUrl"));
+			importSite.setPreviewUrlWorkServer(getNValNotNull(node, "previewUrlWorkServer"));
+			importSite.setPreviewUrlLiveServer(getNValNotNull(node, "previewUrlLiveServer"));
 			importSite.setPageNameFull(getNValNotNull(node, "pageNameFull"));
 			importSite.setPageNameContent(getNValNotNull(node, "pageNameContent"));
 			importSite.setPageNameSearch(getNValNotNull(node, "pageNameSearch"));
@@ -1734,7 +1732,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	protected void handlePublishEditionToLiveserver(Integer editionId) throws Exception {
 		String info = "";
 		editionCronService.logEditionStatusInfo(LiveserverDeployStatus.TransmitDeployFile, editionId);
-		if(log.isDebugEnabled()) log.debug("start publishing to liveserver process");
+		if (log.isDebugEnabled()) log.debug("start publishing to liveserver process");
 		try {
 			String liveServerIP = "";
 			String liveUserName = "";
@@ -1743,14 +1741,14 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			org.w3c.dom.Document doc = null;
 			try {
 				site = getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
-				if(log.isDebugEnabled()) log.debug("siteId: "+site.getSiteId());
+				if (log.isDebugEnabled()) log.debug("siteId: " + site.getSiteId());
 				doc = XercesHelper.string2Dom(site.getConfigXML());
 				liveServerIP = XercesHelper.getNodeValue(doc, "/config/default/liveServer/url");
-				if(log.isDebugEnabled()) log.debug("liveserverIp: "+liveServerIP);
+				if (log.isDebugEnabled()) log.debug("liveserverIp: " + liveServerIP);
 				liveUserName = XercesHelper.getNodeValue(doc, "/config/default/liveServer/username");
-				if(log.isDebugEnabled()) log.debug("liveUserName: "+liveUserName);
+				if (log.isDebugEnabled()) log.debug("liveUserName: " + liveUserName);
 				livePassword = XercesHelper.getNodeValue(doc, "/config/default/liveServer/password");
-				if(log.isDebugEnabled()) log.debug("livePassword: "+livePassword);
+				if (log.isDebugEnabled()) log.debug("livePassword: " + livePassword);
 			} catch (Exception exe) {
 				log.error("Error occured reading siteConfig: ", exe);
 			} finally {
@@ -1770,7 +1768,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 
 				System.setProperty("tizzit-liveserver.remoteServer", "http://" + liveServerIP);
 				ApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext-deploy.xml");
-				if(log.isDebugEnabled()) log.debug("ApplicationContext: "+ctx);
+				if (log.isDebugEnabled()) log.debug("ApplicationContext: " + ctx);
 				try {
 					SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_GLOBAL);
 					RemoteAuthenticationManager remoteAuthenticationService = (RemoteAuthenticationManager) ctx.getBean("remoteRemoteAuthenticationManagerServiceDeploy");
@@ -1796,9 +1794,9 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 				if (log.isInfoEnabled()) log.info("Try to get bean clientServiceSpring ");
 
 				ClientServiceSpring clientServiceSpring = (ClientServiceSpring) ctx.getBean("clientServiceDeploySpring");
-				
+
 				if (log.isInfoEnabled()) log.info("Starting transfer to Liveserver - " + info);
-				
+
 				clientServiceSpring.importEditionFromImport(fis, edition.getViewComponentId(), false, editionId);
 
 				if (log.isInfoEnabled()) log.info("Liveserver has finished deploy - " + info);
@@ -3116,7 +3114,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleImportUnit(Integer editionId, String editionFileName) throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -3125,7 +3123,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 		Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
 		if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
 		for (EditionHbm edition : editionsToDeploy) {
-			this.editionCronService.createEditionFileAndSendToLive(edition) ;
+			this.editionCronService.createEditionFileAndSendToLive(edition);
 		}
 	}
 }

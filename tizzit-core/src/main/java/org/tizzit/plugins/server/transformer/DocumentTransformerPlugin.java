@@ -109,7 +109,7 @@ public class DocumentTransformerPlugin implements ManagedTizzitPlugin {
 			if (mime == null || mime.isEmpty()) {
 				try {
 					Integer docId = Integer.decode(attrs.getValue("src"));
-					mime = webSpringBean.getDocumentMimeType(docId);
+					mime = webSpringBean.getMimetype4Document(docId);
 					SAXHelper.setSAXAttr(newAttrs, MIMETYPE, mime);
 				} catch (NumberFormatException e) {
 					log.warn("Cound not get int value from: " + attrs.getValue("src"), e);

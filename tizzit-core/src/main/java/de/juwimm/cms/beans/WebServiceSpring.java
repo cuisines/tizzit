@@ -1279,23 +1279,8 @@ public class WebServiceSpring {
 	}
 
 	/**
-	 * @see de.juwimm.cms.remote.WebServiceSpring#getDocumentName(java.lang.Integer)
-	 */
-	public String getDocumentMimeType(Integer documentId) throws Exception {
-		String ret = null;
-		try {
-			DocumentHbm docHbm = documentHbmDao.load(documentId);
-			ret = docHbm.getMimeType();
-		} catch (Exception e) {
-			log.warn("Error getting MimeType for Document " + documentId + ": " + e.getMessage());
-		}
-		return ret;
-	}
-
-	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getMimetype4Document(java.lang.Integer)
 	 */
-	//@RequestMapping(value = "/mimetypefordocument/{documentId}", method = RequestMethod.GET)
 	public String getMimetype4Document(Integer documentId) throws Exception {
 		String ret = null;
 		try {

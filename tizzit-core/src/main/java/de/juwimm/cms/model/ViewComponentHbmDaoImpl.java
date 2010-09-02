@@ -604,7 +604,8 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		// sending deleted-message to searchEngine
 		if (viewComponentHbm.getViewDocument() != null) {
-			searchengineDeleteService.deletePage(viewComponentHbm);
+			searchengineDeleteService.deletePage(viewComponentHbm, true);
+			searchengineDeleteService.deletePage(viewComponentHbm, false);
 		}
 
 		// if this page was protected remove protection

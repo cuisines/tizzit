@@ -89,6 +89,7 @@ public class PictureHbmImpl extends PictureHbm {
 		pictureSlimValue.setWidth(this.getWidth());
 		pictureSlimValue.setAltText(this.getAltText());
 		pictureSlimValue.setPictureName(this.getPictureName());
+		pictureSlimValue.setTitle(this.getTitle());
 		pictureSlimValue.setThumbnailPopup(this.isThumbnailPopup());
 		return pictureSlimValue;
 	}
@@ -110,6 +111,7 @@ public class PictureHbmImpl extends PictureHbm {
 		pictureSlimValue.setWidth(this.getWidth());
 		pictureSlimValue.setAltText(this.getAltText());
 		pictureSlimValue.setPictureName(this.getPictureName());
+		pictureSlimValue.setTitle(this.getTitle());
 		pictureSlimValue.setThumbnailPopup(this.isThumbnailPopup());
 		return pictureSlimValue;
 	}
@@ -132,6 +134,7 @@ public class PictureHbmImpl extends PictureHbm {
 		pictureValue.setHeight(this.getHeight());
 		pictureValue.setWidth(this.getWidth());
 		pictureValue.setAltText(this.getAltText());
+		pictureValue.setTitle(this.getTitle());
 		pictureValue.setPictureName(this.getPictureName());
 		pictureValue.setThumbnailPopup(this.isThumbnailPopup());
 		return pictureValue;

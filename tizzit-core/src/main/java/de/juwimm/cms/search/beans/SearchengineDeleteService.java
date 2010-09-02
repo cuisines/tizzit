@@ -26,9 +26,9 @@ public class SearchengineDeleteService {
 	@Autowired
 	private XmlDb xmlDb;
 
-	public void deletePage(ViewComponentHbm viewComponent) {
+	public void deletePage(ViewComponentHbm viewComponent, boolean isLive) {
 		deletePage4Xml(viewComponent);
-		deletePage4Lucene(viewComponent);
+		deletePage4Lucene(viewComponent, isLive);
 	}
 
 	public void deletePage4Xml(ViewComponentHbm viewComponent) {
@@ -39,12 +39,12 @@ public class SearchengineDeleteService {
 		if (log.isDebugEnabled()) log.debug("finished deletePage4Xml");
 	}
 
-	public void deletePage4Lucene(ViewComponentHbm viewComponent) {
+	public void deletePage4Lucene(ViewComponentHbm viewComponent, boolean isLive) {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index delete for VC " + viewComponent.getViewComponentId());
 		CompassSession session = null;
 		CompassTransaction tx = null;
 		try {
-			String currentUrl = getUrl(viewComponent);
+			String currentUrl = getUrl(viewComponent, isLive);
 			String cleanUrl = viewComponent.getViewDocument().getSite().getPageNameSearch();
 			cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
 			session = compass.openSession();
@@ -65,9 +65,17 @@ public class SearchengineDeleteService {
 		if (log.isDebugEnabled()) log.debug("finished deletePage4Lucene");
 	}
 
-	public String getUrl(ViewComponentHbm vc) {
+	public String getUrl(ViewComponentHbm vc, boolean isLive) {
 		SiteHbm site = vc.getViewDocument().getSite();
-		String url = site.getPreviewUrl() + vc.getViewDocument().getLanguage() + "/" + vc.getPath() + "/" + site.getPageNameSearch();
+		String url = "";
+		if (isLive) {
+			url = site.getPreviewUrlLiveServer();
+		} else {
+			url = site.getPreviewUrlWorkServer();
+		}
+		if (url != null) {
+			url += vc.getViewDocument().getLanguage() + "/" + vc.getPath() + "/" + site.getPageNameSearch();
+		}
 		if (log.isInfoEnabled()) log.info("created url " + url + " for site " + site.getName());
 		return url;
 	}

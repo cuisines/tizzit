@@ -118,7 +118,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleAddPicture2Unit(Integer unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null, null);
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
@@ -128,7 +128,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Integer handleAddPictureWithPreview2Unit(Integer unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName, String title) throws Exception {
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, false, title, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, preview, mimeType, null, altText, pictureName, null, null, false, title, null, null);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
@@ -390,7 +390,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleCreatePicture(byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null);
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null, null);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
 	}
@@ -1238,20 +1238,20 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 	private String storeEditionFile(InputStream in) throws IOException {
 		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "edition";
-		if(log.isInfoEnabled()) log.info("Storing Edition File in: " + dir);
+		if (log.isInfoEnabled()) log.info("Storing Edition File in: " + dir);
 		File fDir = new File(dir);
 		fDir.mkdirs();
-		if(log.isInfoEnabled()) log.info("deploy dir created");
+		if (log.isInfoEnabled()) log.info("deploy dir created");
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 		String date = dateFormat.format(new Date());
 		File storedEditionFile = new File(fDir.getAbsolutePath() + File.separatorChar + "edition_import_" + date + ".xml.gz");
-		if(log.isInfoEnabled()) log.info("edition file is named: " + storedEditionFile.getAbsolutePath());
+		if (log.isInfoEnabled()) log.info("edition file is named: " + storedEditionFile.getAbsolutePath());
 		//File.createTempFile("edition_import_" + date, ".xml.gz", fDir);
 		FileOutputStream out = new FileOutputStream(storedEditionFile);
 		IOUtils.copyLarge(in, out);
 		IOUtils.closeQuietly(out);
 		IOUtils.closeQuietly(in);
-		if(log.isInfoEnabled()) log.info("Storing Edition File finished");
+		if (log.isInfoEnabled()) log.info("Storing Edition File finished");
 		return storedEditionFile.getAbsolutePath();
 	}
 
@@ -1636,12 +1636,12 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		//create dir for deploys
 		log.info("Start creating edition output file");
 		String dir = getTizzitPropertiesBeanSpring().getDatadir() + File.separatorChar + "deploys";
-		log.info("deployDir: "+dir);
+		log.info("deployDir: " + dir);
 		File fDir = new File(dir);
 		fDir.mkdirs();
 		log.info("outputdir created");
 		String fileName = fDir.getAbsolutePath() + File.separatorChar + "deploy_file_edition_" + edition.getEditionId() + "_byUser_" + edition.getCreator().getUserId() + "_" + edition.getCreationDate() + ".xml.gz";
-		log.info("fileName: "+fileName);
+		log.info("fileName: " + fileName);
 		File fle = new File(fileName);
 		edition.setEditionFileName(fle.getAbsolutePath());
 		log.info("output file opend: " + fle.getAbsolutePath());
@@ -1664,7 +1664,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected void handleDeployEdition(Integer editionId) throws Exception {
 		try {
 			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
-			if(log.isDebugEnabled()) log.debug("Start creating Edition");
+			if (log.isDebugEnabled()) log.debug("Start creating Edition");
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			PrintStream out = createEditionOutputStream(edition);
@@ -1700,9 +1700,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
-			if(log.isDebugEnabled()) log.debug("Finished creating Edition");
+			if (log.isDebugEnabled()) log.debug("Finished creating Edition");
 		} catch (Exception e) {
-			if(log.isDebugEnabled()) log.debug("Error while creating Edition", e);
+			if (log.isDebugEnabled()) log.debug("Error while creating Edition", e);
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}
@@ -1711,13 +1711,13 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleDeployUnitEdition(Integer editionId, Integer unitId) throws Exception {
 		try {
-			if(log.isDebugEnabled()) log.debug("Start creating unitEdition");
+			if (log.isDebugEnabled()) log.debug("Start creating unitEdition");
 			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
 			//if (log.isInfoEnabled())log.info("createDeployFile " + AuthenticationHelper.getUserName());
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			PrintStream out = createEditionOutputStream(edition);
-			if(log.isDebugEnabled()) log.debug("creating outputstream for unitEdition");
+			if (log.isDebugEnabled()) log.debug("creating outputstream for unitEdition");
 			// site info is needed to connect to the live server
 			if (log.isDebugEnabled()) log.debug("siteToXml");
 			getEditionHbmDao().siteToXml(edition.getSiteId(), out, edition);
@@ -1753,9 +1753,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.flush();
 			out.close();
 			out = null;
-			if(log.isDebugEnabled()) log.debug("Finished creating unitEdition");
+			if (log.isDebugEnabled()) log.debug("Finished creating unitEdition");
 		} catch (Exception e) {
-			if(log.isDebugEnabled()) log.debug("error while creating unitEdition", e);
+			if (log.isDebugEnabled()) log.debug("error while creating unitEdition", e);
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}
@@ -1957,7 +1957,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected void handleDeployRootUnitEdition(Integer editionId) throws Exception {
 		try {
 			editionCronService.logEditionStatusInfo(LiveserverDeployStatus.CreateDeployFileForExport, editionId);
-			if(log.isDebugEnabled()) log.debug("Start creating RootEdition");
+			if (log.isDebugEnabled()) log.debug("Start creating RootEdition");
 			EditionHbm edition = getEditionHbmDao().load(editionId);
 
 			PrintStream out = createEditionOutputStream(edition);
@@ -2002,9 +2002,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			out.close();
 			log.info("output file closed.");
 			out = null;
-			if(log.isDebugEnabled()) log.debug("Finished creating Edition");
+			if (log.isDebugEnabled()) log.debug("Finished creating Edition");
 		} catch (Exception e) {
-			if(log.isWarnEnabled()) log.warn("Error while creating RootEdition");
+			if (log.isWarnEnabled()) log.warn("Error while creating RootEdition");
 			editionCronService.logEditionStatusException(editionId, e.getMessage());
 			throw new UserException(e.getMessage(), e);
 		}

@@ -21,6 +21,7 @@ package de.juwimm.cms.gui.admin;
 import static de.juwimm.cms.client.beans.Application.getBean;
 import static de.juwimm.cms.common.Constants.rb;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -1080,7 +1081,7 @@ public class PanHost extends JPanel implements ReloadablePanel {
 			this.btnSaveShortLink.setText(rb.getString("dialog.save"));
 			this.btnSaveShortLink.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveShortLink();
+					validateAndSaveShortLink();
 				}
 			});
 			this.btnSaveShortLink.setEnabled(false);
@@ -1129,6 +1130,19 @@ public class PanHost extends JPanel implements ReloadablePanel {
 				selectedHost.setUnitId(unit.getUnitId());
 			}
 			selectedHost = this.communication.saveHost(selectedHost);
+		}
+	}
+
+	private void validateAndSaveShortLink() {
+		boolean hasErrors = false;
+		if (!getTxtShortLink().getText().matches("\\w+")) {
+			getTxtShortLink().setBackground(Color.red);
+			hasErrors = true;
+		} else {
+			getTxtShortLink().setBackground(Color.white);
+		}
+		if (!hasErrors) {
+			this.saveShortLink();
 		}
 	}
 

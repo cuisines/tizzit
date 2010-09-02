@@ -99,6 +99,9 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 		newPicture.setThumbnailPopup(oldPicture.isThumbnailPopup());
 		/**set the new unit*/
 		newPicture.setUnit(newUnit);
+		/* or new ViewComponent */
+
+		newPicture.setTitle(oldPicture.getTitle());
 		newPicture.setTimeStamp(oldPicture.getTimeStamp());
 		newPicture = create(newPicture);
 		return newPicture.getPictureId();

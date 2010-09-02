@@ -49,7 +49,8 @@ public class SiteHbmImpl extends SiteHbm {
 		value.setWysiwygImageUrl(this.getWysiwygImageUrl());
 		value.setHelpUrl(this.getHelpUrl());
 		value.setDcfUrl(this.getDcfUrl());
-		value.setPreviewUrl(this.getPreviewUrl());
+		value.setPreviewUrlWorkServer(this.getPreviewUrlWorkServer());
+		value.setPreviewUrlLiveServer(this.getPreviewUrlLiveServer());
 		value.setPageNameFull(this.getPageNameFull());
 		value.setPageNameContent(this.getPageNameContent());
 		value.setPageNameSearch(this.getPageNameSearch());
@@ -71,7 +72,8 @@ public class SiteHbmImpl extends SiteHbm {
 		this.setWysiwygImageUrl(value.getWysiwygImageUrl());
 		this.setHelpUrl(value.getHelpUrl());
 		this.setDcfUrl(value.getDcfUrl());
-		this.setPreviewUrl(value.getPreviewUrl());
+		this.setPreviewUrlWorkServer(value.getPreviewUrlWorkServer());
+		this.setPreviewUrlLiveServer(value.getPreviewUrlLiveServer());
 		this.setPageNameFull(value.getPageNameFull());
 		this.setPageNameContent(value.getPageNameContent());
 		this.setPageNameSearch(value.getPageNameSearch());
@@ -170,7 +172,8 @@ public class SiteHbmImpl extends SiteHbm {
 		buf.append("<wysiwygImageUrl>").append("<![CDATA[").append(this.getWysiwygImageUrl()).append("]]>").append("</wysiwygImageUrl>");
 		buf.append("<helpUrl>").append("<![CDATA[").append(this.getHelpUrl()).append("]]>").append("</helpUrl>");
 		buf.append("<dcfUrl>").append("<![CDATA[").append(this.getDcfUrl()).append("]]>").append("</dcfUrl>");
-		buf.append("<previewUrl>").append("<![CDATA[").append(this.getPreviewUrl()).append("]]>").append("</previewUrl>");
+		buf.append("<previewUrlWorkServer>").append("<![CDATA[").append(this.getPreviewUrlWorkServer()).append("]]>").append("</previewUrlWorkServer>");
+		buf.append("<previewUrlLiveServer>").append("<![CDATA[").append(this.getPreviewUrlLiveServer()).append("]]>").append("</previewUrlLiveServer>");
 		buf.append("<pageNameFull>").append("<![CDATA[").append(this.getPageNameFull()).append("]]>").append("</pageNameFull>");
 		buf.append("<pageNameContent>").append("<![CDATA[").append(this.getPageNameContent()).append("]]>").append("</pageNameContent>");
 		buf.append("<pageNameSearch>").append("<![CDATA[").append(this.getPageNameSearch()).append("]]>").append("</pageNameSearch>");

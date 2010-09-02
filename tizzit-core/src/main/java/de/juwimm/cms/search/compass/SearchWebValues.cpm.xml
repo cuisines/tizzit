@@ -9,6 +9,7 @@
         <resource-property name="unitId" store="yes" index="un_tokenized" />
         <resource-property name="siteId" store="yes" index="un_tokenized" />
         <resource-property name="unitName" store="yes" index="un_tokenized" />
+        <resource-property name="isLiveContent" store="yes" index="un_tokenized" />
         <resource-property name="language" store="yes" index="un_tokenized" />
         <resource-property name="viewtype" store="yes" index="un_tokenized" />
         <resource-property name="template" store="yes" index="un_tokenized" />
