@@ -115,9 +115,6 @@ public class Documents extends AbstractModule {
 			if (pan.getDocumentId().intValue() > 0) {
 				elm.setAttribute("src", pan.getDocumentId() + "");
 			}
-			if (pan.getTimeStamp() > 0) {
-				elm.setAttribute("timeStamp", pan.getTimeStamp() + "");
-			}
 			elm.setAttribute("documentName", pan.getDocumentName());
 			elm.setAttribute("mimeType", pan.getMimeType());
 			if (pan.getCbxDisplayTypeInline().isSelected()) {

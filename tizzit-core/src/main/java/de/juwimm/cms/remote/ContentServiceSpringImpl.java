@@ -1318,6 +1318,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleUpdatePictureData(Integer pictureId, byte[] picture, String mimeType, byte[] thumbnail) throws Exception {
 		PictureHbm pic = getPictureHbmDao().load(pictureId);
+		pic.setTimeStamp(System.currentTimeMillis());
 		pic.setMimeType(mimeType);
 		pic.setPicture(picture);
 		pic.setThumbnail(thumbnail);

@@ -1707,6 +1707,10 @@ public class WebServiceSpring {
 		return includeContent;
 	}
 
+	public long getDocumentLastModifiedDate(Integer documentId) throws Exception {
+		return documentHbmDao.load(documentId).getTimeStamp();
+	}
+
 	public String getIncludeTeaser(Integer currentViewComponentId, boolean getPublsVersion, String teaserRequest) throws Exception {
 		StringBuffer includeContent = new StringBuffer("<teaserInclude>");
 		try {

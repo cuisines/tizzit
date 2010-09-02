@@ -444,6 +444,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 				this.fillContentInclude(doc);
 				this.fillTeaserInclude(doc);
 			}
+			this.fillDocumentLastModifiedDate(doc);
 			if (!disableUnitInformation) // has to be before fulltext, because fulltext will fill its own
 				this.fillUnitInformation(doc, null);
 			if (!disableFulltext) // has to be at the beginning, because it can contain other tags as well
@@ -464,6 +465,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			if (!disableHtmlSearch && this.webSearchquery != null && this.webSearchquery.length() > 0) {
 				this.fillWebSearch(doc);
 			}
+			this.fillDocumentLastModifiedDate(doc);
 		} catch (Exception e) {
 			String errMsg = "An error occured while processing the content";
 			log.error(errMsg, e);
@@ -1414,6 +1416,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			}
 			try {
 				Document unitXmlDoc = XercesHelper.string2Dom(webSpringBean.getIncludeContent(viewComponentId, includeUnit, searchBy, iAmTheLiveserver, xPathQuery));
+
 				Node contentInclude = XercesHelper.findNode(unitXmlDoc, "//contentInclude/contentInclude");
 				if (contentInclude == null) {
 					contentInclude = XercesHelper.findNode(unitXmlDoc, "//contentInclude");
@@ -1424,6 +1427,21 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 				}
 			} catch (Exception e) {
 				log.warn("Error getting includeContent: " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private void fillDocumentLastModifiedDate(Node doc) {
+		Iterator it = XercesHelper.findNodes(doc, "//documents/document");
+		while (it.hasNext()) {
+			Element elm = (Element) it.next();
+			Integer documentId = null;
+			try {
+				documentId = new Integer(elm.getAttribute("src"));
+				long timeStamp = webSpringBean.getDocumentLastModifiedDate(documentId);
+				elm.setAttribute("timeStamp", timeStamp + "");
+			} catch (Exception exe) {
+				log.info("Could not insert timeStamp into document. ", exe);
 			}
 		}
 	}
