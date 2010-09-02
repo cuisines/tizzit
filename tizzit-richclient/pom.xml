@@ -48,6 +48,10 @@
 		</dependency>
 		<dependency>
 		  <groupId>org.springframework</groupId>
+		  <artifactId>spring-context</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework</groupId>
 		  <artifactId>spring-core</artifactId>
 		</dependency>
 		<dependency>
@@ -251,7 +255,11 @@
 							<include>org.tizzit:tizzit-loginmodules</include>
 							<include>org.springframework:spring-beans</include>
 							<include>org.springframework:spring-context-support</include>
+							<include>org.springframework:spring-context</include>
 							<include>org.springframework:spring-core</include>
+							<include>org.springframework:spring-asm</include>
+							<include>org.springframework:spring-expression</include>
+							<include>org.springframework:spring-aop</include>
 							<include>org.springframework:spring-jdbc</include>
 							<include>org.springframework:spring-test</include>
 							<include>org.springframework:spring-orm</include>
@@ -263,6 +271,7 @@
 							<include>org.springframework.security:spring-security-acl</include>
 							<include>org.springframework.security:spring-security-core</include>
 							<include>commons-codec:commons-codec</include>
+							<include>aopalliance:aopalliance</include>
 							<include>commons-collections:commons-collections</include>
 							<include>commons-discovery:commons-discovery</include>
 							<include>commons-beanutils:commons-beanutils</include>

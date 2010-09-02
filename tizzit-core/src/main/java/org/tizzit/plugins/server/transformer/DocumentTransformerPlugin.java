@@ -32,6 +32,7 @@ public class DocumentTransformerPlugin implements ManagedTizzitPlugin {
 	private final String IMAGE = "image";
 	private final String DOCUMENT = "document";
 	private final String MIMETYPE = "mimeType";
+	private final String TIMESTAMP = "timeStamp";
 	private boolean iAmTheLiveserver = true;
 
 	private WebServiceSpring webSpringBean = null;
@@ -105,6 +106,7 @@ public class DocumentTransformerPlugin implements ManagedTizzitPlugin {
 			parent.startElement(null, localName, qName, newAttrs);
 		} else if (localName.equalsIgnoreCase(DOCUMENT)) {
 			String mime = attrs.getValue(MIMETYPE);
+			String timeStamp = attrs.getValue(TIMESTAMP);
 			AttributesImpl newAttrs = new AttributesImpl(attrs);
 			if (mime == null || mime.isEmpty()) {
 				try {
@@ -115,6 +117,17 @@ public class DocumentTransformerPlugin implements ManagedTizzitPlugin {
 					log.warn("Cound not get int value from: " + attrs.getValue("src"), e);
 				} catch (Exception e) {
 					log.warn("Error while getting mime type for document: " + attrs.getValue("src"), e);
+				}
+			}
+			if (timeStamp == null || timeStamp.isEmpty()) {
+				try {
+					Integer docId = Integer.decode(attrs.getValue("src"));
+					timeStamp = "" + webSpringBean.getDocumentLastModifiedDate(docId);
+					SAXHelper.setSAXAttr(newAttrs, TIMESTAMP, timeStamp);
+				} catch (NumberFormatException e) {
+					log.warn("Cound not get int value from: " + attrs.getValue("src"), e);
+				} catch (Exception e) {
+					log.warn("Error while getting timeStamp for document: " + attrs.getValue("src"), e);
 				}
 			}
 			parent.startElement(uri, localName, qName, newAttrs);
