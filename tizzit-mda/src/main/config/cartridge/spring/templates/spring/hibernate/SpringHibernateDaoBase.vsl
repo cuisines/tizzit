@@ -21,6 +21,7 @@ package $entity.packageName;
 #set ($rootDaoType = $entity.fullyQualifiedDaoName)
 #end
 
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  * <p>
  * Base Spring DAO Class: is able to create, update, remove, load, and find
@@ -39,7 +40,9 @@ public abstract class $entity.daoBaseName
 {
 
 #foreach($entityRef in $entity.entityReferences)
-    private $entityRef.targetElement.fullyQualifiedDaoName $entityRef.daoName;
+
+	@Autowired private $entityRef.targetElement.fullyQualifiedDaoName $entityRef.daoName;
+
 
     /**
      * Sets the reference to <code>$entityRef.daoName</code>.
