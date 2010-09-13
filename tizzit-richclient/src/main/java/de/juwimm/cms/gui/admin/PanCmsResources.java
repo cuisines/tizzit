@@ -91,29 +91,29 @@ import de.juwimm.swing.NoResizeScrollPane;
  */
 public class PanCmsResources extends JPanel implements ReloadablePanel {
 	private static Logger log = Logger.getLogger(PanCmsResources.class);
-	private JTree treeResources;
-	private JPanel detailsPane;
-	private JSplitPane splitPane;
+	private final JTree treeResources;
+	private final JPanel detailsPane;
+	private final JSplitPane splitPane;
 	private CmsResourcesTreeModel treeModel;
-	private Communication communication;
-	private JPanel resourcePanel;
-	private JLabel nameLabel;
-	private JLabel typeLabel;
-	private JLabel createdLabel;
-	private JLabel resourceStateLabel;
+	private final Communication communication;
+	private final JPanel resourcePanel;
+	private final JLabel nameLabel;
+	private final JLabel typeLabel;
+	private final JLabel createdLabel;
+	private final JLabel resourceStateLabel;
 	JButton resourcePreview;
 
-	private JLabel nameValueLabel;
-	private JLabel typeValueLabel;
-	private JLabel createdValueLabel;
-	private JLabel resourceStateValueLabel;
-	private JTable viewComponentsTable;
+	private final JLabel nameValueLabel;
+	private final JLabel typeValueLabel;
+	private final JLabel createdValueLabel;
+	private final JLabel resourceStateValueLabel;
+	private final JTable viewComponentsTable;
 
-	private JPanel treeControlPanel;
-	private JPanel resourcePreviewPanel;
-	private JButton deleteResource;
+	private final JPanel treeControlPanel;
+	private final JPanel resourcePreviewPanel;
+	private final JButton deleteResource;
 	private MultiComboBox filterMultiComboBox;
-	private ViewComponentsTableModel viewComponentsTableModel = new ViewComponentsTableModel();
+	private final ViewComponentsTableModel viewComponentsTableModel = new ViewComponentsTableModel();
 
 	private boolean isLoading = false;
 
@@ -272,7 +272,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 				UnitTreeNode unitNode = (UnitTreeNode) entry;
 				unitNode.removeAllChildren();
 				List<Boolean> values = filterMultiComboBox.getValues();
-				Map<Object, ResourceUsageState> resources = (Map<Object, ResourceUsageState>) communication.getResources4Unit(unitNode.getId(), values.get(0), values.get(1), values.get(2), values.get(3));
+				Map<Object, ResourceUsageState> resources = communication.getResources4Unit(unitNode.getId(), values.get(0), values.get(1), values.get(2), values.get(3));
 				if (resources != null && resources.size() > 0) {
 					for (Entry<Object, ResourceUsageState> resource : resources.entrySet()) {
 						if (resource.getKey() instanceof DocumentSlimValue) {
@@ -300,7 +300,7 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
 
 		if (entry.getState() != ResourceUsageState.Unsused) {
-			Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>) communication.getDocumentUsage(value.getDocumentId());
+			Set<ViewComponentValue> viewComponentValues = communication.getDocumentUsage(value.getDocumentId());
 			this.viewComponentsTableModel.setRows(viewComponentValues);
 			//this.viewComponentsTable.setModel(viewComponentsTableModel);
 			this.viewComponentsTable.setVisible(true);
@@ -320,9 +320,11 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 				nameValueLabel.setText(value.getPictureName());
 				typeValueLabel.setText(value.getMimeType());
 				createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));
-				resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
+				if (entry != null && entry.getState() != null && entry.getState().getKey() != null) {
+					resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
+				}
 				if (entry.getState() != ResourceUsageState.Unsused) {
-					Set<ViewComponentValue> viewComponentValues = (Set<ViewComponentValue>) communication.getPictureUsage(value.getPictureId());
+					Set<ViewComponentValue> viewComponentValues = communication.getPictureUsage(value.getPictureId());
 					viewComponentsTableModel.setRows(viewComponentValues);
 					//viewComponentsTable.setModel(new TableSorter(viewComponentsTableModel, viewComponentsTable.getTableHeader()));
 					viewComponentsTable.setVisible(true);
@@ -566,13 +568,13 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 
 	private static class MultiComboBox extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private JButton dropButton;
-		private List<String> items;
-		private List<JCheckBox> values;
-		private JPopupMenu popup;
-		private PanCmsResources panelResources;
+		private final JButton dropButton;
+		private final List<String> items;
+		private final List<JCheckBox> values;
+		private final JPopupMenu popup;
+		private final PanCmsResources panelResources;
 		private int itemIndex = 0;
-		private MouseAdapter exitMouseAdapter;
+		private final MouseAdapter exitMouseAdapter;
 
 		public MultiComboBox(PanCmsResources panel) {
 			this.panelResources = panel;
@@ -695,8 +697,8 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 	}
 
 	private class CellListener extends MouseAdapter {
-		private JTable table;
-		private int columnIndexToListen;
+		private final JTable table;
+		private final int columnIndexToListen;
 
 		public CellListener(JTable table, int index) {
 			this.table = table;
