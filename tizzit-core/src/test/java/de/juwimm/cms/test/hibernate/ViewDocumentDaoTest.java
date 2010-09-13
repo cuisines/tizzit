@@ -43,14 +43,7 @@ public class ViewDocumentDaoTest extends HbmTestImpl {
 		((ViewDocumentHbmDaoImpl) viewDocumentDao).setUserHbmDao(userDao);
 	}
 
-	public void insertViewDocument(ViewDocumentHbm viewDocument) {
-		getJdbcTemplate().update(String.format("insert into viewdocument (view_document_id,language,view_type,site_id_fk) " + "values (%d,'%s','%s',%d)", viewDocument.getViewDocumentId(), viewDocument.getLanguage(), viewDocument.getViewType(), viewDocument.getSite().getSiteId()));
-	}
 
-	public void insertSite(SiteHbm site) {
-		getJdbcTemplate().update(String.format("insert into site " + "(site_id,site_name,site_short,mandator_dir,WYSIWYG_IMAGE_URL,HELP_URL,DCF_URL,PREVIEW_URL,PAGE_NAME_FULL,PAGE_NAME_CONTENT,PAGE_NAME_SEARCH,LAST_MODIFIED_DATE,UPDATE_SITE_INDEX, EXTERNAL_SITE_SEARCH) values " + "(%d,'%s','%s','c:/mandatorDir','WYSIWYG_IMAGE_URL','HELP_URL','DCF_URL','PREVIEW_URL','page.html','content.html','search.html',0,0,0)", site.getSiteId(), site.getName(), site.getName()));
-
-	}
 
 	public void init() {
 		ViewDocumentHbm viewDocument = new ViewDocumentHbmImpl();

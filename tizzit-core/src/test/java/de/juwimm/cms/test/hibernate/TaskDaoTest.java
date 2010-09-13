@@ -25,22 +25,6 @@ public class TaskDaoTest extends HbmTestImpl {
 
 	}
 
-	private void insertTask(TaskHbm task) {
-		getJdbcTemplate().update(String.format("insert into task " + "(task_id,task_type,receiver_role,unit_id_fk,receiver,sender,user_comment,status,creation_date) values " + "(%d,1,'receiverRole',%d,'%s','%s','comment',1,1)", task.getTaskId(), task.getUnit().getUnitId(), task.getReceiver().getUserId(), task.getSender().getUserId()));
-	}
-
-	private void insertUser(String userName, Integer activeSiteId) {
-		getJdbcTemplate().update(String.format("insert into usr " + "(user_id,first_name,last_name,email,login_date,active_site_id_fk,masterRoot,passwd) values " + "('%s','%s','%s','%s',0,%d,1,'123')", userName, userName, userName, userName + "@juwimm.de", activeSiteId));
-	}
-
-	public void insertSite(SiteHbm site) {
-		getJdbcTemplate().update(String.format("insert into site " + "(site_id,site_name,site_short,mandator_dir,WYSIWYG_IMAGE_URL,HELP_URL,DCF_URL,PREVIEW_URL,PAGE_NAME_FULL,PAGE_NAME_CONTENT,PAGE_NAME_SEARCH,LAST_MODIFIED_DATE,UPDATE_SITE_INDEX, EXTERNAL_SITE_SEARCH) values " + "(%d,'%s','%s','c:/mandatorDir','WYSIWYG_IMAGE_URL','HELP_URL','DCF_URL','PREVIEW_URL','page.html','content.html','search.html',0,0,0)", site.getSiteId(), site.getName(), site.getName()));
-	}
-
-	public void insertUnit(UnitHbm unit) {
-		getJdbcTemplate().update(String.format("insert into unit (unit_id,name,last_Modified_date,site_id_fk) " + "values (%d,'%s',0,%d)", unit.getUnitId(), unit.getName(), unit.getSite().getSiteId()));
-	}
-
 	/**
 	 * Test findAll for tasks
 	 * 

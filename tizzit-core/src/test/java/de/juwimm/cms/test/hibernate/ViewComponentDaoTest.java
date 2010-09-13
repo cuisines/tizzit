@@ -34,32 +34,8 @@ public class ViewComponentDaoTest extends HbmTestImpl {
 
 	}
 
-	public void insertViewComponent(ViewComponentHbm viewComponent) {
-		getJdbcTemplate().update(String.format("insert into viewcomponent" + "(view_component_id,status,show_type,view_type,visible,search_indexed,xml_search_indexed,display_link_name,link_description,url_link_name,approved_link_name,online_start,online_stop,reference,online_state,deploy_command,meta_data,meta_description,view_document_id_fk,create_date,last_modified_date,display_settings,user_last_modified_date) " + "values (%d,0,3,1,1,1,1,'%s','%s','%s','%s',0,0,'%s',0,0,'%s','%s',%d,0,0,0,0)", viewComponent.getViewComponentId(), viewComponent.getDisplayLinkName(), viewComponent.getLinkDescription(), viewComponent.getUrlLinkName(), viewComponent.getApprovedLinkName(), viewComponent.getReference(), viewComponent.getMetaData(), viewComponent.getMetaDescription(), viewComponent.getViewDocument().getViewDocumentId()));
-	}
-
-	public void insertUnit(UnitHbm unit) {
-		getJdbcTemplate().update(String.format("insert into unit (unit_id,name,last_Modified_date,site_id_fk) " + "values (%d,'%s',0,%d)", unit.getUnitId(), unit.getName(), unit.getSite().getSiteId()));
-	}
-
-	public void insertSite(SiteHbm site) {
-		getJdbcTemplate().update(String.format("insert into site " + "(site_id,site_name,site_short,mandator_dir,WYSIWYG_IMAGE_URL,HELP_URL,DCF_URL,PREVIEW_URL,PAGE_NAME_FULL,PAGE_NAME_CONTENT,PAGE_NAME_SEARCH,LAST_MODIFIED_DATE,UPDATE_SITE_INDEX, EXTERNAL_SITE_SEARCH) values " + "(%d,'%s','%s','c:/mandatorDir','WYSIWYG_IMAGE_URL','HELP_URL','DCF_URL','PREVIEW_URL','page.html','content.html','search.html',0,0,0)", site.getSiteId(), site.getName(), site.getName()));
-
-	}
-
-	public void insertContent(ContentHbm content) {
-		getJdbcTemplate().update(String.format("insert into content (content_id,status,template,UPDATE_SEARCH_INDEX) " + "values (%d,%d,'%s',0)", content.getContentId(), content.getStatus(), content.getTemplate()));
-	}
-
-	public void insertViewDocument(ViewDocumentHbm viewDocument) {
-		getJdbcTemplate().update(String.format("insert into viewdocument (view_document_id,language,view_type,view_component_id_fk,site_id_fk) " + "values (%d,'%s','%s',%d,%d)", viewDocument.getViewDocumentId(), viewDocument.getLanguage(), viewDocument.getViewType(), viewDocument.getViewComponent().getViewComponentId(), viewDocument.getSite().getSiteId()));
-	}
-
-	public void insertRealm2viewComponent(Realm2viewComponentHbm realm) {
-		getJdbcTemplate().update(String.format("insert into realm2view_component (realm2view_component_id,role_needed,view_component_id_fk,login_page_id_fk) " + "values (%d,'%s',1,1)", realm.getRealm2viewComponentId(), realm.getRoleNeeded()));
-	}
-
 	public void init() {
+		
 		ViewComponentHbm viewComponent = new ViewComponentHbmImpl();
 		UnitHbm unit = new UnitHbmImpl();
 		SiteHbm site = new SiteHbmImpl();

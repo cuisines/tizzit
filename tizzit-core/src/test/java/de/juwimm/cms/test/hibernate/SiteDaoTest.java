@@ -31,10 +31,6 @@ public class SiteDaoTest extends HbmTestImpl {
 		// TODO Auto-generated method stub
 	}
 
-	public void insertSite(SiteHbm site) {
-		getJdbcTemplate().update(String.format("insert into site " + "(site_id,site_name,site_short,mandator_dir,WYSIWYG_IMAGE_URL,HELP_URL,DCF_URL,PREVIEW_URL,PAGE_NAME_FULL,PAGE_NAME_CONTENT,PAGE_NAME_SEARCH,LAST_MODIFIED_DATE,UPDATE_SITE_INDEX, EXTERNAL_SITE_SEARCH) values " + "(%d,'%s','%s','c:/mandatorDir','WYSIWYG_IMAGE_URL','HELP_URL','DCF_URL','PREVIEW_URL','page.html','content.html','search.html',0,1,1)", site.getSiteId(), site.getName(), site.getName()));
-	}
-
 	public void init() {
 		SiteHbm site = new SiteHbmImpl();
 		site.setSiteId(1);
@@ -87,7 +83,8 @@ public class SiteDaoTest extends HbmTestImpl {
 		site.setWysiwygImageUrl("testImageUrl");
 		site.setHelpUrl("testHelpUrl");
 		site.setDcfUrl("testDcfUrl");
-		site.setPreviewUrl("testPreviewUrl");
+		site.setPreviewUrlLiveServer("testPreviewUrlLive");
+		site.setPreviewUrlWorkServer("testPreviewUrlWork");
 		site.setPageNameFull("testPageName");
 		site.setPageNameContent("testPageNameContent");
 		site.setPageNameSearch("testPageNameSearch");
@@ -120,7 +117,8 @@ public class SiteDaoTest extends HbmTestImpl {
 		site.setWysiwygImageUrl("testImageUrl");
 		site.setHelpUrl("testHelpUrl");
 		site.setDcfUrl("testDcfUrl");
-		site.setPreviewUrl("testPreviewUrl");
+		site.setPreviewUrlLiveServer("testPreviewUrlLive");
+		site.setPreviewUrlWorkServer("testPreviewUrlWork");
 		site.setPageNameFull("testPageName");
 		site.setPageNameContent("testPageNameContent");
 		site.setPageNameSearch("testPageNameSearch");

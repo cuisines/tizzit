@@ -17,6 +17,18 @@ package de.juwimm.cms.test.hibernate;
 
 import java.security.Principal;
 
+import de.juwimm.cms.model.ContentHbm;
+import de.juwimm.cms.model.ContentVersionHbm;
+import de.juwimm.cms.model.DocumentHbm;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.LockHbm;
+import de.juwimm.cms.model.TaskHbm;
+import de.juwimm.cms.model.SiteHbm;
+import de.juwimm.cms.model.UnitHbm;
+import de.juwimm.cms.model.ViewComponentHbm;
+import de.juwimm.cms.model.ViewDocumentHbm;
+import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
+
 public interface HbmTest {
 
 	/**
@@ -48,4 +60,30 @@ public interface HbmTest {
 	 *Used to mock the user logged in 
 	 */
 	void mockAuthetication();
+	
+	void insertSite(SiteHbm site);
+	
+	void insertUnit(UnitHbm unit);
+	
+	void insertHost(HostHbm hostHbm);
+	
+	void insertViewDocument(ViewDocumentHbm viewDocument);
+	
+	void insertUser(String userName, Integer activeSiteId);
+
+	void insertLock(LockHbm lock);
+
+	void insertViewComponent(ViewComponentHbm viewComponent);
+
+	void insertContent(ContentHbm content);
+	
+	void insertDocument(DocumentHbm document);
+
+	void insertContentVersion(ContentVersionHbm contentVersion, Integer contentId);
+	
+	void insertContentVersion(ContentVersionHbm contentVersion);
+
+	void insertRealm2viewComponent(Realm2viewComponentHbm realm);
+	
+	void insertTask(TaskHbm task);
 }

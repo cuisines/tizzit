@@ -37,14 +37,6 @@ public class ContentDaoTest extends HbmTestImpl {
 		// TODO Auto-generated method stub
 	}
 
-	public void insertContent(ContentHbm content) {
-		getJdbcTemplate().update(String.format("insert into content (content_id,status,template,UPDATE_SEARCH_INDEX) " + "values (%d,%d,'%s',%b)", content.getContentId(), content.getStatus(), content.getTemplate(), content.isUpdateSearchIndex()));
-	}
-
-	public void insertContentVersion(ContentVersionHbm contentVersion, Integer contentId) {
-		getJdbcTemplate().update(String.format("insert into contentversion (content_version_id,version,heading,text,create_date,creator,content_id_fk) " + "values (%d,'%s','%s','%s',%d,'%s',%d)", contentVersion.getContentVersionId(), contentVersion.getVersion(), contentVersion.getHeading(), contentVersion.getText(), contentVersion.getCreateDate(), contentVersion.getCreator(), contentId));
-	}
-
 	public void init() {
 		ContentHbm content = new ContentHbmImpl();
 		content.setContentId(1);

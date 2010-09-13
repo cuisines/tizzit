@@ -26,10 +26,6 @@ public class ContentVersionDaoTest extends HbmTestImpl {
 		super.mockAuthetication();
 	}
 
-	public void insertContentVersion(ContentVersionHbm contentVersion) {
-		getJdbcTemplate().update(String.format("insert into contentversion (content_version_id,version,heading,text,create_date,creator) " + "values (%d,'%s','%s','%s',%d,'%s')", contentVersion.getContentVersionId(), contentVersion.getVersion(), contentVersion.getHeading(), contentVersion.getText(), contentVersion.getCreateDate(), contentVersion.getCreator()));
-	}
-
 	public void init() {
 		ContentVersionHbm contentVersion = new ContentVersionHbmImpl();
 		contentVersion.setContentVersionId(1);

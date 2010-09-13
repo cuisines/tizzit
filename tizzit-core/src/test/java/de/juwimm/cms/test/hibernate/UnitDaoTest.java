@@ -144,14 +144,14 @@ public class UnitDaoTest extends HbmTestImpl {
 
 		try {
 			EasyMock.expect(talktimeDao.findByUnit(EasyMock.eq(1))).andReturn(talktimeCollection);
-			EasyMock.expect(personDao.findByUnit(EasyMock.eq(1))).andReturn(persons);
+			//EasyMock.expect(personDao.findByUnit(EasyMock.eq(1))).andReturn(persons);
 
 		} catch (Exception e) {
 			Assert.assertTrue(false);
 		}
 
 		EasyMock.replay(talktimeDao);
-		EasyMock.replay(personDao);
+		//EasyMock.replay(personDao);
 
 		try {
 			UnitValue unitValue = unitDao.getDao(unit);
@@ -165,7 +165,7 @@ public class UnitDaoTest extends HbmTestImpl {
 		}
 
 		EasyMock.verify(talktimeDao);
-		EasyMock.verify(personDao);
+		//EasyMock.verify(personDao);
 	}
 
 	/**
