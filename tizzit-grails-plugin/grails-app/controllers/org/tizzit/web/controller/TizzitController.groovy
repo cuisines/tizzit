@@ -36,6 +36,7 @@ class TizzitController {
 			flash.tizzit = new Expando()
 			flash.tizzit.viewComponentId = xml.params.viewComponentId  // currently only for navigations in layout file
 			flash.tizzit.isLiveserver = xml.params.hostIsLiveserver
+ 
 		}
 	}
 
