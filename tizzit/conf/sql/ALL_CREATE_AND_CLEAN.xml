@@ -49,12 +49,13 @@
 		<field name="external_id" datatype="varchar" length="255" index="true"/>
 		<field name="last_modified_date" datatype="long" index="true" default="0"/>
 	</createTable>
-	<createTable name="comp_persontounitlink">
+<!--	<createTable name="comp_persontounitlink">
 		<field name="personToUnitLink_id" datatype="int" index="primary" empty="false"/>
 		<field name="role_type" datatype="int"/>
 		<field name="unit_id_fk" datatype="int" index="true"/>
 		<field name="person_id_fk" datatype="long" index="true"/>
 	</createTable>
+-->
 	<createTable name="comp_talktime">
 		<field name="talk_time_id" datatype="long" index="primary" empty="false"/>
 		<field name="talk_time_type" datatype="varchar" length="255"/>
@@ -74,7 +75,6 @@
 		<field name="version" datatype="varchar" length="5" index="true"/>
 		<field name="heading" datatype="varchar" length="255"/>
 		<field name="text" datatype="clob"/>
-		<field name="version_comment" datatype="clob"/>
 		<field name="create_date" datatype="long" index="true"/>
 		<field name="creator" datatype="varchar" length="255" index="true"/>
 		<field name="content_id_fk" datatype="int" index="true"/>
@@ -105,6 +105,7 @@
 		<field name="use_count_last_version" datatype="int"/>
 		<field name="use_count_publish_version" datatype="int"/>
 		<field name="update_search_index" datatype="tinyint"  default="1"/> 
+		<field name="VIEW_COMPONENT_ID_FK" datatype="int" index="true"/>
 	</createTable>
 	<createTable name="edition">
 		<field name="edition_id" datatype="int" empty="false" index="primary"/>
@@ -114,13 +115,25 @@
 		<field name="status" datatype="tinyint"/>
 		<field name="unit_id" datatype="int" index="true"/>
 		<field name="view_document_id" datatype="int" index="true"/>
+		<field name="edition_file_name" datatype="varchar" length="255"/>
+		<field name="needs_import" datatype="tinyint"/>
+		<field name="needs_deploy" datatype="tinyint"/>
+		<field name="use_new_ids" datatype="tinyint"/>
+		<field name="site_id" datatype="int"/>
+		<field name="view_component_id" datatype="int"/>
+		<field name="DEPLOY_TYPE" datatype="int"/>
+		<field name="WORK_SERVER_EDITION_ID" datatype="int"/>
+		<field name="DEPLOY_STATUS" datatype="blob"/>
+		<field name="START_ACTION_TIMESTAMP" datatype="int"/>
+		<field name="END_ACTION_TIMESTAMP" datatype="int"/>
 	</createTable>
-	<createTable name="editionslice">
+<!--	<createTable name="editionslice">
 		<field name="edition_slice_id" datatype="int" empty="false" index="primary"/>
 		<field name="edition_id" datatype="int" empty="false" index="true"/>
 		<field name="slice_nr" datatype="int" empty="false" index="true"/>
 		<field name="slice_data" datatype="blob"/>
 	</createTable>
+-->
 	<createTable name="groups2roles">
 		<field name="roles_id_fk" datatype="varchar" length="255" empty="false" index="primary"/>
 		<field name="groups_id_fk" datatype="int" empty="false" index="primary"/>
@@ -136,6 +149,7 @@
 		<field name="unit_id_fk" datatype="int" index="true"/>
 		<field name="redirect_url" datatype="varchar" length="255"/>
 		<field name="redirect_host_name_id_fk" datatype="varchar" length="255" index="true"/>
+		<field name="liveserver" datatype="tinyint"/>
 	</createTable>
 	<createTable name="keygen">
 		<field name="idx" datatype="int" empty="false"/>
@@ -168,6 +182,9 @@
 		<field name="picture_name" datatype="varchar" length="255"/>
 		<field name="height" datatype="int"/>
 		<field name="width" datatype="int"/>
+		<field name="thumbnail_popup" datatype="tinyint"/>
+		<field name="title" datatype="varchar" length="255"/>
+		<field name="VIEW_COMPONENT_ID_FK" datatype="int" index="true"/>
 	</createTable>
 	<createTable name="role">
 		<field name="role_id" datatype="varchar" length="255" empty="false" index="primary"/>
@@ -190,11 +207,14 @@
 		<field name="wysiwyg_image_url" datatype="varchar" length="255"/>
 		<field name="help_url" datatype="varchar" length="255"/>
 		<field name="dcf_url" datatype="varchar" length="255"/>
-		<field name="preview_url" datatype="varchar" length="255"/>
 		<field name="page_name_full" datatype="varchar" length="255"/>
 		<field name="page_name_content" datatype="varchar" length="255"/>
 		<field name="page_name_search" datatype="varchar" length="255"/>
 		<field name="last_modified_date" datatype="long" index="true" default="0"/>
+		<field name="UPDATE_SITE_INDEX" datatype="tinyint"/>
+		<field name="EXTERNAL_SITE_SEARCH" datatype="tinyint"/>
+		<field name="PREVIEW_URL_LIVE_SERVER" datatype="varchar" length="255"/>
+		<field name="PREVIEW_URL_WORK_SERVER" datatype="varchar" length="255"/>
 	</createTable>
 	<createTable name="site_group">
 		<field name="site_group_id" datatype="int" empty="false" index="primary"/>
@@ -477,6 +497,7 @@
 		<field name="site_name">www.test.de</field>
 		<field name="site_short">test</field>
 		<field name="root_unit_id_fk">1</field>
+		<field name="mandator_dir">tizzit-site-tizzit/web/</field>
 	</insertInto>
 	<insertInto table="unit"><!-- create a unit -->
 		<field name="unit_id">1</field>

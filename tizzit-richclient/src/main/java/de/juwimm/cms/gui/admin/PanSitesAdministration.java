@@ -59,6 +59,7 @@ import org.w3c.dom.Document;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
+import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.DirtyInputListener;
 import de.juwimm.cms.gui.controls.ReloadablePanel;
 import de.juwimm.cms.gui.table.SiteTableModel;
@@ -191,19 +192,11 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			btnParametrize.setText(rb.getString("panel.sitesAdministration.btnParametrize"));
 			btnSearchSettings.setText(rb.getString("panel.sitesAdministration.btnSearchSettings"));
 			cbxSearchOnly.setText(rb.getString("panel.sitesAdministration.cbxSearchOnly"));
-			cbxLanguage.addItem("en");
-			cbxLanguage.addItem("de");
-			cbxLanguage.addItem("es");
-			cbxLanguage.addItem("fr");
-			cbxLanguage.addItem("it");
-			cbxLanguage.addItem("ru");
-			cbxLanguage.addItem("tr");
-			cbxLanguage.addItem("nl"); //Holland
-			cbxLanguage.addItem("dk"); //Dänemark
-			cbxLanguage.addItem("se"); //Schweden
-			cbxLanguage.addItem("sa"); //Saudi-Arabien
-			cbxLanguage.addItem("pl"); //Polen
-			cbxLanguage.addItem("uae"); // Vereinigte Arabische Emirate			
+			String[] lang = Constants.VIEWCOMPONENT_LANGUAGES.split("\\|");
+			for (int i = 0; i < lang.length; i++) {
+				cbxLanguage.addItem(lang[i]);
+			}
+
 			cbxViewType.addItem("browser");
 			cbxViewType.addItem("WAP");
 			jViewTypeLabel.setText(rb.getString("panel.panelCmsViews.viewType"));
