@@ -108,16 +108,18 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private final JTextField txtImageUrl = new JTextField();
 	private final JLabel lblHelpUrl = new JLabel();
 	private final JTextField txtHelpUrl = new JTextField();
-	private final JTextField txtPreviewUrlWorkServer = new JTextField();
-	private final JTextField txtPreviewUrlLiveServer = new JTextField();
-	private final JLabel lblWebURL = new JLabel();
+	private final JTextField txtPreviewUrl = new JTextField();
+
+	private final JLabel lblWebURLWork = new JLabel();
 	private final JLabel lblDcfURL = new JLabel();
 	private final JTextField txtDcfUrl = new JTextField();
 	private final JCheckBox chkLiveserver = new JCheckBox();
-	private final JLabel lblLiveserverURL = new JLabel();
+	private final JLabel lblLiveserverIP = new JLabel();
+	private final JLabel lblLiveserverUrl = new JLabel();
 	private final JLabel lblLiveserverUser = new JLabel();
 	private final JLabel lblLiveserverPassword = new JLabel();
-	private final JTextField txtLiveserverURL = new JTextField();
+	private final JTextField txtLiveserverIP = new JTextField();
+	private final JTextField txtLiveserverUrl = new JTextField();
 	private final JTextField txtLiveserverUser = new JTextField();
 	private final JTextField txtLiveserverPassword = new JTextField();
 	private final JPanel panConnectedUsers = new JPanel();
@@ -177,7 +179,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			lblSiteName.setText(rb.getString("panel.sitesAdministration.lblSiteName") + " *");
 			lblImageURL.setText(rb.getString("panel.sitesAdministration.lblImageURL"));
 			lblHelpUrl.setText(rb.getString("panel.sitesAdministration.lblBugpageURL"));
-			lblWebURL.setText(rb.getString("panel.sitesAdministration.lblWebURL"));
+			lblWebURLWork.setText(rb.getString("panel.sitesAdministration.lblWebURLWork"));
+			lblLiveserverUrl.setText(rb.getString("panel.sitesAdministration.lblWebURLLive"));
 			lblPageNames.setText(rb.getString("panel.sitesAdministration.lblPageNames"));
 			lblPageNameFull.setText(rb.getString("panel.sitesAdministration.lblPageNameFull"));
 			lblPageNameContent.setText(rb.getString("panel.sitesAdministration.lblPageNameContent"));
@@ -185,7 +188,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			btnMigrateConfig.setText(rb.getString("panel.sitesAdministration.btnMigrateConfig"));
 			lblDcfURL.setText(rb.getString("panel.sitesAdministration.lblDcfURL"));
 			chkLiveserver.setText(rb.getString("panel.sitesAdministration.chkLiveserver"));
-			lblLiveserverURL.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL"));
+			lblLiveserverIP.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL"));
 			lblLiveserverUser.setText(rb.getString("panel.sitesAdministration.lblLiveserverUser"));
 			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword"));
 			lblSiteId.setText(rb.getString("panel.sitesAdministration.lblSiteId"));
@@ -234,6 +237,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints251.gridy = 8;
 		GridBagConstraints gridBagConstraints241 = new GridBagConstraints(1, 5, 3, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
 		gridBagConstraints241.gridy = 6;
+		GridBagConstraints gridBagConstraints242 = new GridBagConstraints(1, 5, 3, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+		gridBagConstraints242.gridy = 7;
 		GridBagConstraints gridBagConstraints23 = new GridBagConstraints(1, 4, 3, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
 		gridBagConstraints23.gridy = 5;
 		GridBagConstraints gridBagConstraints22 = new GridBagConstraints(1, 3, 3, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
@@ -313,12 +318,16 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
 		gridBagConstraints.gridy = 7;
 		titledBorder2 = new TitledBorder(BorderFactory.createEtchedBorder(Color.white, new Color(165, 163, 151)), "Connected Users");
-		GridBagConstraints gridBagConstraints11 = new GridBagConstraints(1, 15, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 10, 0, 0), 0, 0);
-		GridBagConstraints gridBagConstraints12 = new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
-		GridBagConstraints gridBagConstraints13 = new GridBagConstraints(2, 13, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
-		GridBagConstraints gridBagConstraints14 = new GridBagConstraints(1, 12, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+		GridBagConstraints gridBagConstraints11 = new GridBagConstraints(1, 17, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(5, 10, 0, 0), 0, 0);
+		gridBagConstraints11.gridy = 17;
+		GridBagConstraints gridBagConstraints12 = new GridBagConstraints(1, 14, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+		GridBagConstraints gridBagConstraints13 = new GridBagConstraints(2, 14, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+		GridBagConstraints gridBagConstraints131 = new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+		GridBagConstraints gridBagConstraints132 = new GridBagConstraints(2, 13, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+
+		GridBagConstraints gridBagConstraints14 = new GridBagConstraints(1, 13, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
 		GridBagConstraints gridBagConstraints15 = new GridBagConstraints(1, 11, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
-		GridBagConstraints gridBagConstraints16 = new GridBagConstraints(2, 12, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
+		GridBagConstraints gridBagConstraints16 = new GridBagConstraints(2, 13, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
 		GridBagConstraints gridBagConstraints17 = new GridBagConstraints(2, 11, 2, 1, 0.6, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 0), 0, 0);
 		GridBagConstraints gridBagConstraints18 = new GridBagConstraints(1, 11, 3, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 6, 0, 0), 0, 0);
 		java.awt.GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
@@ -409,7 +418,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		lblSiteName.setText("Site Name");
 		lblImageURL.setText("Image URL");
 		lblHelpUrl.setText("Bugpage URL");
-		lblWebURL.setText("Web URL");
+		lblWebURLWork.setText("Web URL WorkServer");
+		lblLiveserverUrl.setText("Web URL LiveServer");
 		lblDcfURL.setText("DCF URL");
 		chkLiveserver.setText("Is Live deployment active?");
 		chkLiveserver.addActionListener(new java.awt.event.ActionListener() {
@@ -417,7 +427,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				chkLiveserverActionPerformed(e);
 			}
 		});
-		lblLiveserverURL.setText("URL");
+		lblLiveserverIP.setText("URL");
 		lblLiveserverUser.setText("User");
 		lblLiveserverPassword.setText("Password");
 		panConnectedUsers.setBorder(titledBorder2);
@@ -449,11 +459,11 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		gridBagConstraints18.gridy = 11;
 		gridBagConstraints15.gridy = 12;
 		gridBagConstraints17.gridy = 12;
-		gridBagConstraints14.gridy = 13;
-		gridBagConstraints16.gridy = 13;
-		gridBagConstraints12.gridy = 14;
-		gridBagConstraints13.gridy = 14;
-		gridBagConstraints11.gridy = 18;
+		gridBagConstraints14.gridy = 14;
+		gridBagConstraints16.gridy = 14;
+		gridBagConstraints12.gridy = 15;
+		gridBagConstraints13.gridy = 15;
+
 		gridBagConstraints19.gridx = 1;
 		gridBagConstraints19.gridy = 9;
 		gridBagConstraints19.weightx = 1.0;
@@ -490,9 +500,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		panDetails.add(txtImageUrl, gridBagConstraints22);
 		panDetails.add(lblHelpUrl, gridBagConstraints171);
 		panDetails.add(txtHelpUrl, gridBagConstraints23);
-		panDetails.add(lblWebURL, gridBagConstraints181);
-		panDetails.add(txtPreviewUrlWorkServer, gridBagConstraints241);
-		panDetails.add(txtPreviewUrlLiveServer, gridBagConstraints241);
+		panDetails.add(lblWebURLWork, gridBagConstraints181);
+		panDetails.add(lblLiveserverUrl, gridBagConstraints131);
+		panDetails.add(txtPreviewUrl, gridBagConstraints241);
+		panDetails.add(txtLiveserverUrl, gridBagConstraints132);
 		panDetails.add(lblDcfURL, gridBagConstraints201);
 		this.add(btnCreateNew, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
 		this.add(btnDelete, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 10, 0), 0, 0));
@@ -509,8 +520,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		panDetails.add(lblPageNames, gridBagConstraints191);
 		panDetails.add(panPageNames, gridBagConstraints);
 		panDetails.add(chkLiveserver, gridBagConstraints18);
-		panDetails.add(lblLiveserverURL, gridBagConstraints15);
-		panDetails.add(txtLiveserverURL, gridBagConstraints17);
+		panDetails.add(lblLiveserverIP, gridBagConstraints15);
+		panDetails.add(txtLiveserverIP, gridBagConstraints17);
 		panDetails.add(txtLiveserverUser, gridBagConstraints16);
 		panDetails.add(lblLiveserverUser, gridBagConstraints14);
 		panDetails.add(txtLiveserverPassword, gridBagConstraints13);
@@ -645,8 +656,12 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 					txtLiveserverPassword.setBackground(backgroundTextFieldError);
 					isValid = false;
 				}
-				if (txtLiveserverURL.getText() == null || txtLiveserverURL.getText().isEmpty()) {
-					txtLiveserverURL.setBackground(backgroundTextFieldError);
+				if (txtLiveserverIP.getText() == null || txtLiveserverIP.getText().isEmpty()) {
+					txtLiveserverIP.setBackground(backgroundTextFieldError);
+					isValid = false;
+				}
+				if (txtLiveserverUrl.getText() == null || txtLiveserverUrl.getText().isEmpty()) {
+					txtLiveserverUrl.setBackground(backgroundTextFieldError);
 					isValid = false;
 				}
 				if (txtLiveserverUser.getText() == null || txtLiveserverUser.getText().isEmpty()) {
@@ -674,17 +689,20 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 
 	private void resetLiveDeploymentInputsHighlight() {
 		resetInputHighlight(txtLiveserverUser);
-		resetInputHighlight(txtLiveserverURL);
+		resetInputHighlight(txtLiveserverIP);
+		resetInputHighlight(txtLiveserverUrl);
 		resetInputHighlight(txtLiveserverPassword);
 	}
 
 	private void setLiveDeploymentRequired(boolean required) {
 		if (required) {
-			lblLiveserverURL.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL") + "*");
+			lblLiveserverIP.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL") + "*");
+			lblLiveserverIP.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL") + "*");
 			lblLiveserverUser.setText(rb.getString("panel.sitesAdministration.lblLiveserverUser") + "*");
 			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword") + "*");
 		} else {
-			lblLiveserverURL.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL"));
+			lblLiveserverIP.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL"));
+			lblLiveserverIP.setText(rb.getString("panel.sitesAdministration.lblLiveserverURL"));
 			lblLiveserverUser.setText(rb.getString("panel.sitesAdministration.lblLiveserverUser"));
 			lblLiveserverPassword.setText(rb.getString("panel.sitesAdministration.lblLiveserverPassword"));
 		}
@@ -710,8 +728,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				vo.setWysiwygImageUrl(txtImageUrl.getText());
 				vo.setHelpUrl(txtHelpUrl.getText());
 				vo.setDcfUrl(txtDcfUrl.getText());
-				vo.setPreviewUrlWorkServer(txtPreviewUrlWorkServer.getText());
-				vo.setPreviewUrlLiveServer(txtPreviewUrlLiveServer.getText());
+				vo.setPreviewUrlWorkServer(txtPreviewUrl.getText());
 				vo.setPageNameContent(txtPageNameContent.getText());
 				vo.setPageNameFull(txtPageNameFull.getText());
 				vo.setExternalSiteSearch(cbxSearchOnly.isSelected());
@@ -727,9 +744,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 					}
 					comm.setConnectedUsersForSite(siteToSelect, tblUserModel.getSelectedUsers());
 					if (chkLiveserver.isSelected()) {
+						vo.setPreviewUrlLiveServer(txtLiveserverUrl.getText());
 						configReader.saveValue("liveServer/liveDeploymentActive", "1");
 						configReader.saveValue("liveServer/password", txtLiveserverPassword.getText());
-						configReader.saveValue("liveServer/url", txtLiveserverURL.getText());
+						configReader.saveValue("liveServer/url", txtLiveserverIP.getText());
 						configReader.saveValue("liveServer/username", txtLiveserverUser.getText());
 					} else {
 						configReader.saveValue("liveServer/liveDeploymentActive", "0");
@@ -768,7 +786,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 	private void chkLiveserverActionPerformed(ActionEvent e) {
 		boolean sel = chkLiveserver.isSelected() && chkLiveserver.isEnabled();
 		txtLiveserverPassword.setEnabled(sel);
-		txtLiveserverURL.setEnabled(sel);
+		txtLiveserverIP.setEnabled(sel);
+		txtLiveserverUrl.setEnabled(sel);
 		txtLiveserverUser.setEnabled(sel);
 		setLiveDeploymentRequired(sel);
 		if (!sel) {
@@ -824,7 +843,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		chkLiveserver.setEnabled(val);
 		if (!val) {
 			txtLiveserverPassword.setEnabled(val);
-			txtLiveserverURL.setEnabled(val);
+			txtLiveserverIP.setEnabled(val);
+			txtLiveserverUrl.setEnabled(val);
 			txtLiveserverUser.setEnabled(val);
 		}
 
@@ -841,8 +861,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		txtMandatorDir.setEnabled(state);
 		spCacheExpire.setEnabled(state);
 		txtDcfUrl.setEnabled(state);
-		txtPreviewUrlWorkServer.setEnabled(state);
-		txtPreviewUrlLiveServer.setEnabled(state);
+		txtPreviewUrl.setEnabled(state);
 		txtPageNameFull.setEnabled(state);
 		txtPageNameContent.setEnabled(state);
 		txtPageNameSearch.setEnabled(state);
@@ -882,8 +901,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtImageUrl.setText(vo.getWysiwygImageUrl());
 			txtHelpUrl.setText(vo.getHelpUrl());
 			txtDcfUrl.setText(vo.getDcfUrl());
-			txtPreviewUrlWorkServer.setText(vo.getPreviewUrlWorkServer());
-			txtPreviewUrlLiveServer.setText(vo.getPreviewUrlLiveServer());
+			txtPreviewUrl.setText(vo.getPreviewUrlWorkServer());
 			txtPageNameFull.setText(vo.getPageNameFull());
 			txtPageNameContent.setText(vo.getPageNameContent());
 			txtPageNameSearch.setText(vo.getPageNameSearch());
@@ -892,9 +910,10 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			} else {
 				lblSiteIdContent.setText(Integer.toString(vo.getSiteId()));
 			}
-			if (cfg != null && !cfg.getConfigNodeValue("liveServer/url").equalsIgnoreCase("")) {
+			if (cfg != null && cfg.getConfigNodeValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1")) {
 				txtLiveserverPassword.setText(cfg.getConfigNodeValue("liveServer/password"));
-				txtLiveserverURL.setText(cfg.getConfigNodeValue("liveServer/url"));
+				txtLiveserverIP.setText(cfg.getConfigNodeValue("liveServer/url"));
+				txtLiveserverUrl.setText(vo.getPreviewUrlLiveServer());
 				txtLiveserverUser.setText(cfg.getConfigNodeValue("liveServer/username"));
 				if (cfg.getConfigNodeValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1")) {
 					chkLiveserver.setSelected(true);
@@ -904,11 +923,11 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 				}
 			} else {
 				txtLiveserverPassword.setText("");
-				txtLiveserverURL.setText("");
+				txtLiveserverIP.setText("");
 				txtLiveserverUser.setText("");
 				chkLiveserver.setSelected(false);
 				txtLiveserverPassword.setEnabled(false);
-				txtLiveserverURL.setEnabled(false);
+				txtLiveserverIP.setEnabled(false);
 				txtLiveserverUser.setEnabled(false);
 			}
 			dlgSiteparams.load(cfg);
@@ -918,18 +937,18 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtImageUrl.setText("http://");
 			txtHelpUrl.setText("http://wiki.tizzit.org/");
 			txtDcfUrl.setText("http://");
-			txtPreviewUrlWorkServer.setText("http://");
-			txtPreviewUrlLiveServer.setText("http://");
+			txtPreviewUrl.setText("http://");
 			txtPageNameFull.setText("html");
 			txtPageNameContent.setText("html");
 			txtPageNameSearch.setText("html?viewType=search");
 			lblSiteIdContent.setText(" ");
 			txtLiveserverPassword.setText("");
-			txtLiveserverURL.setText("");
+			txtLiveserverIP.setText("");
+			txtLiveserverUrl.setText("");
 			txtLiveserverUser.setText("");
 			chkLiveserver.setSelected(false);
 			txtLiveserverPassword.setEnabled(false);
-			txtLiveserverURL.setEnabled(false);
+			txtLiveserverIP.setEnabled(false);
 			txtLiveserverUser.setEnabled(false);
 		}
 		btnSearchSettings.setEnabled(vo.isExternalSiteSearch());
@@ -1093,8 +1112,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 			txtImageUrl.setText(cfg.getConfigNodeValue("wysiwygImageUrl"));
 			txtHelpUrl.setText(cfg.getConfigNodeValue("bugpageUrl"));
 			txtDcfUrl.setText(cfg.getConfigNodeValue("dcfUrl"));
-			txtPreviewUrlWorkServer.setText(cfg.getConfigNodeValue("demoWebUrl"));
-			txtPreviewUrlLiveServer.setText(cfg.getConfigNodeValue("demoWebUrl"));
+			txtPreviewUrl.setText(cfg.getConfigNodeValue("demoWebUrl"));
+			txtLiveserverUrl.setText(cfg.getConfigNodeValue("demoWebUrl"));
 			txtPageNameFull.setText(cfg.getConfigAttribute("demoWebUrl", "fullFrameset"));
 			txtPageNameContent.setText(cfg.getConfigAttribute("demoWebUrl", "contentOnly"));
 			txtPageNameSearch.setText(txtPageNameContent.getText());
@@ -1104,7 +1123,7 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 
 			if (chkLiveserver.isSelected()) {
 				configReader.saveValue("liveServer/password", txtLiveserverPassword.getText());
-				configReader.saveValue("liveServer/url", txtLiveserverURL.getText());
+				configReader.saveValue("liveServer/url", txtLiveserverIP.getText());
 				configReader.saveValue("liveServer/username", txtLiveserverUser.getText());
 			}
 			dlgSiteparams.save(configReader);
@@ -1177,8 +1196,8 @@ public class PanSitesAdministration extends JPanel implements ReloadablePanel {
 		initDirtyInputListeners(txtPageNameContent);
 		initDirtyInputListeners(txtPageNameFull);
 		initDirtyInputListeners(txtPageNameSearch);
-		initDirtyInputListeners(txtPreviewUrlWorkServer);
-		initDirtyInputListeners(txtPreviewUrlLiveServer);
+		initDirtyInputListeners(txtPreviewUrl);
+		initDirtyInputListeners(txtLiveserverUrl);
 		initDirtyInputListeners(txtSiteName);
 		initDirtyInputListeners(txtSiteShort);
 		initDirtyInputListeners(cbxSearchOnly);
