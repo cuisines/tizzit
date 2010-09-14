@@ -114,6 +114,7 @@ import de.juwimm.cms.gui.tree.PageSymlinkNode;
 import de.juwimm.cms.gui.tree.TreeNode;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ContentValue;
@@ -1918,6 +1919,15 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	}
 
 	private void processApproval(Collection<ViewComponentValue> data, PageNode entry) throws Exception {
+		boolean liveDeploy = false;
+		try {
+			ConfigReader cfg = new ConfigReader(comm.getSiteConfigXML(), ConfigReader.CONF_NODE_DEFAULT);
+			if (cfg != null) {
+				liveDeploy = cfg.getConfigNodeValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1");
+			}
+		} catch (Exception ex) {
+			log.warn("could not read siteConfig of site: " + comm.getSiteName(), ex);
+		}
 		Iterator it = data.iterator();
 		while (it.hasNext()) {
 			ViewComponentValue view = (ViewComponentValue) it.next();
@@ -1927,6 +1937,11 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				if (comm.removeViewComponent(view.getViewComponentId().intValue(), view.getDisplayLinkName(), Constants.ONLINE_STATUS_OFFLINE)) treeModel.removeNodeFromParent(entry);
 			} else {
 				view.setStatus(Constants.DEPLOY_STATUS_APPROVED);
+				if (!liveDeploy) {
+					view.setOnline((byte) 1);
+					view.setOnlineStart(System.currentTimeMillis());
+				}
+
 				comm.updateStatus4ViewComponent(view);
 				view.setOnline((byte) 1);
 				comm.setViewComponentOnline(view.getViewComponentId());

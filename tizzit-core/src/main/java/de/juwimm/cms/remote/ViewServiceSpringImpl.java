@@ -1061,6 +1061,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				log.debug("STATUS old " + vc.getStatus() + " new " + dao.getStatus());
 			}
 			vc.setDeployCommand(dao.getDeployCommand());
+			vc.setOnline(dao.getOnline());
+			vc.setOnlineStart(dao.getOnlineStart());
 			vc.setStatus(dao.getStatus());
 			vc.setLastModifiedDate(System.currentTimeMillis());
 			vc.setUserLastModifiedDate(dao.getUserLastModifiedDate());

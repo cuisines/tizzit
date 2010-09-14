@@ -15,15 +15,34 @@
  */
 package de.juwimm.cms.deploy.panel;
 
-import static de.juwimm.cms.client.beans.Application.*;
-import static de.juwimm.cms.common.Constants.*;
+import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -43,6 +62,7 @@ import de.juwimm.cms.deploy.panel.table.EditorTableModel;
 import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.TaskValue;
 import de.juwimm.cms.vo.ViewComponentValue;
@@ -58,29 +78,29 @@ import de.juwimm.cms.vo.ViewComponentValue;
 public class PanTaskDetails extends JPanel implements ActionListener {
 	private static Logger log = Logger.getLogger(PanTaskDetails.class);
 	private AbstractTableModel tableModel;
-	private JLabel lblPath = new JLabel();
-	private JButton cmdNone = new JButton();
-	private JButton cmdAll = new JButton();
+	private final JLabel lblPath = new JLabel();
+	private final JButton cmdNone = new JButton();
+	private final JButton cmdAll = new JButton();
 	private JScrollPane scrollPane;
-	private JTable table = new JTable();
-	private JTextField txtPath = new JTextField();
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
-	private GridBagLayout gridBagLayout1 = new GridBagLayout();
-	private BorderLayout borderLayout1 = new BorderLayout();
-	private JPanel panButtons = new JPanel();
-	private JPanel panFat = new JPanel();
-	private JButton cmdSave = new JButton();
-	private JButton cmdCancel = new JButton();
-	private JButton btnPreview = new JButton();
-	private GridBagLayout gridBagLayout2 = new GridBagLayout();
+	private final JTable table = new JTable();
+	private final JTextField txtPath = new JTextField();
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final GridBagLayout gridBagLayout1 = new GridBagLayout();
+	private final BorderLayout borderLayout1 = new BorderLayout();
+	private final JPanel panButtons = new JPanel();
+	private final JPanel panFat = new JPanel();
+	private final JButton cmdSave = new JButton();
+	private final JButton cmdCancel = new JButton();
+	private final JButton btnPreview = new JButton();
+	private final GridBagLayout gridBagLayout2 = new GridBagLayout();
 	private FrmRejectMessage frm = null;
 	private TaskValue task = null;
-	private JPanel panMessage = new JPanel();
+	private final JPanel panMessage = new JPanel();
 	private Border border1;
 	private TitledBorder titledBorder1;
-	private GridBagLayout gridBagLayout3 = new GridBagLayout();
-	private JScrollPane jScrollPane1 = new JScrollPane();
-	private JTextArea txtMessage = new JTextArea();
+	private final GridBagLayout gridBagLayout3 = new GridBagLayout();
+	private final JScrollPane jScrollPane1 = new JScrollPane();
+	private final JTextArea txtMessage = new JTextArea();
 
 	public PanTaskDetails() {
 		try {
@@ -140,12 +160,9 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 			}
 		});
 
-		panButtons.add(cmdSave, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 30, 0));
-		panButtons.add(cmdCancel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 30, 0));
-		panButtons.add(btnPreview, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST,
-				GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 43, 0));
+		panButtons.add(cmdSave, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 0), 30, 0));
+		panButtons.add(cmdCancel, new GridBagConstraints(2, 0, 1, 1, 1.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 0, 5, 5), 30, 0));
+		panButtons.add(btnPreview, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 43, 0));
 
 		this.add(panFat, BorderLayout.CENTER);
 
@@ -178,19 +195,13 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 		cmdNone.setPreferredSize(new Dimension(101, 25));
 		lblPath.setText("Pfad");
 		panFat.setLayout(gridBagLayout1);
-		panFat.add(scrollPane, new GridBagConstraints(0, 0, 2, 2, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(0, 10, 0, 0), 49, 0));
-		panFat.add(cmdAll, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER,
-				GridBagConstraints.NONE, new Insets(0, 10, 0, 10), 0, 0));
-		panFat.add(cmdNone, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH,
-				GridBagConstraints.NONE, new Insets(5, 10, 0, 10), 0, 0));
-		panFat.add(txtPath, new GridBagConstraints(0, 3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 501, 9));
-		panFat.add(lblPath, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST,
-				GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 108, 7));
+		panFat.add(scrollPane, new GridBagConstraints(0, 0, 2, 2, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 10, 0, 0), 49, 0));
+		panFat.add(cmdAll, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 10, 0, 10), 0, 0));
+		panFat.add(cmdNone, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(5, 10, 0, 10), 0, 0));
+		panFat.add(txtPath, new GridBagConstraints(0, 3, 3, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 501, 9));
+		panFat.add(lblPath, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 10, 0, 0), 108, 7));
 		this.add(panMessage, BorderLayout.NORTH);
-		panMessage.add(jScrollPane1, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER,
-				GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
+		panMessage.add(jScrollPane1, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 5, 5), 0, 0));
 		jScrollPane1.getViewport().add(txtMessage, null);
 	}
 
@@ -223,8 +234,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 
 	private void cmdCancelActionPerformed(ActionEvent e) {
 		btnPreview.setEnabled(false);
-		ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-				Constants.ACTION_TASK_DESELECT));
+		ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TASK_DESELECT));
 	}
 
 	private void btnPreviewActionPerformed(ActionEvent e) {
@@ -239,7 +249,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 		this.task = null;
 	}
 
-	public void load(TaskValue taskValue){
+	public void load(TaskValue taskValue) {
 		this.panFat.setVisible(true);
 		this.panButtons.setVisible(true);
 		this.task = taskValue;
@@ -249,6 +259,15 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 	}
 
 	public void save() {
+		boolean liveDeploy = false;
+		try {
+			ConfigReader cfg = new ConfigReader(comm.getSiteConfigXML(), ConfigReader.CONF_NODE_DEFAULT);
+			if (cfg != null) {
+				liveDeploy = cfg.getConfigNodeValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1");
+			}
+		} catch (Exception ex) {
+			log.warn("could not read siteConfig of site: " + comm.getSiteName(), ex);
+		}
 		ArrayList<Integer> al = new ArrayList<Integer>();
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		int count = tableModel.getRowCount();
@@ -257,24 +276,25 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 			if (((Boolean) tableModel.getValueAt(i, 4)).booleanValue()) {
 				try {
 					view = (ViewComponentValue) tableModel.getValueAt(i, 6);
-					if (view.getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE
-							|| view.getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
-						comm.removeViewComponent(view.getViewComponentId(), view.getDisplayLinkName(),
-								Constants.ONLINE_STATUS_OFFLINE);
+					if (view.getDeployCommand() == Constants.DEPLOY_COMMAND_DELETE || view.getDeployCommand() == Constants.DEPLOY_COMMAND_REMOVE) {
+						comm.removeViewComponent(view.getViewComponentId(), view.getDisplayLinkName(), Constants.ONLINE_STATUS_OFFLINE);
 						// remove from task
 						al.add(new Integer(view.getViewComponentId()));
 					} else {
 						view.setStatus(Constants.DEPLOY_STATUS_APPROVED);
+						if (!liveDeploy) {
+							view.setOnline((byte) 1);
+							view.setOnlineStart(System.currentTimeMillis());
+						}
 						comm.updateStatus4ViewComponent(view);
+						view.setOnline((byte) 1);
 						comm.setStatus4ViewComponentId(view.getViewComponentId(), Constants.DEPLOY_STATUS_APPROVED);
 						// remove from task
 						al.add(new Integer(view.getViewComponentId()));
 					}
 				} catch (Exception exe) {
 					log.error("cant change content status", exe);
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb
-							.getString("exception.cantChangeContentStatus")
-							+ "\n" + exe.getMessage(), "CMS", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.cantChangeContentStatus") + "\n" + exe.getMessage(), "CMS", JOptionPane.ERROR_MESSAGE);
 				}
 			} else if (((Boolean) tableModel.getValueAt(i, 3)).booleanValue()) {
 				try {
@@ -297,8 +317,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 					if (frm.getPressedButton() == FrmRejectMessage.BUTTON_REJECT) {
 						String msg = Messages.getString("panel.panTaskDetails.rejectMessage", view.getDisplayLinkName());
 						msg += "\n" + frm.getMessage();
-						comm.createTask(task.getSender().getUserName(), null, task.getUnit().getUnitId(), msg,
-								Constants.TASK_REJECTED);
+						comm.createTask(task.getSender().getUserName(), null, task.getUnit().getUnitId(), msg, Constants.TASK_REJECTED);
 
 						view.setStatus(Constants.DEPLOY_STATUS_EDITED);
 						comm.updateStatus4ViewComponent(view);
@@ -309,9 +328,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 					frm.dispose();
 				} catch (Exception exe) {
 					log.error("cant change content status", exe);
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb
-							.getString("exception.cantChangeContentStatus")
-							+ "\n" + exe.getMessage(), "CMS", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.cantChangeContentStatus") + "\n" + exe.getMessage(), "CMS", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -322,8 +339,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 				for (int i = 0; i < tv.length; i++) {
 					if (tv[i].getTaskId().equals(task.getTaskId())) {
 						load(tv[i]);
-						ActionHub.fireActionPerformed(new ActionEvent(tv[i], ActionEvent.ACTION_PERFORMED,
-								Constants.ACTION_TASK_VIEW_COMPONENT_REFRESH));
+						ActionHub.fireActionPerformed(new ActionEvent(tv[i], ActionEvent.ACTION_PERFORMED, Constants.ACTION_TASK_VIEW_COMPONENT_REFRESH));
 					}
 				}
 			}
@@ -331,8 +347,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 			log.error("error removing vcs from task", exe);
 		}
 		if (tableModel.getRowCount() == 0) {
-			ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-					Constants.ACTION_TASK_DONE));
+			ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TASK_DONE));
 		}
 		this.setCursor(Cursor.getDefaultCursor());
 	}
@@ -341,7 +356,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 		try {
 			if (task != null) {
 				ViewComponentValue[] viewComponents = task.getViewComponents();
-				if(tableModel == null){
+				if (tableModel == null) {
 					tableModel = new EditorTableModel(viewComponents);
 					TableSorter sorter = new TableSorter(tableModel, table.getTableHeader());
 					table.setModel(sorter);
@@ -363,8 +378,8 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 						column = table.getColumnModel().getColumn(3);
 						column.setPreferredWidth(100);
 					}
-				}else{
-					((EditorTableModel)tableModel).setNewData(viewComponents);
+				} else {
+					((EditorTableModel) tableModel).setNewData(viewComponents);
 				}
 			} else {
 				tableModel = new DefaultTableModel();
@@ -382,7 +397,7 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 			btnPreview.setEnabled(true);
 		}
 	}
-	
+
 	/**
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
 	 */
@@ -401,18 +416,17 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 				});
 				t.setPriority(Thread.NORM_PRIORITY);
 				t.start();
-				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-						Constants.ACTION_TASK_VIEW_SELECTED));
+				ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TASK_VIEW_SELECTED));
 			}
 		}
 	}
-	
+
 	/**
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
 	 */
 	private class ImageCellRenderer extends DefaultTableCellRenderer {
-		public Component getTableCellRendererComponent(JTable tbl, Object value, boolean isSelected,
-				boolean hasFocus, int row, int column) {
+		@Override
+		public Component getTableCellRendererComponent(JTable tbl, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			JPanel pan = new JPanel();
 			JLabel lbl = new JLabel();
 			pan.add(lbl);
@@ -433,13 +447,13 @@ public class PanTaskDetails extends JPanel implements ActionListener {
 			return pan;
 		}
 	}
-	
+
 	/**
 	 * @author <a href="sascha.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
 	 */
 	private class PageTypeCellRenderer extends DefaultTableCellRenderer {
-		public Component getTableCellRendererComponent(JTable tbl, Object value, boolean isSelected,
-				boolean hasFocus, int row, int column) {
+		@Override
+		public Component getTableCellRendererComponent(JTable tbl, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			JPanel pan = new JPanel();
 			pan.setBackground(Color.WHITE);
 			JLabel lbl = new JLabel();
