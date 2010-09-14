@@ -134,6 +134,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 				cmdLoginActionPerformed();
 			}
 		});
+		cmdLogin.addKeyListener(new MyKeyListener(this));
 		lblUsername.setText("username");
 		lblPassword.setText("password");
 		lblDomain.setText("Domain");
