@@ -62,16 +62,6 @@ CREATE TABLE COMP_PERSON (
 	KEY idx_comp_person_last_modified_date (last_modified_date)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
-CREATE TABLE COMP_PERSONTOUNITLINK (
-	personToUnitLink_id INTEGER NOT NULL, 
-	role_type INTEGER NULL, 
-	unit_id_fk INTEGER NULL, 
-	person_id_fk BIGINT NULL, 
-	PRIMARY KEY (personToUnitLink_id), 
-	KEY idx_comp_persontounitlink_unit_id_fk (unit_id_fk), 
-	KEY idx_comp_persontounitlink_person_id_fk (person_id_fk)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
-
 CREATE TABLE COMP_TALKTIME (
 	talk_time_id BIGINT NOT NULL, 
 	talk_time_type VARCHAR(255) NULL, 
@@ -98,7 +88,6 @@ CREATE TABLE CONTENTVERSION (
 	version VARCHAR(5) NULL, 
 	heading VARCHAR(255) NULL, 
 	text LONGTEXT NULL, 
-	version_comment LONGTEXT NULL, 
 	create_date BIGINT NULL, 
 	creator VARCHAR(255) NULL, 
 	content_id_fk INTEGER NULL, 
@@ -126,9 +115,11 @@ CREATE TABLE DOCUMENT (
 	unit_id_fk INTEGER NULL, 
 	use_count_last_version INTEGER NULL, 
 	use_count_publish_version INTEGER NULL,
-	UPDATE_SEARCH_INDEX SMALLINT NULL DEFAULT '1', 	
+	update_search_index SMALLINT NULL DEFAULT '1', 	
+	view_component_id_fk INTEGER NULL,
 	PRIMARY KEY (document_id), 
-	KEY idx_document_unit_id_fk (unit_id_fk)
+	KEY idx_document_unit_id_fk (unit_id_fk),
+	KEY idx_document_view_component_id_fk (view_component_id_fk)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
 CREATE TABLE EDITION (
@@ -139,24 +130,21 @@ CREATE TABLE EDITION (
 	status SMALLINT NULL, 
 	unit_id INTEGER NULL, 
 	view_document_id INTEGER NULL,
-	WORK_SERVER_EDITION_ID INTEGER NULL,
-	DEPLOY_STATUS LONGBLOB NULL,
-	START_ACTION_TIMESTAMP BIGINT(20) NULL,
-	END_ACTION_TIMESTAMP BIGINT(20) NULL,
+	work_server_edition_id INTEGER NULL,
+	deploy_status LONGBLOB NULL,
+	start_action_timestamp BIGINT(20) NULL,
+	end_action_timestamp BIGINT(20) NULL,
+	edition_file_name VARCHAR(255) NULL,
+	needs_import TINYINT DEFAULT 0 NULL,
+	needs_deploy TINYINT DEFAULT 0 NULL,
+	use_new_ids TINYINT DEFAULT 0 NULL,
+	site_id INTEGER NULL,
+	view_component_id INTEGER NULL,
+	deploy_type INTEGER NULL,
 	PRIMARY KEY (edition_id), 
 	KEY idx_edition_creator_id_fk (creator_id_fk), 
 	KEY idx_edition_unit_id (unit_id), 
 	KEY idx_edition_view_document_id (view_document_id)
-) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
-
-CREATE TABLE EDITIONSLICE (
-	edition_slice_id INTEGER NOT NULL, 
-	edition_id INTEGER NOT NULL, 
-	slice_nr INTEGER NOT NULL, 
-	slice_data LONGBLOB NULL, 
-	PRIMARY KEY (edition_slice_id), 
-	KEY idx_editionslice_edition_id (edition_id), 
-	KEY idx_editionslice_slice_nr (slice_nr)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
 CREATE TABLE GROUPS2ROLES (
@@ -218,8 +206,12 @@ CREATE TABLE PICTURE (
 	picture_name VARCHAR(255) NULL, 
 	height INTEGER NULL, 
 	width INTEGER NULL, 
+	thumbnail_popup TINYINT DEFAULT 0,
+	title VARCHAR(255) NULL,
+	view_component_id_fk INTEGER NULL,
 	PRIMARY KEY (picture_id), 
-	KEY idx_picture_unit_id_fk (unit_id_fk)
+	KEY idx_picture_unit_id_fk (unit_id_fk),
+	KEY idx_picture_view_component_id_fk (view_component_id_fk)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
 CREATE TABLE ROLE (
@@ -248,13 +240,14 @@ CREATE TABLE SITE (
 	wysiwyg_image_url VARCHAR(255) NULL, 
 	help_url VARCHAR(255) NULL, 
 	dcf_url VARCHAR(255) NULL, 
-	preview_url VARCHAR(255) NULL, 
 	page_name_full VARCHAR(255) NULL, 
 	page_name_content VARCHAR(255) NULL, 
 	page_name_search VARCHAR(255) NULL, 
 	last_modified_date BIGINT NULL DEFAULT '0',
-	UPDATE_SITE_INDEX SMALLINT NULL,
-	EXTERNAL_SITE_SEARCH SMALLINT NULL,	
+	update_site_index SMALLINT NULL,
+	external_site_search SMALLINT NULL,
+	preview_url_live_server VARCHAR(255) NULL,
+	preview_url_work_server VARCHAR(255) NULL,
 	PRIMARY KEY (site_id), 
 	KEY idx_site_site_short (site_short), 
 	KEY idx_site_mandator_dir (mandator_dir), 
@@ -460,8 +453,6 @@ CREATE TABLE SHORT_LINK (
 	KEY idx_short_link_view_document_id_fk (view_document_id_fk)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
-DELETE FROM keygen;
-
 INSERT INTO keygen (idx, name) VALUES ('1', 'address.address_id');
 
 INSERT INTO keygen (idx, name) VALUES ('1', 'content.content_id');
@@ -537,7 +528,7 @@ INSERT INTO role (role_id) VALUES ('changeXmlSearchIndexed');
 INSERT INTO role (role_id) VALUES ('updatePageLastModifiedDate');
 
 -- create a site
-INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name) VALUES ('1', '1', 'test', 'www.test.de');
+INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name, mandator_dir) VALUES ('1', '1', 'test', 'www.test.de', '/mandatordir/dcf');
 
 -- create a unit
 INSERT INTO unit (unit_id, last_modified_date, name, site_id_fk) VALUES ('1', '1', 'erste rootunit', '1');

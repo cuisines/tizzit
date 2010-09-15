@@ -59,15 +59,6 @@ CREATE INDEX idx_comp_person_image_id ON comp_person (image_id);
 CREATE INDEX idx_comp_person_external_id ON comp_person (external_id);
 CREATE INDEX idx_comp_person_last_modified_ ON comp_person (last_modified_date);
 
-CREATE TABLE "COMP_PERSONTOUNITLINK" (
-	"PERSONTOUNITLINK_ID" NUMBER(10) NOT NULL, 
-	"ROLE_TYPE" NUMBER(10) NULL, 
-	"UNIT_ID_FK" NUMBER(10) NULL, 
-	"PERSON_ID_FK" NUMBER(19) NULL,
-	PRIMARY KEY (personToUnitLink_id));
-CREATE INDEX idx_comp_persontounitlink_unit ON comp_persontounitlink (unit_id_fk);
-CREATE INDEX idx_comp_persontounitlink_pers ON comp_persontounitlink (person_id_fk);
-
 CREATE TABLE "COMP_TALKTIME" (
 	"TALK_TIME_ID" NUMBER(19) NOT NULL, 
 	"TALK_TIME_TYPE" VARCHAR2(255) NULL, 
@@ -92,7 +83,6 @@ CREATE TABLE "CONTENTVERSION" (
 	"VERSION" VARCHAR2(5) NULL, 
 	"HEADING" VARCHAR2(255) NULL, 
 	"TEXT" CLOB NULL, 
-	"VERSION_COMMENT" CLOB NULL, 
 	"CREATE_DATE" NUMBER(19) NULL, 
 	"CREATOR" VARCHAR2(255) NULL, 
 	"CONTENT_ID_FK" NUMBER(10) NULL, 
@@ -119,8 +109,10 @@ CREATE TABLE "DOCUMENT" (
 	"USE_COUNT_LAST_VERSION" NUMBER(10) NULL, 
 	"USE_COUNT_PUBLISH_VERSION" NUMBER(10) NULL,
 	"UPDATE_SEARCH_INDEX" NUMBER(5) DEFAULT '1' NULL, 
+	"VIEW_COMPONENT_ID_FK" NUMBER(10) NULL,
 	PRIMARY KEY (document_id));
 CREATE INDEX idx_document_unit_id_fk ON document (unit_id_fk);
+CREATE INDEX idx_document_view_component_id_fk ON document (view_component_id_fk);
 
 CREATE TABLE "EDITION" (
 	"EDITION_ID" NUMBER(10) NOT NULL, 
@@ -134,19 +126,17 @@ CREATE TABLE "EDITION" (
 	"DEPLOY_STATUS" BLOB NULL,
 	"START_ACTION_TIMESTAMP" NUMBER(19) NULL,
 	"END_ACTION_TIMESTAMP" NUMBER(19) NULL,
+	"EDITION_FILE_NAME" VARCHAR2(255) NULL,
+	"NEEDS_IMPORT" NUMBER(5) DEFAULT '0' NULL,
+	"NEEDS_DEPLOY" NUMBER(5) DEFAULT '0' NULL,
+	"USE_NEW_IDS" NUMBER(5) DEFAULT '0' NULL,
+	"SITE_ID" NUMBER(10) NULL,
+	"VIEW_COMPONENT_ID" NUMBER(10) NULL,
+	"DEPLOY_TYPE" NUMBER(10) NULL,
 	PRIMARY KEY (edition_id));
 CREATE INDEX idx_edition_creator_id_fk ON edition (creator_id_fk);
 CREATE INDEX idx_edition_unit_id ON edition (unit_id);
 CREATE INDEX idx_edition_view_document_id ON edition (view_document_id);
-
-CREATE TABLE "EDITIONSLICE" (
-	"EDITION_SLICE_ID" NUMBER(10) NOT NULL, 
-	"EDITION_ID" NUMBER(10) NOT NULL, 
-	"SLICE_NR" NUMBER(10) NOT NULL, 
-	"SLICE_DATA" BLOB NULL,
-	PRIMARY KEY (edition_slice_id));
-CREATE INDEX idx_editionslice_edition_id ON editionslice (edition_id);
-CREATE INDEX idx_editionslice_slice_nr ON editionslice (slice_nr);
 
 CREATE TABLE "GROUPS2ROLES" (
 	"ROLES_ID_FK" VARCHAR2(255) NOT NULL, 
@@ -166,6 +156,7 @@ CREATE TABLE "HOST" (
 	"UNIT_ID_FK" NUMBER(10) NULL, 
 	"REDIRECT_URL" VARCHAR2(255) NULL, 
 	"REDIRECT_HOST_NAME_ID_FK" VARCHAR2(255) NULL,
+	"LIVESERVER" NUMBER(5) DEFAULT '0' NULL,
 	PRIMARY KEY (host_name));
 CREATE INDEX idx_host_site_id_fk ON host (site_id_fk);
 CREATE INDEX idx_host_startpage_vc_id_fk ON host (startpage_vc_id_fk);
@@ -201,8 +192,12 @@ CREATE TABLE "PICTURE" (
 	"PICTURE_NAME" VARCHAR2(255) NULL, 
 	"HEIGHT" NUMBER(10) NULL, 
 	"WIDTH" NUMBER(10) NULL,
+	"THUMBNAIL_POPUP" NUMBER(5) DEFAULT '0' NULL,
+	"TITLE" VARCHAR(255) NULL,
+	"VIEW_COMPONENT_ID_FK" NUMBER(10) NULL,
 	PRIMARY KEY (picture_id));
 CREATE INDEX idx_picture_unit_id_fk ON picture (unit_id_fk);
+CREATE INDEX idx_picture_view_component_id_fk ON picture (view_component_id_fk);
 
 CREATE TABLE "ROLE" (
 	"ROLE_ID" VARCHAR2(255) NOT NULL,
@@ -228,13 +223,14 @@ CREATE TABLE "SITE" (
 	"WYSIWYG_IMAGE_URL" VARCHAR2(255) NULL, 
 	"HELP_URL" VARCHAR2(255) NULL, 
 	"DCF_URL" VARCHAR2(255) NULL, 
-	"PREVIEW_URL" VARCHAR2(255) NULL, 
 	"PAGE_NAME_FULL" VARCHAR2(255) NULL, 
 	"PAGE_NAME_CONTENT" VARCHAR2(255) NULL, 
 	"PAGE_NAME_SEARCH" VARCHAR2(255) NULL, 
 	"LAST_MODIFIED_DATE" NUMBER(19) DEFAULT '0' NULL,
 	"UPDATE_SITE_INDEX" NUMBER(5) NULL, 
 	"EXTERNAL_SITE_SEARCH" NUMBER(5) NULL,	
+	"PREVIEW_URL_LIVE_SERVER" VARCHAR(255) null,
+	"PREVIEW_URL_WORK_SERVER" VARCHAR(255) null,
 	PRIMARY KEY (site_id));
 CREATE INDEX idx_site_site_short ON site (site_short);
 CREATE INDEX idx_site_mandator_dir ON site (mandator_dir);
@@ -423,8 +419,6 @@ CREATE TABLE "SHORT_LINK" (
 CREATE INDEX idx_short_link_site_id_fk ON short_link (site_id_fk);
 CREATE INDEX idx_short_link_view_document_i ON short_link (view_document_id_fk);
 
-DELETE FROM keygen;
-
 INSERT INTO keygen (idx, name) VALUES ('1', 'address.address_id');
 
 INSERT INTO keygen (idx, name) VALUES ('1', 'content.content_id');
@@ -500,7 +494,7 @@ INSERT INTO role (role_id) VALUES ('changeXmlSearchIndexed');
 INSERT INTO role (role_id) VALUES ('updatePageLastModifiedDate');
 
 -- create a site
-INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name) VALUES ('1', '1', 'test', 'www.test.de');
+INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name, mandator_dir) VALUES ('1', '1', 'test', 'www.test.de', "/mandatordir/dcf");
 
 -- create a unit
 INSERT INTO unit (unit_id, last_modified_date, name, site_id_fk) VALUES ('1', '1', 'erste rootunit', '1');
