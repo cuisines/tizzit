@@ -1,57 +1,82 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<title><g:layoutTitle default="Tizzit Content Page"/></title>
-	<meta name="keywords" content=""/>
-	<meta name="description" content=""/>
-	<link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon"/>
-	<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}"/>
-	<g:layoutHead/>
-	<g:javascript library="application"/>
-</head>
-<body>
-<div id="spinner" class="spinner" style="display:none;">
-	<img src="${resource(dir: 'images', file: 'spinner.gif')}" alt="${message(code: 'spinner.alt', default: 'Loading...')}"/>
-</div>
-<div id="logo">
-	<h1><a href="#">Tizzit Default Page - Test</a></h1>
-</div>
-<hr/>
-<!-- end #logo -->
-<div id="header">
-	<div id="menu">
-		<tizzit:navigation since="root" depth="1" omitFirst="true" showType="1"/>
-	</div>
-	<!-- end #menu -->
-	<div id="search">
-		<form method="get" action="">
-			<fieldset>
-				<input type="text" name="s" id="search-text" size="15" value=""/>
-				<input type="submit" id="search-submit" value="GO"/>
-			</fieldset>
-		</form>
-	</div>
-	<!-- end #search -->
-</div>
-<!-- end #header -->
-<!-- end #header-wrapper -->
-<div id="page">
-	<div id="content">
-		<div class="post">
-			<g:layoutBody/>
+	<head>
+		<title><g:layoutTitle default="Tizzit Content Page"/></title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<meta name="keywords" content=""/>
+		<meta name="description" content=""/>
+		<link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon"/>
+		<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}"/>
+		<g:layoutHead/>
+		<g:javascript library="application"/>
+	</head>
+	<body>
+		<div class="page_center">
+			<div class="page">
+				<div class="header_wrapper">
+			        <div class="header">
+						<div class="banner_wrapper"> <img src="${resource(dir: 'images', file: 'banner.jpg')}" width="884" height="129" alt="tissit content management system" /></div>
+						<div class="main_menu_wrapper">
+							<tizzit:navigation since="root" depth="1" omitFirst="true" showType="3" template="navigation"/>
+						</div>
+			        </div>
+				</div>
+				<div class="colomn_left_wrapper">
+					<div class="colomn_left">
+						<div class="sidenavi_wrapper">
+							<div class="sidenavi_header"></div>
+							<tizzit:navigation since="lastNavigationRoot" depth="2" omitFirst="true" showType="0" template="navigation"/>
+						</div>
+					</div>
+				</div>
+				<div class="colomn_right_wrapper">
+					<div class="colomn_right">
+						<div class="teaser_box_wrapper">
+							<div class="teaser_box">
+								<div class="teaser_header"><span>Europa</span></div>
+								<div class="teaser_image"><img src="${resource(dir: 'images', file: '1x1.png')}" width="168" height="100" alt="" /></div>
+								<div class="teaser_content_wrapper">
+									<div class="teaser_subline"><span>Karte</span></div>
+									<div class="teaser_text"><span>Duis autem vel eum irure dolor in.</span></div>
+									<div class="teaser_link"><a href="#">mehr Infos</a></div>
+									<div class="clear"></div>
+								</div>
+								<div class="teaser_footer"></div>
+							</div>
+						</div>
+						<div class="teaser_box_wrapper">
+							<div class="teaser_box">
+								<div class="teaser_header"><span>Service</span></div>
+								<div class="teaser_content_wrapper">
+									<div class="teaser_subline"><span>Hilfe und Tipps</span></div>
+									<div class="teaser_text"><span>Duis autem vel eum irure dolor in henderit in vulputate velit.</span></div>
+									<div class="teaser_link"><a href="#">mehr Infos</a></div>
+									<div class="clear"></div>
+								</div>
+								<div class="teaser_footer"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="colomn_center_wrapper">
+					<div class="colomn_center">
+						<div class="breadcrumb_wrapper">
+							<div class="breadcrumb"> <a href="#">Startseite</a><a href="#" class="sublink">Chain 1</a><a href="#" class="sublink">Chain 2</a> </div>
+						</div>
+						<div class="main_box_wrapper">
+							<div class="main_box">
+								<g:layoutBody/>
+							</div>
+						</div>
+						<!-- End of center colomn -->
+						<div class="colomn_center_clear"></div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
 		</div>
-	</div><!-- end #content -->
-	<div id="sidebar">
-		<tizzit:navigation since="me" depth="2" omitFirst="true"/>
-	</div>
-	<!-- end #sidebar -->
-	<div style="clear: both;">&nbsp;</div>
-</div>
-<!-- end #page -->
-<div id="footer">
-	<tizzit:navigation since="root" depth="1" omitFirst="true" showType="2"/>
-</div>
-<!-- end #footer -->
-</body>
+		<div class="footer_wrapper">
+		  <div class="footer"> <a href="#"><span class="print">Drucken</span></a> | <a href="#"><span class="mail">Versenden per Email</span></a> | <a href="#top"><span class="favorites">Zu Favoriten hinzufügen</span></a> | <a href="#"><span class="pageup">Zum Seitenanfang</span></a></div>
+		</div>
+	</body>
 </html>

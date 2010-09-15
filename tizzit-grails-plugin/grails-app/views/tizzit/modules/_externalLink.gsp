@@ -1,0 +1,1 @@
+<a class="link externalLink" target="_blank" href="${node.a.@href[0]}">${node.a.text()}</a>

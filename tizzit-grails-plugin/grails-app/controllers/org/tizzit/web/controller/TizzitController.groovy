@@ -19,7 +19,7 @@ class TizzitController {
 			params.tizzit = new Expando()
 			log.debug "fetching content from REST service"
 //http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null
-			def resp = tizzitRestClientService.actionData("www.hsg-wennigsen-gehrden.de", params.tizzituri, params.safeguardUsername, params.safeguardPassword)
+			def resp = tizzitRestClientService.actionData("test.local.conquest-cms.net", params.tizzituri, params.safeguardUsername, params.safeguardPassword)
 			def xml = new XmlSlurper().parseText(resp)
 			params.tizzit.viewComponentId = xml.params.viewComponentId
 			params.tizzit.template = xml.params.template ?: "standard"
