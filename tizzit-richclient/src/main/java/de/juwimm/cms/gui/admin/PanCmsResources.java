@@ -297,9 +297,11 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		nameValueLabel.setText(value.getDocumentName());
 		typeValueLabel.setText(value.getMimeType());
 		createdValueLabel.setText(new SimpleDateFormat(rb.getString("General.ShortDateTimeFormat")).format(new Date(value.getTimeStamp())));
-		resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
+		if (entry.getState() != null) {
+			resourceStateValueLabel.setText(rb.getString("panCmsResources.state." + entry.getState().getKey()));
+		}
 
-		if (entry.getState() != ResourceUsageState.Unsused) {
+		if (entry.getState() != null && entry.getState() != ResourceUsageState.Unsused) {
 			Set<ViewComponentValue> viewComponentValues = communication.getDocumentUsage(value.getDocumentId());
 			this.viewComponentsTableModel.setRows(viewComponentValues);
 			//this.viewComponentsTable.setModel(viewComponentsTableModel);

@@ -132,7 +132,7 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 					tmp.append(ch[i]);
 				}
 				if (startOrEnd) {
-					content.append(">\n");
+					content.append(">");
 				}
 				content.append(XercesHelper.getHexEncoded(tmp.toString()));
 				lastStartElement = "";
@@ -161,7 +161,9 @@ public class GetContentHandler extends DefaultHandler implements ErrorHandler {
 				Module module = mf.getModuleByDCFName(dcfname);
 				Node node = module.getProperties();
 				String validationError = module.getValidationError();
-				if (!validationError.equalsIgnoreCase("")) { throw new SAXException(validationError); }
+				if (!validationError.equalsIgnoreCase("")) {
+					throw new SAXException(validationError);
+				}
 				String nde = "";
 				if (node != null) nde = XercesHelper.nodeList2string(node.getChildNodes());
 				if (log.isDebugEnabled()) log.debug("Added in endElement: " + nde);
