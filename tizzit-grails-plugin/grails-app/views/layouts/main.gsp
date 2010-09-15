@@ -15,7 +15,7 @@
 	<img src="${resource(dir: 'images', file: 'spinner.gif')}" alt="${message(code: 'spinner.alt', default: 'Loading...')}"/>
 </div>
 <div id="logo">
-	<h1><a href="#">Tizzit Default Page</a></h1>
+	<h1><a href="#">Tizzit Default Page - Test</a></h1>
 </div>
 <hr/>
 <!-- end #logo -->
