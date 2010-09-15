@@ -2,7 +2,7 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ctmpl="http://www.conquest-cms.net/template">
   
 	<xsl:include href="variables.xsl"/>
-     
+      
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/line.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/format.xsl"/>
 	<xsl:include href="../../../../tizzit-site-master/web/templates/includes/db-components.xsl"/>
