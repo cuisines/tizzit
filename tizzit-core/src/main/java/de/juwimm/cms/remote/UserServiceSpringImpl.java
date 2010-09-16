@@ -996,7 +996,7 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 			if (tasks != null && !tasks.isEmpty()) getTaskHbmDao().remove(tasks);
 
 			//remove all locks held by this user
-			Collection locks = getLockHbmDao().findAll("from de.juwimm.cms.model.LockHbm as l where l.owner.userId = +" + userId);
+			Collection locks = getLockHbmDao().findAll("from de.juwimm.cms.model.LockHbm as l where l.owner.userId = '" + userId + "'");
 			getLockHbmDao().remove(locks);
 
 			if (user != null && this.hasRightsForChangeUser(user)) {
