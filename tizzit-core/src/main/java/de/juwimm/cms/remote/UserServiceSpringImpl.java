@@ -988,6 +988,17 @@ public class UserServiceSpringImpl extends UserServiceSpringBase {
 		try {
 			UserHbm user = null;
 			user = super.getUserHbmDao().load(userId);
+
+			//remove all existing tasks from or to this user
+			Collection tasks = getTaskHbmDao().findByReceiver(userId);
+			if (tasks != null && !tasks.isEmpty()) getTaskHbmDao().remove(tasks);
+			tasks = getTaskHbmDao().findBySender(userId);
+			if (tasks != null && !tasks.isEmpty()) getTaskHbmDao().remove(tasks);
+
+			//remove all locks held by this user
+			Collection locks = getLockHbmDao().findAll("from de.juwimm.cms.model.LockHbm as l where l.owner.userId = +" + userId);
+			getLockHbmDao().remove(locks);
+
 			if (user != null && this.hasRightsForChangeUser(user)) {
 				super.getUserHbmDao().remove(user);
 			}
