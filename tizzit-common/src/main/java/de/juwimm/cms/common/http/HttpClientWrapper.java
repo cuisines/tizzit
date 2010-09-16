@@ -113,7 +113,7 @@ public class HttpClientWrapper {
 		}
 
 	}
-	
+
 	public boolean isUsingProxy() {
 		return (getHttpProxyHost() == null || getHttpProxyHost().equalsIgnoreCase("")) ? false : true;
 	}
@@ -156,7 +156,8 @@ public class HttpClientWrapper {
 
 	public synchronized String getString(URL destUrl, String userName, String password) throws IOException {
 		HttpMethodBase method = invoke(destUrl, userName, password);
-		String retString = method.getResponseBodyAsString();
+		String charSet = method.getRequestCharSet();
+		String retString = new String(method.getResponseBodyAsString().getBytes(charSet));
 		method.releaseConnection();
 		return retString;
 	}

@@ -286,6 +286,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			try {
 				webSearchquery = request.getParameter("conquest-searchquery");
 				if (webSearchquery == null) webSearchquery = this.request.getParameter("cqWebSearchQuery");
+				if (webSearchquery != null) {
+					webSearchquery = new String(webSearchquery.getBytes(request.getCharacterEncoding()));
+				}
 			} catch (Exception exe) {
 			}
 
