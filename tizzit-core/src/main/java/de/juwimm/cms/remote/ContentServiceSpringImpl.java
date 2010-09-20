@@ -2010,4 +2010,25 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			throw new UserException(e.getMessage(), e);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ContentServiceSpringBase#handleRemoveLocks(java.lang.String)
+	 */
+	@Override
+	protected void handleRemoveLocks(String userName) throws Exception {
+		Collection locks = getLockHbmDao().findAll("from de.juwimm.cms.model.LockHbm as l where l.owner.userId = '" + userName + "'");
+		Collection cvs = getContentVersionHbmDao().findAll("select cv from de.juwimm.cms.model.LockHbm as l, de.juwimm.cms.model.ContentVersionHbm as cv where l.owner.userId = '" + userName + "' and cv.lock.lockId = l.lockId");
+		if (locks != null) {
+			if (cvs != null && !cvs.isEmpty()) {
+				Iterator it = cvs.iterator();
+				while (it.hasNext()) {
+					ContentVersionHbm cv = (ContentVersionHbm) it.next();
+					cv.setLock(null);
+				}
+				getContentVersionHbmDao().update(cvs);
+			}
+			getLockHbmDao().remove(locks);
+		}
+
+	}
 }
