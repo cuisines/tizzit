@@ -215,14 +215,14 @@ public class HttpClientWrapper {
 		} catch (InvalidCredentialsException exe) {
 			if (log.isInfoEnabled()) log.info("Invalid credentials trying to authenticate: " + exe.getMessage());
 		} catch (HttpException exe) {
-			log.error("an unknown error occured (HttpException): " + exe.getMessage());
+			log.error("while connection to: " + targetURL.getHost() + " an unknown error occured (HttpException): " + exe.getMessage());
 		} catch (SSLPeerUnverifiedException exe) {
 			returnCode = 516;
 			returnMessage = exe.getMessage();
 		} catch (IOException exe) {
-			log.error("an unknown error occured (IOException): " + exe.getMessage());
+			log.error("while connection to: " + targetURL.getHost() + " using Proxy: " + this.isUsingProxy() + " host: " + this.getHttpProxyHost() + " on Port: " + this.httpProxyPort + " together: " + this.getProxyServer() + " an unknown error occured (IOException): " + targetURL.toExternalForm() + " " + exe.getMessage());
 		} catch (Exception exe) {
-			log.error("an unknown error occured: " + exe.getMessage());
+			log.error("while connection to: " + targetURL.getHost() + " an unknown error occured: " + exe.getMessage());
 		}
 
 		if ((returnCode > 199) && (returnCode < 300)) {

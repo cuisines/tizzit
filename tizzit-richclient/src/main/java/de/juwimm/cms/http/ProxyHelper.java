@@ -15,7 +15,11 @@
  */
 package de.juwimm.cms.http;
 
-import java.net.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +78,7 @@ public class ProxyHelper {
 		this.httpProxy = Proxy.NO_PROXY;
 		this.socksProxy = Proxy.NO_PROXY;
 		for (Proxy proxy : this.proxylist) {
-			if(log.isDebugEnabled()) log.debug(proxy.toString());
+			if (log.isDebugEnabled()) log.debug(proxy.toString());
 			if (proxy.type() == Proxy.Type.DIRECT) {
 				// so Proxy.NO_PROXY
 			} else if (proxy.type() == Proxy.Type.HTTP) {
@@ -85,6 +89,7 @@ public class ProxyHelper {
 				this.socksProxy = proxy;
 			}
 		}
+		this.setSystemProperties();
 	}
 
 	/**
@@ -222,7 +227,7 @@ public class ProxyHelper {
 		setSocksProxySystemProperties(false);
 		setFtpProxySystemProperties(false);
 	}
-	
+
 	private void resetProxies() {
 		if (log.isDebugEnabled()) log.debug("resetProxies() begin");
 
