@@ -460,6 +460,17 @@ CREATE TABLE SHORT_LINK (
 CREATE INDEX idx_short_link_site_id_fk ON short_link (site_id_fk);
 CREATE INDEX idx_short_link_view_document_id_fk ON short_link (view_document_id_fk);
 
+CREATE TABLE ACCESSROLE (
+	role_id VARCHAR(255) NOT NULL, 
+	PRIMARY KEY CLUSTERED(role_id)
+);
+
+CREATE TABLE ROLES2VIEW_COMPONENTS (
+	roles_id_fk VARCHAR(255) NOT NULL, 
+	view_components_id_fk INTEGER NOT NULL, 
+	PRIMARY KEY CLUSTERED(roles_id_fk, view_components_id_fk)
+);
+
 DELETE FROM keygen;
 
 INSERT INTO keygen (idx, name) VALUES ('1', 'address.address_id');

@@ -419,6 +419,15 @@ CREATE TABLE "SHORT_LINK" (
 CREATE INDEX idx_short_link_site_id_fk ON short_link (site_id_fk);
 CREATE INDEX idx_short_link_view_document_i ON short_link (view_document_id_fk);
 
+CREATE TABLE "ACCESSROLE" (
+	"ROLE_ID" VARCHAR2(255) NOT NULL,
+	PRIMARY KEY (role_id));
+	
+CREATE TABLE "ROLES2VIEW_COMPONENTS" (
+	"ROLES_ID_FK" VARCHAR2(255) NOT NULL, 
+	"VIEW_COMPONENTS_ID_FK" NUMBER(10) NOT NULL,
+	PRIMARY KEY (roles_id_fk, view_components_id_fk));
+
 INSERT INTO keygen (idx, name) VALUES ('1', 'address.address_id');
 
 INSERT INTO keygen (idx, name) VALUES ('1', 'content.content_id');

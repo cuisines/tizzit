@@ -453,6 +453,17 @@ CREATE TABLE SHORT_LINK (
 	KEY idx_short_link_view_document_id_fk (view_document_id_fk)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
+CREATE TABLE ROLES2VIEW_COMPONENTS (
+	roles_id_fk VARCHAR(255) NOT NULL, 
+	view_components_id_fk INTEGER NOT NULL, 
+	PRIMARY KEY (roles_id_fk, view_components_id_fk)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE ACCESSROLE (
+	role_id VARCHAR(255) NOT NULL, 
+	PRIMARY KEY (role_id)
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
+
 INSERT INTO keygen (idx, name) VALUES ('1', 'address.address_id');
 
 INSERT INTO keygen (idx, name) VALUES ('1', 'content.content_id');
