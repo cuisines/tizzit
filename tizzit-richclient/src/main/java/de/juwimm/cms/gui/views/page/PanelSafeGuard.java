@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.views.safeguard.PanGrailsRealm;
 import de.juwimm.cms.gui.views.safeguard.PanJaasRealm;
 import de.juwimm.cms.gui.views.safeguard.PanJdbcRealm;
 import de.juwimm.cms.gui.views.safeguard.PanelLDAPRealm;
@@ -55,23 +56,26 @@ import de.juwimm.cms.vo.ViewComponentValue;
 public final class PanelSafeGuard extends JPanel implements LoadableViewComponentPanel {
 	private static final long serialVersionUID = 202512339880580071L;
 	private static Logger log = Logger.getLogger(PanelSafeGuard.class);
-	private Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private int viewComponentId = -1;
-	private PanelSimplePwRealm panSimplePwRealm = new PanelSimplePwRealm();
-	private PanJdbcRealm panJdbcRealm = new PanJdbcRealm();
-	private PanelLDAPRealm panLdapRealm = new PanelLDAPRealm();
-	private PanJaasRealm panJaasRealm = new PanJaasRealm();
+	private final PanelSimplePwRealm panSimplePwRealm = new PanelSimplePwRealm();
+	private final PanJdbcRealm panJdbcRealm = new PanJdbcRealm();
+	private final PanelLDAPRealm panLdapRealm = new PanelLDAPRealm();
+	private final PanJaasRealm panJaasRealm = new PanJaasRealm();
+	private final PanGrailsRealm panGrails = new PanGrailsRealm();
 	private final int REALM_NONE = -1;
 	private final int REALM_SIMPLE_PW = 1;
 	private final int REALM_RDBMS = 2;
 	private final int REALM_JAAS = 3;
 	private final int REALM_LDAP = 4;
+	private final int REALM_GRAILS = 5;
 	private int selectedRealm = REALM_NONE;
-	private ButtonGroup realmGroup = new ButtonGroup();
+	private final ButtonGroup realmGroup = new ButtonGroup();
 	private JRadioButton rbSimplePw = null;
 	private JRadioButton rbJdbc = null;
 	private JRadioButton rbJaas = null;
 	private JRadioButton rbLdap = null;
+	private JRadioButton rbGrails = null;
 	private JRadioButton rbNoRealm = null;
 	private JPanel panConfigure = null;
 	private JPanel panSelection = null;
@@ -89,6 +93,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 		realmGroup.add(rbJdbc);
 		realmGroup.add(rbJaas);
 		realmGroup.add(rbLdap);
+		realmGroup.add(rbGrails);
 		realmGroup.add(rbNoRealm);
 
 	}
@@ -164,6 +169,10 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 				panConfigure.add(panJaasRealm, BorderLayout.NORTH);
 				break;
 			}
+			case (REALM_GRAILS): {
+				panConfigure.add(panGrails, BorderLayout.NORTH);
+				break;
+			}
 			case (REALM_NONE): {
 				Integer protectedParentId = this.comm.getFirstProtectedParentId(Integer.valueOf(this.viewComponentId));
 				if (log.isDebugEnabled()) log.debug("First protected Parent: " + protectedParentId);
@@ -220,7 +229,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 		gridBagConstraints5.insets = new java.awt.Insets(10, 10, 10, 10);
 		gridBagConstraints5.gridy = 1;
 		this.setLayout(new GridBagLayout());
-		this.setSize(new java.awt.Dimension(637, 319));
+		this.setSize(new java.awt.Dimension(637, 300));
 		this.add(getPanConfigure(), gridBagConstraints5);
 		this.add(getPanSelection(), gridBagConstraints6);
 	}
@@ -288,6 +297,25 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 				int pk;
 				try {
 					pk = panJaasRealm.getSelectedRealm().intValue();
+				} catch (Exception e) {
+					noSelectedProtectionMessage();
+					return;
+				}
+				String loginPage = panJaasRealm.getLoginPageViewComponentId();
+				Integer loginPageId = null;
+				try {
+					loginPageId = Integer.valueOf(loginPage);
+				} catch (Exception e) {
+				}
+				String requiredRole = panJaasRealm.getRequiredRole();
+				comm.addJaasRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
+			} else if (rbGrails.isSelected()) {
+				if (log.isDebugEnabled()) log.debug("Grails role selected");
+				//
+				//change change change
+				int pk;
+				try {
+					pk = panGrails.getSelectedRealm().intValue();
 				} catch (Exception e) {
 					noSelectedProtectionMessage();
 					return;
@@ -370,6 +398,32 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 
 		}
 		return rbJdbc;
+	}
+
+	/**
+	 * This method initializes rbJaas	
+	 * 	
+	 * @return javax.swing.JRadioButton	
+	 */
+	private JRadioButton getRbGrails() {
+		if (rbGrails == null) {
+			rbGrails = new JRadioButton();
+			rbGrails.setText(rb.getString("panel.panelSafeguard.realm.grails"));
+			rbGrails.setEnabled(true);
+			rbGrails.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
+					selectedRealm = REALM_GRAILS;
+					panGrails.fillRealmList();
+					//FIXME
+					//					if (activeRealm.isRealmJaas()) {
+					//						panJaasRealm.setExistingRealm(Integer.valueOf(activeRealm.getRealmId()));
+					//						panJaasRealm.setLoginPageViewComponentId(loginPageId);
+					//					}
+					showConfigurePanel();
+				}
+			});
+		}
+		return rbGrails;
 	}
 
 	/**
@@ -462,54 +516,64 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 	 */
 	private JPanel getPanSelection() {
 		if (panSelection == null) {
-			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-			gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints1.gridx = 1;
-			gridBagConstraints1.gridy = 4;
-			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints1.weightx = 1.0;
-			gridBagConstraints1.weighty = 1.0;
-			gridBagConstraints1.insets = new java.awt.Insets(10, 10, 10, 0);
+
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
 			gridBagConstraints4.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints4.gridy = 3;
+			gridBagConstraints4.gridy = 4;
 			gridBagConstraints4.insets = new java.awt.Insets(10, 10, 0, 0);
 			gridBagConstraints4.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints4.weightx = 1.0;
 			gridBagConstraints4.weighty = 1.0;
 			gridBagConstraints4.gridx = 1;
+			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
+			gridBagConstraints5.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			gridBagConstraints5.gridy = 5;
+			gridBagConstraints5.insets = new java.awt.Insets(10, 10, 0, 0);
+			gridBagConstraints5.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints5.weightx = 1.0;
+			gridBagConstraints5.weighty = 1.0;
+			gridBagConstraints5.gridx = 1;
 			GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
 			gridBagConstraints3.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints3.gridy = 2;
+			gridBagConstraints3.gridy = 3;
 			gridBagConstraints3.insets = new java.awt.Insets(10, 10, 0, 0);
 			gridBagConstraints3.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints3.weightx = 1.0;
 			gridBagConstraints3.weighty = 1.0;
 			gridBagConstraints3.gridx = 1;
+			GridBagConstraints gridBagConstraints0 = new GridBagConstraints();
+			gridBagConstraints0.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			gridBagConstraints0.gridy = 0;
+			gridBagConstraints0.insets = new java.awt.Insets(10, 10, 0, 0);
+			gridBagConstraints0.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints0.weightx = 1.0;
+			gridBagConstraints0.weighty = 1.0;
+			gridBagConstraints0.gridx = 1;
+			GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
+			gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
+			gridBagConstraints1.gridx = 1;
+			gridBagConstraints1.gridy = 1;
+			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+			gridBagConstraints1.weightx = 1.0;
+			gridBagConstraints1.weighty = 1.0;
+			gridBagConstraints1.insets = new java.awt.Insets(10, 10, 10, 0);
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints2.gridy = 1;
+			gridBagConstraints2.gridy = 2;
 			gridBagConstraints2.insets = new java.awt.Insets(10, 10, 0, 0);
 			gridBagConstraints2.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints2.weightx = 1.0;
 			gridBagConstraints2.weighty = 1.0;
 			gridBagConstraints2.gridx = 1;
-			GridBagConstraints gridBagConstraints = new GridBagConstraints();
-			gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-			gridBagConstraints.gridy = 0;
-			gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
-			gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-			gridBagConstraints.weightx = 1.0;
-			gridBagConstraints.weighty = 1.0;
-			gridBagConstraints.gridx = 1;
 			panSelection = new JPanel();
 			panSelection.setBorder(new TitledBorder(rb.getString("panel.panelSafeguard.realm.choosekind")));
 			panSelection.setLayout(new GridBagLayout());
-			panSelection.add(getRbNoRealm(), gridBagConstraints);
-			panSelection.add(getRbSimplePw(), gridBagConstraints2);
-			panSelection.add(getRbJdbc(), gridBagConstraints3);
-			panSelection.add(getRbJaas(), gridBagConstraints1);
+			panSelection.add(getRbNoRealm(), gridBagConstraints0);
+			panSelection.add(getRbSimplePw(), gridBagConstraints1);
+			panSelection.add(getRbJdbc(), gridBagConstraints2);
+			panSelection.add(getRbJaas(), gridBagConstraints3);
 			panSelection.add(getRbLdap(), gridBagConstraints4);
+			panSelection.add(getRbGrails(), gridBagConstraints5);
 		}
 		return panSelection;
 	}

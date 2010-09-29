@@ -15,10 +15,7 @@
  */
 package de.juwimm.cms.plugins.test;
 
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
-import de.juwimm.cms.plugins.client.testcontainer.TizzitPanel;
 
 public class ConquestPanelTest extends TestCase {
 
@@ -35,29 +32,29 @@ public class ConquestPanelTest extends TestCase {
 		//		assertEquals(true, ret);
 	}
 
-	public void testJarDirectory() {
-		TizzitPanel conquest = new TizzitPanel();
-		conquest.configurePlugin(JARPATH, DCFPATH);
-
-		String ret = "";
-		Object[] ob = new Object[0];
-
-		Method[] methods = conquest.getClass().getDeclaredMethods();
-		for (int i = 0; i < methods.length; i++) {
-			String methodName = methods[i].getName();
-			if (methodName.equals("getJarDir")) {
-				methods[i].setAccessible(true);
-				try {
-					ret = (String) methods[i].invoke(conquest, ob);
-				} catch (Exception ex) {
-					System.out.println("CANNOT ACCESS METHOD " + ex.getMessage());
-				}
-				break;
-			}
-		}
-
-		assertEquals(JARDIR, ret);
-	}
+	//	public void testJarDirectory() {
+	//		TizzitPanel conquest = new TizzitPanel();
+	//		conquest.configurePlugin(JARPATH, DCFPATH);
+	//
+	//		String ret = "";
+	//		Object[] ob = new Object[0];
+	//
+	//		Method[] methods = conquest.getClass().getDeclaredMethods();
+	//		for (int i = 0; i < methods.length; i++) {
+	//			String methodName = methods[i].getName();
+	//			if (methodName.equals("getJarDir")) {
+	//				methods[i].setAccessible(true);
+	//				try {
+	//					ret = (String) methods[i].invoke(conquest, ob);
+	//				} catch (Exception ex) {
+	//					System.out.println("CANNOT ACCESS METHOD " + ex.getMessage());
+	//				}
+	//				break;
+	//			}
+	//		}
+	//
+	//		assertEquals(JARDIR, ret);
+	//	}
 
 	/*	public void testNamespace() {
 			

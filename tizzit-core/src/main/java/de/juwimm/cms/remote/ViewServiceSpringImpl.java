@@ -71,6 +71,7 @@ import de.juwimm.cms.components.model.PersonHbmImpl;
 import de.juwimm.cms.components.model.TalktimeHbm;
 import de.juwimm.cms.components.model.TalktimeHbmImpl;
 import de.juwimm.cms.exceptions.UserException;
+import de.juwimm.cms.model.AccessRoleHbm;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.DocumentHbm;
@@ -94,6 +95,7 @@ import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm;
 import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDaoImpl;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
+import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
@@ -2596,5 +2598,19 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		ViewComponentHbm viewComponentHbm = getViewComponentHbmDao().load(viewComponentId);
 		viewComponentHbm.setOnline((byte) 1);
 		getViewComponentHbmDao().update(viewComponentHbm);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleGetAllAccessRoles()
+	 */
+	@Override
+	protected AccessRoleValue[] handleGetAllAccessRoles() throws Exception {
+		Collection coll = getAccessRoleHbmDao().findAll();
+		AccessRoleValue[] values = new AccessRoleValue[coll.size()];
+		int i = 0;
+		for (Iterator it = coll.iterator(); it.hasNext();) {
+			values[i++] = getAccessRoleHbmDao().toAccessRoleValue((AccessRoleHbm) it.next());
+		}
+		return values;
 	}
 }

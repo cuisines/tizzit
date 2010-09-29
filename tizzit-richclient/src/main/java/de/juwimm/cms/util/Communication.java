@@ -97,6 +97,7 @@ import de.juwimm.cms.safeguard.vo.RealmLdapValue;
 import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
 import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 import de.juwimm.cms.search.vo.XmlSearchValue;
+import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -2732,5 +2733,9 @@ public class Communication implements ExitListener, ActionListener {
 
 	public void setViewComponentOnline(Integer viewComponentId) {
 		getClientService().setViewComponentOnline(viewComponentId);
+	}
+
+	public AccessRoleValue[] getAllAccessRoles() {
+		return getClientService().getAllAccessRoles();
 	}
 }

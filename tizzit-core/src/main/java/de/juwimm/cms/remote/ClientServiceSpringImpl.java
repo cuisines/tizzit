@@ -59,6 +59,7 @@ import de.juwimm.cms.safeguard.vo.RealmSimplePwUserValue;
 import de.juwimm.cms.safeguard.vo.RealmSimplePwValue;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
+import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -1964,5 +1965,13 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 			log.error("Error deleting shortLinkValue " + shortLinkId + ": " + e.getMessage(), e);
 		}
 
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleGetAllAccessRoles()
+	 */
+	@Override
+	protected AccessRoleValue[] handleGetAllAccessRoles() throws Exception {
+		return getViewServiceSpring().getAllAccessRoles();
 	}
 }

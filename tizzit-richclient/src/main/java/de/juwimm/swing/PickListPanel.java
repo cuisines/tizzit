@@ -125,7 +125,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 		panExchangeConstraints.insets = new java.awt.Insets(5, 5, 5, 0);
 		panExchangeConstraints.weightx = 0.0D;
 		panExchangeConstraints.weighty = 1.0D;
-		this.setMinimumSize(new java.awt.Dimension(400, 200));
+		this.setMinimumSize(new java.awt.Dimension(400, 150));
 		this.setPreferredSize(new java.awt.Dimension(400, 200));
 		this.setSize(490, 200);
 		this.add(lblLeftArea, lbAssignedConstraints);
@@ -457,6 +457,7 @@ public class PickListPanel extends JPanel implements ActionListener {
 	 * Enable or disable the PickListPanel
 	 * @see java.awt.Component#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabling) {
 		this.isEnabled = enabling;
 		this.disableButtons();
