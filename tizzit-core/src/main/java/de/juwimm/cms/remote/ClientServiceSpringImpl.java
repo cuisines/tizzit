@@ -1974,4 +1974,22 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	protected AccessRoleValue[] handleGetAllAccessRoles() throws Exception {
 		return getViewServiceSpring().getAllAccessRoles();
 	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleAddAccessRole(java.lang.String)
+	 */
+	@Override
+	protected void handleAddAccessRole(String roleId) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleRemoveAccessRole(java.lang.String)
+	 */
+	@Override
+	protected void handleRemoveAccessRole(String roleId) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

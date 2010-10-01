@@ -311,23 +311,25 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 				comm.addJaasRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
 			} else if (rbGrails.isSelected()) {
 				if (log.isDebugEnabled()) log.debug("Grails role selected");
+				// in case it had a realm protection
+				comm.deleteRealmAtVC(Integer.valueOf(this.viewComponentId));
+
 				//
 				//change change change
-				int pk;
+				String[] roles;
 				try {
-					pk = panGrails.getSelectedRealm().intValue();
+					roles = panGrails.getSelectedRoles();
 				} catch (Exception e) {
 					noSelectedProtectionMessage();
 					return;
 				}
-				String loginPage = panJaasRealm.getLoginPageViewComponentId();
+				String loginPage = panGrails.getLoginPageViewComponentId();
 				Integer loginPageId = null;
 				try {
 					loginPageId = Integer.valueOf(loginPage);
 				} catch (Exception e) {
 				}
-				String requiredRole = panJaasRealm.getRequiredRole();
-				comm.addJaasRealmToVC(new Integer(this.viewComponentId), new Integer(pk), requiredRole, loginPageId);
+				//comm.addAccessRolesToVC(new Integer(this.viewComponentId), roles,loginPageId);
 			} else {
 				if (log.isDebugEnabled()) log.debug("unknown realm selected?");
 			}

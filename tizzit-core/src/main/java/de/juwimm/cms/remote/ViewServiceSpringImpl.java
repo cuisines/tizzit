@@ -2613,4 +2613,22 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 		return values;
 	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRole(java.lang.String)
+	 */
+	@Override
+	protected void handleAddAccessRole(String roleId) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveAccessRole(java.lang.String)
+	 */
+	@Override
+	protected void handleRemoveAccessRole(String roleId) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
 }

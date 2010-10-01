@@ -20,6 +20,7 @@ import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Iterator;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -55,10 +56,22 @@ public final class PanGrailsRealm extends JPanel implements ConfigurationInterfa
 	}
 
 	public void setExistingRoles(String[] roles) {
+		if (roles != null) {
+			rolePickData.getLstLeftModel().addAll(roles);
+		}
 	}
 
 	public String[] getSelectedRoles() {
-		return null;
+		int size = rolePickData.getLstLeftModel().getSize();
+		String[] roles = null;
+		if (size > 0) {
+			roles = new String[size];
+			int i = 0;
+			for (Iterator it = rolePickData.getLstLeftModel().iterator(); it.hasNext();) {
+				roles[i++] = (String) it.next();
+			}
+		}
+		return roles;
 	}
 
 	/**

@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -91,6 +92,7 @@ import de.juwimm.cms.safeguard.realmlogin.SafeguardLoginManager;
 import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
+import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.PictureValue;
 import de.juwimm.cms.vo.SiteValue;
@@ -2233,6 +2235,38 @@ public class WebServiceSpring {
 		} catch (Exception e) {
 			log.error("Error getting " + numberOfPages + " last-modified pages for viewComponent " + viewComponentId + " and unit " + unitId + ": " + e.getMessage());
 			throw new UserException("Error getting " + numberOfPages + " last-modified pages for viewComponent " + viewComponentId + " and unit " + unitId + ": " + e.getMessage());
+		}
+	}
+
+	public void syncGrailsRoles(String[] grailsRoles) {
+		try {
+			List<String> addToTizzit = new ArrayList<String>();
+			List<String> deleteInTizzit = new ArrayList<String>();
+			AccessRoleValue[] tizzitRoles = viewServiceSpring.getAllAccessRoles();
+
+			for (AccessRoleValue arv : tizzitRoles) {
+				deleteInTizzit.add(arv.getRoleId());
+			}
+			for (String gString : grailsRoles) {
+				addToTizzit.add(gString);
+			}
+			for (String tString : deleteInTizzit) {
+				if (addToTizzit.contains(tString)) {
+					addToTizzit.remove(tString);
+					deleteInTizzit.remove(tString);
+				}
+			}
+
+			if (!deleteInTizzit.isEmpty()) {
+				//delete from db
+			}
+
+			if (!addToTizzit.isEmpty()) {
+				//add to db
+			}
+
+		} catch (UserException e) {
+			log.info("Could not load access roles from tizzit db");
 		}
 	}
 
