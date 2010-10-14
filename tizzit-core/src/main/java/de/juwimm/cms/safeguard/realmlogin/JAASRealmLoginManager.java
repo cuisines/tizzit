@@ -16,6 +16,7 @@
 package de.juwimm.cms.safeguard.realmlogin;
 
 import java.security.Principal;
+import java.security.acl.Group;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -27,8 +28,6 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
 import org.apache.log4j.Logger;
-import org.jboss.security.SimpleGroup;
-import org.jboss.security.SimplePrincipal;
 
 import de.juwimm.cms.authorization.SimpleCallbackHandler;
 import de.juwimm.cms.safeguard.model.RealmJaasHbm;
@@ -67,7 +66,7 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 			if (this.roleNeeded != null && this.roleNeeded.length() > 0) {
 				login = SafeguardLoginManager.LOGIN_UNAUTHORIZED;
 				// check required role for this realm
-				SimplePrincipal requiredRole = new SimplePrincipal(this.roleNeeded);
+				Principal requiredRole = new PrincipalImpl(this.roleNeeded);
 				Subject user = lc.getSubject();
 				if (log.isDebugEnabled()) log.debug(user.getClass().getName() + ": " + user);
 				Set<Principal> principalSet = user.getPrincipals();
@@ -75,8 +74,8 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 				while (login < SafeguardLoginManager.LOGIN_SUCCESSFULLY && it.hasNext()) {
 					Principal principal = it.next();
 					if (log.isDebugEnabled()) log.debug(principal.getClass().getName() + ": " + principal.getName() + ": " + principal);
-					if (principal instanceof SimpleGroup) {
-						SimpleGroup group = (SimpleGroup) principal;
+					if (principal instanceof Group) {
+						Group group = (Group) principal;
 						if (group.getName().equalsIgnoreCase("roles")) {
 							if (group.isMember(requiredRole)) login = SafeguardLoginManager.LOGIN_SUCCESSFULLY;
 						}
@@ -111,8 +110,8 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 			Iterator<Principal> it = principalSet.iterator();
 			while (it.hasNext()) {
 				Principal principal = it.next();
-				if (principal instanceof SimpleGroup) {
-					SimpleGroup group = (SimpleGroup) principal;
+				if (principal instanceof Group) {
+					Group group = (Group) principal;
 					if (group.getName().equalsIgnoreCase("roles")) {
 						Enumeration members = group.members();
 						while (members.hasMoreElements()) {
@@ -129,4 +128,16 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 		return rolesSet;
 	}
 
+}
+
+class PrincipalImpl implements Principal {
+	private final String name;
+
+	public PrincipalImpl(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
 }
