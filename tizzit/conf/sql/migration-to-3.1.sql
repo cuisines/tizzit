@@ -13,10 +13,10 @@ alter table `site` add column `PREVIEW_URL_LIVE_SERVER` VARCHAR(255) NULL;
 alter table `site` add column `PREVIEW_URL_WORK_SERVER` VARCHAR(255) NULL;
 alter table `site` drop COLUMN `PREVIEW_URL` ;
 drop table EDITIONSLICE;
-CREATE TABLE ROLES2VIEW_COMPONENTS (
-	roles_id_fk VARCHAR(255) NOT NULL, 
-	view_components_id_fk INTEGER NOT NULL, 
-	PRIMARY KEY (roles_id_fk, view_components_id_fk)
+CREATE TABLE access_roles2view_components (
+	access_roles_id_fk VARCHAR(255) NOT NULL, 
+	view_components_id_fk INTEGER NOT NULL,
+	PRIMARY KEY (access_roles_id_fk, view_components_id_fk)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8 ;
 
 CREATE TABLE ACCESSROLE (
@@ -43,10 +43,11 @@ CREATE TABLE "ACCESSROLE" (
 	"ROLE_ID" VARCHAR2(255) NOT NULL,
 	PRIMARY KEY (role_id));
 	
-CREATE TABLE "ROLES2VIEW_COMPONENTS" (
-	"ROLES_ID_FK" VARCHAR2(255) NOT NULL, 
-	"VIEW_COMPONENTS_ID_FK" NUMBER(10) NOT NULL,
-	PRIMARY KEY (roles_id_fk, view_components_id_fk));
+CREATE TABLE access_roles2view_components (
+	access_roles_id_fk VARCHAR(255) NOT NULL, 
+	view_components_id_fk INTEGER NOT NULL,
+	PRIMARY KEY (access_roles_id_fk, view_components_id_fk)
+);
 	
 # sapdb
 alter table edition add WORK_SERVER_EDITION_ID INTEGER NULL;
@@ -67,11 +68,6 @@ CREATE TABLE ACCESSROLE (
 	"ROLE_ID" VARCHAR(255) NOT NULL,
 	PRIMARY KEY (role_id))
 //
-CREATE TABLE ROLES2VIEW_COMPONENTS (
-	"ROLES_ID_FK" VARCHAR(255) NOT NULL, 
-	"VIEW_COMPONENTS_ID_FK" INTEGER NOT NULL,
-	PRIMARY KEY (roles_id_fk, view_components_id_fk))
-//
 # mssql
 alter table edition add WORK_SERVER_EDITION_ID INTEGER NULL;
 alter table edition add DEPLOY_TYPE INTEGER NULL;
@@ -90,10 +86,4 @@ drop table EDITIONSLICE;
 CREATE TABLE ACCESSROLE (
 	role_id VARCHAR(255) NOT NULL, 
 	PRIMARY KEY CLUSTERED(role_id)
-);
-
-CREATE TABLE ROLES2VIEW_COMPONENTS (
-	roles_id_fk VARCHAR(255) NOT NULL, 
-	view_components_id_fk INTEGER NOT NULL, 
-	PRIMARY KEY CLUSTERED(roles_id_fk, view_components_id_fk)
 );
