@@ -2619,8 +2619,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected void handleAddAccessRole(String roleId) throws Exception {
-		// TODO Auto-generated method stub
-
+		AccessRoleHbm accessRoleHbm = AccessRoleHbm.Factory.newInstance();
+		accessRoleHbm.setRoleId(roleId);
+		getAccessRoleHbmDao().create(accessRoleHbm);
 	}
 
 	/* (non-Javadoc)
@@ -2628,6 +2629,56 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemoveAccessRole(String roleId) throws Exception {
+		getAccessRoleHbmDao().remove(roleId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRoleToViewComponent(java.lang.String, java.lang.Integer)
+	 */
+
+	protected void handleAddAccessRoleToViewComponent(String roleId, Integer vcId) throws Exception {
+		//		ViewComponentHbm vc = getViewComponentHbmDao().load(vcId);
+		//		AccessRoleHbm ar = getAccessRoleHbmDao().load(roleId);
+		//		Collection vcs = ar.getViewComponents();
+		//		if (vcs == null) {
+		//			vcs = new ArrayList<ViewComponentHbm>();
+		//		}
+		//		vcs.add(vc);
+		//		ar.setViewComponents(vcs);
+		//
+		//		Collection ars = vc.getRoles();
+		//		if (ars == null) {
+		//			ars = new ArrayList<AccessRoleHbm>();
+		//		}
+		//		ars.add(ar);
+		//		vc.setRoles(ars);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveViewComponentFromAccessRole(java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	protected void handleRemoveViewComponentFromAccessRole(String roleId, Integer vcId) throws Exception {
+		//		ViewComponentHbm vc = getViewComponentHbmDao().load(vcId);
+		//		AccessRoleHbm ar = getAccessRoleHbmDao().load(roleId);
+		//		Collection vcs = ar.getViewComponents();
+		//		if (vcs != null) {
+		//			vcs.remove(vc);
+		//			ar.setViewComponents(vcs);
+		//		}
+		//
+		//		Collection ars = vc.getRoles();
+		//		if (ars != null) {
+		//			ars.remove(ar);
+		//			vc.setRoles(ars);
+		//		}
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRolesToViewComponent(java.lang.Integer, java.lang.String[])
+	 */
+	@Override
+	protected void handleAddAccessRolesToViewComponent(Integer viewComponentId, String[] roleIds) throws Exception {
 		// TODO Auto-generated method stub
 
 	}

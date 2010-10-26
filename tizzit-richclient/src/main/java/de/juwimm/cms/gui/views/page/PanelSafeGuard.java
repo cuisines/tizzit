@@ -530,7 +530,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 			GridBagConstraints gridBagConstraints5 = new GridBagConstraints();
 			gridBagConstraints5.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints5.gridy = 5;
-			gridBagConstraints5.insets = new java.awt.Insets(10, 10, 0, 0);
+			gridBagConstraints5.insets = new java.awt.Insets(10, 10, 10, 0);
 			gridBagConstraints5.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints5.weightx = 1.0;
 			gridBagConstraints5.weighty = 1.0;
@@ -558,7 +558,7 @@ public final class PanelSafeGuard extends JPanel implements LoadableViewComponen
 			gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
 			gridBagConstraints1.weightx = 1.0;
 			gridBagConstraints1.weighty = 1.0;
-			gridBagConstraints1.insets = new java.awt.Insets(10, 10, 10, 0);
+			gridBagConstraints1.insets = new java.awt.Insets(10, 10, 0, 0);
 			GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
 			gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
 			gridBagConstraints2.gridy = 2;

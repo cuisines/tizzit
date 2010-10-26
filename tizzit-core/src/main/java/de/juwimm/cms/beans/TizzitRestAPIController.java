@@ -32,6 +32,7 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -487,6 +488,15 @@ public class TizzitRestAPIController {
 			log.warn("Error calling getModifiedDate4Cache on webservicespring");
 		}
 		return date;
+	}
+
+	@RequestMapping(value = "/synchronizegrailsuserroles", method = RequestMethod.POST)
+	public void synchronizeGrailsUserRoles(@RequestBody String roles) {
+		if (log.isDebugEnabled()) log.debug("/synchronizegrailsuserroles/");
+		// get the role names from the body and write them to an array
+		int anzRoles = 10;
+		String[] grailsRoles = new String[anzRoles];
+		webSpringBean.syncGrailsRoles(grailsRoles);
 	}
 
 	//http://localhost:8080/remote/action?host=www.hsg-wennigsen-gehrden.de&requestPath=de/UnsereMannschaften&safeguardUsername=null&safeguardPassword=null

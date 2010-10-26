@@ -2258,11 +2258,15 @@ public class WebServiceSpring {
 			}
 
 			if (!deleteInTizzit.isEmpty()) {
-				//delete from db
+				for (String role : deleteInTizzit) {
+					viewServiceSpring.removeAccessRole(role);
+				}
 			}
 
 			if (!addToTizzit.isEmpty()) {
-				//add to db
+				for (String role : deleteInTizzit) {
+					viewServiceSpring.addAccessRole(role);
+				}
 			}
 
 		} catch (UserException e) {

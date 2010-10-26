@@ -11,6 +11,7 @@ import de.juwimm.cms.model.SiteHbmImpl;
 import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.UnitHbmDao;
 import de.juwimm.cms.model.UnitHbmImpl;
+import de.juwimm.cms.test.hibernate.HbmTestImpl;
 
 public class SiteDaoTest extends HbmTestImpl {
 
@@ -25,6 +26,7 @@ public class SiteDaoTest extends HbmTestImpl {
 
 		unitDao = EasyMock.createMock(UnitHbmDao.class);
 		((SiteHbmDaoImpl) siteDao).setUnitHbmDao(unitDao);
+		
 	}
 
 	public void initializeServiceBeans() {

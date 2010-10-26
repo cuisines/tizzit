@@ -1980,7 +1980,7 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	 */
 	@Override
 	protected void handleAddAccessRole(String roleId) throws Exception {
-		// TODO Auto-generated method stub
+		getViewServiceSpring().addAccessRole(roleId);
 
 	}
 
@@ -1989,7 +1989,6 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	 */
 	@Override
 	protected void handleRemoveAccessRole(String roleId) throws Exception {
-		// TODO Auto-generated method stub
-
+		getViewServiceSpring().removeAccessRole(roleId);
 	}
 }
