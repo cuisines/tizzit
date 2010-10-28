@@ -695,6 +695,8 @@ public class Communication implements ExitListener, ActionListener {
 		return getClientService().getUnit4ViewComponent(Integer.valueOf(viewComponentId));
 	}
 
+	// the returned Array will contain viewDocuments ordered by language
+	// but it will put vd's in the languages contained in the array languages first
 	public ViewDocumentValue[] getViewDocuments() throws Exception {
 		ViewDocumentValue[] documents = getClientService().getViewDocuments();
 		int indexFirst = 0;
@@ -2097,7 +2099,6 @@ public class Communication implements ExitListener, ActionListener {
 		}
 
 		return ret;
-
 	}
 
 	public Integer addSqlDbRealmToSite(Integer siteId, RealmJdbcValue jdbcRealmValue) {
@@ -2244,6 +2245,17 @@ public class Communication implements ExitListener, ActionListener {
 
 	/* Safeguard end */
 
+	public void deleteAccessRoleAtVC(Integer viewComponentId, String accessRole) {
+		try {
+			getClientService().removeAccessRoleFromViewComponent(viewComponentId, accessRole);
+		} catch (RuntimeException rex) {
+			log.error(rex.getMessage());
+		}
+	}
+
+	public void addAccessRoleToVC(String accessRole, Integer viewComponentId, Integer loginPageId) throws Exception {
+		getClientService().addAccessRoleToViewComponent(viewComponentId, accessRole, loginPageId);
+	}
 	/**
 	 * 
 	 */

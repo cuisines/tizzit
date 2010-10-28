@@ -30,6 +30,7 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.acls.AlreadyExistsException;
 import org.tizzit.util.Comparer;
 
 import de.juwimm.cms.authorization.model.UserHbm;
@@ -50,7 +51,6 @@ import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
-import de.juwimm.cms.safeguard.remote.AlreadyExistsException;
 import de.juwimm.cms.safeguard.vo.ActiveRealmValue;
 import de.juwimm.cms.safeguard.vo.RealmJaasValue;
 import de.juwimm.cms.safeguard.vo.RealmJdbcValue;
@@ -1990,5 +1990,41 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected void handleRemoveAccessRole(String roleId) throws Exception {
 		getViewServiceSpring().removeAccessRole(roleId);
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleAddAccessRoleToViewComponent(java.lang.Integer, java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	protected void handleAddAccessRoleToViewComponent(Integer viewComponentId, String accessRole, Integer loginPage) throws Exception {
+		getViewServiceSpring().addAccessRoleToViewComponent(viewComponentId, accessRole, loginPage);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleAddAccessRolesToViewComponent(java.lang.Integer, java.lang.String[], java.lang.Integer)
+	 */
+	@Override
+	protected void handleAddAccessRolesToViewComponent(Integer viewComponentId, String[] accessRoles, Integer loginPage) throws Exception {
+		getViewServiceSpring().addAccessRolesToViewComponent(viewComponentId, accessRoles, loginPage);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleRemoveAccessRoleFromViewComponent(java.lang.Integer, java.lang.String)
+	 */
+	@Override
+	protected void handleRemoveAccessRoleFromViewComponent(Integer viewComponentId, String accessRole) throws Exception {
+		getViewServiceSpring().removeAccessRoleFromViewComponent(viewComponentId, accessRole);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleRemoveAccessRolesFromViewComponent(java.lang.Integer, java.lang.String)
+	 */
+	@Override
+	protected void handleRemoveAccessRolesFromViewComponent(Integer viewComponentId, String[] accessRoles) throws Exception {
+		getViewServiceSpring().removeAccessRolesFromViewComponent(viewComponentId, accessRoles);
+
 	}
 }

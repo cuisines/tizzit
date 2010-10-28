@@ -2675,10 +2675,37 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRolesToViewComponent(java.lang.Integer, java.lang.String[])
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRoleToViewComponent(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@Override
-	protected void handleAddAccessRolesToViewComponent(Integer viewComponentId, String[] roleIds) throws Exception {
+	protected void handleAddAccessRoleToViewComponent(Integer viewComponentId, String accessRole, Integer loginPageId) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRolesToViewComponent(java.lang.Integer, java.lang.String[], java.lang.Integer)
+	 */
+	@Override
+	protected void handleAddAccessRolesToViewComponent(Integer viewComponentId, String[] accessRoles, Integer loginPageId) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveAccessRoleFromViewComponent(java.lang.Integer, java.lang.String)
+	 */
+	@Override
+	protected void handleRemoveAccessRoleFromViewComponent(Integer viewComponentId, String accessRole) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/* (non-Javadoc)
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveAccessRolesFromViewComponent(java.lang.Integer, java.lang.String[])
+	 */
+	@Override
+	protected void handleRemoveAccessRolesFromViewComponent(Integer viewComponentId, String[] accessRoles) throws Exception {
 		// TODO Auto-generated method stub
 
 	}
