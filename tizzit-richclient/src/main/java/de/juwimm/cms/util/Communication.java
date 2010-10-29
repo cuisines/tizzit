@@ -2245,14 +2245,6 @@ public class Communication implements ExitListener, ActionListener {
 
 	/* Safeguard end */
 
-	public void deleteAccessRoleAtVC(Integer viewComponentId, String accessRole) {
-		try {
-			getClientService().removeAccessRoleFromViewComponent(viewComponentId, accessRole);
-		} catch (RuntimeException rex) {
-			log.error(rex.getMessage());
-		}
-	}
-
 	public void addAccessRoleToVC(String accessRole, Integer viewComponentId, Integer loginPageId) throws Exception {
 		getClientService().addAccessRoleToViewComponent(viewComponentId, accessRole, loginPageId);
 	}

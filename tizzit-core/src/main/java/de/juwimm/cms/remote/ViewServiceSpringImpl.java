@@ -72,6 +72,7 @@ import de.juwimm.cms.components.model.TalktimeHbm;
 import de.juwimm.cms.components.model.TalktimeHbmImpl;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.AccessRoleHbm;
+import de.juwimm.cms.model.AccessRoles2ViewComponentsHbm;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.DocumentHbm;
@@ -2633,54 +2634,16 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRoleToViewComponent(java.lang.String, java.lang.Integer)
-	 */
-
-	protected void handleAddAccessRoleToViewComponent(String roleId, Integer vcId) throws Exception {
-		//		ViewComponentHbm vc = getViewComponentHbmDao().load(vcId);
-		//		AccessRoleHbm ar = getAccessRoleHbmDao().load(roleId);
-		//		Collection vcs = ar.getViewComponents();
-		//		if (vcs == null) {
-		//			vcs = new ArrayList<ViewComponentHbm>();
-		//		}
-		//		vcs.add(vc);
-		//		ar.setViewComponents(vcs);
-		//
-		//		Collection ars = vc.getRoles();
-		//		if (ars == null) {
-		//			ars = new ArrayList<AccessRoleHbm>();
-		//		}
-		//		ars.add(ar);
-		//		vc.setRoles(ars);
-	}
-
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveViewComponentFromAccessRole(java.lang.String, java.lang.Integer)
-	 */
-	@Override
-	protected void handleRemoveViewComponentFromAccessRole(String roleId, Integer vcId) throws Exception {
-		//		ViewComponentHbm vc = getViewComponentHbmDao().load(vcId);
-		//		AccessRoleHbm ar = getAccessRoleHbmDao().load(roleId);
-		//		Collection vcs = ar.getViewComponents();
-		//		if (vcs != null) {
-		//			vcs.remove(vc);
-		//			ar.setViewComponents(vcs);
-		//		}
-		//
-		//		Collection ars = vc.getRoles();
-		//		if (ars != null) {
-		//			ars.remove(ar);
-		//			vc.setRoles(ars);
-		//		}
-	}
-
-	/* (non-Javadoc)
 	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleAddAccessRoleToViewComponent(java.lang.Integer, java.lang.String, java.lang.Integer)
 	 */
 	@Override
 	protected void handleAddAccessRoleToViewComponent(Integer viewComponentId, String accessRole, Integer loginPageId) throws Exception {
-		// TODO Auto-generated method stub
+		ViewComponentHbm vc = getViewComponentHbmDao().load(viewComponentId);
+		AccessRoleHbm ar = getAccessRoleHbmDao().load(accessRole);
+		ViewComponentHbm login = getViewComponentHbmDao().load(loginPageId);
 
+		AccessRoles2ViewComponentsHbm ar2vc = AccessRoles2ViewComponentsHbm.Factory.newInstance(login, vc, ar);
+		getAccessRoles2ViewComponentsHbmDao().create(ar2vc);
 	}
 
 	/* (non-Javadoc)
@@ -2688,25 +2651,29 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 */
 	@Override
 	protected void handleAddAccessRolesToViewComponent(Integer viewComponentId, String[] accessRoles, Integer loginPageId) throws Exception {
-		// TODO Auto-generated method stub
-
+		ViewComponentHbm vc = getViewComponentHbmDao().load(viewComponentId);
+		ViewComponentHbm login = getViewComponentHbmDao().load(loginPageId);
+		for (String accessRole : accessRoles) {
+			AccessRoleHbm ar = getAccessRoleHbmDao().load(accessRole);
+			AccessRoles2ViewComponentsHbm ar2vc = AccessRoles2ViewComponentsHbm.Factory.newInstance(login, vc, ar);
+			getAccessRoles2ViewComponentsHbmDao().create(ar2vc);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveAccessRoleFromViewComponent(java.lang.Integer, java.lang.String)
 	 */
 	@Override
-	protected void handleRemoveAccessRoleFromViewComponent(Integer viewComponentId, String accessRole) throws Exception {
-		// TODO Auto-generated method stub
-
+	protected void handleRemoveAccessRole2ViewComponent(Integer ar2vcId) throws Exception {
+		getAccessRoles2ViewComponentsHbmDao().remove(ar2vcId);
 	}
 
 	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleRemoveAccessRolesFromViewComponent(java.lang.Integer, java.lang.String[])
+	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleHandleGetViewComponentsForSearch(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
 	@Override
-	protected void handleRemoveAccessRolesFromViewComponent(Integer viewComponentId, String[] accessRoles) throws Exception {
+	protected List handleHandleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 }

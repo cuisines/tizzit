@@ -598,11 +598,6 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected void handleRemoveViewComponentsFromTask(int taskId, Integer[] vcIds) throws Exception {
-		getUserServiceSpring().removeViewComponentsFromTask(Integer.valueOf(taskId), vcIds);
-	}
-
-	@Override
 	protected void handleRemoveViewDocument(int viewDocumentId) throws Exception {
 		getViewServiceSpring().removeViewDocument(Integer.valueOf(viewDocumentId));
 	}
@@ -2011,20 +2006,25 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleRemoveAccessRoleFromViewComponent(java.lang.Integer, java.lang.String)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleRemoveAccessRole2ViewComponent(java.lang.Integer)
 	 */
 	@Override
-	protected void handleRemoveAccessRoleFromViewComponent(Integer viewComponentId, String accessRole) throws Exception {
-		getViewServiceSpring().removeAccessRoleFromViewComponent(viewComponentId, accessRole);
+	protected void handleRemoveAccessRole2ViewComponent(Integer ar2vcId) throws Exception {
+		getViewServiceSpring().removeAccessRole2ViewComponent(ar2vcId);
+	}
 
+	@Override
+	protected void handleRemoveViewComponentsFromTask(Integer taskId, Integer[] vcIds) throws Exception {
+		getUserServiceSpring().removeViewComponentsFromTask(Integer.valueOf(taskId), vcIds);
 	}
 
 	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleRemoveAccessRolesFromViewComponent(java.lang.Integer, java.lang.String)
+	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleHandleGetViewComponentsForSearch(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
 	@Override
-	protected void handleRemoveAccessRolesFromViewComponent(Integer viewComponentId, String[] accessRoles) throws Exception {
-		getViewServiceSpring().removeAccessRolesFromViewComponent(viewComponentId, accessRoles);
-
+	protected List handleHandleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
 }

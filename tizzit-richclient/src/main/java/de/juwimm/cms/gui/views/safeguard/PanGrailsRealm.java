@@ -48,13 +48,6 @@ public final class PanGrailsRealm extends JPanel implements ConfigurationInterfa
 	private PickListData rolePickData = null;
 	private PickListPanel panRolePick = null;
 
-	public Integer getSelectedRealm() throws Exception {
-		return null;
-	}
-
-	public void setExistingRealm(Integer accessRoleId) {
-	}
-
 	public void setExistingRoles(String[] roles) {
 		if (roles != null) {
 			rolePickData.getLstLeftModel().addAll(roles);
@@ -136,9 +129,7 @@ public final class PanGrailsRealm extends JPanel implements ConfigurationInterfa
 		this.setLayout(new GridBagLayout());
 		this.setSize(new java.awt.Dimension(398, 250));
 		this.add(this.panChooseLoginPage, gridBagConstraints1);
-
 		this.add(this.panRolePick, gridBagConstraints2);
-
 		fillRealmList();
 	}
 
@@ -148,5 +139,14 @@ public final class PanGrailsRealm extends JPanel implements ConfigurationInterfa
 
 	public void setLoginPageViewComponentId(String loginPageId) {
 		this.panChooseLoginPage.setLoginpage(loginPageId);
+	}
+
+	// just inherited by the interface 
+	public Integer getSelectedRealm() throws Exception {
+		return null;
+	}
+
+	// just inherited by the interface 
+	public void setExistingRealm(Integer accessRoleId) {
 	}
 } //  @jve:decl-index=0:visual-constraint="257,279"
