@@ -25,6 +25,10 @@ import org.w3c.dom.Node;
 
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.event.EditpaneFiredEvent;
+import de.juwimm.cms.content.frame.DlgModalModule;
+import de.juwimm.cms.content.panel.PanLine;
+import de.juwimm.cms.util.EnumAlign;
+import de.juwimm.cms.util.EnumWidthUnit;
 
 /**
  * <p>Title: </p>
@@ -37,6 +41,7 @@ import de.juwimm.cms.content.event.EditpaneFiredEvent;
 public class Line extends AbstractModule {
 	private String iconImage = "16_linie_einfuegen.gif";
 	private String paneImage = "16_linie_einfuegen.gif";
+	private PanLine panLine = new PanLine();
 
 	public void setCustomProperties(String methodname, Properties parameters) {
 		super.setCustomProperties(methodname, parameters);
@@ -68,17 +73,36 @@ public class Line extends AbstractModule {
 
 	public Node getProperties() {
 		Element elm = ContentManager.getDomDoc().createElement("line");
+		elm.setAttribute("align", getPanLine().getAlign());
+		elm.setAttribute("thickness", getPanLine().getThickness());
+		elm.setAttribute("width", getPanLine().getCustomWidth());
+		elm.setAttribute("widthUnit", getPanLine().getCustomWidthUnit());
+		elm.setAttribute("color", getPanLine().getColor());
 		return elm;
 	}
 
 	public void setProperties(Node node) {
+		Element elm=(Element) node;
+		String align=elm.getAttribute("align");
+		EnumAlign enumAlign=EnumAlign.findByXmlValue(align);
+		getPanLine().setAlign(enumAlign);
+		String thickness=elm.getAttribute("thickness");
+		getPanLine().setThickness(thickness);
+		String width=elm.getAttribute("width");
+		getPanLine().setCustomWidth(width);
+		String widthUnit=elm.getAttribute("widthUnit");
+		EnumWidthUnit enumWidthUnit=EnumWidthUnit.findByXmlValue(widthUnit);
+		getPanLine().setCustomWidthUnit(enumWidthUnit);
+		String hexColor=elm.getAttribute("color");
+		getPanLine().setColor(hexColor);
 	}
 
 	public JDialog viewModalUI(boolean modal) {
-		EditpaneFiredEvent efe = new EditpaneFiredEvent(this);
-		runEditpaneFiredEvent(efe);
-		setSaveable(true);
-		return null;
+		int frameHeight = 500;
+		int frameWidth = 460;
+		DlgModalModule frm = new DlgModalModule(this, getPanLine(), frameHeight, frameWidth, modal);
+		frm.setVisible(true);
+		return frm;
 	}
 
 	public String getIconImage() {
@@ -92,8 +116,17 @@ public class Line extends AbstractModule {
 	public void setEnabled(boolean enabling) {
 		throw new UnsupportedOperationException("Method setEnabled() not yet implemented.");
 	}
-	
+
 	public void recycle() {
-	
+
 	}
+
+	public PanLine getPanLine() {
+		return panLine;
+	}
+
+	public void setPanLine(PanLine panLine) {
+		this.panLine = panLine;
+	}
+
 }

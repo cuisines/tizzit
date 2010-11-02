@@ -19,6 +19,8 @@ import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -725,4 +727,9 @@ public final class UIConstants {
 	public static Main getMainFrame() {
 		return mainFrame;
 	}
+	
+	//Added by nitun on (1/11/2010)
+	public static int screenHeight=(int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+	public static int screenWidth=(int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+	public static Dimension screenSize= Toolkit.getDefaultToolkit().getScreenSize();
 }
