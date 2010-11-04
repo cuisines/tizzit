@@ -22,7 +22,7 @@ import de.juwimm.cms.util.EnumWidthUnit;
 import static org.junit.Assert.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {PanLine.class})
+//@PrepareForTest( {PanLine.class})
 public class PanLineTest {
 
 	PanLine panLine;
