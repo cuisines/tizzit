@@ -2018,13 +2018,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		getUserServiceSpring().removeViewComponentsFromTask(Integer.valueOf(taskId), vcIds);
 	}
 
-	/* (non-Javadoc)
-	 * @see de.juwimm.cms.remote.ClientServiceSpringBase#handleHandleGetViewComponentsForSearch(java.lang.Integer, java.lang.Integer, java.lang.String)
-	 */
 	@Override
-	protected List handleHandleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	protected List handleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
+		return getViewServiceSpring().getViewComponentsForSearch(unitId, viewDocumentId, searchValue);
 	}
 
 }

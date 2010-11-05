@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.swing.DefaultListCellRenderer;
@@ -55,6 +56,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
@@ -173,6 +175,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private boolean stop = true;
 	private JPanel panelParameters;
 	private ViewDocumentValue[] viewDocuments;
+	/**In case of search the popup is not shown*/
+	private boolean inSearchMode = false;
 
 	//private DragSource dragSource = null;
 
@@ -457,7 +461,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				int selRow = tree.getRowForLocation(e.getX(), e.getY());
 				TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
 				TreeNode treeNode = (TreeNode) tree.getLastSelectedPathComponent();
-				ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_RESET_CONSTANTS_CONTENT_VIEW));
+				if (treeNode != null) {
+					ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_RESET_CONSTANTS_CONTENT_VIEW));
+				}
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					try {
 						if (e.getClickCount() == 2) {
@@ -525,6 +531,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		panelParameters = treeParametersPanel();
 		panelParameters.setPreferredSize(new Dimension(250, 90));
 		panelParameters.setMinimumSize(new Dimension(250, 90));
+		/**Dimensions for when search will be added*/
+		//		panelParameters.setPreferredSize(new Dimension(250, 120));
+		//		panelParameters.setMinimumSize(new Dimension(250, 120));
 		return panelParameters;
 	}
 
@@ -618,6 +627,40 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		cbxViewDocuments.setRenderer(renderer);
 		cbxViewDocuments.setMaximumRowCount(20);
 
+		JLabel labelSearchTree = new JLabel();
+		labelSearchTree.setText("Filter");
+		final JTextField searchTreeField = new JTextField();
+		searchTreeField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (searchTreeField.getText().trim().length() > 0) {
+					List<ViewComponentValue> list = comm.getViewComponentsForSearch(searchTreeField.getText());
+					//if (list != null) {
+					log.debug("Found " + list.size() + " values at search");
+					ArrayList<ViewComponentValue> vcs = new ArrayList<ViewComponentValue>();
+					vcs.addAll(list);
+					((PageNode) tree.getModel().getRoot()).buildTreeWithSearchResults(vcs);
+					inSearchMode = true;
+					//}
+				} else {
+					inSearchMode = false;
+					TreeNode treeNode = (TreeNode) tree.getLastSelectedPathComponent();
+					try {
+						reload();
+					} catch (Exception e1) {
+						log.debug("Error at reloading tree after search");
+					}
+					PageNode selectedNodeOldTree = (PageNode) treeNode;
+					if (selectedNodeOldTree != null) {
+						PageNode selectedNodeNewTree = loadTree2View(selectedNodeOldTree.getViewId());
+						TreePath tp = new TreePath(treeModel.getPathToRoot(selectedNodeNewTree));
+						tree.setSelectionPath(tp);
+						tree.scrollPathToVisible(tp);
+					}
+
+				}
+			}
+		});
+
 		panel.add(lblNavigationLanguage, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
 		panel.add(cbxViewDocuments, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 115, 0, 10), 0, 0));
 		panel.add(unitLblPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 170), 0, 0));
@@ -625,6 +668,12 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		panel.add(allOpen, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 190), 0, 0));
 		panel.add(allClosed, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 75, 0, 120), 0, 0));
 		panel.add(refresh, new GridBagConstraints(0, 3, 2, 1, 0, 0.0, GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE, new Insets(5, 0, 0, 10), 0, 0));
+
+		/**
+		 * Tizzit-156 - This will be uncommented after final modifications are finished 
+		 */
+		//panel.add(labelSearchTree, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
+		//panel.add(searchTreeField, new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 115, 0, 10), 0, 0));
 		return panel;
 	}
 	/**
@@ -958,31 +1007,48 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		// This are general Actions, which do not depend on the type of the TreeNode
 		if (action.equals(Constants.ACTION_TREE_SELECT) || action.equals(Constants.ACTION_DEPLOY_STATUS_CHANGED)) {
 			// NEW --------------------------------------------------------
-			miMoveLeft.setEnabled(treeNode.isMoveableToLeft());
-			miMoveUp.setEnabled(treeNode.isMoveableToUp());
-			miMoveDown.setEnabled(treeNode.isMoveableToDown());
-			miMoveRight.setEnabled(treeNode.isMoveableToRight());
-			miDELETE.setEnabled(treeNode.isDeleteable());
+			if (!inSearchMode) {
+				miMoveLeft.setEnabled(treeNode.isMoveableToLeft());
+				miMoveUp.setEnabled(treeNode.isMoveableToUp());
+				miMoveDown.setEnabled(treeNode.isMoveableToDown());
+				miMoveRight.setEnabled(treeNode.isMoveableToRight());
+				miDELETE.setEnabled(treeNode.isDeleteable());
 
-			boolean append = treeNode.isAppendingAllowed();
-			miTreeNodeAppend.setEnabled(append);
-			miTreeJumpAdd.setEnabled(append);
-			miTreeLinkAdd.setEnabled(append);
-			miTreeSeparatorAdd.setEnabled(append);
-			miTreeSymlinkAdd.setEnabled(append);
-			miRootDeploysUnit.setEnabled(false);
-			miRootExportUnit.setEnabled(false);
-			miRootImportUnit.setEnabled(false);
-			String msg = Messages.getString("wizard.root.deployAll.progressdialog.createEdition", "");
-			miRootDeploysUnit.setText(msg);
-			msg = Messages.getString("actions.ACTION_ROOT_EXPORT_UNIT", "");
-			miRootExportUnit.setText(msg);
-			miContentApprove.setEnabled(false);
+				boolean append = treeNode.isAppendingAllowed();
+				miTreeNodeAppend.setEnabled(append);
+				miTreeJumpAdd.setEnabled(append);
+				miTreeLinkAdd.setEnabled(append);
+				miTreeSeparatorAdd.setEnabled(append);
+				miTreeSymlinkAdd.setEnabled(append);
+				miRootDeploysUnit.setEnabled(false);
+				miRootExportUnit.setEnabled(false);
+				miRootImportUnit.setEnabled(false);
+				String msg = Messages.getString("wizard.root.deployAll.progressdialog.createEdition", "");
+				miRootDeploysUnit.setText(msg);
+				msg = Messages.getString("actions.ACTION_ROOT_EXPORT_UNIT", "");
+				miRootExportUnit.setText(msg);
+				miContentApprove.setEnabled(false);
+			} else {
+				miMoveLeft.setEnabled(false);
+				miMoveUp.setEnabled(false);
+				miMoveDown.setEnabled(false);
+				miMoveRight.setEnabled(false);
+				miTreeNodeAppend.setEnabled(false);
+				miTreeJumpAdd.setEnabled(false);
+				miTreeLinkAdd.setEnabled(false);
+				miTreeSeparatorAdd.setEnabled(false);
+				miTreeSymlinkAdd.setEnabled(false);
+				miRootDeploysUnit.setEnabled(false);
+				miRootExportUnit.setEnabled(false);
+				miRootImportUnit.setEnabled(false);
+				miContentApprove.setEnabled(false);
+			}
 		}
 		if (action.equals(Constants.ACTION_TREE_CLICK_NODE)) {
 			TreePath localTreePath = (TreePath) e.getSource();
 			tree.setSelectionPath(localTreePath);
 			stop = false;
+			this.invalidateTreeCache();
 
 		}
 		// This is specific for one type

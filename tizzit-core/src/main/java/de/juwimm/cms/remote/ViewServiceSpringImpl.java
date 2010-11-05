@@ -2672,8 +2672,15 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ViewServiceSpringBase#handleHandleGetViewComponentsForSearch(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
 	@Override
-	protected List handleHandleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	protected List handleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
+		List<ViewComponentValue> results = new ArrayList<ViewComponentValue>();
+		List<ViewComponentHbm> entities = getViewComponentHbmDao().getViewComponentsForSearch(unitId, viewDocumentId, searchValue);
+		for (ViewComponentHbm entity : entities) {
+			Integer vcUnitId = getViewComponentUnit(entity.getViewComponentId());
+			if (vcUnitId.intValue() == unitId.intValue()) {
+				results.add(entity.getDao());
+			}
+		}
+		return results;
 	}
 }

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -735,4 +736,30 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		return create(viewComponentHbm);
 	}
 
+	@Override
+	public List getViewComponentsForSearch(int transform, Integer viewDocumentId, String searchValue) {
+		boolean searchAll = true;
+		List results = new ArrayList<ViewComponentHbm>();
+		Integer vcId = null;
+		try {
+			vcId = Integer.parseInt(searchValue);
+		} catch (NumberFormatException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("The entered search value is not a number so search is only is only for the linkname");
+			}
+			searchAll = false;
+		}
+
+		searchValue = "%" + searchValue + "%";
+		List urlLinkNameResults = this.getViewComponentsForSearch(transform, "from de.juwimm.cms.model.ViewComponentHbm as viewComponentHbm where viewComponentHbm.viewDocument.viewDocumentId = ? and viewComponentHbm.urlLinkName like ?", viewDocumentId, searchValue);
+		if (urlLinkNameResults != null) results.addAll(urlLinkNameResults);
+
+		if (searchAll) {
+			if (vcId != null) {
+				ViewComponentHbm vc = this.load(vcId);
+				results.add(vc);
+			}
+		}
+		return results;
+	}
 }

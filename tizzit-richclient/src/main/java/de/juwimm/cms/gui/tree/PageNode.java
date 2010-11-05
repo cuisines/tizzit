@@ -395,6 +395,27 @@ public class PageNode extends TreeNode implements Transferable {
 	}
 
 	/**
+	 * Populates the tree with the viewComponents given as parameters 
+	 * It is used for the search in the tree
+	 * @param values
+	 */
+	public void buildTreeWithSearchResults(ArrayList<ViewComponentValue> values) {
+		try {
+			removeAllChildren();
+			for (ViewComponentValue viewComponentValue : values) {
+				buildNodes(this, viewComponentValue);
+			}
+			if (getTreeModel() != null) {
+				getTreeModel().nodeStructureChanged(this);
+			} else if (getTreeModel() == null) {
+				log.warn("TreeModel was null!");
+			}
+		} catch (Exception e) {
+			log.debug("Error at loading tree from search results");
+		}
+	}
+
+	/**
 	 * @param viewComponent The viewComponent to set.
 	 */
 	public void setViewComponent(ViewComponentValue viewComponent) {

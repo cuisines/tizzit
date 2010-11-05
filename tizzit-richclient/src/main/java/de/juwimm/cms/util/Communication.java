@@ -2742,4 +2742,9 @@ public class Communication implements ExitListener, ActionListener {
 	public AccessRoleValue[] getAllAccessRoles() {
 		return getClientService().getAllAccessRoles();
 	}
+
+	public List<ViewComponentValue> getViewComponentsForSearch(String searchValue) {
+		return getClientService().getViewComponentsForSearch(this.getSelectedUnitId(), this.getViewDocumentId(), searchValue);
+	}
+
 }
