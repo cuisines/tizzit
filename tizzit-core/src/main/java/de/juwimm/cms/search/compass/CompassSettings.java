@@ -65,6 +65,8 @@ public class CompassSettings extends Properties {
 		super.put("compass.engine.highlighter.default.fragmenter.simple.size", "250");
 		super.put("compass.engine.queryParser.default.defaultOperator", "AND");
 		super.put("compass.engine.optimizer.schedule.period", "300");
+		super.put("compass.engine.spellcheck.enable","true");
+		super.put("compass.engine.spellcheck.scheduleInterval", "1");
 		// super.put("compass.engine.analyzer.default.name", "German2");
 
 	}

@@ -37,6 +37,9 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.CompassQueryBuilder.CompassBooleanQueryBuilder;
+import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
+import org.compass.core.engine.spellcheck.SearchEngineSpellCheckSuggestBuilder;
+import org.compass.core.engine.spellcheck.SearchEngineSpellSuggestions;
 import org.compass.core.lucene.util.LuceneHelper;
 import org.compass.core.support.search.CompassSearchCommand;
 import org.compass.core.support.search.CompassSearchHelper;
@@ -428,6 +431,25 @@ public class SearchengineService {
 		staticRetArr = new SearchResultValue[retArr.size()];
 		retArr.toArray(staticRetArr);
 		return staticRetArr;
+	}
+	
+	@Transactional(readOnly = true)
+	public String[][] searchWebSuggestions(Integer siteId, final String searchItem, Map safeGuardCookieMap) throws Exception {
+		CompassSession session = compass.openSession();
+		SearchEngineSpellCheckManager spellCheckManager= compass.getSpellCheckManager();
+		SearchEngineSpellCheckSuggestBuilder suggestBuilder=spellCheckManager.suggestBuilder(searchItem);
+		suggestBuilder.numberOfSuggestions(10);
+		suggestBuilder.accuracy(0.3f);
+		SearchEngineSpellSuggestions spellSuggestions =suggestBuilder.suggest();
+		log.info(spellSuggestions.getSuggestions().toString());
+		String[][] resultValue=new String[spellSuggestions.getSuggestions().length][2];
+		for (int i = 0; i < spellSuggestions.getSuggestions().length; i++) {
+			resultValue[i][0]=spellSuggestions.getSuggestions()[i];
+			CompassQuery query = buildRatedWildcardQuery(session, siteId, spellSuggestions.getSuggestions()[i], null, safeGuardCookieMap);
+			CompassHits hits = query.hits();
+			resultValue[i][1]=String.valueOf(hits.getLength());
+		}
+		return resultValue;
 	}
 
 	public String stripNonValidXMLCharacters(String in) {
