@@ -433,6 +433,17 @@ public class SearchengineService {
 		return staticRetArr;
 	}
 	
+	/**
+	 * This method provides search suggestions for the <b>searchItem</b> input string. 
+	 * The search suggestions are limited to the site mentioned in the <b>siteId</b> 
+	 * parameter and for the authorization tokens provided in the <b>safeGuardCookieMap</b>
+	 * 
+	 * @param siteId
+	 * @param searchItem
+	 * @param safeGuardCookieMap
+	 * @return a {@link String} matrix of maximum 10 lines and exactly 2 columns. Each line contains a search suggestion, the first column contains the suggestion string and the second column the number of hits for the suggestion in the first column. 
+	 * @throws Exception
+	 */
 	@Transactional(readOnly = true)
 	public String[][] searchWebSuggestions(Integer siteId, final String searchItem, Map safeGuardCookieMap) throws Exception {
 		CompassSession session = compass.openSession();
