@@ -24,17 +24,25 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 import org.apache.log4j.Logger;
 
@@ -45,6 +53,7 @@ import de.juwimm.cms.exceptions.ViewComponentNotFound;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
+import de.juwimm.cms.util.UrlValidator;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
@@ -59,21 +68,79 @@ public class PanMenuentryExternallink extends PanMenuentry {
 	private static Logger log = Logger.getLogger(PanMenuentryExternallink.class);
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private final JPanel panNewWindow = new JPanel();
+	private final JPanel panLinkSuggestion = new JPanel();
 	private final JRadioButton rbBlank = new JRadioButton();
 	private final JRadioButton rbHeader = new JRadioButton();
 	private final JLabel lblLinkAddress = new JLabel();
+	private final JLabel lblResultAddress = new JLabel();
 	private final JTextField txtLinkUrl = new JTextField();
 	private final Communication comm;
 	private final JPanel panLinkProperties = new JPanel();
 	private Component spacer;
 	private final JCheckBox cbNewWindow = new JCheckBox();
-
+	private final JButton buttonUseSuggested=new JButton();
+	private String suggestedLink=null;
+	
+	@SuppressWarnings("unchecked")
 	public PanMenuentryExternallink(Communication comm) {
 		super();
 		this.comm = comm;
 		try {
 			jbInit();
 			txtLinkUrl.addKeyListener(ActionHub.getContentEditKeyListener());
+			txtLinkUrl.addCaretListener(new CaretListener() {
+				SwingWorker worker;
+
+				private SwingWorker createNewWorker() {
+					SwingWorker worker = new SwingWorker() {
+						@Override
+						protected Object doInBackground() throws Exception {
+							return UrlValidator.validate(txtLinkUrl.getText());
+						}
+
+						@Override
+						protected void done() {
+							try {
+								if (!isCancelled()) {
+									suggestedLink=(String) get();
+									lblResultAddress.setText(rb.getString("de.juwimm.cms.util.urlValidator.foundAdress")+suggestedLink);
+									if(!txtLinkUrl.getText().equals(suggestedLink) && !suggestedLink.contains(rb.getString("exception.invalidURL"))){
+										buttonUseSuggested.setVisible(true);
+									} else {
+										buttonUseSuggested.setVisible(false);
+									}
+								}
+							} catch (InterruptedException e) {
+								log.error(e);
+							} catch (ExecutionException e) {
+								log.error(e);
+							} catch (CancellationException e) {
+								log.error(e);
+							}
+						}
+					};
+					return worker;
+				}
+
+				public void caretUpdate(CaretEvent e) {
+					lblResultAddress.setText(rb.getString("de.juwimm.cms.gui.views.menuentry.PanMenuentryExternallink.Searching"));
+					buttonUseSuggested.setVisible(false);
+					if (worker != null && worker.getState().equals(StateValue.STARTED)) {
+						worker.cancel(true);
+					}
+					worker = createNewWorker();
+					worker.execute();
+				}
+			});
+			buttonUseSuggested.setText(rb.getString("de.juwimm.cms.gui.views.menuentry.PanMenuentryExternallink.UseSuggestion"));
+			buttonUseSuggested.setVisible(false);
+			buttonUseSuggested.addActionListener(new ActionListener() {
+				
+				public void actionPerformed(ActionEvent e) {
+					txtLinkUrl.setText(suggestedLink);
+					buttonUseSuggested.setVisible(false);
+				}
+			});
 			rbBlank.addMouseListener(ActionHub.getContentEditMouseListener());
 			rbBlank.addKeyListener(ActionHub.getContentEditKeyListener());
 			rbHeader.addMouseListener(ActionHub.getContentEditMouseListener());
@@ -85,8 +152,10 @@ public class PanMenuentryExternallink extends PanMenuentry {
 			cbNewWindow.addMouseListener(ActionHub.getContentEditMouseListener());
 			cbNewWindow.setText(rb.getString("panel.panelView.jump.newWindow"));
 		} catch (Exception ex) {
+			log.error(ex);
 		}
 	}
+
 
 	void jbInit() throws Exception {
 		spacer = Box.createVerticalStrut(8);
@@ -103,13 +172,17 @@ public class PanMenuentryExternallink extends PanMenuentry {
 		panLinkProperties.setLayout(new GridBagLayout());
 		getOptPan().setLayout(new GridBagLayout());
 		panNewWindow.add(rbBlank, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 10), 0, 0));
-		panNewWindow.add(rbHeader, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 0, 10), 0, 0));
+		panNewWindow.add(rbHeader, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 10), 0, 0));
+		panLinkSuggestion.setLayout(new GridBagLayout());
+		panLinkSuggestion.add(lblResultAddress, new GridBagConstraints(0, 0, 1, 1, 1, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
+		panLinkSuggestion.add(buttonUseSuggested, new GridBagConstraints(1, 0, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 4));
 		getOptPan().add(spacer, new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0));
 		getOptPan().add(panLinkProperties, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 8, 0, 8), 0, -11));
-		panLinkProperties.add(lblLinkAddress, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 4));
-		panLinkProperties.add(txtLinkUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 4));
-		panLinkProperties.add(cbNewWindow, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 0), 0, 4));
-		panLinkProperties.add(panNewWindow, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 10, 10), 0, 4));
+		panLinkProperties.add(lblLinkAddress, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 4));
+		panLinkProperties.add(txtLinkUrl, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 10), 0, 4));
+		panLinkProperties.add(panLinkSuggestion, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 4));
+		panLinkProperties.add(cbNewWindow, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 0, 0), 0, 4));
+		panLinkProperties.add(panNewWindow, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(0, 10, 10, 10), 0, 4));
 		buttonGroup.add(rbBlank);
 		buttonGroup.add(rbHeader);
 	}

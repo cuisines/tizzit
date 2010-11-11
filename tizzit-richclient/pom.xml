@@ -152,7 +152,8 @@
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
-			<!-- JIRA: TIZZIT-249 - Moved version property to main pom to make it available in tizzit-web-richclient. -->
+			<!-- JIRA: TIZZIT-249 - Moved version property to main pom to make it available in tizzit-web-richclient.
+-->
 			<version>${javax.activation.version}</version>
 		</dependency>
 		<dependency>
@@ -210,7 +211,13 @@
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-easymock</artifactId>
 			<scope>test</scope>
-		</dependency>  
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
