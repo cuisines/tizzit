@@ -308,6 +308,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 	}
 
 	public void load(ViewComponentValue viewComponentToLoad, boolean fromDropDown) {
+		UIConstants.setWorker(true);
 		this.lock.lock();
 		this.loadedViewComponentValue = viewComponentToLoad;
 		synchronized (viewComponentToLoad) {
@@ -319,6 +320,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 
 			log.info("Loading " + viewComponentToLoad.getDisplayLinkName());
 			UIConstants.setActionStatus(rb.getString("statusinfo.content"));
+			UIConstants.setWorker(true);
 			this.hasBeenSavedAndCanCheckinWithoutSave = false;
 			this.hasFirstSaveDoneAndDoNotCreateNewContentVersion = false;
 			try {
@@ -523,6 +525,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 					btnDeleteSelectedContentVersion.setEnabled(true);
 				}
 				if (dropdownEnabled) {
+					UIConstants.setWorker(true);
 					load(loadedViewComponentValue, true);
 				}
 			} catch (Exception exe) {

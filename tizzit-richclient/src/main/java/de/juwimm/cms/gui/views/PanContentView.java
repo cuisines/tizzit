@@ -243,6 +243,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		}
 
 		public void stateChanged(ChangeEvent e) {
+			UIConstants.setWorker(true);
 			if (Constants.EDIT_CONTENT && lastIndex == 1) {
 				int i = JOptionPane.showConfirmDialog(panTab, rb.getString("dialog.wantToSave"), rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (i == JOptionPane.YES_OPTION) {
@@ -270,8 +271,8 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				// sometimes an ArrayIndexOutOfBoundsException occurs
 			}
 			if (panTab.getSelectedIndex() == 1) {
+				UIConstants.setWorker(true);
 				//m_Pnl.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-
 				panContent.setEditorPane(txtEditor);
 				panContent.load(viewComponent, false);
 
@@ -358,6 +359,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 
 	public synchronized void load(ViewComponentValue value) {
 		if (getSaveStatus()) {
+			UIConstants.setWorker(true);
 			boolean showFrameset = Parameters.getBooleanParameter(Parameters.PARAM_SHOW_PREVIEW_FRAMESET);
 			radioPreviewFrameset.setVisible(showFrameset);
 			radioPreviewWithoutFrame.setVisible(showFrameset);
