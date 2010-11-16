@@ -85,7 +85,6 @@ public class GenericReader extends AbstractCacheableReader implements Configurab
 		if (log.isDebugEnabled()) log.debug("generate() -> begin");
 		try {
 			this.reader.setOutputStream(super.out);
-			this.reader.generate();
 			if (this.reader != null) this.reader.generate();
 		} catch (IOException ex) {
 			throw ex;
