@@ -112,7 +112,8 @@ CREATE TABLE "DOCUMENT" (
 	"VIEW_COMPONENT_ID_FK" NUMBER(10) NULL,
 	PRIMARY KEY (document_id));
 CREATE INDEX idx_document_unit_id_fk ON document (unit_id_fk);
-CREATE INDEX idx_document_view_component_id_fk ON document (view_component_id_fk);
+/* change the identifier cause it was too long */
+CREATE INDEX idx_document_view_comp_id_fk ON document (view_component_id_fk);
 
 CREATE TABLE "EDITION" (
 	"EDITION_ID" NUMBER(10) NOT NULL, 
@@ -156,7 +157,6 @@ CREATE TABLE "HOST" (
 	"UNIT_ID_FK" NUMBER(10) NULL, 
 	"REDIRECT_URL" VARCHAR2(255) NULL, 
 	"REDIRECT_HOST_NAME_ID_FK" VARCHAR2(255) NULL,
-	"LIVESERVER" NUMBER(5) DEFAULT '0' NULL,
 	PRIMARY KEY (host_name));
 CREATE INDEX idx_host_site_id_fk ON host (site_id_fk);
 CREATE INDEX idx_host_startpage_vc_id_fk ON host (startpage_vc_id_fk);
@@ -197,7 +197,7 @@ CREATE TABLE "PICTURE" (
 	"VIEW_COMPONENT_ID_FK" NUMBER(10) NULL,
 	PRIMARY KEY (picture_id));
 CREATE INDEX idx_picture_unit_id_fk ON picture (unit_id_fk);
-CREATE INDEX idx_picture_view_component_id_fk ON picture (view_component_id_fk);
+CREATE INDEX idx_picture_view_comp_id_fk ON picture (view_component_id_fk);
 
 CREATE TABLE "ROLE" (
 	"ROLE_ID" VARCHAR2(255) NOT NULL,
@@ -503,7 +503,7 @@ INSERT INTO role (role_id) VALUES ('changeXmlSearchIndexed');
 INSERT INTO role (role_id) VALUES ('updatePageLastModifiedDate');
 
 -- create a site
-INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name, mandator_dir) VALUES ('1', '1', 'test', 'www.test.de', "/mandatordir/dcf");
+INSERT INTO site (root_unit_id_fk, site_id, site_short, site_name, mandator_dir) VALUES ('1', '1', 'test', 'www.test.de', '/mandatordir/dcf');
 
 -- create a unit
 INSERT INTO unit (unit_id, last_modified_date, name, site_id_fk) VALUES ('1', '1', 'erste rootunit', '1');
