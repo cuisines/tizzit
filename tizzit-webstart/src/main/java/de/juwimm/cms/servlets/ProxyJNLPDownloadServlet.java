@@ -54,6 +54,8 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 	private static final String SMTPHostKey = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.SMTPHost";
 	private static final String fromKey = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.from";
 	private static final String toKey = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.to";
+	private static final String SMTP_USR = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.SMTPUsername";
+	private static final String SMTP_PW = "tizzitPropertiesBeanSpring.clientMailAppenderConfig.SMTPPassword";
 
 	private static Logger log = Logger.getLogger(ProxyJNLPDownloadServlet.class);
 	private static final String MAX_HEAP = "max-heap-size=\"";
@@ -141,6 +143,8 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 				addLog4jPropertyArgument(clientMailAppenderProperties,SMTPHostKey);
 				addLog4jPropertyArgument(clientMailAppenderProperties,fromKey);
 				addLog4jPropertyArgument(clientMailAppenderProperties,toKey);
+				addLog4jPropertyArgument(clientMailAppenderProperties,SMTP_USR);
+				addLog4jPropertyArgument(clientMailAppenderProperties,SMTP_PW);
 				clientMailAppenderProperties.append("\"");
 				newJnlp = newJnlp.replace(PLACEHOLDER_LOG4J_PROPERTIES, clientMailAppenderProperties.toString());
 
