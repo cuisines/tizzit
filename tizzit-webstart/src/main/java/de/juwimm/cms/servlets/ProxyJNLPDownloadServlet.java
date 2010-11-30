@@ -59,7 +59,7 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 	private static final String MAX_HEAP = "max-heap-size=\"";
 	private static final String INITIAL_HEAP = "initial-heap-size=\"";
 	private Properties props = null;
-	private String clientMailAppenderProperties = "clientMailAppenderProperties=\"";
+	//private String clientMailAppenderProperties = "clientMailAppenderProperties=\"";
 	private String serverHost = null;
 	private String serverPort = null;
 
@@ -137,11 +137,12 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 
 				//mail appender argument
 				//should be log4jProperties="k1=v1;k2=v2"			
-				addLog4jPropertyArgument(SMTPHostKey);
-				addLog4jPropertyArgument(fromKey);
-				addLog4jPropertyArgument(toKey);
-				clientMailAppenderProperties += "\"";
-				newJnlp = newJnlp.replace(PLACEHOLDER_LOG4J_PROPERTIES, clientMailAppenderProperties);
+				StringBuilder clientMailAppenderProperties = new StringBuilder("clientMailAppenderProperties=\"");
+				addLog4jPropertyArgument(clientMailAppenderProperties,SMTPHostKey);
+				addLog4jPropertyArgument(clientMailAppenderProperties,fromKey);
+				addLog4jPropertyArgument(clientMailAppenderProperties,toKey);
+				clientMailAppenderProperties.append("\"");
+				newJnlp = newJnlp.replace(PLACEHOLDER_LOG4J_PROPERTIES, clientMailAppenderProperties.toString());
 
 				if (isMacClient(req)) {
 					newJnlp = this.cutMemorySettings(newJnlp);
@@ -162,7 +163,7 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 		}
 	}
 
-	private void addLog4jPropertyArgument(String propertyKey) {
+	private void addLog4jPropertyArgument(StringBuilder clientMailAppenderProperties,  String propertyKey) {
 		String propertyValue = props.getProperty(propertyKey);
 		if (propertyValue == null || "".equals(propertyValue)) {
 			log.warn("Property " + propertyKey + "is missing from tizzit.properties");
@@ -170,7 +171,7 @@ public class ProxyJNLPDownloadServlet extends HttpServlet implements javax.servl
 		}
 		//properties of the email appender e.g. log4j.appender.email.BufferSize=1
 		propertyKey = propertyKey.replace(tizzitPropetiesMailAppenderPrefix, log4jPrefix);
-		this.clientMailAppenderProperties += propertyKey + "=" + propertyValue + ";";
+		clientMailAppenderProperties.append(propertyKey + "=" + propertyValue + ";");
 	}
 
 	@Override
