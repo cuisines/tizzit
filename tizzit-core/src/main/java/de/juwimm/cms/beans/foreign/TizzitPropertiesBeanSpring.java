@@ -318,6 +318,25 @@ public class TizzitPropertiesBeanSpring {
 		private String SMTPHost;
 		private String from;
 		private String to;
+		/* for SMTP user authentication */
+		private String SMTPPassword;
+		private String SMTPUsername;
+
+		public String getSMTPPassword() {
+			return SMTPPassword;
+		}
+
+		public void setSMTPPassword(String sMTPPassword) {
+			SMTPPassword = sMTPPassword;
+		}
+
+		public String getSMTPUsername() {
+			return SMTPUsername;
+		}
+
+		public void setSMTPUsername(String sMTPUsername) {
+			SMTPUsername = sMTPUsername;
+		}
 
 		public String getSMTPHost() {
 			return SMTPHost;
