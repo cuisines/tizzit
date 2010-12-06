@@ -1831,7 +1831,7 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 			Collection vds = getViewDocumentHbmDao().findAll(edition.getSiteId());
 			for (int unitc = 0; unitc < units.size(); unitc++) {
 				for (int vdc = 0; vdc < vds.size(); vdc++) {
-					ViewComponentHbm unitRoot = getViewComponentHbmDao().find4Unit(unitc, vdc);
+					ViewComponentHbm unitRoot = getViewComponentHbmDao().find4Unit(Integer.valueOf(unitc), Integer.valueOf(vdc));
 					if (unitRoot != null) {
 						unitRoot.setUnitOnline();
 					}

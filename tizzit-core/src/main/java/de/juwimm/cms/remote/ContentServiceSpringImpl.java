@@ -72,6 +72,7 @@ import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
+import de.juwimm.cms.search.beans.SearchengineDeleteService;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -92,6 +93,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	public static final byte MAX_NO_OF_CONTENT_VERSIONS_PER_PAGE = 10;
 	@Autowired
 	EditionCronService editionCronService;
+	@Autowired
+	private SearchengineDeleteService searchengineDeleteService;
+
 
 	public class DocumentCountWrapper {
 		private HashMap<Integer, Integer> deltaDocuments = null;
@@ -121,6 +125,15 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null, null);
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
 		pictureHbm.setUnit(unit);
+		pictureHbm = getPictureHbmDao().create(pictureHbm);
+		return pictureHbm.getPictureId();
+	}
+
+	@Override
+	protected Integer handleAddPicture2ViewComponent(Integer viewComponentId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null, null);
+		ViewComponentHbm viewComponent = super.getViewComponentHbmDao().load(viewComponentId);
+		pictureHbm.setViewComponent(viewComponent);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
 		return pictureHbm.getPictureId();
 	}
@@ -967,11 +980,18 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#importDocument(java.lang.Integer, java.lang.String, java.lang.String, java.io.InputStream)
 	 */
 	@Override
-	protected Integer handleAddOrUpdateDocument(Integer unitId, String documentName, String mimeType, InputStream documentData, Integer documentId) throws Exception {
+	protected Integer handleAddOrUpdateDocument(Integer unitId, Integer viewComponentId, String documentName, String mimeType, InputStream documentData, Integer documentId) throws Exception {
 		try {
 			if (log.isDebugEnabled()) log.debug("addOrUpdateDocument for user " + AuthenticationHelper.getUserName());
 
-			UnitHbm unit = getUnitHbmDao().load(unitId);
+			UnitHbm unit = null;
+			ViewComponentHbm viewComponent = null;
+			if (viewComponentId != null) {
+				viewComponent = getViewComponentHbmDao().load(viewComponentId);
+			}
+			if (unitId != null) {
+				unit = getUnitHbmDao().load(unitId);
+			}
 			DocumentHbm doc = null;
 
 			File tmp = this.storeTempFile(documentData, documentName);
@@ -983,6 +1003,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
 				doc.setUnit(unit);
+				doc.setViewComponent(viewComponent);
 				doc = getDocumentHbmDao().create(doc);
 				doc.setDocument(b);
 			} else {
@@ -1060,6 +1081,17 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		if (viewComponents.size() > 0) {
 			throw new UserException("validation exception");
 		}
+		DocumentHbm documentHbm=super.getDocumentHbmDao().load(documentId);
+		Integer siteId=null;
+		if(documentHbm.getUnit()==null){
+			Integer unitId=documentHbm.getViewComponent().getUnit4ViewComponent();
+			UnitHbm unitHbm=super.getUnitHbmDao().load(unitId);
+			siteId=unitHbm.getSite().getSiteId();
+		} else {
+			siteId=documentHbm.getUnit().getSite().getSiteId();
+		}
+		searchengineDeleteService.deleteDocument(documentHbm.getDocumentId(), siteId);
+
 		super.getDocumentHbmDao().remove(documentId);
 	}
 
@@ -1327,6 +1359,11 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
 		return getPictureHbmDao().getIdForNameAndUnit(unitId, name);
+	}
+
+	@Override
+	protected Integer handleGetPictureIdForViewComponentAndName(Integer viewComponentId, String name) throws Exception {
+		return getPictureHbmDao().getIdForNameAndViewComponent(name, viewComponentId);
 	}
 
 	@Override
@@ -1909,8 +1946,14 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Set handleGetDocumentUsage(Integer documentId) throws Exception {
 		DocumentHbm document = super.getDocumentHbmDao().load(documentId);
+		Integer unitId=null;
+		if(document.getUnit()==null){
+			unitId=document.getViewComponent().getUnit4ViewComponent();
+		} else {
+			unitId=document.getUnit().getUnitId();
+		}
 		Set<ViewComponentValue> result = new HashSet<ViewComponentValue>();
-		Map<ViewComponentHbm, List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(document.getUnit().getUnitId());
+		Map<ViewComponentHbm, List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(unitId);
 		for (Entry<ViewComponentHbm, List<ContentVersionHbm>> contentVersion : contentVersions.entrySet()) {
 			List<ContentVersionHbm> usedContentVersions = getContentVersionUsingResource(contentVersion.getValue(), documentId, "document", "src");
 			if (usedContentVersions != null && usedContentVersions.size() > 0) {
@@ -1923,8 +1966,14 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected Set handleGetPictureUsage(Integer pictureId) throws Exception {
 		PictureHbm picture = getPictureHbmDao().load(pictureId);
+		Integer unitId=null;
+		if(picture.getUnit()==null){
+			unitId=picture.getViewComponent().getUnit4ViewComponent();
+		} else {
+			unitId=picture.getUnit().getUnitId();
+		}
 		Set<ViewComponentValue> result = new HashSet<ViewComponentValue>();
-		Map<ViewComponentHbm, List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(picture.getUnit().getUnitId());
+		Map<ViewComponentHbm, List<ContentVersionHbm>> contentVersions = getAllContentVersions4Unit(unitId);
 		for (Entry<ViewComponentHbm, List<ContentVersionHbm>> contentVersion : contentVersions.entrySet()) {
 			List<ContentVersionHbm> usedContentVersions = getContentVersionUsingResource(contentVersion.getValue(), pictureId, "picture", "description");
 			if (usedContentVersions != null && usedContentVersions.size() > 0) {
@@ -2031,4 +2080,44 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		}
 
 	}
+
+	@Override
+	protected PictureSlimstValue[] handleGetAllSlimPictures4View(Integer viewComponentId) throws Exception {
+		PictureSlimstValue[] pvArr = null;
+		try {
+			Collection coll = super.getPictureHbmDao().findAllPerViewComponent(viewComponentId);
+			Iterator it = coll.iterator();
+			int siz = coll.size();
+			pvArr = new PictureSlimstValue[siz];
+			for (int i = 0; i < siz; i++) {
+				PictureHbm pic = (PictureHbm) it.next();
+				pvArr[i] = pic.getSlimstValue();
+			}
+			return pvArr;
+		} catch (Exception e) {
+			throw new UserException(e.getMessage(), e);
+		}
+	}
+
+	@Override
+	protected DocumentSlimValue[] handleGetAllSlimDocuments4ViewComponent(Integer viewComponentId) throws Exception {
+		DocumentSlimValue[] dvArr = null;
+		try {
+			Collection<DocumentHbm> coll = getDocumentHbmDao().findAllPerViewComponent(viewComponentId);
+			dvArr = new DocumentSlimValue[coll.size()];
+			int i = 0;
+			for (DocumentHbm doc : coll) {
+				dvArr[i++] = doc.getSlimValue();
+			}
+			return dvArr;
+		} catch (Exception e) {
+			throw new UserException(e.getMessage());
+		}
+	}
+
+	@Override
+	protected Integer handleGetDocumentIdForNameAndViewComponent(String name, Integer viewComponentId) throws Exception {
+		return getDocumentHbmDao().getIdForNameAndViewComponent(name, viewComponentId);
+	}
+
 }

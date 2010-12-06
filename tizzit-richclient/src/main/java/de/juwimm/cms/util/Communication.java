@@ -1270,8 +1270,20 @@ public class Communication implements ExitListener, ActionListener {
 		return dsv;
 	}
 
+	public DocumentSlimValue[] getAllSlimDocumentValues4ViewComponent(Integer viewComponentId) throws Exception {
+		DocumentSlimValue[] dsv = getClientService().getAllSlimDocumentValues4ViewComponent(viewComponentId);
+		if (dsv == null) dsv = new DocumentSlimValue[0];
+		return dsv;
+	}
+
 	public PictureSlimstValue[] getAllSlimPictureValues(Integer unitId) throws Exception {
 		PictureSlimstValue[] psv = getClientService().getAllSlimPictures4Unit(unitId);
+		if (psv == null) psv = new PictureSlimstValue[0];
+		return psv;
+	}
+
+	public PictureSlimstValue[] getAllSlimPictureValues4ViewComponent(Integer viewComponentId) throws Exception {
+		PictureSlimstValue[] psv = getClientService().getAllSlimPictures4View(viewComponentId);
 		if (psv == null) psv = new PictureSlimstValue[0];
 		return psv;
 	}
@@ -1449,6 +1461,10 @@ public class Communication implements ExitListener, ActionListener {
 
 	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
 		return getClientService().addPicture2Unit(Integer.valueOf(unitId), thumbnail, picture, mimeType, altText, pictureName, title);
+	}
+
+	public int addPicture2ViewComponent(int viewComponentId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		return getClientService().addPicture2ViewComponent(Integer.valueOf(viewComponentId), thumbnail, picture, mimeType, altText, pictureName, title);
 	}
 
 	public int addPicture2Unit(int unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName, String title) throws Exception {
@@ -2538,17 +2554,41 @@ public class Communication implements ExitListener, ActionListener {
 		}
 	}
 
-	public Integer addOrUpdateDocument(File file, int unitId, String fileName, String mimeType, Integer documentId) {
+	/**
+	 * Adds a document in the database for a given unit or viewComponent.
+	 * @param file
+	 * @param unitId
+	 * @param viewComponentId
+	 * @param fileName
+	 * @param mimeType
+	 * @param documentId
+	 * @return
+	 */
+	public Integer addOrUpdateDocument(File file, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId) {
 		InputStream fis = null;
 		try {
 			fis = new BufferedInputStream(new FileInputStream(file));
-			return getClientService().addOrUpdateDocument(fis, unitId, fileName, mimeType, documentId);
+			return getClientService().addOrUpdateDocument(fis, unitId, viewComponentId, fileName, mimeType, documentId);
 		} catch (Exception re) {
 			log.error("Error importing document " + re.getMessage());
 		} finally {
 			IOUtils.closeQuietly(fis);
 		}
 		return null;
+	}
+
+	/**
+	 * Adds a document in the database for a given unit.
+	 * 
+	 * @param file
+	 * @param unitId
+	 * @param fileName
+	 * @param mimeType
+	 * @param documentId
+	 * @return
+	 */
+	public Integer addOrUpdateDocument(File file, Integer unitId, String fileName, String mimeType, Integer documentId) {
+		return addOrUpdateDocument(file, unitId, null, fileName, mimeType, documentId);
 	}
 
 	/*
@@ -2602,8 +2642,16 @@ public class Communication implements ExitListener, ActionListener {
 		return getClientService().getPictureIdForUnitAndName(unitId, name);
 	}
 
+	public Integer getPictureIdForViewComponentAndName(Integer viewComponentId, String name) {
+		return getClientService().getPictureIdForViewComponentAndName(viewComponentId, name);
+	}
+
 	public Integer getDocumentIdForNameAndUnit(String name, Integer unitId) {
 		return getClientService().getDocumentIdForNameAndUnit(name, unitId);
+	}
+
+	public Integer getDocumentIdForNameAndViewComponent(String name, Integer viewComponentId) {
+		return getClientService().getDocumentIdForNameAndViewComponent(name, viewComponentId);
 	}
 
 	public ViewComponentValue[] moveViewComponentsUp(Integer[] viewComponentsId) {

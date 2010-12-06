@@ -747,6 +747,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
+	protected Integer handleAddPicture2ViewComponent(Integer viewComponentId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
+		return getContentServiceSpring().addPicture2ViewComponent(Integer.valueOf(viewComponentId), thumbnail, picture, mimeType, altText, pictureName, title).intValue();
+	}
+
+	@Override
 	protected int handleAddPictureWithPreview2Unit(int unitId, byte[] thumbnail, byte[] picture, byte[] preview, String mimeType, String altText, String pictureName, String title) throws Exception {
 		return getContentServiceSpring().addPictureWithPreview2Unit(Integer.valueOf(unitId), thumbnail, picture, preview, mimeType, altText, pictureName, title).intValue();
 	}
@@ -1758,9 +1763,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected Integer handleAddOrUpdateDocument(InputStream inputStream, Integer unitId, String fileName, String mimeType, Integer documentId) throws Exception {
+	protected Integer handleAddOrUpdateDocument(InputStream inputStream, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId) throws Exception {
 		try {
-			return getContentServiceSpring().addOrUpdateDocument(Integer.valueOf(unitId), fileName, mimeType, inputStream, documentId);
+			return getContentServiceSpring().addOrUpdateDocument(unitId,viewComponentId, fileName, mimeType, inputStream, documentId);
 		} catch (Exception re) {
 			log.error("Error importing document", re);
 		}
@@ -1793,6 +1798,11 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected Integer handleGetPictureIdForUnitAndName(Integer unitId, String name) throws Exception {
 		return getContentServiceSpring().getPictureIdForUnitAndName(unitId, name);
+	}
+
+	@Override
+	protected Integer handleGetPictureIdForViewComponentAndName(Integer viewComponentId, String name) throws Exception {
+		return getContentServiceSpring().getPictureIdForViewComponentAndName(viewComponentId, name);
 	}
 
 	@Override
@@ -2021,6 +2031,21 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected List handleGetViewComponentsForSearch(Integer unitId, Integer viewDocumentId, String searchValue) throws Exception {
 		return getViewServiceSpring().getViewComponentsForSearch(unitId, viewDocumentId, searchValue);
+	}
+
+	@Override
+	protected PictureSlimstValue[] handleGetAllSlimPictures4View(int viewComponentId) throws Exception {
+		return getContentServiceSpring().getAllSlimPictures4View(viewComponentId);
+	}
+
+	@Override
+	protected DocumentSlimValue[] handleGetAllSlimDocumentValues4ViewComponent(Integer viewComponentId) throws Exception {
+		return getContentServiceSpring().getAllSlimDocuments4ViewComponent(viewComponentId);
+	}
+
+	@Override
+	protected Integer handleGetDocumentIdForNameAndViewComponent(String name, Integer viewComponentId) throws Exception {
+		return getContentServiceSpring().getDocumentIdForNameAndViewComponent(name, viewComponentId);
 	}
 
 }

@@ -231,6 +231,20 @@ public class SearchengineService {
 					// -- Indexing through No-Messaging
 					doc.setUpdateSearchIndex(true);
 				}
+				
+				Collection<ViewComponentHbm> allViewComponentsForUnit=new ArrayList<ViewComponentHbm>();
+				Collection<ViewComponentHbm> rootViewComponents=getViewComponentHbmDao().find4Unit(unit.getUnitId());
+				for (ViewComponentHbm viewComponentHbm : rootViewComponents) {
+					allViewComponentsForUnit.addAll(viewComponentHbm.getAllChildrenOfUnit());
+				}
+				docs=new ArrayList<DocumentHbm>();
+				for (ViewComponentHbm viewComponentHbm : allViewComponentsForUnit) {
+					docs.addAll(getDocumentHbmDao().findAllPerViewComponent(viewComponentHbm.getViewComponentId()));
+				}
+				for (DocumentHbm doc : docs) {
+					// -- Indexing through No-Messaging
+					doc.setUpdateSearchIndex(true);
+				}
 			}
 		} catch (Exception e) {
 			log.error("Caught a " + e.getClass() + "\n with message: " + e.getMessage());

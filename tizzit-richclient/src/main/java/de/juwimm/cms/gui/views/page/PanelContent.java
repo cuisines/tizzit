@@ -57,9 +57,12 @@ import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.GetContentHandler;
 import de.juwimm.cms.content.frame.FrmStickyPad;
+import de.juwimm.cms.content.panel.util.PopupDocuments;
+import de.juwimm.cms.content.panel.util.PopupPictures;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
 import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.gui.controls.LoadableViewComponentPanel;
+import de.juwimm.cms.gui.controls.PopupComponent;
 import de.juwimm.cms.gui.event.ExitEvent;
 import de.juwimm.cms.gui.event.ExitListener;
 import de.juwimm.cms.gui.views.PanContentView;
@@ -99,11 +102,15 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 	private final JLabel lblHeader = new JLabel();
 	private final JTextField txtHeadline = new JTextField();
 	private final JButton btnDeleteAllOldContentVersions = new JButton();
+	private final JButton btnAddPicture = new JButton();
+	private final JButton btnAddDocument = new JButton();
 	private final JLabel lblContentVersions = new JLabel();
 	private final JButton btnDeleteSelectedContentVersion = new JButton();
 	private final JComboBox cboContentVersions = new JComboBox();
 	private final JPanel panContentHeader = new JPanel(); // contains the ContentVersion-DropDown and the Page-Title
 	private JEditorPane txtEditor = null;
+	private PopupComponent popupAddDocument;
+	private PopupComponent popupAddPicture;
 
 	private boolean loadFromDropDown = false;
 	private boolean dropdownEnabled = false;
@@ -127,6 +134,8 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 			btnDeleteSelectedContentVersion.setText(rb.getString("panel.panelContent.btnDeleteSelectedContentVersion"));
 			lblContentVersions.setText(rb.getString("panel.panelContent.lblContentVersions"));
 			btnDeleteAllOldContentVersions.setText(rb.getString("panel.panelContent.btnDeleteAllOldContentVersions"));
+			btnAddPicture.setText("Add picture");
+			btnAddDocument.setText("Add document");
 			lblHeader.setText(rb.getString("panel.panelContent.lblHeader"));
 			jScrollpane.setDoubleBuffered(true);
 			jScrollpane.setWheelScrollingEnabled(false);
@@ -177,6 +186,27 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 				btnDeleteAllOldContentVersionsActionPerformed(e);
 			}
 		});
+		btnAddPicture.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				if (popupAddPicture == null)
+					showAddPicturePopup();
+				else {
+					popupAddPicture.hide();
+					popupAddPicture = null;
+				}
+			}
+		});
+		btnAddDocument.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				if (popupAddDocument == null || !popupAddDocument.isVisible())
+					showAddDocumentPopup();
+				else {
+					popupAddDocument.hide();
+				}
+			}
+		});
 		this.setLayout(new BorderLayout());
 
 		lblHeader.setText("Überschrift / Seitentitel");
@@ -193,10 +223,20 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 		panContentHeader.add(lblContentVersions, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(3, 6, 0, 12), 4, 0));
 		panContentHeader.add(btnDeleteAllOldContentVersions, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0));
 		panContentHeader.add(btnDeleteSelectedContentVersion, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0));
+		panContentHeader.add(btnAddDocument, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0));
+		panContentHeader.add(btnAddPicture, new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 0, 0, 5), 0, 0));
 		panContentHeader.add(txtHeadline, new GridBagConstraints(1, 1, 4, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(7, 0, 6, 5), 489, 0));
 		panContentHeader.add(lblHeader, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(7, 6, 6, 0), 6, 4));
 		this.add(jScrollpane, BorderLayout.CENTER);
 		jPanel1.add(panContentHeader, BorderLayout.NORTH);
+	}
+
+	protected void showAddDocumentPopup() {
+		PopupDocuments popupDocuments=new PopupDocuments(btnAddDocument);
+	}
+
+	protected void showAddPicturePopup() {
+		PopupPictures popupPictures=new PopupPictures(btnAddPicture, loadedViewComponentValue.getViewComponentId());
 	}
 
 	public void checkIn() { // this is for cancel
@@ -579,6 +619,10 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 
 	public String getTemplate() {
 		return contentValue.getTemplate();
+	}
+
+	public Integer getViewComponentId() {
+		return loadedViewComponentValue.getViewComponentId();
 	}
 
 	void btnDeleteSelectedContentVersionActionPerformed(ActionEvent e) {

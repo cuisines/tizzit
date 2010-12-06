@@ -39,6 +39,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -64,6 +65,7 @@ import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.gui.table.DocumentTableModel;
 import de.juwimm.cms.gui.table.TableSorter;
+import de.juwimm.cms.gui.views.PanContentView;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -89,9 +91,11 @@ public class PanDocuments extends JPanel {
 	private final Integer intRootUnit;
 	private int anzahlItems;
 	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+	private final ContentManager contentManager = ((ContentManager) getBean(Beans.CONTENT_MANAGER));
 	private final JComboBox cboRegion = new JComboBox();
 	private final JButton btnAdd = new JButton();
 	private final JButton btnUpdate = new JButton();
+	private final JButton btnPreview = new JButton();
 	private final JPanel panLinkName = new JPanel();
 	private final JTextField txtDocumentDesc = new JTextField();
 	private final JLabel lbLinkDescription = new JLabel();
@@ -106,16 +110,21 @@ public class PanDocuments extends JPanel {
 	private JToggleButton btnSymbolView = null;
 	private int maxButtonWidth = 0;
 	private boolean isDataActualization = false;
+	boolean showRegionCombo = true;
 	private String selectedDocName;
 	private String mimeType = "";
+	private Integer viewComponentId;
 
-	public PanDocuments() {
+	public PanDocuments(boolean showRegionCombo) {
+		this.showRegionCombo = showRegionCombo;
+		viewComponentId = PanContentView.getInstance().getViewComponent().getViewComponentId();
 		try {
 			jbInit();
 			tblDocuments.getSelectionModel().addListSelectionListener(new DocumentListSelectionListener());
 			tblDocuments.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			btnDelete.setText(Messages.getString("panel.content.documents.deleteDocument"));
 			btnAdd.setText(Messages.getString("panel.content.documents.addDocument"));
+			btnPreview.setText(Messages.getString("dialog.preview"));
 			btnUpdate.setText(Messages.getString("panel.content.documents.updateDocument"));
 			btnUpdate.setVisible(false);
 			lbLinkDescription.setText(Messages.getString("panel.content.documents.linkdescription"));
@@ -137,16 +146,25 @@ public class PanDocuments extends JPanel {
 		});
 		intActUnit = new Integer(((ContentManager) getBean(Beans.CONTENT_MANAGER)).getActUnitId());
 		intRootUnit = new Integer(((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId());
-		this.cboRegion.addItem(new CboModel(Messages.getString("panel.content.documents.files4ThisUnit"), intActUnit));
-		this.cboRegion.addItem(new CboModel(Messages.getString("panel.content.documents.files4AllUnits"), intRootUnit));
+		this.cboRegion.addItem(new CboModel(Messages.getString("panel.content.documents.files4ThisUnit"), intActUnit, true));
+		this.cboRegion.addItem(new CboModel(Messages.getString("panel.content.documents.files4AllUnits"), intRootUnit, true));
+		this.cboRegion.addItem(new CboModel(Messages.getString("panel.content.documents.files4ThisComponent"), viewComponentId, false));
+
 		cboRegion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				regionSelected();
 			}
 		});
+		cboRegion.setSelectedIndex(2);
+
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnAddActionPerformed(e);
+			}
+		});
+		btnPreview.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnPreviewActionPerformed(e);
 			}
 		});
 		btnUpdate.addActionListener(new ActionListener() {
@@ -167,8 +185,10 @@ public class PanDocuments extends JPanel {
 	public final class CboModel {
 		private final String strView;
 		private final Integer intRegionId;
+		private final boolean isUnit;
 
-		public CboModel(String view, Integer regionid) {
+		public CboModel(String view, Integer regionid, boolean isUnit) {
+			this.isUnit = isUnit;
 			this.strView = view;
 			this.intRegionId = regionid;
 		}
@@ -233,12 +253,16 @@ public class PanDocuments extends JPanel {
 		panFileAction.add(btnUpdate, null);
 		panFileAction.add(btnAdd, null);
 		panFileAction.add(btnDelete, null);
+		panFileAction.add(btnPreview, null);
 		panBottom.add(panLinkName, BorderLayout.NORTH);
 		panLinkName.add(lbLinkDescription, BorderLayout.WEST);
 		panLinkName.add(txtDocumentDesc, BorderLayout.CENTER);
 		panBottom.add(cbxDisplayTypeInline, BorderLayout.WEST);
 		this.add(scrollPane, BorderLayout.CENTER);
-		this.add(cboRegion, BorderLayout.NORTH);
+		if (showRegionCombo) {
+			this.add(cboRegion, BorderLayout.NORTH);
+		}
+
 		this.add(getViewSelectPan(), BorderLayout.WEST);
 		scrollPane.getViewport().add(tblDocuments, null);
 		scrollPane.setTransferHandler(new FileTransferHandler(this));
@@ -251,7 +275,12 @@ public class PanDocuments extends JPanel {
 			tblDocumentSorter = new TableSorter(tblDocumentsModel, tblDocuments.getTableHeader());
 			tblDocuments.getSelectionModel().clearSelection();
 			tblDocuments.setModel(tblDocumentSorter);
-			DocumentSlimValue[] dsva = comm.getAllSlimDocumentValues(unit);
+			DocumentSlimValue[] dsva = null;
+			if (((CboModel) cboRegion.getSelectedItem()).isUnit) {
+				dsva = comm.getAllSlimDocumentValues(unit);
+			} else {
+				dsva = comm.getAllSlimDocumentValues4ViewComponent(viewComponentId);
+			}
 			panDocumentButtons.removeAll();
 			anzahlItems = 0;
 			bgrp = new ButtonGroup();
@@ -315,13 +344,16 @@ public class PanDocuments extends JPanel {
 				if (comm.isUserInRole(UserRights.SITE_ROOT) || intActUnit.equals(intRootUnit)) {
 					this.btnDelete.setVisible(true);
 					this.btnAdd.setVisible(true);
+					this.btnPreview.setVisible(true);
 				} else {
 					this.btnDelete.setVisible(false);
 					this.btnAdd.setVisible(false);
+					this.btnPreview.setVisible(false);
 				}
 			} else {
 				this.btnDelete.setVisible(true);
 				this.btnAdd.setVisible(true);
+				this.btnPreview.setVisible(true);
 			}
 		} catch (Exception ex) {
 		}
@@ -372,8 +404,29 @@ public class PanDocuments extends JPanel {
 			public void run() {
 				CboModel cb = (CboModel) cboRegion.getSelectedItem();
 				isDataActualization = false;
-				upload(cb.getView(), cb.getRegionId(), null);
+				if (cb.isUnit) {
+					upload(cb.getView(), cb.getRegionId(), null, intDocId);
+				} else {
+					upload(cb.getView(), null, cb.getRegionId(), intDocId);
+				}
 				loadThumbs(cb.getRegionId());
+			}
+		});
+	}
+
+	private void btnPreviewActionPerformed(ActionEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				DocumentSlimValue currDoc = null;
+				String acc = bgrp.getSelection().getActionCommand();
+				int rowInModel = tblDocumentsModel.getRowForDocument(Integer.valueOf(acc));
+				if (rowInModel >= 0) {
+					currDoc = (DocumentSlimValue) tblDocumentsModel.getValueAt(rowInModel, 4);
+				}
+				String tmp = acc;
+				if (currDoc != null && currDoc.getDocumentName() != null && !"".equalsIgnoreCase(currDoc.getDocumentName())) {
+					tmp += " (" + currDoc.getDocumentName() + ")";
+				}
 			}
 		});
 	}
@@ -384,13 +437,17 @@ public class PanDocuments extends JPanel {
 				CboModel cb = (CboModel) cboRegion.getSelectedItem();
 				/**overwrite the content of the document*/
 				isDataActualization = true;
-				upload(cb.getView(), cb.getRegionId(), intDocId);
+				if (cb.isUnit) {
+					upload(cb.getView(), cb.getRegionId(), null, intDocId);
+				} else {
+					upload(cb.getView(), null, cb.getRegionId(), intDocId);
+				}
 				loadThumbs(cb.getRegionId());
 			}
 		});
 	}
 
-	private void upload(String prosa, Integer unit, Integer documentId) {
+	private void upload(String prosa, Integer unit, Integer viewComponentId, Integer documentId) {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		JFileChooser fc = new JFileChooser();
 		int ff = fc.getChoosableFileFilters().length;
@@ -407,7 +464,7 @@ public class PanDocuments extends JPanel {
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File[] files = fc.getSelectedFiles();
-			uploadFiles(files, unit, documentId);
+			uploadFiles(files, unit, viewComponentId, documentId);
 			Constants.LAST_LOCAL_UPLOAD_DIR = fc.getCurrentDirectory();
 		}
 		this.setCursor(Cursor.getDefaultCursor());
@@ -419,7 +476,7 @@ public class PanDocuments extends JPanel {
 	 * @param unit
 	 * @param documentId
 	 */
-	public void uploadFiles(File[] files, int unit, Integer documentId) {
+	public void uploadFiles(File[] files, Integer unit, Integer viewComponentId, Integer documentId) {
 		if ((files != null) && (files.length > 0)) {
 			for (int i = (files.length - 1); i >= 0; i--) {
 				File file = files[i];
@@ -435,11 +492,18 @@ public class PanDocuments extends JPanel {
 						mimetype = "application/octet-stream";
 					}
 					prog.setProgress(Messages.getString("panel.content.upload.Uploading"), 50);
-					int existingDocId = comm.getDocumentIdForNameAndUnit(file.getName(), unit);
+					int existingDocId = -1;
+					if (unit != null) {
+						existingDocId = comm.getDocumentIdForNameAndUnit(file.getName(), unit);
+					} else if (viewComponentId != null) {
+						existingDocId = comm.getDocumentIdForNameAndViewComponent(file.getName(), viewComponentId);
+					} else {
+						throw new RuntimeException("There must be at least one of unitId or viewComponentId present in method call");
+					}
 					//this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
 					if (!isDataActualization) {
 						if (existingDocId == 0) {
-							this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId);
 						} else {
 							DlgSaveDocument saveDialog = new DlgSaveDocument(file, unit, file.getName(), mimetype, existingDocId);
 							int frameHeight = 180;
@@ -451,7 +515,7 @@ public class PanDocuments extends JPanel {
 						}
 					} else {
 						if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
-							this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
+							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId);
 						} else if ((existingDocId != 0) && (!file.getName().equalsIgnoreCase(selectedDocName))) {
 							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("dialog.saveDocument.imposibleToOverwrite"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 						}

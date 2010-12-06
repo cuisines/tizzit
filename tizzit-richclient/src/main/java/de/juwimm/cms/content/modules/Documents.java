@@ -44,7 +44,7 @@ import de.juwimm.cms.content.panel.PanLinkButton;
  */
 public class Documents extends AbstractModule {
 	private static Logger log = Logger.getLogger(Documents.class);
-	private PanDocuments pan = new PanDocuments();
+	private PanDocuments pan = new PanDocuments(true);
 	private PanLinkButton panBtn;
 	private boolean imEnabled = true;
 	private boolean displayTypeEditable = false;
@@ -140,7 +140,7 @@ public class Documents extends AbstractModule {
 			} catch (Exception exe) {
 			}
 			try {
-				pan = new PanDocuments();
+				pan = new PanDocuments(true);
 				try {
 					setDescription(XercesHelper.getNodeValue(node));
 				} catch (Exception exe) {
@@ -156,7 +156,7 @@ public class Documents extends AbstractModule {
 			} catch (Exception e) {
 			}
 		} else {
-			pan = new PanDocuments();
+			pan = new PanDocuments(true);
 			pan.setDocumentId(null);
 			pan.setDocumentDescription("");
 		}

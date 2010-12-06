@@ -444,4 +444,9 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 
 	}
 
+	public ViewComponentValue getViewComponent() {
+		return viewComponent;
+	}
+
+	
 }

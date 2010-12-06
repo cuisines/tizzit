@@ -66,6 +66,7 @@ import de.juwimm.cms.content.frame.helper.ImageFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.content.modules.Module;
+import de.juwimm.cms.content.panel.util.PictureUploadUtil;
 import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.util.Communication;
@@ -328,191 +329,54 @@ public class PanPicture extends JPanel {
 	}
 
 	protected void btnUploadActionPerformed(ActionEvent e) {
-		Thread t = new Thread(new Runnable() {
+		PictureUploadUtil util= new PictureUploadUtil(this, rb.getString("panel.content.picture.upload4allUnits"), ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId(), null) {
 
-			public void run() {
-				upload(rb.getString("panel.content.picture.upload4thisUnit"), ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getActUnitId());
+			@Override
+			public int findExistingPicture(String fileName) {
+				return comm.getPictureIdForUnitAndName(getUnitId(), fileName);
 			}
-		});
-		t.setPriority(Thread.NORM_PRIORITY);
-		t.start();
+
+			@Override
+			public void pictureExistsAction(int i) {
+				setPictureId(i);
+				
+			}
+
+			@Override
+			public void pictureSelectedAction(byte[] thumbnail, byte[] picture, String mimeType, String pictureName) throws Exception {
+				Integer unitId=((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId();
+				int retInt = this.comm.addPicture2Unit(unitId, thumbnail, picture, mimeType, "", pictureName, "");
+				setPictureId(retInt);
+			}
+
+		};
+		util.show();
 	}
 
 	protected void btnUploadRootActionPerformed(ActionEvent e) {
-		Thread t = new Thread(new Runnable() {
+		PictureUploadUtil util= new PictureUploadUtil(this, rb.getString("panel.content.picture.upload4allUnits"), ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId(), null){
 
-			public void run() {
-				upload(rb.getString("panel.content.picture.upload4allUnits"), ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId());
+			@Override
+			public int findExistingPicture(String fileName) {
+				Integer unitId=((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId();
+				return comm.getPictureIdForUnitAndName(unitId, fileName);
 			}
-		});
-		t.setPriority(Thread.NORM_PRIORITY);
-		t.start();
-	}
 
-	protected void upload(String prosa, int unit) {
-		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		int retInt = 0;
-		JFileChooser fc = new JFileChooser();
-		int ff = fc.getChoosableFileFilters().length;
-		FileFilter[] fft = fc.getChoosableFileFilters();
-		for (int i = 0; i < ff; i++) {
-			fc.removeChoosableFileFilter(fft[i]);
-		}
-		fc.addChoosableFileFilter(new ImageFilter());
-		fc.setFileView(new ImageFileView());
-		fc.setAccessory(new ImagePreview(fc));
-		fc.setDialogTitle(prosa);
-		fc.setMultiSelectionEnabled(true);
-		fc.setCurrentDirectory(Constants.LAST_LOCAL_UPLOAD_DIR);
-		int returnVal = fc.showDialog(PanPicture.this, rb.getString("panel.content.picture.addPicture"));
-
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File[] files = fc.getSelectedFiles();
-			uploadFiles(files, unit, fc.getCurrentDirectory());
-			this.setCursor(Cursor.getDefaultCursor());
-		} else {
-			this.setCursor(Cursor.getDefaultCursor());
-		}
-	}
-
-	/**
-	 * Upload the selected images
-	 * @param files
-	 * @param unit
-	 * @param localUploadDir
-	 */
-	public void uploadFiles(File[] files, int unit, File localUploadDir) {
-		int retInt = 0;
-		if (files != null) {
-			for (int i = (files.length - 1); i >= 0; i--) {
-				this.lblFile.setVisible(true);
-				this.lblFileName.setVisible(true);
-				this.lblFileName.setText(files[i].getName());
-				Constants.LAST_LOCAL_UPLOAD_DIR = localUploadDir;
-				if (files[i].length() > 4000000) {
-					this.setCursor(Cursor.getDefaultCursor());
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.FileTooBig") + ": " + files[i].getName(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
-					continue;
-				}
-				FrmProgressDialog prog = new FrmProgressDialog(rb.getString("panel.content.picture.addPicture"), rb.getString("panel.content.upload.ParseFile"), 100);
-				prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-				try {
-
-					byte[] bty = getBytesFromFile(files[i]);
-
-					ImageIcon tmpIcon = new ImageIcon(bty);
-					ImageIcon thumbnail = null;
-					if (tmpIcon.getIconWidth() > 90 || tmpIcon.getIconHeight() > 90) {
-						thumbnail = new ImageIcon(tmpIcon.getImage().getScaledInstance(90, -1, Image.SCALE_DEFAULT));
-					} else {
-						thumbnail = tmpIcon;
-					}
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					try {
-						out = manipulateImage(thumbnail.getImage());
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.content.picture.onlyPictures"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
-						return;
-					}
-
-					String fext = Utils.getExtension(files[i]);
-					String mimetype = "image/jpeg";
-					if (fext.equals(Utils.JPEG) || fext.equals(Utils.JPG)) {
-						mimetype = "image/jpeg";
-					} else if (fext.equals(Utils.GIF)) {
-						mimetype = "image/gif";
-					} else if (fext.equals(Utils.TIF) || fext.equals(Utils.TIFF)) {
-						mimetype = "image/tif";
-					}
-
-					prog.setProgress(rb.getString("panel.content.upload.Uploading"), 50);
-					int existingPicId = 0;
-					try {
-						existingPicId = comm.getPictureIdForUnitAndName(unit, files[i].getName());
-					} catch (Exception e) {
-						log.error("Error during getting getPictureIdForUnitAndName");
-					}
-					if (existingPicId == 0) {
-						retInt = this.comm.addPicture2Unit(unit, out.toByteArray(), bty, mimetype, "", files[i].getName(), "");
-						setPictureId(retInt);
-					} else {
-						/**picture name already exists=>dialog message*/
-						PictureSlimValue picSlimVal = comm.getPicture(existingPicId);
-						retInt = picSlimVal.getPictureId();
-						DlgSavePicture saveDialog = new DlgSavePicture(picSlimVal, bty, out.toByteArray());
-						saveDialog.addSaveActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-								setPictureId(e.getID());
-							}
-						});
-						int frameHeight = 180;
-						int frameWidth = 250;
-						saveDialog.setSize(frameWidth, frameHeight);
-						saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
-						saveDialog.setModal(true);
-						saveDialog.setVisible(true);
-					}
-				} catch (Exception exe) {
-					log.error("Error during the upload of the picture " + files[i].getName(), exe);
-				} finally {
-					prog.setProgress(rb.getString("panel.content.upload.Finished"), 100);
-					prog.dispose();
-				}
+			@Override
+			public void pictureExistsAction(int i) {
+				setPictureId(i);
+				
 			}
-		}
-	}
 
-	public ByteArrayOutputStream manipulateImage(Image image) {
-		ByteArrayOutputStream imageStream = null;
-		Frame frame = null;
-		Graphics graphics = null;
-		try {
-			frame = new Frame();
-			MediaTracker mt = new MediaTracker(frame); // frame acts as an ImageObserver
-			mt.addImage(image, 0);
-			mt.waitForAll();
-			int w = image.getWidth(frame);
-			int h = image.getHeight(frame);
-			BufferedImage offscreen = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
-			graphics = offscreen.getGraphics();
-			graphics.drawImage(image, 0, 0, frame);
-			imageStream = new ByteArrayOutputStream();
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(imageStream);
-			encoder.encode(offscreen);
-		} catch (InterruptedException e) {
-			log.error("Interrupted the manipulation of the image", e);
-		} catch (IOException e) {
-			log.error("IO ERROR manipulating the image", e);
-		} finally {
-			if (graphics != null) {
-				graphics.dispose();
+			@Override
+			public void pictureSelectedAction(byte[] thumbnail, byte[] picture, String mimeType, String pictureName) throws Exception {
+				Integer unitId=((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId();
+				int retInt = this.comm.addPicture2Unit(unitId, thumbnail, picture, mimeType, "", pictureName, "");
+				setPictureId(retInt);
 			}
-		}
-		return imageStream;
-	}
-
-	public static byte[] getBytesFromFile(File file) throws IOException {
-		InputStream is = new FileInputStream(file);
-		long length = file.length();
-
-		if (length > Integer.MAX_VALUE) {
-			throw new IOException("File too big");
-		}
-
-		byte[] bytes = new byte[(int) length];
-		int offset = 0;
-		int numRead = 0;
-		while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-			offset += numRead;
-		}
-
-		if (offset < bytes.length) {
-			throw new IOException("Could not completely read file " + file.getName());
-		}
-
-		is.close();
-		return bytes;
+			
+		};
+		util.show();
 	}
 
 	protected void btnChooseActionPerformed(ActionEvent e) {

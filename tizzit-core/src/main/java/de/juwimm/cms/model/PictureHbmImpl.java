@@ -47,8 +47,13 @@ public class PictureHbmImpl extends PictureHbm {
 		sb.append(this.getPictureId());
 		sb.append("\" mimeType=\"");
 		sb.append(this.getMimeType());
-		sb.append("\" unitId=\"");
-		sb.append(this.getUnit().getUnitId());
+		if(this.getUnit()!=null){
+			sb.append("\" unitId=\"");
+			sb.append(this.getUnit().getUnitId());
+		} else if(this.getViewComponent()!=null){
+			sb.append("\" viewComponentId=\"");
+			sb.append(this.getViewComponent().getViewComponentId());
+		}
 		sb.append("\" popup=\"");
 		sb.append(this.isThumbnailPopup());
 		sb.append("\">\n");

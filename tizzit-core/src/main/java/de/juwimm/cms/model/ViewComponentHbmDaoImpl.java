@@ -30,6 +30,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 
+import de.juwimm.cms.beans.BlobJdbcDao;
 import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.exceptions.UserException;
@@ -59,6 +60,10 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
+	
+	@Autowired
+	private BlobJdbcDao blobJdbcDao;
+
 
 	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
 		return tizzitPropertiesBeanSpring;
@@ -88,6 +93,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	 * @see de.juwimm.cms.model.ViewComponentHbmDaoBase#handleToXml(de.juwimm.cms.model.ViewComponentHbm, java.lang.Integer, boolean, boolean, boolean, boolean, int, boolean, boolean, int, int, int, java.io.PrintStream)
 	 */
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void handleToXml(ViewComponentHbm current, Integer onlyThisUnitId, boolean withContent, boolean lastContenVersionOnly, boolean withSiteProtection, boolean withUrl, int depth, boolean liveServer, boolean returnOnlyVisibleOne, int deployType, int showType, PrintStream out) throws Exception {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
@@ -251,6 +257,24 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			}
 			exportVCRealms(out, current);
 		}
+		
+		//attach viewComponent linked pictures
+		out.println("<pictures>");
+		Collection<PictureHbm> pictureHbms=current.getPictures();
+		for (PictureHbm pictureHbm : pictureHbms) {
+			out.append(pictureHbm.toXml(0));
+		}
+		out.println("</pictures>");
+		
+		//attach viewComponent linked documents
+		out.println("<documents>");
+		Collection<DocumentHbm> documentHbms=current.getDocuments();
+		for (DocumentHbm documentHbm : documentHbms) {
+			byte[] data = blobJdbcDao.getDocumentContent(documentHbm.getDocumentId());
+			out.append(documentHbm.toXml(0,data));
+		}
+		out.println("</documents>");
+		
 
 		if (depth != 0) { // 0 is only THIS ViewComponent
 			try {
@@ -639,6 +663,11 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	@Override
 	public java.lang.Object find4Unit(final int transform, final java.lang.Integer unitId, final java.lang.Integer viewDocumentId) {
 		return this.find4Unit(transform, "from de.juwimm.cms.model.ViewComponentHbm v where v.assignedUnit.unitId = ? and v.viewDocument.viewDocumentId = ?", unitId, viewDocumentId);
+	}
+
+	@Override
+	public java.util.Collection find4Unit(final int transform, final java.lang.Integer unitId) {
+		return this.find4Unit(transform, "from de.juwimm.cms.model.ViewComponentHbm v where v.assignedUnit.unitId = ?", unitId);
 	}
 
 	@Override

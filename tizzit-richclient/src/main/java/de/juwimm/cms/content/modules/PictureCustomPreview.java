@@ -34,7 +34,7 @@ public class PictureCustomPreview extends Picture {
 		return "16_bildvorschau.gif";
 	}
 
-	protected PanPicture getPanPicture() {
+	public PanPicture getPanPicture() {
 		if (this.panPicture == null) {
 			this.panPicture = new PanPictureCustomPreview(this);
 		}

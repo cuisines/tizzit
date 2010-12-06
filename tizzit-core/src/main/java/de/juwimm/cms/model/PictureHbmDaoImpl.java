@@ -63,8 +63,25 @@ public class PictureHbmDaoImpl extends PictureHbmDaoBase {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public java.util.Collection findAllPerViewComponent(final int transform, final java.lang.Integer viewComponentId) {
+		return this.findAllPerViewComponent(transform, "from de.juwimm.cms.model.PictureHbm as p where p.viewComponent.viewComponentId = ?", viewComponentId);
+	}
+
+	@Override
 	public java.lang.Object getIdForNameAndUnit(final int transform, final java.lang.Integer unitId, final java.lang.String name) {
 		PictureHbm pic = (PictureHbm) this.getIdForNameAndUnit(transform, "from de.juwimm.cms.model.PictureHbm as pictureHbm where pictureHbm.unit.unitId = ? and pictureHbm.pictureName = ?", unitId, name);
+		if (pic != null) {
+			return pic.getPictureId();
+		} else {
+			return 0;
+		}
+
+	}
+
+	@Override
+	public java.lang.Object getIdForNameAndViewComponent(final int transform, final java.lang.String name, final java.lang.Integer viewComponentId) {
+		PictureHbm pic = (PictureHbm) this.getIdForNameAndViewComponent(transform, "from de.juwimm.cms.model.PictureHbm as pictureHbm where pictureHbm.pictureName = ? and pictureHbm.viewComponent.viewComponentId = ?", name, viewComponentId);
 		if (pic != null) {
 			return pic.getPictureId();
 		} else {

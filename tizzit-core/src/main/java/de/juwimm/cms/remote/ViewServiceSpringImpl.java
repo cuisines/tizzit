@@ -56,6 +56,7 @@ import org.tizzit.util.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLFilter;
 import org.xml.sax.helpers.XMLFilterImpl;
@@ -2115,6 +2116,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				Node nodeRealm = XercesHelper.findNode(nodeViewComponent, "realm2viewComponent");
 				/**import realms*/
 				importRealms(nodeViewComponent, siteId, useNewIds);
+				importViewComponentPictures(nodeViewComponent,viewComponent);
+				importViewComponentDocuments(nodeViewComponent,viewComponent);
 				String linkName = XercesHelper.getNodeValue(nodeViewComponent, "//linkName");
 				String approvedLinkName = XercesHelper.getNodeValue(nodeViewComponent, "//approvedLinkName");
 				String statusInfo = XercesHelper.getNodeValue(nodeViewComponent, "//statusInfo");
@@ -2224,6 +2227,94 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		viewComponent.setViewDocument(parent.getViewDocument());
 		return getViewComponentHbmDao().create(viewComponent);
 	}
+
+	private void importViewComponentDocuments(Node nodeViewComponent, ViewComponentHbm viewComponent) {
+		File tempFile=null;
+		try {
+			tempFile = File.createTempFile("temp_", ".xml");
+		} catch (IOException e1) {
+			log.error(e1);
+		}
+
+		Iterator itDocs = XercesHelper.findNodes(nodeViewComponent, ".//document");
+		Hashtable<Integer, Integer> docIds = new Hashtable<Integer, Integer>();
+		while (itDocs.hasNext()) {
+			try {
+				Element el = (Element) itDocs.next();
+				Integer id = new Integer(el.getAttribute("id"));
+				String strDocName = XercesHelper.getNodeValue(el, "./name");
+				String strMimeType = el.getAttribute("mimeType");
+				File fle = new File(tempFile.getParent() + File.separator + "d" + id);
+				byte[] file = new byte[(int) fle.length()];
+				new FileInputStream(fle).read(file);
+				fle.delete();
+				DocumentHbm document = new DocumentHbmImpl();
+				try {
+					Blob b = Hibernate.createBlob(file);
+					document.setDocument(b);
+				} catch (Exception e) {
+					if (log.isWarnEnabled()) log.warn("Exception copying document to database", e);
+				}
+				document.setDocumentName(strDocName);
+				document.setMimeType(strMimeType);
+				document.setViewComponent(viewComponent);
+				document = super.getDocumentHbmDao().create(document);
+				docIds.put(id, document.getDocumentId());
+			} catch (Exception e) {
+				if (log.isWarnEnabled()) log.warn("Error at importing documents");
+			}
+		}
+	}
+
+	private Hashtable<Integer, Integer> importViewComponentPictures(Node nodeViewComponent, ViewComponentHbm viewComponent) {
+		File tempFile=null;
+		try {
+			tempFile = File.createTempFile("temp_", ".xml");
+		} catch (IOException e1) {
+			log.error(e1);
+		}
+		Hashtable<Integer, Integer> pictureIds = new Hashtable<Integer, Integer>();
+		Iterator<Element> iterator=XercesHelper.findNodes(nodeViewComponent, ".//picture");
+		while (iterator.hasNext()) {
+			Element el = (Element) iterator.next();
+			try {
+				Integer id = new Integer(el.getAttribute("id"));
+				String strMimeType = el.getAttribute("mimeType");
+				String strPictureName = XercesHelper.getNodeValue(el, "./pictureName");
+				String strAltText = XercesHelper.getNodeValue(el, "./altText");
+				File fle = new File(tempFile.getParent() + File.separator + "f" + id);
+				byte[] file = new byte[(int) fle.length()];
+				new FileInputStream(fle).read(file);
+				fle.delete();
+
+				File fleThumb = new File(tempFile.getParent() + File.separator + "t" + id);
+				byte[] thumbnail = new byte[(int) fleThumb.length()];
+				new FileInputStream(fleThumb).read(thumbnail);
+				fleThumb.delete();
+
+				byte[] preview = null;
+				File flePreview = new File(tempFile.getParent() + File.separator + "p" + id);
+				if (flePreview.exists() && flePreview.canRead()) {
+					preview = new byte[(int) flePreview.length()];
+					new FileInputStream(flePreview).read(preview);
+					flePreview.delete();
+				}
+				PictureHbm picture = new PictureHbmImpl();
+				picture.setThumbnail(thumbnail);
+				picture.setPicture(file);
+				picture.setPreview(preview);
+				picture.setMimeType(strMimeType);
+				picture.setAltText(strAltText);
+				picture.setPictureName(strPictureName);
+				picture.setViewComponent(viewComponent);
+				picture = getPictureHbmDao().create(picture);
+				pictureIds.put(id, picture.getPictureId());
+			} catch (Exception e) {
+				if (log.isWarnEnabled()) log.warn("Error at importing pictures");
+			}
+		}
+		tempFile.delete();
+		return pictureIds;	}
 
 	private Realm2viewComponentHbm createTempRealm(ViewComponentHbm viewComponent, String neededRole, RealmJdbcHbm jdbcRealm, RealmSimplePwHbm simplePWRealm, RealmLdapHbm ldapRealm, RealmJaasHbm jaasRealm) {
 		Realm2viewComponentHbm tempRealm = new Realm2viewComponentHbmImpl();
@@ -2438,6 +2529,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		while (itPictures.hasNext()) {
 			Element el = (Element) itPictures.next();
 			try {
+				String unitIdAttribute = el.getAttribute("unitId");
+				if(unitIdAttribute==null || unitIdAttribute.isEmpty()){continue;}
 				Integer id = new Integer(el.getAttribute("id"));
 				String strMimeType = el.getAttribute("mimeType");
 				String strPictureName = XercesHelper.getNodeValue(el, "./pictureName");
@@ -2492,6 +2585,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		while (itDocs.hasNext()) {
 			try {
 				Element el = (Element) itDocs.next();
+				String unitIdAttribute = el.getAttribute("unitId");
+				if(unitIdAttribute==null || unitIdAttribute.isEmpty()){
+					continue;
+				}
 				UnitHbm unit = getUnitHbmDao().load(unitId);
 				Integer id = new Integer(el.getAttribute("id"));
 				String strDocName = XercesHelper.getNodeValue(el, "./name");

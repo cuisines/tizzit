@@ -35,6 +35,7 @@ import de.juwimm.cms.content.frame.helper.ImageFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.content.modules.Module;
+import de.juwimm.cms.content.panel.util.PictureUploadUtil;
 import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.util.UIConstants;
 
@@ -56,7 +57,6 @@ public class PanPictureCustomPreview extends PanPicture {
 		super(module);
 	}
 
-	@Override
 	protected void upload(String prosa, int unit) {
 		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		File picFull = null;
@@ -106,8 +106,8 @@ public class PanPictureCustomPreview extends PanPicture {
 				prog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 				try {
-					byte[] btyPicFull = getBytesFromFile(picFull);
-					byte[] btyPicPre = getBytesFromFile(picPreview);
+					byte[] btyPicFull = PictureUploadUtil.getBytesFromFile(picFull);
+					byte[] btyPicPre = PictureUploadUtil.getBytesFromFile(picPreview);
 
 					ImageIcon tmpIcon = new ImageIcon(btyPicFull);
 					ImageIcon thumbnail = null;
@@ -116,7 +116,7 @@ public class PanPictureCustomPreview extends PanPicture {
 					} else {
 						thumbnail = tmpIcon;
 					}
-					ByteArrayOutputStream out = manipulateImage(thumbnail.getImage());
+					ByteArrayOutputStream out = PictureUploadUtil.manipulateImage(thumbnail.getImage());
 
 					String fext = Utils.getExtension(picFull);
 					String mimetype = "image/jpeg";

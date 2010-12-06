@@ -14,6 +14,7 @@ import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.panel.PanDocuments;
 import de.juwimm.cms.content.panel.PanPicture;
+import de.juwimm.cms.content.panel.util.PictureUploadUtil;
 
 /**
  * This is used to handle the drag and drop of pictures and documents
@@ -41,11 +42,29 @@ public class FileTransferHandler extends TransferHandler {
 			java.util.List<File> listOfFile = (java.util.List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
 			File[] filesToUpload = (File[]) listOfFile.toArray();
 			if (panMedia instanceof PanPicture) {
-				PanPicture panel = (PanPicture) panMedia;
-				panel.uploadFiles(filesToUpload, ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId(), listOfFile.get(0).getParentFile());
+				final PanPicture panel = (PanPicture) panMedia;
+				PictureUploadUtil pictureUploadUtil=new PictureUploadUtil(panel,"irelevant",((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId(),null) {
+					
+					@Override
+					public void pictureSelectedAction(byte[] thumbnail, byte[] picture, String mimeType, String pictureName) throws Exception {
+						int retInt = this.comm.addPicture2Unit(getUnitId(), thumbnail, picture, mimeType, "", pictureName, "");
+						panel.setPictureId(retInt);
+					}
+					
+					@Override
+					public void pictureExistsAction(int i) {
+						panel.setPictureId(i);
+					}
+					
+					@Override
+					public int findExistingPicture(String fileName) {
+						return comm.getPictureIdForUnitAndName(getUnitId(), fileName);
+					}
+				};
+				pictureUploadUtil.uploadFiles(filesToUpload, listOfFile.get(0).getParentFile());
 			} else if (panMedia instanceof PanDocuments) {
 				PanDocuments panel = (PanDocuments) panMedia;
-				panel.uploadFiles(filesToUpload, ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId(), panel.getDocumentId());
+				panel.uploadFiles(filesToUpload, ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getRootUnitId(),null, panel.getDocumentId());
 				panel.refreshList();
 			}
 		} catch (UnsupportedFlavorException e) {

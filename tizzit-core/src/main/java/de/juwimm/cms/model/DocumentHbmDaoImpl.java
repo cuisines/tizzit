@@ -97,7 +97,6 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 
 	@Override
 	public void remove(DocumentHbm documentHbm) {
-		searchengineDeleteService.deleteDocument(documentHbm.getDocumentId(), documentHbm.getUnit().getSite().getSiteId());
 		super.remove(documentHbm);
 	}
 
@@ -120,37 +119,29 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public java.util.Collection findAllPerViewComponent(final int transform, final java.lang.Integer viewComponentId) {
+		return this.findAllPerViewComponent(transform, "from de.juwimm.cms.model.DocumentHbm as d where d.viewComponent.viewComponentId = ?", viewComponentId);
+	}
+
+	@Override
 	protected byte[] handleGetDocumentContent(Integer documentId) throws Exception {
 		return blobJdbcDao.getDocumentContent(documentId);
 	}
 
 	@Override
-	public String handleToXml(Integer documentId, int tabdepth) {
-		DocumentHbm document = this.load(documentId);
-		StringBuffer sb = new StringBuffer();
-		sb.append("<document id=\"");
-		sb.append(document.getDocumentId());
-		sb.append("\" mimeType=\"");
-		sb.append(document.getMimeType());
-		sb.append("\" unitId=\"");
-		sb.append(document.getUnit().getUnitId());
-		sb.append("\">\n");
-		byte[] data = blobJdbcDao.getDocumentContent(document.getDocumentId());
-
-		if (data == null || data.length == 0) {
-			sb.append("\t<file></file>\n");
+	public java.lang.Object getIdForNameAndUnit(final int transform, final java.lang.String name, final java.lang.Integer unitId) {
+		DocumentHbm docHbm = (DocumentHbm) this.getIdForNameAndUnit(transform, "from de.juwimm.cms.model.DocumentHbm as documentHbm where documentHbm.documentName = ? and documentHbm.unit.unitId = ?", name, unitId);
+		if (docHbm != null) {
+			return docHbm.getDocumentId();
 		} else {
-			sb.append("\t<file>").append(Base64.encodeBytes(data)).append("</file>\n");
+			return 0;
 		}
-
-		sb.append("\t<name><![CDATA[" + document.getDocumentName() + "]]></name>\n");
-		sb.append("</document>\n");
-		return sb.toString();
 	}
 
 	@Override
-	public java.lang.Object getIdForNameAndUnit(final int transform, final java.lang.String name, final java.lang.Integer unitId) {
-		DocumentHbm docHbm = (DocumentHbm) this.getIdForNameAndUnit(transform, "from de.juwimm.cms.model.DocumentHbm as documentHbm where documentHbm.documentName = ? and documentHbm.unit.unitId = ?", name, unitId);
+	public java.lang.Object getIdForNameAndViewComponent(final int transform, final java.lang.String name, final java.lang.Integer viewComponentIdId) {
+		DocumentHbm docHbm = (DocumentHbm) this.getIdForNameAndUnit(transform, "from de.juwimm.cms.model.DocumentHbm as documentHbm where documentHbm.documentName = ? and documentHbm.viewComponent.viewComponentId = ?", name, viewComponentIdId);
 		if (docHbm != null) {
 			return docHbm.getDocumentId();
 		} else {
@@ -191,5 +182,35 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 		setDocumentContent(newDocument.getDocumentId(), blob);
 		return newDocument.getDocumentId();
 	}
+
+	@Override
+	public String handleToXml(Integer documentId, int tabdepth) {
+		DocumentHbm document = this.load(documentId);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<document id=\"");
+		sb.append(document.getDocumentId());
+		sb.append("\" mimeType=\"");
+		sb.append(document.getMimeType());
+		if (document.getUnit() == null) {
+			sb.append("\" viewComponentId=\"");
+			sb.append(document.getViewComponent().getViewComponentId());
+		} else {
+			sb.append("\" unitId=\"");
+			sb.append(document.getUnit().getUnitId());
+		}
+		sb.append("\">\n");
+		byte[] data = blobJdbcDao.getDocumentContent(document.getDocumentId());
+
+		if (data == null || data.length == 0) {
+			sb.append("\t<file></file>\n");
+		} else {
+			sb.append("\t<file>").append(Base64.encodeBytes(data)).append("</file>\n");
+		}
+
+		sb.append("\t<name><![CDATA[" + document.getDocumentName() + "]]></name>\n");
+		sb.append("</document>\n");
+		return sb.toString();
+	}
+
 
 }

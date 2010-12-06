@@ -215,7 +215,7 @@ public class Picture extends AbstractModule {
 		getPanPicture().setPictureText("");
 	}
 
-	protected PanPicture getPanPicture() {
+	public PanPicture getPanPicture() {
 		if (this.panPicture == null) {
 			if (log.isDebugEnabled()) log.debug("PanPictureCustomPreview: " + this.customPreview);
 			if (this.customPreview) {
