@@ -2237,7 +2237,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		}
 
 		Iterator itDocs = XercesHelper.findNodes(nodeViewComponent, ".//document");
-		Hashtable<Integer, Integer> docIds = new Hashtable<Integer, Integer>();
 		while (itDocs.hasNext()) {
 			try {
 				Element el = (Element) itDocs.next();
@@ -2259,7 +2258,6 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				document.setMimeType(strMimeType);
 				document.setViewComponent(viewComponent);
 				document = super.getDocumentHbmDao().create(document);
-				docIds.put(id, document.getDocumentId());
 			} catch (Exception e) {
 				if (log.isWarnEnabled()) log.warn("Error at importing documents");
 			}
@@ -2314,7 +2312,8 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			}
 		}
 		tempFile.delete();
-		return pictureIds;	}
+		return pictureIds;	
+	}
 
 	private Realm2viewComponentHbm createTempRealm(ViewComponentHbm viewComponent, String neededRole, RealmJdbcHbm jdbcRealm, RealmSimplePwHbm simplePWRealm, RealmLdapHbm ldapRealm, RealmJaasHbm jaasRealm) {
 		Realm2viewComponentHbm tempRealm = new Realm2viewComponentHbmImpl();

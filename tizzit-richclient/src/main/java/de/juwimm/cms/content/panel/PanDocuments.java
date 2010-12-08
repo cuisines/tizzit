@@ -95,7 +95,6 @@ public class PanDocuments extends JPanel {
 	private final JComboBox cboRegion = new JComboBox();
 	private final JButton btnAdd = new JButton();
 	private final JButton btnUpdate = new JButton();
-	private final JButton btnPreview = new JButton();
 	private final JPanel panLinkName = new JPanel();
 	private final JTextField txtDocumentDesc = new JTextField();
 	private final JLabel lbLinkDescription = new JLabel();
@@ -124,7 +123,6 @@ public class PanDocuments extends JPanel {
 			tblDocuments.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			btnDelete.setText(Messages.getString("panel.content.documents.deleteDocument"));
 			btnAdd.setText(Messages.getString("panel.content.documents.addDocument"));
-			btnPreview.setText(Messages.getString("dialog.preview"));
 			btnUpdate.setText(Messages.getString("panel.content.documents.updateDocument"));
 			btnUpdate.setVisible(false);
 			lbLinkDescription.setText(Messages.getString("panel.content.documents.linkdescription"));
@@ -160,11 +158,6 @@ public class PanDocuments extends JPanel {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnAddActionPerformed(e);
-			}
-		});
-		btnPreview.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				btnPreviewActionPerformed(e);
 			}
 		});
 		btnUpdate.addActionListener(new ActionListener() {
@@ -253,7 +246,6 @@ public class PanDocuments extends JPanel {
 		panFileAction.add(btnUpdate, null);
 		panFileAction.add(btnAdd, null);
 		panFileAction.add(btnDelete, null);
-		panFileAction.add(btnPreview, null);
 		panBottom.add(panLinkName, BorderLayout.NORTH);
 		panLinkName.add(lbLinkDescription, BorderLayout.WEST);
 		panLinkName.add(txtDocumentDesc, BorderLayout.CENTER);
@@ -344,16 +336,13 @@ public class PanDocuments extends JPanel {
 				if (comm.isUserInRole(UserRights.SITE_ROOT) || intActUnit.equals(intRootUnit)) {
 					this.btnDelete.setVisible(true);
 					this.btnAdd.setVisible(true);
-					this.btnPreview.setVisible(true);
 				} else {
 					this.btnDelete.setVisible(false);
 					this.btnAdd.setVisible(false);
-					this.btnPreview.setVisible(false);
 				}
 			} else {
 				this.btnDelete.setVisible(true);
 				this.btnAdd.setVisible(true);
-				this.btnPreview.setVisible(true);
 			}
 		} catch (Exception ex) {
 		}

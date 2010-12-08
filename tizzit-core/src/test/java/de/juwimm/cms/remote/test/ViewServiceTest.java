@@ -1,13 +1,33 @@
 package de.juwimm.cms.remote.test;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import junit.framework.Assert;
 
+import org.dom4j.tree.DefaultElement;
 import org.easymock.EasyMock;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
+import org.tizzit.util.XercesHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import static org.powermock.api.easymock.PowerMock.*;
+import static org.powermock.reflect.Whitebox.*;
 
 import de.juwimm.cms.authorization.model.UserHbm;
 import de.juwimm.cms.authorization.model.UserHbmDao;
@@ -17,6 +37,9 @@ import de.juwimm.cms.exceptions.UserException;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.ContentHbmImpl;
+import de.juwimm.cms.model.PictureHbm;
+import de.juwimm.cms.model.PictureHbmDao;
+import de.juwimm.cms.model.PictureHbmImpl;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.SiteHbmImpl;
 import de.juwimm.cms.model.UnitHbm;
@@ -29,12 +52,15 @@ import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.model.ViewDocumentHbmDao;
 import de.juwimm.cms.model.ViewDocumentHbmImpl;
 import de.juwimm.cms.remote.ViewServiceSpringImpl;
+import de.juwimm.cms.remote.test.AbstractServiceTest;
 import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
  * @version $Id$
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(XercesHelper.class)
 public class ViewServiceTest extends AbstractServiceTest {
 
 	private ViewComponentHbmDao viewComponentDaoMock;
@@ -1103,4 +1129,84 @@ public class ViewServiceTest extends AbstractServiceTest {
 
 		EasyMock.verify(viewComponentDaoMock);
 	}
+
+	public void testImportViewComponentPictures() throws Exception {
+		//prepare mocks
+		Node viewComponentNode = createNiceMock(Node.class);
+		ViewComponentHbm viewComponentHbm = createNiceMock(ViewComponentHbm.class);
+		Iterator iterator = createNiceMock(Iterator.class);
+		mockStatic(XercesHelper.class);
+		PictureHbmDao pictureHbmDao=createNiceMock(PictureHbmDao.class);
+		viewService.setPictureHbmDao(pictureHbmDao);
+		PictureHbmImpl pictureHbm=createNiceMock(PictureHbmImpl.class);
+
+		//prepare test data
+		File tempFile = null;
+		tempFile = File.createTempFile("temp_", ".xml");
+		File fileF = new File(tempFile.getParent(), "f1");
+		fileF.createNewFile();
+		File fileT = new File(tempFile.getParent(), "t1");
+		fileT.createNewFile();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder loader = factory.newDocumentBuilder();
+		Document document = loader.newDocument();
+		Element firstPictureElement = document.createElement("picture");
+		firstPictureElement.setAttribute("id", "1");
+		firstPictureElement.setAttribute("mimeType", "jpg");
+
+		//prepare mock method calls 
+		XercesHelper.findNodes(viewComponentNode, ".//picture");
+		expectLastCall().andReturn(iterator);
+		iterator.hasNext();
+		expectLastCall().andReturn(true);
+		iterator.next();
+		expectLastCall().andReturn(firstPictureElement);
+		XercesHelper.getNodeValue(firstPictureElement, "./pictureName");
+		expectLastCall().andReturn("test1");
+		XercesHelper.getNodeValue(firstPictureElement, "./altText");
+		expectLastCall().andReturn("test1_alt");
+
+		replayAll();
+		//actual test method call
+		Hashtable<Integer, Integer> pictureIds = Whitebox.invokeMethod(viewService, "importViewComponentPictures", viewComponentNode, viewComponentHbm);
+		verifyAll();
+		fileF.delete();
+		fileT.delete();
+		tempFile.delete();
+	}
+
+	public void testImportViewComponentDocuments() throws Exception {
+		//prepare mocks
+		Node viewComponentNode = createNiceMock(Node.class);
+		ViewComponentHbm viewComponentHbm = createNiceMock(ViewComponentHbm.class);
+		Iterator iterator = createNiceMock(Iterator.class);
+		mockStatic(XercesHelper.class);
+
+		//prepare test data
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder loader = factory.newDocumentBuilder();
+		Document document = loader.newDocument();
+		Element firstPictureElement = document.createElement("document");
+		firstPictureElement.setAttribute("id", "1");
+		firstPictureElement.setAttribute("mimeType", "pdf");
+
+		//prepare mock method calls 
+		XercesHelper.findNodes(viewComponentNode, ".//document");
+		expectLastCall().andReturn(iterator);
+		iterator.hasNext();
+		expectLastCall().andReturn(true);
+		iterator.next();
+		expectLastCall().andReturn(firstPictureElement);
+		XercesHelper.getNodeValue(firstPictureElement, "./name");
+		expectLastCall().andReturn("test1");
+
+		replayAll();
+
+		//actual test method call
+		Whitebox.invokeMethod(viewService, "importViewComponentDocuments", viewComponentNode, viewComponentHbm);
+		verifyAll();
+	}
+
 }
