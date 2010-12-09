@@ -656,6 +656,11 @@
 				</executions>
 			</plugin>
 			 -->
+			<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-pmd-plugin</artifactId>
+      	  		<version>2.5</version>
+      		</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -738,7 +743,17 @@
 	
 					</configuration>
 				</plugin>
-
+				<plugin>
+          			<groupId>org.apache.maven.plugins</groupId>
+          			<artifactId>maven-pmd-plugin</artifactId>
+          			<version>2.5</version>
+        		</plugin>
+				<plugin>
+    	      		<groupId>org.codehaus.mojo</groupId>
+        	  		<artifactId>sonar-maven-plugin</artifactId>
+<!--        	  		<version>2.0-beta-1</version>-->
+          			<version>1.0-beta-2</version>
+        		</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -807,6 +822,8 @@
 		<application.version>2.4.12</application.version>
 		<dataSource.name>tizzitDS</dataSource.name>
 		<dataSource>java:/${dataSource.name}</dataSource>
+		<!-- targetJdk property set in order to allow pmd to run -->
+		<targetJdk>1.6</targetJdk>
 	</properties>
 	<profiles>
 		<profile>
@@ -988,6 +1005,11 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
         <version>2.0.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.5</version>
       </plugin>    
     </plugins>
   </reporting>
