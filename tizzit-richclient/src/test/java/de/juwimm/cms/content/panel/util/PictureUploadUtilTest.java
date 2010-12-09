@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -37,7 +38,7 @@ public class PictureUploadUtilTest {
 		file.delete();
 	}
 	
-	@Test
+	@Ignore
 	public void testManipulateImage(){
 		Image image=new BufferedImage(500, 500, BufferedImage.TYPE_BYTE_BINARY);
 		ByteArrayOutputStream stream=PictureUploadUtil.manipulateImage(image);
