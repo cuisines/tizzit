@@ -2732,6 +2732,10 @@ public class Communication implements ExitListener, ActionListener {
 		return getClientService().getDocumentUsage(documentId);
 	}
 
+	public byte[] getDocumentBytes(Integer documentId) {
+		return getClientService().getDocumentBytes(documentId);
+	}
+
 	public Set getPictureUsage(Integer pictureId) {
 		return getClientService().getPictureUsage(pictureId);
 	}

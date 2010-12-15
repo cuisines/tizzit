@@ -218,6 +218,11 @@
 			<version>3.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+    		<groupId>org.swinglabs</groupId>
+    		<artifactId>pdf-renderer</artifactId>
+    		<version>1.0.5</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

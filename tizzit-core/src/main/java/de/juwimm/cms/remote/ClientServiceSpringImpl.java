@@ -2048,4 +2048,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 		return getContentServiceSpring().getDocumentIdForNameAndViewComponent(name, viewComponentId);
 	}
 
+	@Override
+	protected byte[] handleGetDocumentBytes(Integer documentId) throws Exception {
+		return getContentServiceSpring().getDocument(documentId);
+	}
+
 }

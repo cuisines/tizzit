@@ -28,6 +28,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
@@ -36,10 +42,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -52,6 +58,10 @@ import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
 
+import com.sun.pdfview.PDFFile;
+import com.sun.pdfview.PDFPage;
+import com.sun.pdfview.PagePanel;
+
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
@@ -61,6 +71,8 @@ import de.juwimm.cms.content.frame.DlgSaveDocument;
 import de.juwimm.cms.content.frame.helper.DocumentFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
+import de.juwimm.cms.content.panel.util.DocumentPreviewComponent;
+import de.juwimm.cms.content.panel.util.PdfPreviewFrame;
 import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.gui.table.DocumentTableModel;
@@ -95,6 +107,7 @@ public class PanDocuments extends JPanel {
 	private final JComboBox cboRegion = new JComboBox();
 	private final JButton btnAdd = new JButton();
 	private final JButton btnUpdate = new JButton();
+	private final JButton btnPreview = new JButton();
 	private final JPanel panLinkName = new JPanel();
 	private final JTextField txtDocumentDesc = new JTextField();
 	private final JLabel lbLinkDescription = new JLabel();
@@ -123,6 +136,7 @@ public class PanDocuments extends JPanel {
 			tblDocuments.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			btnDelete.setText(Messages.getString("panel.content.documents.deleteDocument"));
 			btnAdd.setText(Messages.getString("panel.content.documents.addDocument"));
+			btnPreview.setText(Messages.getString("dialog.preview"));
 			btnUpdate.setText(Messages.getString("panel.content.documents.updateDocument"));
 			btnUpdate.setVisible(false);
 			lbLinkDescription.setText(Messages.getString("panel.content.documents.linkdescription"));
@@ -158,6 +172,11 @@ public class PanDocuments extends JPanel {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnAddActionPerformed(e);
+			}
+		});
+		btnPreview.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnPreviewActionPerformed(e);
 			}
 		});
 		btnUpdate.addActionListener(new ActionListener() {
@@ -246,6 +265,7 @@ public class PanDocuments extends JPanel {
 		panFileAction.add(btnUpdate, null);
 		panFileAction.add(btnAdd, null);
 		panFileAction.add(btnDelete, null);
+		panFileAction.add(btnPreview, null);
 		panBottom.add(panLinkName, BorderLayout.NORTH);
 		panLinkName.add(lbLinkDescription, BorderLayout.WEST);
 		panLinkName.add(txtDocumentDesc, BorderLayout.CENTER);
@@ -336,13 +356,16 @@ public class PanDocuments extends JPanel {
 				if (comm.isUserInRole(UserRights.SITE_ROOT) || intActUnit.equals(intRootUnit)) {
 					this.btnDelete.setVisible(true);
 					this.btnAdd.setVisible(true);
+					this.btnPreview.setVisible(true);
 				} else {
 					this.btnDelete.setVisible(false);
 					this.btnAdd.setVisible(false);
+					this.btnPreview.setVisible(false);
 				}
 			} else {
 				this.btnDelete.setVisible(true);
 				this.btnAdd.setVisible(true);
+				this.btnPreview.setVisible(true);
 			}
 		} catch (Exception ex) {
 		}
@@ -403,6 +426,10 @@ public class PanDocuments extends JPanel {
 		});
 	}
 
+	/**
+	 * Method called when pressing <b>Preview</b> button in Document selection panel. It uses <i>SwingUtilities.invokeLater</i> in order to display a separate {@link JFrame} with the content of the document.
+	 * @param e
+	 */
 	private void btnPreviewActionPerformed(ActionEvent e) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -413,9 +440,17 @@ public class PanDocuments extends JPanel {
 					currDoc = (DocumentSlimValue) tblDocumentsModel.getValueAt(rowInModel, 4);
 				}
 				String tmp = acc;
-				if (currDoc != null && currDoc.getDocumentName() != null && !"".equalsIgnoreCase(currDoc.getDocumentName())) {
+				if (currDoc != null && currDoc.getDocumentName() != null && !currDoc.getDocumentName().isEmpty()) {
 					tmp += " (" + currDoc.getDocumentName() + ")";
 				}
+				if (log.isDebugEnabled()) {
+					log.info(tmp);
+				}
+				//load a pdf from a byte buffer
+				byte[] data = comm.getDocumentBytes(currDoc.getDocumentId());
+				DocumentPreviewComponent component = new PdfPreviewFrame();
+				component.setDocumentContent(data);
+				component.displayComponent();
 			}
 		});
 	}
