@@ -60,10 +60,9 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 
 	@Autowired
 	private SequenceHbmDao sequenceHbmDao;
-	
+
 	@Autowired
 	private BlobJdbcDao blobJdbcDao;
-
 
 	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
 		return tizzitPropertiesBeanSpring;
@@ -257,24 +256,23 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			}
 			exportVCRealms(out, current);
 		}
-		
+
 		//attach viewComponent linked pictures
 		out.println("<pictures>");
-		Collection<PictureHbm> pictureHbms=current.getPictures();
+		Collection<PictureHbm> pictureHbms = current.getPictures();
 		for (PictureHbm pictureHbm : pictureHbms) {
 			out.append(pictureHbm.toXml(0));
 		}
 		out.println("</pictures>");
-		
+
 		//attach viewComponent linked documents
 		out.println("<documents>");
-		Collection<DocumentHbm> documentHbms=current.getDocuments();
+		Collection<DocumentHbm> documentHbms = current.getDocuments();
 		for (DocumentHbm documentHbm : documentHbms) {
 			byte[] data = blobJdbcDao.getDocumentContent(documentHbm.getDocumentId());
-			out.append(documentHbm.toXml(0,data));
+			out.append(documentHbm.toXml(0, data));
 		}
 		out.println("</documents>");
-		
 
 		if (depth != 0) { // 0 is only THIS ViewComponent
 			try {
@@ -780,8 +778,8 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 
 		searchValue = "%" + searchValue + "%";
-		List urlLinkNameResults = this.getViewComponentsForSearch(transform, "from de.juwimm.cms.model.ViewComponentHbm as viewComponentHbm where viewComponentHbm.viewDocument.viewDocumentId = ? and viewComponentHbm.urlLinkName like ?", viewDocumentId, searchValue);
-		if (urlLinkNameResults != null) results.addAll(urlLinkNameResults);
+		List linkNameResults = this.getViewComponentsForSearch(transform, "from de.juwimm.cms.model.ViewComponentHbm as viewComponentHbm where viewComponentHbm.viewDocument.viewDocumentId = ? and viewComponentHbm.displayLinkName like ?", viewDocumentId, searchValue);
+		if (linkNameResults != null) results.addAll(linkNameResults);
 
 		if (searchAll) {
 			if (vcId != null) {

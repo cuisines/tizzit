@@ -31,6 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -44,10 +46,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -168,15 +171,15 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private final String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
 	private final String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
 	private final String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
-	private JButton refresh;
 	private final HashMap<Integer, String> unitNamesMap = new HashMap<Integer, String>();
-	private final Integer[] viewComponentIdsCopy = null;
 	private TreePath previousTreeNodePath = null;
 	private boolean stop = true;
 	private JPanel panelParameters;
 	private ViewDocumentValue[] viewDocuments;
-	/**In case of search the popup is not shown*/
+	/**In case of search the popup is not shown with options */
 	private boolean inSearchMode = false;
+	final JTextField searchTreeField = new JTextField();
+	private Timer previousTimer;
 
 	//private DragSource dragSource = null;
 
@@ -529,11 +532,10 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 	private JPanel createParameterPanel() {
 		panelParameters = treeParametersPanel();
-		panelParameters.setPreferredSize(new Dimension(250, 90));
-		panelParameters.setMinimumSize(new Dimension(250, 90));
-		/**Dimensions for when search will be added*/
-		//		panelParameters.setPreferredSize(new Dimension(250, 120));
-		//		panelParameters.setMinimumSize(new Dimension(250, 120));
+		//panelParameters.setPreferredSize(new Dimension(250, 90));
+		//panelParameters.setMinimumSize(new Dimension(250, 90));
+		panelParameters.setPreferredSize(new Dimension(250, 120));
+		panelParameters.setMinimumSize(new Dimension(250, 120));
 		return panelParameters;
 	}
 
@@ -628,54 +630,66 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		cbxViewDocuments.setMaximumRowCount(20);
 
 		JLabel labelSearchTree = new JLabel();
-		labelSearchTree.setText("Filter");
-		final JTextField searchTreeField = new JTextField();
-		searchTreeField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (searchTreeField.getText().trim().length() > 0) {
-					List<ViewComponentValue> list = comm.getViewComponentsForSearch(searchTreeField.getText());
-					//if (list != null) {
-					log.debug("Found " + list.size() + " values at search");
-					ArrayList<ViewComponentValue> vcs = new ArrayList<ViewComponentValue>();
-					vcs.addAll(list);
-					((PageNode) tree.getModel().getRoot()).buildTreeWithSearchResults(vcs);
-					inSearchMode = true;
-					//}
-				} else {
-					inSearchMode = false;
-					TreeNode treeNode = (TreeNode) tree.getLastSelectedPathComponent();
-					try {
-						reload();
-					} catch (Exception e1) {
-						log.debug("Error at reloading tree after search");
-					}
-					PageNode selectedNodeOldTree = (PageNode) treeNode;
-					if (selectedNodeOldTree != null) {
-						PageNode selectedNodeNewTree = loadTree2View(selectedNodeOldTree.getViewId());
-						TreePath tp = new TreePath(treeModel.getPathToRoot(selectedNodeNewTree));
-						tree.setSelectionPath(tp);
-						tree.scrollPathToVisible(tp);
-					}
-
+		labelSearchTree.setText(rb.getString("panel.tree.filter"));
+		searchTreeField.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				Timer timer = new Timer();
+				/**if a timer is already started cancel it*/
+				if (previousTimer != null) {
+					previousTimer.cancel();
 				}
+				previousTimer = timer;
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						if (searchTreeField.getText().trim().length() > 0) {
+							List<ViewComponentValue> list = comm.getViewComponentsForSearch(searchTreeField.getText());
+							log.debug("Found " + list.size() + " values at search");
+							ArrayList<ViewComponentValue> vcs = new ArrayList<ViewComponentValue>();
+							vcs.addAll(list);
+							((PageNode) tree.getModel().getRoot()).buildTreeWithSearchResults(vcs);
+							inSearchMode = true;
+						} else {
+							inSearchMode = false;
+							TreeNode treeNode = (TreeNode) tree.getLastSelectedPathComponent();
+							try {
+								reload();
+							} catch (Exception e1) {
+								log.debug("Error at reloading tree after search");
+							}
+							PageNode selectedNodeOldTree = (PageNode) treeNode;
+							if (selectedNodeOldTree != null) {
+								PageNode selectedNodeNewTree = loadTree2View(selectedNodeOldTree.getViewId());
+								TreePath tp = new TreePath(treeModel.getPathToRoot(selectedNodeNewTree));
+								tree.setSelectionPath(tp);
+								tree.scrollPathToVisible(tp);
+							}
+						}
+					}
+				}, 1000);
+			}
+
+			public void keyReleased(KeyEvent e) {
+
+			}
+
+			public void keyTyped(KeyEvent e) {
+
 			}
 		});
-
 		panel.add(lblNavigationLanguage, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
 		panel.add(cbxViewDocuments, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 115, 0, 10), 0, 0));
 		panel.add(unitLblPanel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 0, 0, 170), 0, 0));
 		panel.add(unitCBBPanel, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 100, 0, 0), 0, 0));
-		panel.add(allOpen, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 190), 0, 0));
-		panel.add(allClosed, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 75, 0, 120), 0, 0));
-		panel.add(refresh, new GridBagConstraints(0, 3, 2, 1, 0, 0.0, GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE, new Insets(5, 0, 0, 10), 0, 0));
-
-		/**
-		 * Tizzit-156 - This will be uncommented after final modifications are finished 
-		 */
-		//panel.add(labelSearchTree, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
-		//panel.add(searchTreeField, new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 115, 0, 10), 0, 0));
+		panel.add(labelSearchTree, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 10, 0, 21), 0, 0));
+		panel.add(searchTreeField, new GridBagConstraints(0, 3, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 115, 0, 10), 0, 0));
+		panel.add(allOpen, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 190), 0, 0));
+		panel.add(allClosed, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(5, 75, 0, 120), 0, 0));
+		panel.add(refresh, new GridBagConstraints(0, 4, 2, 1, 0, 0.0, GridBagConstraints.LAST_LINE_END, GridBagConstraints.NONE, new Insets(5, 0, 0, 10), 0, 0));
 		return panel;
+
 	}
+
 	/**
 	 * @version $Id$
 	 */
@@ -967,11 +981,15 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	}
 
 	private void updateTreeAfterClick(TreeNode treeNode, boolean force, boolean expand) {
+		/**if it's in search mode the full tree must not reload*/
 		if (expand) blockExpand = true;
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		int viewId = ((PageNode) treeNode).getViewId();
+		if (inSearchMode) {
+			/**is search mode if the treeNode has init=true the entire tree reloads*/
+			treeNode.setInit(false);
+		}
 		boolean changed = treeNode.loadChildren();
-
 		TreePath path = null;
 		if (treeNode.isRoot() || changed) {
 			// try to find it by id
@@ -1049,7 +1067,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			tree.setSelectionPath(localTreePath);
 			stop = false;
 			this.invalidateTreeCache();
-
 		}
 		// This is specific for one type
 		if (treeNode instanceof PageNode) {
