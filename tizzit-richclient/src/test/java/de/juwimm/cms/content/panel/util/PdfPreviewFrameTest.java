@@ -64,8 +64,8 @@ public class PdfPreviewFrameTest {
 		Whitebox.invokeMethod(previewFrame, "actionNext", actionEvent);
 		
 		verifyAll();
-//		currentPage=Whitebox.getInternalState(previewFrame, "currentPage");
-//		assertEquals(1, currentPage);
+		currentPage=((Integer)Whitebox.getInternalState(previewFrame, "currentPage")).intValue();
+		assertEquals(1, currentPage);
 	}
 
 	@Test
@@ -90,8 +90,8 @@ public class PdfPreviewFrameTest {
 		Whitebox.invokeMethod(previewFrame, "actionPrevious", actionEvent);
 		
 		verifyAll();
-//		currentPage=Whitebox.getInternalState(previewFrame, "currentPage");
-//		assertEquals(0, currentPage);
+		currentPage=((Integer)Whitebox.getInternalState(previewFrame, "currentPage")).intValue();
+		assertEquals(0, currentPage);
 	}
 
 }
