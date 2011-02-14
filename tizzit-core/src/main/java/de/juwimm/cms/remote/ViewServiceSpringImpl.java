@@ -1654,6 +1654,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 				}
 				ViewComponentHbm viewComponent = getViewComponentHbmDao().cloneViewComponent(oldViewComponent, picIds, docIds, personIds, parentUnitId);
 				viewComponent.setStatus(Constants.DEPLOY_STATUS_EDITED);
+				viewComponent.setOnline((byte) 0);
 				parent.addChild(viewComponent);
 				viewComponent.setParent(parent);
 
