@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 
-    <xsl:param name="language" select="'deutsch'"/>
+    <xsl:param name="language" select="'de'"/>
     <xsl:param name="url" select="''"/>
     <xsl:param name="serverName" select="''"/>
     <xsl:param name="serverPort" select="''"/>

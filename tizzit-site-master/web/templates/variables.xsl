@@ -3,7 +3,7 @@
 
 
 	<xsl:param name="requestQuery" select="''"/>
-	<xsl:param name="language" select="'deutsch'"/>
+	<xsl:param name="language" select="'de'"/>
 	<xsl:param name="url" select="''"/>
 	<xsl:param name="viewComponentId" select="''"/>
 	<xsl:param name="print" select="0"/>
