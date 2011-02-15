@@ -2020,14 +2020,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				if (comm.removeViewComponent(view.getViewComponentId().intValue(), view.getDisplayLinkName(), Constants.ONLINE_STATUS_OFFLINE)) treeModel.removeNodeFromParent(entry);
 			} else {
 				view.setStatus(Constants.DEPLOY_STATUS_APPROVED);
-				if (!liveDeploy) {
-					view.setOnline((byte) 1);
-					view.setOnlineStart(System.currentTimeMillis());
-				}
 
 				comm.updateStatus4ViewComponent(view);
-				view.setOnline((byte) 1);
-				comm.setViewComponentOnline(view.getViewComponentId());
+				if (liveDeploy) {
+					view.setOnline((byte) 1);
+					view.setOnlineStart(System.currentTimeMillis());
+					comm.setViewComponentOnline(view.getViewComponentId());
+				}
 				ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
 				UIConstants.setStatusInfo("Content wurde freigegeben und kann deployed werden.");
 			}

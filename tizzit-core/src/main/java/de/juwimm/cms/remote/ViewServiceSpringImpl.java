@@ -97,6 +97,7 @@ import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbm;
 import de.juwimm.cms.safeguard.model.RealmSimplePwUserHbmDaoImpl;
 import de.juwimm.cms.search.beans.SearchengineService;
 import de.juwimm.cms.search.vo.XmlSearchValue;
+import de.juwimm.cms.util.SmallSiteConfigReader;
 import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.ViewComponentValue;
@@ -1070,7 +1071,17 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			vc.setStatus(dao.getStatus());
 			vc.setLastModifiedDate(System.currentTimeMillis());
 			vc.setUserLastModifiedDate(dao.getUserLastModifiedDate());
-			if (vc.getStatus() == Constants.DEPLOY_STATUS_APPROVED && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
+			SiteHbm site = vc.getViewDocument().getSite();
+			boolean liveDeploy = false;
+			try {
+				SmallSiteConfigReader cfg = new SmallSiteConfigReader(site);
+				if (cfg != null) {
+					liveDeploy = cfg.getConfigElementValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1");
+				}
+			} catch (Exception ex) {
+				log.warn("could not read siteConfig of site: " + site.getName(), ex);
+			}
+			if (liveDeploy && vc.getStatus() == Constants.DEPLOY_STATUS_APPROVED && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
 				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
 			}
 		} catch (Exception e) {
