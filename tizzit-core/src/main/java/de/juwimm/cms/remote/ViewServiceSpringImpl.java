@@ -1081,7 +1081,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			} catch (Exception ex) {
 				log.warn("could not read siteConfig of site: " + site.getName(), ex);
 			}
-			if (liveDeploy && vc.getStatus() == Constants.DEPLOY_STATUS_APPROVED && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
+			if (liveDeploy && vc.getStatus() == Constants.DEPLOY_STATUS_FOR_DEPLOY && (vc.getViewType() == Constants.VIEW_TYPE_CONTENT || vc.getViewType() == Constants.VIEW_TYPE_UNIT)) {
 				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
 			}
 		} catch (Exception e) {

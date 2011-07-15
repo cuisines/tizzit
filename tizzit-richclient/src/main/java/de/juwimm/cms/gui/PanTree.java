@@ -16,6 +16,7 @@
 package de.juwimm.cms.gui;
 
 import static de.juwimm.cms.client.beans.Application.getBean;
+import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -48,6 +49,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -103,6 +105,10 @@ import de.juwimm.cms.deploy.EditorController;
 import de.juwimm.cms.deploy.RootController;
 import de.juwimm.cms.deploy.actions.ExportFullThread;
 import de.juwimm.cms.deploy.actions.ImportFullThread;
+import de.juwimm.cms.exceptions.EditionXMLIsNotValid;
+import de.juwimm.cms.exceptions.ParentUnitNeverDeployed;
+import de.juwimm.cms.exceptions.PreviousUnitNeverDeployed;
+import de.juwimm.cms.exceptions.UnitWasNeverDeployed;
 import de.juwimm.cms.exceptions.UserHasNoUnitsException;
 import de.juwimm.cms.gui.event.ChooseTemplateListener;
 import de.juwimm.cms.gui.event.ViewComponentEvent;
@@ -123,6 +129,7 @@ import de.juwimm.cms.util.ConfigReader;
 import de.juwimm.cms.util.Parameters;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.ContentValue;
+import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.cms.vo.ViewComponentValue;
 import de.juwimm.cms.vo.ViewDocumentValue;
@@ -1942,7 +1949,20 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	}
 
 	private void showFrmEditor() {
-		if (comm.isUserInRole(UserRights.SITE_ROOT)) {
+		boolean liveDeploy = false;
+		try {
+			ConfigReader cfg = new ConfigReader(comm.getSiteConfigXML(), ConfigReader.CONF_NODE_DEFAULT);
+			if (cfg != null) {
+				liveDeploy = cfg.getConfigNodeValue("liveServer/liveDeploymentActive").equalsIgnoreCase("1");
+			}
+		} catch (Exception ex) {
+			log.warn("could not read siteConfig of site: " + comm.getSiteName(), ex);
+		}
+
+		if (!liveDeploy && (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY))){
+			int unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId().intValue();
+			createEditionWithoutDeploy(unitId);
+		}else if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			int vcid = ((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject()).getViewId().intValue();
 			try {
 				int unitId = comm.getUnit4ViewComponent(vcid);
@@ -1958,6 +1978,34 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			new AuthorController(unitId);
 		}
 	}
+	
+	private void createEditionWithoutDeploy(int unitId) {
+		int alertResult = JOptionPane.showConfirmDialog(this, rb.getString("alert.deploy.noLiveServer"), rb.getString("alert.deploy.noLiveServer.title"), JOptionPane.YES_NO_OPTION);
+		if (alertResult == 0) {
+			Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
+			Integer rootViewComponentId;
+			try {
+				rootViewComponentId = comm.getViewComponent4Unit(unitId).getViewComponentId();
+				comm.createEditionWithoutDeploy("Some comment", rootViewComponentId);
+			} catch (ParentUnitNeverDeployed pd) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.ParentUnitNeverDeployed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			} catch (PreviousUnitNeverDeployed pu) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.PreviousUnitNeverDeployed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			} catch (UnitWasNeverDeployed ud) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.UnitWasNeverDeployed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			} catch (EditionXMLIsNotValid ex) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.EditionXMLIsNotValid"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			} catch (Exception exe) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.UnknownError") + exe.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				log.error("Error during save and create edition", exe);
+
+			}
+			PageNode entry = (PageNode) tree.getLastSelectedPathComponent();
+			ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
+
+		}
+	}
+
 
 	public static TreeNode getSelectedEntry() {
 		return (TreeNode) tree.getLastSelectedPathComponent();

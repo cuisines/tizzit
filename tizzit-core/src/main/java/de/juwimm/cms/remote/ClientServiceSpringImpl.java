@@ -826,6 +826,16 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
+	protected void handleCreateEditionWithoutDeploy(String comment, int rootViewComponentId) throws Exception {
+		try {
+			getContentServiceSpring().createEditionWithoutDeploy(comment, Integer.valueOf(rootViewComponentId));
+		} catch (UserException ue) {
+			log.error("Error creating edition", ue);
+			throw ue;
+		}
+	}
+
+	@Override
 	protected HostValue handleCreateHost(String hostName) throws Exception {
 		return (getAdministrationServiceSpring().createHost(hostName));
 	}

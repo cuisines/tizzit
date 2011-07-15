@@ -1616,6 +1616,15 @@ public class Communication implements ExitListener, ActionListener {
 		}
 	}
 
+	public void createEditionWithoutDeploy(String comment, int rootViewComponentId) throws UserException {
+		try {
+			getClientService().createEditionWithoutDeploy(comment, rootViewComponentId);
+		} catch (Exception ue) {
+			log.error("Error creating edition", ue);
+			throw new UserException(ue);
+		}
+	}
+
 	public void removeEdition(int editionId) throws Exception {
 		getClientService().removeEdition(Integer.valueOf(editionId));
 	}

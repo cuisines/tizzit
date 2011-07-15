@@ -73,6 +73,7 @@ import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
+import de.juwimm.cms.util.SmallSiteConfigReader;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
@@ -397,6 +398,107 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			throw new UserException("User was not loggedin to the site he is willing to deploy. Deploy has been CANCELED.");
 		}
 	}
+
+	@Override
+	protected void handleCreateEditionWithoutDeploy(String commentText, Integer rootViewComponentId) throws Exception {
+		if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event " + AuthenticationHelper.getUserName() + " rootVCID " + rootViewComponentId);
+		SiteHbm site = null;
+		ViewComponentHbm vcParent = null;
+		try { 
+			site = getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
+			vcParent = getViewComponentHbmDao().load(rootViewComponentId);
+			Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
+			this.getAllViewComponentsChildren4Status(vcParent, vec, Constants.DEPLOY_STATUS_APPROVED, vcParent.getUnit4ViewComponent());
+			this.getAllViewComponentsChildren4Status(vcParent, vec, Constants.DEPLOY_STATUS_DEPLOYED, vcParent.getUnit4ViewComponent());
+			this.getAllViewComponentsChildren4Status(vcParent, vec, Constants.DEPLOY_STATUS_FOR_DEPLOY, vcParent.getUnit4ViewComponent());
+			for (ViewComponentValue viewComponentValue : vec) {
+				ViewComponentHbm vc = super.getViewComponentHbmDao().load(viewComponentValue.getViewComponentId());
+				vc.setDeployCommand(viewComponentValue.getDeployCommand());
+				vc.setOnline((byte)1);
+				vc.setOnlineStart(viewComponentValue.getOnlineStart());
+				vc.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
+				vc.setLastModifiedDate(System.currentTimeMillis());
+				vc.setUserLastModifiedDate(viewComponentValue.getUserLastModifiedDate());
+				super.getViewComponentHbmDao().update(vc);
+				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
+			}
+
+		} catch (Exception exe) {
+			log.error("Havent found either site or viewcomponent: (rootVc)" + rootViewComponentId + " " + exe.getMessage());
+		}
+		if (site != null) {
+			if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for viewComponentId: " + rootViewComponentId);
+			try {
+				boolean needsDeploy = false;
+				//TODO Edition
+				// site, vc, vd, unit in one value - difference makes deploy type
+				// type = 3 rootDeploy
+				// type = 0 fulldeploy - value is site; 1 unitdeploy - value is unit, 2 pagedeploy - value is vc, rest for export...
+				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, vcParent.getUnit4ViewComponent(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+				newEdition.setDeployType(3);
+				newEdition.setStartActionTimestamp(System.currentTimeMillis());
+//				newEdition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
+				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
+			} catch (Exception e) {
+				throw new UserException(e.getMessage());
+			}
+		} else {
+			throw new UserException("User was not loggedin to the site he is willing to deploy. Deploy has been CANCELED.");
+		}
+	}
+	
+	private void getAllViewComponentsChildren4Status(ViewComponentHbm view, Vector<ViewComponentValue> vec, int status, Integer unitId) throws Exception {
+		if (view.getStatus() == status && !view.isRoot()) {
+			ViewComponentValue viewDao = view.getDeployDao();
+			viewDao.setPath2Unit(this.getParents4View(view));
+			vec.addElement(viewDao);
+		}
+		Iterator it = view.getChildren().iterator();
+		while (it.hasNext()) {
+			ViewComponentHbm vcl = (ViewComponentHbm) it.next();
+			if (vcl.getAssignedUnit() == null || vcl.getAssignedUnit().getUnitId().equals(unitId)) {
+				this.getAllViewComponentsChildren4Status(vcl, vec, status, unitId);
+			}
+		}
+	}
+	
+	private String getParents4View(ViewComponentHbm viewComponent) {
+		try {
+			if (viewComponent.getParent().isRoot()) {
+				return "\\";
+			}
+		} catch (Exception ex) {
+			return "\\";
+		}
+		Vector<ViewComponentHbm> vec = new Vector<ViewComponentHbm>();
+		ViewComponentHbm parentView = viewComponent.getParent();
+
+		while (parentView.getAssignedUnit() == null) {
+			vec.addElement(parentView);
+			parentView = parentView.getParent();
+			try {
+				if (parentView.isRoot()) {
+					break;
+				}
+			} catch (Exception ex) {
+				break;
+			}
+		}
+		if (parentView.getAssignedUnit() != null) {
+			vec.addElement(parentView);
+		}
+		StringBuffer sb = new StringBuffer("\\");
+
+		for (int i = vec.size() - 1; i > -1; i--) {
+			sb.append((vec.elementAt(i)).getUrlLinkName());
+			if (i != 0) {
+				sb.append("\\");
+			}
+		}
+		sb.append("\\").append(viewComponent.getUrlLinkName());
+		return sb.toString();
+	}
+
 
 	/**
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#createPicture(byte[], byte[], java.lang.String, java.lang.String, java.lang.String)
