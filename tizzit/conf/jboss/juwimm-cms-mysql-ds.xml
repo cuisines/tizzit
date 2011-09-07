@@ -3,7 +3,7 @@
     <local-tx-datasource>
         <jndi-name>ConQuestDS</jndi-name>
         <!-- This extended Connection-Url is needed for Compass BLOB Storage of the Lucene Index -->
-        <connection-url>jdbc:mysql://localhost:3306/conquest?useUnicode=true&amp;characterEncoding=UTF-8&amp;emulateLocators=true</connection-url>        
+        <connection-url>jdbc:mysql://localhost:3306/conquest?useUnicode=true&amp;characterEncoding=UTF-8&amp;emulateLocators=true&amp;relaxAutoCommit=true</connection-url>        
         <driver-class>com.mysql.jdbc.Driver</driver-class>
         <user-name>conquest</user-name>
         <password>conquest</password>

@@ -51,9 +51,10 @@ public class CompassSettings extends Properties {
 			if (dataSource == null) dataSource = getTizzitPropertiesBeanSpring().getSearch().getXmlDatasource();
 			if (log.isInfoEnabled()) log.info("using database to store searchindex: " + dataSource);
 			super.put("compass.engine.store.jdbc.connection.provider.class", "org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider");
-			// FIXME why does this not work properly?
-			// super.put("compass.engine.store.jdbc.managed", "true");
-			// super.put("compass.transaction.commitBeforeCompletion", "true");
+			super.put("compass.engine.store.jdbc.managed", "true");
+			super.put("compass.engine.store.jdbc.autocommit", "external");
+			super.put("compass.engine.store.jdbc.useCommitLocks", "true");
+			super.put("compass.transaction.commitBeforeCompletion", "true");
 			super.put("compass.engine.connection", "jdbc://" + dataSource);
 			String dialect = this.getJdbcDialect();
 			if (log.isInfoEnabled()) log.info("Setting compass.engine.store.jdbc.dialect to: " + dialect);
