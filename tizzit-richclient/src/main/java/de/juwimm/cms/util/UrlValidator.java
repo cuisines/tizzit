@@ -42,4 +42,33 @@ public class UrlValidator {
 			}
 
 	}
+
+	public static boolean validateBoolean(final String urlLink) {
+		int responseCode = -1;
+		HttpURLConnection conn = null;
+		try {
+			URL	url = new URL(urlLink);
+			conn = (HttpURLConnection) url.openConnection();
+
+			// Set up a request.
+			conn.setConnectTimeout(2000); // 10 sec
+			conn.setReadTimeout(5000); // 10 sec
+			conn.setInstanceFollowRedirects(true);
+			conn.setRequestProperty("User-agent", "crawler");
+
+			// Send the request.
+			conn.connect();
+
+			// Get the response.
+			responseCode = conn.getResponseCode();
+		} catch (final Exception e) {
+			return false;
+		}
+		if (responseCode == 200) {
+			return true;
+		} else {
+			return false;
+		}
+
+}
 }
