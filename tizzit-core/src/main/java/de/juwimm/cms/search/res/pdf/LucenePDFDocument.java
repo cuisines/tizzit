@@ -436,11 +436,21 @@ public final class LucenePDFDocument {
 	 * @throws IOException
 	 */
 	public static String getPdfContent(InputStream is) throws IOException {
-		LucenePDFDocument converter = new LucenePDFDocument();
-		return converter.getContent(is);
+		return getPdfContent(is, null);
 	}
 
-	private String getContent(InputStream is) {
+	/**
+	 * Extract the PDF's content as text from password protected pdf
+	 * @param is
+	 * @return the document's content as text
+	 * @throws IOException
+	 */
+	public static String getPdfContent(InputStream is, String password) throws IOException {
+		LucenePDFDocument converter = new LucenePDFDocument();
+		return converter.getContent(is, password);
+	}
+
+	private String getContent(InputStream is, String password) {
 		String content = null;
 		PDDocument pdfDocument = null;
 		try {
@@ -448,7 +458,7 @@ public final class LucenePDFDocument {
 
 			if (pdfDocument.isEncrypted()) {
 				// Just try using the default password and move on
-				pdfDocument.decrypt("");
+				pdfDocument.decrypt(password);
 			}
 
 			// create a writer where to append the text content.

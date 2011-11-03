@@ -2573,11 +2573,11 @@ public class Communication implements ExitListener, ActionListener {
 	 * @param documentId
 	 * @return
 	 */
-	public Integer addOrUpdateDocument(File file, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId) {
+	public Integer addOrUpdateDocument(File file, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId, String password) {
 		InputStream fis = null;
 		try {
 			fis = new BufferedInputStream(new FileInputStream(file));
-			return getClientService().addOrUpdateDocument(fis, unitId, viewComponentId, fileName, mimeType, documentId);
+			return getClientService().addOrUpdateDocument(fis, unitId, viewComponentId, fileName, mimeType, documentId, password);
 		} catch (Exception re) {
 			log.error("Error importing document " + re.getMessage());
 		} finally {
@@ -2586,6 +2586,10 @@ public class Communication implements ExitListener, ActionListener {
 		return null;
 	}
 
+	public Integer addOrUpdateDocument(File file, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId) {
+		return addOrUpdateDocument(file, unitId, viewComponentId, fileName, mimeType, documentId, null);
+	}
+	
 	/**
 	 * Adds a document in the database for a given unit.
 	 * 
@@ -2597,7 +2601,11 @@ public class Communication implements ExitListener, ActionListener {
 	 * @return
 	 */
 	public Integer addOrUpdateDocument(File file, Integer unitId, String fileName, String mimeType, Integer documentId) {
-		return addOrUpdateDocument(file, unitId, null, fileName, mimeType, documentId);
+		return addOrUpdateDocument(file, unitId, null, fileName, mimeType, documentId, null);
+	}
+
+	public Integer addOrUpdateDocument(File file, Integer unitId, String fileName, String mimeType, Integer documentId, String password) {
+		return addOrUpdateDocument(file, unitId, null, fileName, mimeType, documentId, password);
 	}
 
 	/*

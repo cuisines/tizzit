@@ -1773,9 +1773,9 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	}
 
 	@Override
-	protected Integer handleAddOrUpdateDocument(InputStream inputStream, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId) throws Exception {
+	protected Integer handleAddOrUpdateDocument(InputStream inputStream, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId, String password) throws Exception {
 		try {
-			return getContentServiceSpring().addOrUpdateDocument(unitId,viewComponentId, fileName, mimeType, inputStream, documentId);
+			return getContentServiceSpring().addOrUpdateDocument(unitId,viewComponentId, fileName, mimeType, inputStream, documentId, password);
 		} catch (Exception re) {
 			log.error("Error importing document", re);
 		}

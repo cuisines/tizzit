@@ -67,6 +67,7 @@ import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
+import de.juwimm.cms.content.frame.DlgPdfDocumentPassword;
 import de.juwimm.cms.content.frame.DlgSaveDocument;
 import de.juwimm.cms.content.frame.helper.DocumentFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
@@ -79,6 +80,7 @@ import de.juwimm.cms.gui.table.DocumentTableModel;
 import de.juwimm.cms.gui.table.TableSorter;
 import de.juwimm.cms.gui.views.PanContentView;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.PdfUtils;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.DocumentSlimValue;
 
@@ -516,6 +518,18 @@ public class PanDocuments extends JPanel {
 						mimetype = "application/octet-stream";
 					}
 					prog.setProgress(Messages.getString("panel.content.upload.Uploading"), 50);
+					String password=null;
+					if(mimetype.equals("application/pdf") && PdfUtils.isPassswordProtected(file)){
+						
+						DlgPdfDocumentPassword dlgPdfDocumentPassword=new DlgPdfDocumentPassword(password);
+						dlgPdfDocumentPassword.setSize(350, 280);
+						dlgPdfDocumentPassword.setLocationRelativeTo(UIConstants.getMainFrame());
+
+						dlgPdfDocumentPassword.setModal(true);
+						dlgPdfDocumentPassword.setVisible(true);
+						dlgPdfDocumentPassword.pack();
+						password=dlgPdfDocumentPassword.getPassword();
+					}
 					int existingDocId = -1;
 					if (unit != null) {
 						existingDocId = comm.getDocumentIdForNameAndUnit(file.getName(), unit);
@@ -527,11 +541,11 @@ public class PanDocuments extends JPanel {
 					//this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
 					if (!isDataActualization) {
 						if (existingDocId == 0) {
-							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId);
+							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
 						} else {
 							DlgSaveDocument saveDialog = new DlgSaveDocument(file, unit, file.getName(), mimetype, existingDocId);
-							int frameHeight = 180;
-							int frameWidth = 250;
+							int frameHeight = 280;
+							int frameWidth = 350;
 							saveDialog.setSize(frameWidth, frameHeight);
 							saveDialog.setLocationRelativeTo(UIConstants.getMainFrame());
 							saveDialog.setModal(true);
@@ -539,7 +553,7 @@ public class PanDocuments extends JPanel {
 						}
 					} else {
 						if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
-							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId);
+							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
 						} else if ((existingDocId != 0) && (!file.getName().equalsIgnoreCase(selectedDocName))) {
 							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("dialog.saveDocument.imposibleToOverwrite"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 						}

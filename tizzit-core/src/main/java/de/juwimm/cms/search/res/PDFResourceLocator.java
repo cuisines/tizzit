@@ -28,6 +28,7 @@ import org.compass.core.ResourceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.juwimm.cms.model.DocumentHbmDao;
+import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.search.res.pdf.LucenePDFDocument;
 
 /**
@@ -72,7 +73,12 @@ public class PDFResourceLocator {
 		InputStream bis = new ByteArrayInputStream(documentHbmDao.getDocumentContent(document.getDocumentId()));
 
 		try {
-			String content = LucenePDFDocument.getPdfContent(bis);
+			String content = "";
+			if(document.getPassword()!=null){
+				content = LucenePDFDocument.getPdfContent(bis,document.getPassword());
+			} else {
+				content = LucenePDFDocument.getPdfContent(bis);
+			}
 			if (content == null) return null;
 			resource.addProperty("contents", content);
 			int summarySize = Math.min(content.length(), 500);
@@ -85,13 +91,17 @@ public class PDFResourceLocator {
 		}
 		resource.addProperty("documentId", document.getDocumentId().toString());
 		resource.addProperty("uid", document.getDocumentId().toString());
-		resource.addProperty("siteId", document.getUnit().getSite().getSiteId().toString());
+		UnitHbm unitHbm=document.getUnit();
+		if(unitHbm==null){
+			unitHbm=document.getViewComponent().getViewComponentUnit().getAssignedUnit();
+		}
+		resource.addProperty("siteId", unitHbm.getSite().getSiteId().toString());
 		String docName = document.getDocumentName();
 		if (docName == null) docName = "";
 		resource.addProperty("documentName", docName);
 		resource.addProperty("title", docName);
-		resource.addProperty("unitId", document.getUnit().getUnitId().toString());
-		resource.addProperty("unitName", document.getUnit().getName());
+		resource.addProperty("unitId", unitHbm.getUnitId().toString());
+		resource.addProperty("unitName", unitHbm.getName());
 		resource.addProperty("mimeType", document.getMimeType());
 		resource.addProperty("timeStamp", document.getTimeStamp().toString());
 

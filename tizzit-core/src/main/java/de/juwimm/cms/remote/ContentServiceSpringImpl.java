@@ -1082,7 +1082,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 * @see de.juwimm.cms.remote.ContentServiceSpring#importDocument(java.lang.Integer, java.lang.String, java.lang.String, java.io.InputStream)
 	 */
 	@Override
-	protected Integer handleAddOrUpdateDocument(Integer unitId, Integer viewComponentId, String documentName, String mimeType, InputStream documentData, Integer documentId) throws Exception {
+	protected Integer handleAddOrUpdateDocument(Integer unitId, Integer viewComponentId, String documentName, String mimeType, InputStream documentData, Integer documentId, String password) throws Exception {
 		try {
 			if (log.isDebugEnabled()) log.debug("addOrUpdateDocument for user " + AuthenticationHelper.getUserName());
 
@@ -1106,6 +1106,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				doc.setMimeType(mimeType);
 				doc.setUnit(unit);
 				doc.setViewComponent(viewComponent);
+				doc.setPassword(password);
 				doc = getDocumentHbmDao().create(doc);
 				doc.setDocument(b);
 			} else {
@@ -1113,6 +1114,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				doc.setTimeStamp(System.currentTimeMillis());
 				doc.setDocumentName(documentName);
 				doc.setMimeType(mimeType);
+				doc.setPassword(password);
 				getDocumentHbmDao().setDocumentContent(doc.getDocumentId(), IOUtils.toByteArray(in));
 			}
 			return doc.getDocumentId();
