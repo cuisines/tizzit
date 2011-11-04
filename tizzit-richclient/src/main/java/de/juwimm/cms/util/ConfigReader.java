@@ -121,6 +121,7 @@ public class ConfigReader {
 			Element nde = (Element) XercesHelper.findNode(this.getConfdoc().getFirstChild(), this.getRelativeNodePath() + strNode);
 			retVal = nde.getFirstChild().getNodeValue();
 		} catch (Exception exe) {
+			log.info("Parameter loading error", exe);
 		}
 		return retVal;
 	}

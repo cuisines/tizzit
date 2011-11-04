@@ -133,6 +133,21 @@ public class PanPicture extends JPanel {
 			if (txt == null || txt.equals("")) txt = rb.getString("panel.content.picture.directionRight");
 			this.cboDirection.addItem(new CboModel(txt, "right"));
 		}
+		if (Parameters.getBooleanParameter(Parameters.PARAM_PICTURE_POSITION_4)) {
+			String txt = Parameters.getStringParameter(Parameters.PARAM_PICTURE_POSITION_4);
+			if (txt == null || txt.equals("")) txt = rb.getString("panel.content.picture.direction4");
+			this.cboDirection.addItem(new CboModel(txt, "direction4"));
+		}
+		if (Parameters.getBooleanParameter(Parameters.PARAM_PICTURE_POSITION_5)) {
+			String txt = Parameters.getStringParameter(Parameters.PARAM_PICTURE_POSITION_5);
+			if (txt == null || txt.equals("")) txt = rb.getString("panel.content.picture.direction5");
+			this.cboDirection.addItem(new CboModel(txt, "direction5"));
+		}
+		if (Parameters.getBooleanParameter(Parameters.PARAM_PICTURE_POSITION_6)) {
+			String txt = Parameters.getStringParameter(Parameters.PARAM_PICTURE_POSITION_6);
+			if (txt == null || txt.equals("")) txt = rb.getString("panel.content.picture.direction6");
+			this.cboDirection.addItem(new CboModel(txt, "direction6"));
+		}
 	}
 
 	public PanPicture(Module module) {
@@ -209,12 +224,12 @@ public class PanPicture extends JPanel {
 	}
 
 	public void setType(String type) {
-		if (type.equals("left")) {
-			this.cboDirection.setSelectedIndex(1);
-		} else if (type.equals("right")) {
-			this.cboDirection.setSelectedIndex(2);
-		} else if (type.equals("center")) {
-			this.cboDirection.setSelectedIndex(0);
+		for (int i = 0; i < this.cboDirection.getModel().getSize(); i++) {
+			CboModel modelItem = (CboModel) this.cboDirection.getModel().getElementAt(i);
+			if(modelItem.getValue().equalsIgnoreCase(type)){
+				this.cboDirection.setSelectedIndex(i);
+				break;
+			}
 		}
 	}
 
