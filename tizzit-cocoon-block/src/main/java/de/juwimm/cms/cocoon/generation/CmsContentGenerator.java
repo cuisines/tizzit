@@ -615,14 +615,9 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	}
 	
 	/**
-	 * new for database fulltext searching in DCF file, defines something like : <fulltextsearch nodename="joboffer"
-	 * searchOnlyInThisUnit="false"/>
-	 * <ul>
-	 * <li>String[x][0] contains the content.</li>
-	 * <li>String[x][1] contains the infoText</li>
-	 * <li>String[x][2] contains the text</li>
-	 * <li>String[x][3] contains the unitId</li>
-	 * </ul>
+	 * Allows the specification of something like : <fillWithActualDate format="dd-MM-yyy" />
+	 * The result after the processing is: <p>14-11-2011</p>
+	 * This is useful for filling render date on pages
 	 */
 	private void fillCurrentDates(Document doc) throws Exception {
 		Iterator itFillDate = XercesHelper.findNodes(doc, "//fillWithActualDate");
