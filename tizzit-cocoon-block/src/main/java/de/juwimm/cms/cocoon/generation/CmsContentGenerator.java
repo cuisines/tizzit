@@ -468,6 +468,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			if (!disableHtmlSearch && this.webSearchquery != null && this.webSearchquery.length() > 0) {
 				this.fillWebSearch(doc);
 			}
+			this.fillCurrentDates(doc);
 			this.fillDocumentLastModifiedDate(doc);
 		} catch (Exception e) {
 			String errMsg = "An error occured while processing the content";
@@ -610,6 +611,36 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			}
 		} catch (Exception exe) {
 			log.error("An error occured", exe);
+		}
+	}
+	
+	/**
+	 * new for database fulltext searching in DCF file, defines something like : <fulltextsearch nodename="joboffer"
+	 * searchOnlyInThisUnit="false"/>
+	 * <ul>
+	 * <li>String[x][0] contains the content.</li>
+	 * <li>String[x][1] contains the infoText</li>
+	 * <li>String[x][2] contains the text</li>
+	 * <li>String[x][3] contains the unitId</li>
+	 * </ul>
+	 */
+	private void fillCurrentDates(Document doc) throws Exception {
+		Iterator itFillDate = XercesHelper.findNodes(doc, "//fillWithActualDate");
+		while (itFillDate.hasNext()) {
+			Element fillWithActualDate = (Element) itFillDate.next();
+			Node parent=fillWithActualDate.getParentNode();
+			String format=fillWithActualDate.getAttribute("format");
+			DateFormat dateFormat=null;
+			try{
+				if(format!=null && !format.isEmpty())
+				dateFormat=new SimpleDateFormat(format);
+			} catch (Exception e) {
+				log.error("Error interpretting the date format from node attribute", e);
+			}
+			Node textNode=doc.createTextNode(dateFormat==null?new Date().toString():dateFormat.format(new Date()));
+			Node newNode=doc.createElement("p");
+			newNode.appendChild(textNode);
+			parent.replaceChild(newNode, fillWithActualDate);
 		}
 	}
 
