@@ -45,6 +45,7 @@ import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.helper.FlashFilter;
 import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
+import de.juwimm.cms.exceptions.InvalidSizeException;
 import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.gui.LookAndFeel;
 import de.juwimm.cms.gui.table.DocumentTableModel;
@@ -621,6 +622,9 @@ public class PanFlash extends JPanel {
 						}
 						progressDialog.setProgress(Messages.getString("panel.content.upload.Uploading"), 50);
 						this.documentId = this.communication.addOrUpdateDocument(file, unit, file.getName(), mimetype, null);
+					} catch (InvalidSizeException ex) {
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+						return;
 					} catch (Exception exception) {
 						log.error("Error upload document " + file.getName(), exception);
 					} finally {

@@ -54,6 +54,7 @@ public final class Parameters {
 	public static final String PARAM_MAX_DISPLAY_LINK_NAME_LENGTH = "maxLinkNameLength";
 	public static final String PARAM_INCLUDE_XML_SEARCH_NAME = "includeXmlSearch";
 	public static final String PARAM_USER_CHANGE_PAGE_MODIFIED_DATE = "userChangePageModifiedDate";
+	public static final String PARAM_MAX_DOCUMENT_SIZE = "maxDocumentSize";
 
 	private Parameters() {
 	}
@@ -68,7 +69,7 @@ public final class Parameters {
 				new SiteParameter.ParameterType(Parameter.PARAMETER_TYPE_STRING, "")
 				};*/
 		//These are the Parameters
-		availableSiteParameter = new Parameter[16];
+		availableSiteParameter = new Parameter[17];
 		availableSiteParameter[0] = new SiteParameter(PARAM_SHOW_PREVIEW_FRAMESET, rb.getString("PARAM_SHOW_PREVIEW_FRAMESET"), onlyBoolean);
 		availableSiteParameter[1] = new SiteParameter(PARAM_PICTURE_POSITION_1, rb.getString("PARAM_PICTURE_POSITION_1"), boolAndTextTrue);
 		availableSiteParameter[2] = new SiteParameter(PARAM_PICTURE_POSITION_2, rb.getString("PARAM_PICTURE_POSITION_2"), boolAndTextTrue);
@@ -85,6 +86,7 @@ public final class Parameters {
 		availableSiteParameter[13] = new SiteParameter(PARAM_MAX_DISPLAY_LINK_NAME_LENGTH, rb.getString("PARAM_MAX_DISPLAY_LINK_NAME_LENGTH"), boolAndTextFalse);
 		availableSiteParameter[14] = new SiteParameter(PARAM_INCLUDE_XML_SEARCH_NAME, rb.getString("PARAM_INCLUDE_XML_SEARCH_NAME"), boolAndTextFalse);
 		availableSiteParameter[15] = new SiteParameter(PARAM_USER_CHANGE_PAGE_MODIFIED_DATE, rb.getString("PARAM_USER_CHANGE_PAGE_MODIFIED_DATE"), onlyBoolean);
+		availableSiteParameter[16] = new SiteParameter(PARAM_MAX_DOCUMENT_SIZE, rb.getString("PARAM_MAX_DOCUMENT_SIZE"), boolAndTextTrue);
 	}
 
 	public static Parameter[] getAvailableSiteParameter() {

@@ -1097,6 +1097,28 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			DocumentHbm doc = null;
 
 			File tmp = this.storeTempFile(documentData, documentName);
+			
+			//check if we have configured a max allowed size for this site in site configuration
+			int maxSize = -1;
+			try {
+				SmallSiteConfigReader cfg = new SmallSiteConfigReader(unit.getSite());
+				if (cfg != null) {
+					boolean hasMaxDocSize = cfg.getConfigElementValue("parameters/maxDocumentSize_1").equalsIgnoreCase("true");
+					if(hasMaxDocSize){
+						maxSize=Integer.parseInt(cfg.getConfigElementValue("parameters/maxDocumentSize_2"));
+					}
+				}
+			} catch (Exception ex) {
+				log.warn("could not read siteConfig of site: " + unit.getSite().getName(), ex);
+			}
+			if (maxSize > 0) {
+				long maxByteSize = maxSize * 1024 * 1024;
+				if (tmp.length() > maxByteSize) {
+					throw new UserException("Invalid document size. Max size is defined in site config to the value of " + maxSize + " MB.");
+				}
+			}
+			// finished checking document size
+			
 			FileInputStream in = new FileInputStream(tmp);
 			Blob b = Hibernate.createBlob(in);
 
@@ -1119,7 +1141,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			}
 			return doc.getDocumentId();
 		} catch (Exception e) {
-			throw new UserException(e.getMessage());
+			throw new UserException(e.getMessage(),e);
 		}
 	}
 

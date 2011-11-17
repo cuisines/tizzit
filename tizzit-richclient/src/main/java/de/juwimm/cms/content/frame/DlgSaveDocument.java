@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -27,7 +28,9 @@ import org.apache.log4j.Logger;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.exceptions.InvalidSizeException;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.UIConstants;
 
 public class DlgSaveDocument extends JDialog {
 	private static final long serialVersionUID = -84852827972953607L;
@@ -143,6 +146,9 @@ public class DlgSaveDocument extends JDialog {
 			if (!localFileName.isEmpty() && Pattern.matches(filePattern, localFileName) && checkNewName(localFileName, unitId)) {
 				try {
 					documentId = comm.addOrUpdateDocument(file, unitId, localFileName, mimetype, null);
+				} catch (InvalidSizeException ex) {
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+					return;
 				} catch (Exception ex) {
 					log.error("Could not create Document for unit: " + unitId, ex);
 				}
@@ -154,6 +160,9 @@ public class DlgSaveDocument extends JDialog {
 		if (btnFileOverwrite.isSelected()) {
 			try {
 				comm.addOrUpdateDocument(file, unitId, fileName, mimetype, documentId);
+			} catch (InvalidSizeException ex) {
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+				return;
 			} catch (Exception ex) {
 				log.error("Could not update Document: " + documentId, ex);
 			}

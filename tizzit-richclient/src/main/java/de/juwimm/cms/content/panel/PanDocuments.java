@@ -74,6 +74,7 @@ import de.juwimm.cms.content.frame.helper.ImagePreview;
 import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.content.panel.util.DocumentPreviewComponent;
 import de.juwimm.cms.content.panel.util.PdfPreviewFrame;
+import de.juwimm.cms.exceptions.InvalidSizeException;
 import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.gui.table.DocumentTableModel;
@@ -541,7 +542,12 @@ public class PanDocuments extends JPanel {
 					//this.intDocId = this.comm.addOrUpdateDocument(file, unit, file.getName(), mimetype, documentId);
 					if (!isDataActualization) {
 						if (existingDocId == 0) {
-							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
+							try{
+								this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
+							} catch (InvalidSizeException e) {
+								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), e.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+								return;
+							}
 						} else {
 							DlgSaveDocument saveDialog = new DlgSaveDocument(file, unit, file.getName(), mimetype, existingDocId);
 							int frameHeight = 280;
@@ -553,7 +559,12 @@ public class PanDocuments extends JPanel {
 						}
 					} else {
 						if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
-							this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
+							try{
+								this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
+							} catch (InvalidSizeException e) {
+								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), e.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+								return;
+							}
 						} else if ((existingDocId != 0) && (!file.getName().equalsIgnoreCase(selectedDocName))) {
 							JOptionPane.showMessageDialog(UIConstants.getMainFrame(), Messages.getString("dialog.saveDocument.imposibleToOverwrite"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 						}

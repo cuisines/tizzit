@@ -73,6 +73,7 @@ import de.juwimm.cms.components.vo.PersonValue;
 import de.juwimm.cms.components.vo.TalktimeValue;
 import de.juwimm.cms.content.frame.DlgModal;
 import de.juwimm.cms.exceptions.AlreadyCheckedOutException;
+import de.juwimm.cms.exceptions.InvalidSizeException;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
 import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.NeededFieldsMissingException;
@@ -2564,7 +2565,7 @@ public class Communication implements ExitListener, ActionListener {
 	}
 
 	/**
-	 * Adds a document in the database for a given unit or viewComponent.
+	 * Adds a document in the database for a given unit or viewComponent.<br> If the parent site has a maximum allowed size parameter defined <b>(PARAM_MAX_DOCUMENT_SIZE)</b>, then the file being sent for upload is checked for allowed size. If the size is above the max size, the method throws @InvalidSizeException
 	 * @param file
 	 * @param unitId
 	 * @param viewComponentId
@@ -2573,8 +2574,23 @@ public class Communication implements ExitListener, ActionListener {
 	 * @param documentId
 	 * @return
 	 */
-	public Integer addOrUpdateDocument(File file, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId, String password) {
+	public Integer addOrUpdateDocument(File file, Integer unitId, Integer viewComponentId, String fileName, String mimeType, Integer documentId, String password) throws InvalidSizeException{
 		InputStream fis = null;
+		//maximum document size validation
+		if(Parameters.getBooleanParameter(Parameters.PARAM_MAX_DOCUMENT_SIZE)){
+			int maxAllowedSize=-1;
+			try{
+				maxAllowedSize=Integer.parseInt(Parameters.getStringParameter(Parameters.PARAM_MAX_DOCUMENT_SIZE));
+			}catch (NumberFormatException e) {
+				log.error("Could not load site parameter PARAM_MAX_DOCUMENT_SIZE (problem with int parsing)", e);
+			}
+			if(maxAllowedSize>0){
+				long maxSizeBytes=maxAllowedSize*1024*1024;
+				if(file.length()>maxSizeBytes){
+					throw new InvalidSizeException("The document is larger than the maximum allowed limit for upload");
+				}
+			}
+		}
 		try {
 			fis = new BufferedInputStream(new FileInputStream(file));
 			return getClientService().addOrUpdateDocument(fis, unitId, viewComponentId, fileName, mimeType, documentId, password);
