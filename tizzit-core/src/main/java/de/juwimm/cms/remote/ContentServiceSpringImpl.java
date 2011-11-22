@@ -1100,8 +1100,12 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			
 			//check if we have configured a max allowed size for this site in site configuration
 			int maxSize = -1;
+			UnitHbm configUnit=null;
 			try {
-				SmallSiteConfigReader cfg = new SmallSiteConfigReader(unit.getSite());
+				if(viewComponent!=null){
+					configUnit=viewComponent.getViewComponentUnit().getAssignedUnit();
+				}
+				SmallSiteConfigReader cfg = new SmallSiteConfigReader(configUnit.getSite());
 				if (cfg != null) {
 					boolean hasMaxDocSize = cfg.getConfigElementValue("parameters/maxDocumentSize_1").equalsIgnoreCase("true");
 					if(hasMaxDocSize){
@@ -1109,7 +1113,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 					}
 				}
 			} catch (Exception ex) {
-				log.warn("could not read siteConfig of site: " + unit.getSite().getName(), ex);
+				log.warn("could not read siteConfig of site: " + (configUnit!=null?configUnit.getSite().getName():"site unavailable"), ex);
 			}
 			if (maxSize > 0) {
 				long maxByteSize = maxSize * 1024 * 1024;
