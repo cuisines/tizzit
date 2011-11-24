@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -554,6 +555,20 @@ public class PanCmsResources extends JPanel implements ReloadablePanel {
 		Enumeration<TreePath> paths = treeResources.getExpandedDescendants(new TreePath(treeResources.getModel().getRoot()));
 		while (paths.hasMoreElements()) {
 			TreePath currentPath = paths.nextElement();
+			if (currentPath.getPathCount() == 2) {
+				try {
+					treeResources.fireTreeWillExpand(currentPath);
+					TreeNode treeNode=(TreeNode) currentPath.getLastPathComponent();
+					for (Enumeration<TreeNode> e = treeNode.children(); e.hasMoreElements();){
+						TreeNode child= e.nextElement();
+						TreePath path=new TreePath(child.getPath());
+						refreshNode(path);
+						treeResources.fireTreeWillExpand(path);
+					}
+				} catch (ExpandVetoException e) {
+					log.info("filter tree error");
+				}
+			}
 			if (currentPath.getPathCount() == 3) {
 				try {
 					treeResources.fireTreeWillExpand(currentPath);
