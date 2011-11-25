@@ -52,7 +52,6 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 	private PanSafeguardRealmManager panSafeguard;
 	private PanSiteGroups panSiteGroups = null;
 	private PanCmsResources panCmsResources;
-	private PanEditionView panEditionView;
 
 	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 
@@ -107,9 +106,6 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 
 		panCmsResources = new PanCmsResources(comm);
 		panTab.add(panCmsResources, rb.getString(PanCmsResources.TitleKey));
-
-		panEditionView = new PanEditionView(comm);
-		panTab.add(panEditionView, rb.getString(PanEditionView.TitleKey));
 
 		panTab.setSelectedIndex(0);
 
@@ -184,12 +180,6 @@ public class PanAdministrationRoot extends JPanel implements UnloadablePanel {
 							}
 							panCmsResources.reload();
 							lastIndex = panTab.indexOfTab(rb.getString(PanCmsResources.TitleKey));
-						} else if (strTabName.equalsIgnoreCase(rb.getString(PanEditionView.TitleKey))) {
-							if (lastIndex == panTab.indexOfTab(rb.getString("panel.admin.tab.user"))) {
-								panUser.unload();
-							}
-							panEditionView.reload();
-							lastIndex = panTab.indexOfTab(rb.getString(PanEditionView.TitleKey));
 						}
 						setCursor(Cursor.getDefaultCursor());
 					}
