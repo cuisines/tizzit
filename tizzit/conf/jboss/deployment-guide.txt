@@ -61,3 +61,10 @@ enough. So you need do modify the transaction timeout in jboss-service.xml here:
 To make sure that the server can start even without connection to the internet, consider this:
 http://dev.juwimm.net/wiki/space/dev/JBoss/Offlinebetrieb+und+DTDs
 
+************************************************* MySQL specific configurations ****************************************
+
+By default, MySQL server has a setting that does not allow packets larger than 1MB to go in a mysql command. This causes
+an exception in the uploading of big files (pictures, documents). In order to avoid this, the setting must be changed in
+the my.ini file of the mysql server. In the [mysqld] area of the settings file add a new line containing the following:
+
+max_allowed_packet = 16M
