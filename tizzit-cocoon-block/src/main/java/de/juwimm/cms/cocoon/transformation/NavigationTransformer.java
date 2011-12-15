@@ -242,6 +242,29 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 				log.warn("Exception in NavigationTransformer accured: " + ex.getMessage(), ex);
 			}
 		}
+		if(localName=="navigationBackward"){
+			Document doc = XercesHelper.getNewDocument();
+			if (log.isDebugEnabled()) log.debug("fillNavigationBackward entered.");			
+			String sm = "";
+			
+			String since = attrs.getValue("since");
+			int dontShowFirst = 0;
+			try {
+				dontShowFirst = new Integer(attrs.getValue("dontShowFirst")).intValue();
+			} catch (Exception exe) {
+			}
+
+			try {
+				if (sm.equals("")) {
+					sm = "<navigationBackward>" + webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver) + "</navigationBackward>";
+				}
+				Document smdoc = XercesHelper.string2Dom(sm);
+				Node page = doc.importNode(smdoc.getFirstChild(), true);
+				SAXHelper.string2sax(XercesHelper.node2string(page), this);
+			} catch (Exception exe) {
+				log.error("An error occured while trying to create the breadcrumbs navigation", exe);
+			}
+		}
 	}
 
 	private void setAxisToRootAttributes(Node found) {
