@@ -168,6 +168,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private final JMenuItem miCopy = new JMenuItem(rb.getString("actions.ACTION_COPY"));
 	private final JMenuItem miPaste = new JMenuItem(rb.getString("actions.ACTION_PASTE"));
 	private final JMenuItem miRootDeploysUnit = new JMenuItem();
+	private final JMenuItem miRootDeployAllUnits = new JMenuItem();
 	private final JMenuItem miRootExportUnit = new JMenuItem();
 	private final JMenuItem miRootImportUnit = new JMenuItem();
 	private final JMenuItem miContentApprove = new JMenuItem(rb.getString("ribbon.publish.release"));
@@ -175,6 +176,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	private final JMenuItem miImportSite = new JMenuItem(rb.getString("actions.ACTION_IMPORT_SITE"));
 	private final JMenuItem miExportSite = new JMenuItem(rb.getString("actions.ACTION_EXPORT_SITE"));
 	private final String strACTIONROOTDEPLOYSUNIT = rb.getString("wizard.editor.start.approve");
+	private final String strACTIONROOTDEPLOYALLUNITS = rb.getString("actions.ACTION_DEPLOY_ALL_UNITS");
 	private final String strACTIONROOTEXPORTUNIT = rb.getString("actions.ACTION_ROOT_EXPORT_UNIT");
 	private final String strACTIONROOTIMPORTUNIT = rb.getString("actions.ACTION_ROOT_IMPORT_UNIT");
 	private final String strACTIONTREEEXPANDALL = rb.getString("actions.ACTION_TREE_EXPAND_ALL");
@@ -378,6 +380,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			setDoubleBuffered(true);
 			jbInit();
 			miRootDeploysUnit.addActionListener(this);
+			miRootDeployAllUnits.addActionListener(this);
 			miRootExportUnit.addActionListener(this);
 			miRootImportUnit.addActionListener(this);
 			miTreeExpandAll.addActionListener(comm);
@@ -741,6 +744,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			miRootDeploysUnit.setIcon(UIConstants.ACTION_DEPLOY);
 			miRootDeploysUnit.setActionCommand(strACTIONROOTDEPLOYSUNIT);
 			popup.add(miRootDeploysUnit);
+			miRootDeployAllUnits.setIcon(UIConstants.ACTION_DEPLOY);
+			miRootDeployAllUnits.setActionCommand(strACTIONROOTDEPLOYALLUNITS);
+			popup.add(miRootDeployAllUnits);
 			miRootExportUnit.setIcon(UIConstants.ACTION_TREE_NODE_EXPORT);
 			miRootExportUnit.setActionCommand(strACTIONROOTEXPORTUNIT);
 			popup.add(miRootExportUnit);
@@ -1046,10 +1052,13 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				miTreeSeparatorAdd.setEnabled(append);
 				miTreeSymlinkAdd.setEnabled(append);
 				miRootDeploysUnit.setEnabled(false);
+				miRootDeployAllUnits.setEnabled(false);
 				miRootExportUnit.setEnabled(false);
 				miRootImportUnit.setEnabled(false);
 				String msg = Messages.getString("wizard.root.deployAll.progressdialog.createEdition", "");
 				miRootDeploysUnit.setText(msg);
+				msg = Messages.getString("actions.ACTION_DEPLOY_ALL_UNITS", "");
+				miRootDeployAllUnits.setText(msg);
 				msg = Messages.getString("actions.ACTION_ROOT_EXPORT_UNIT", "");
 				miRootExportUnit.setText(msg);
 				miContentApprove.setEnabled(false);
@@ -1064,6 +1073,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				miTreeSeparatorAdd.setEnabled(false);
 				miTreeSymlinkAdd.setEnabled(false);
 				miRootDeploysUnit.setEnabled(false);
+				miRootDeployAllUnits.setEnabled(false);
 				miRootExportUnit.setEnabled(false);
 				miRootImportUnit.setEnabled(false);
 				miContentApprove.setEnabled(false);
@@ -1114,6 +1124,11 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					miRootExportUnit.setText(msg);
 					SwingUtilities.invokeLater(new GetUnitnameRunnable(entry));
 				}
+				if (entry.getViewComponent().isUnit() && comm.isUserInRole(UserRights.SITE_ROOT)) {
+					miRootDeployAllUnits.setEnabled(true);
+					String msg = Messages.getString("actions.ACTION_DEPLOY_ALL_UNITS");
+					miRootDeployAllUnits.setText(msg);
+				}
 				if (log.isDebugEnabled()) log.debug("end ACTION_TREE_SELECT");
 				// NEW END ----------------------------------------------------
 			} else if (action.equals(Constants.ACTION_TREE_NODE_APPEND)) {
@@ -1140,6 +1155,9 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				this.invalidateTreeCache();
 			} else if (action.equals(this.strACTIONROOTDEPLOYSUNIT)) {
 				new EditorController(entry.getViewComponent().getUnitId());
+			} else if (action.equals(this.strACTIONROOTDEPLOYALLUNITS)) {
+				createEditionWithoutDeploy();
+				
 			} else if (action.equalsIgnoreCase(this.strACTIONROOTEXPORTUNIT)) {
 				new ExportFullThread(entry.getViewComponent().getViewComponentId()).run();
 			} else if (action.equalsIgnoreCase(this.strACTIONROOTIMPORTUNIT)) {
@@ -1960,8 +1978,8 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		}
 
 		if (!liveDeploy && (comm.isUserInRole(UserRights.SITE_ROOT) || comm.isUserInRole(UserRights.DEPLOY))){
-			int unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId().intValue();
-			createEditionWithoutDeploy(unitId);
+//			int unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId().intValue();
+			createEditionWithoutDeploy(/*unitId*/);
 		}else if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 			int vcid = ((ViewDocumentValue) ((DropDownHolder) cbxViewDocuments.getSelectedItem()).getObject()).getViewId().intValue();
 			try {
@@ -1979,14 +1997,20 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 		}
 	}
 	
-	private void createEditionWithoutDeploy(int unitId) {
-		int alertResult = JOptionPane.showConfirmDialog(this, rb.getString("alert.deploy.noLiveServer"), rb.getString("alert.deploy.noLiveServer.title"), JOptionPane.YES_NO_OPTION);
-		if (alertResult == 0) {
+	private void createEditionWithoutDeploy(/*int unitId*/) {
+//		int alertResult = JOptionPane.showConfirmDialog(this, rb.getString("alert.deploy.noLiveServer"), rb.getString("alert.deploy.noLiveServer.title"), JOptionPane.YES_NO_OPTION);
+//		if (alertResult == 0) {
 			Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 			Integer rootViewComponentId;
 			try {
-				rootViewComponentId = comm.getViewComponent4Unit(unitId).getViewComponentId();
-				comm.createEditionWithoutDeploy("Some comment", rootViewComponentId);
+//				UnitValue unitValue=comm.getUnit(unitId);
+				UnitValue[] unitValues=comm.getUnits();
+				for (int i = 0; i < unitValues.length; i++) {
+					ViewComponentValue viewComponentValue=comm.getViewComponent4Unit(unitValues[i].getUnitId());
+					if(viewComponentValue!=null){
+						comm.createEditionWithoutDeploy("Some comment", viewComponentValue.getViewComponentId());
+					}
+				} 
 			} catch (ParentUnitNeverDeployed pd) {
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.ParentUnitNeverDeployed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			} catch (PreviousUnitNeverDeployed pu) {
@@ -2003,7 +2027,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 			PageNode entry = (PageNode) tree.getLastSelectedPathComponent();
 			ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
 
-		}
+//		}
 	}
 
 

@@ -107,7 +107,7 @@ public class PanEditorStart extends JPanel implements WizardPanel, ActionListene
 		optSendMessage.setActionCommand(new Integer(EditorController.STAGE_SEND_COMMENT).toString());
 		this.add(lblProsa, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 59, 17));
 		this.add(optApprove, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 1, -5));
-		this.add(optDeleteOldEditions, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 37, -6));
+//		this.add(optDeleteOldEditions, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 20, 50), 37, -6));
 		this.add(optSendMessage, new GridBagConstraints(0, 4, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 50, 0, 50), 0, 0));
 		getBtnGrpOptions().add(optApprove);
 		getBtnGrpOptions().add(optDeleteOldEditions);
