@@ -338,6 +338,11 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				log.debug("updating status");
 				comm.updateStatus4ViewComponent(viewComponent);
 			}
+			if (viewComponent.getStatus() == Constants.DEPLOY_STATUS_DEPLOYED) {
+				log.debug("updating status");
+				viewComponent.setStatus(Constants.DEPLOY_STATUS_EDITED);
+				comm.updateStatus4ViewComponent(viewComponent);
+			}
 			try {
 				viewComponent = comm.saveViewComponent(viewComponent);
 				ActionHub.fireActionPerformed(new ActionEvent(viewComponent, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
