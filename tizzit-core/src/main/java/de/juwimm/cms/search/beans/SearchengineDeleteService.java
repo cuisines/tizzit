@@ -74,7 +74,7 @@ public class SearchengineDeleteService {
 			url = site.getPreviewUrlWorkServer();
 		}
 		if (url != null) {
-			url += vc.getViewDocument().getLanguage() + "/" + vc.getPath() + "/" + site.getPageNameSearch();
+			url += vc.getViewDocument().getLanguage() + "/" + vc.getPath() + "." + site.getPageNameSearch();
 		}
 		if (log.isInfoEnabled()) log.info("created url " + url + " for site " + site.getName());
 		return url;
