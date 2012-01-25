@@ -93,3 +93,4 @@ CREATE TABLE ACCESSROLE (
 	PRIMARY KEY CLUSTERED(role_id)
 );
 alter table viewcomponent add ACCESSROLE2VC_ID_FK integer null;
+ALTER TABLE document ADD password VARCHAR(45) NULL;

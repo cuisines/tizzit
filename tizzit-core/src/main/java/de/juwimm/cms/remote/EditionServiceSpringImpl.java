@@ -3120,10 +3120,10 @@ public class EditionServiceSpringImpl extends EditionServiceSpringBase {
 	@Override
 	protected void handleDeployAll() throws Exception {
 		// TODO Auto-generated method stub
-		Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
-		if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
-		for (EditionHbm edition : editionsToDeploy) {
-			this.editionCronService.createEditionFileAndSendToLive(edition);
-		}
+//		Collection<EditionHbm> editionsToDeploy = getEditionHbmDao().findByNeedsDeploy(true);
+//		if (log.isInfoEnabled()) log.info("Found " + editionsToDeploy.size() + " Deploy-Editions to publish");
+//		for (EditionHbm edition : editionsToDeploy) {
+//			this.editionCronService.createEditionFileAndSendToLive(edition);
+//		}
 	}
 }
