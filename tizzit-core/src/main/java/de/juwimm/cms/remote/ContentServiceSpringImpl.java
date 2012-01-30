@@ -2049,6 +2049,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		ContentVersionHbm publishContentVersion = content.getContentVersionForPublish();
 		//update online status
 		viewComponent.setOnline((byte) 0);
+		viewComponent.setStatus(Constants.DEPLOY_STATUS_EDITED);
 		getViewComponentHbmDao().update(viewComponent);
 
 		if (publishContentVersion == null) {

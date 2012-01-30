@@ -2753,7 +2753,7 @@ public class Communication implements ExitListener, ActionListener {
 
 	public ViewComponentValue makeContentOffline(ViewComponentValue viewComponent) {
 		getClientService().makeContentOffline(viewComponent.getViewComponentId());
-		viewComponent.setOnline((byte) 0);
+		viewComponent=getClientService().getViewComponent(viewComponent.getViewComponentId());
 		return viewComponent;
 	}
 

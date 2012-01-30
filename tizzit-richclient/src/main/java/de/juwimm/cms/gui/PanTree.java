@@ -1286,6 +1286,10 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				}
 			} else if (action.equals(Constants.ACTION_MAKE_VIEW_OFFLINE)) {
 				entry.setViewComponent(comm.makeContentOffline(entry.getViewComponent()));
+				treeModel.nodeChanged(entry);
+				ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
+				UIConstants.setStatusInfo("Content wurde freigegeben und kann deployed werden.");
+				this.invalidateTreeCache();
 			}
 		}
 		if (action.equals(Constants.ACTION_TREE_REFRESH)) {
@@ -2025,7 +2029,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 			}
 			PageNode entry = (PageNode) tree.getLastSelectedPathComponent();
-			ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
+			ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_REFRESH));
 
 //		}
 	}
