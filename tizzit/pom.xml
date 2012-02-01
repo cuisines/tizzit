@@ -66,6 +66,27 @@
 	</developers>
 	<dependencyManagement>
 		<dependencies>
+				<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>xdb</artifactId>
+			<version>10g</version>
+		</dependency>
+		<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>xmlparserv2</artifactId>
+			<version>10gpatchedv2NoServices</version>
+		</dependency>
+		<dependency>
+			<groupId>jboss.jbossas.core-libs</groupId>
+			<artifactId>jboss-common-jdbc-wrapper</artifactId>
+			<version>4.0.4.GA</version>
+		</dependency>
+		
 			<dependency>
 				<groupId>org.andromda.profiles.uml14</groupId>
 				<artifactId>andromda-profile</artifactId>
@@ -1049,6 +1070,11 @@
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>Juwimm - Third Party</id>
+			<name>Juwimm Repository</name>
+			<url>http://maven.juwimm.net/content/repositories/thirdparty/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>

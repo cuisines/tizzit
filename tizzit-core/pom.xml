@@ -273,7 +273,26 @@
 			<artifactId>powermock-api-easymock</artifactId>
 			<scope>test</scope>
 		</dependency>  
-		
+		<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>xdb</artifactId>
+			<version>10g</version>
+		</dependency>
+		<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>10.2.0.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>oracle</groupId>
+			<artifactId>xmlparserv2</artifactId>
+			<version>10gpatchedv2NoServices</version>
+		</dependency>
+		<dependency>
+			<groupId>jboss.jbossas.core-libs</groupId>
+			<artifactId>jboss-common-jdbc-wrapper</artifactId>
+			<version>4.0.4.GA</version>
+		</dependency>
 				 
 	</dependencies>
 
