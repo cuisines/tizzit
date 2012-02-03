@@ -23,6 +23,7 @@ import java.util.Map;
 import oracle.xdb.XMLType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resource.adapter.jdbc.WrappedConnection;
 
 /**
  * Uses cqXmlDatasource as datasource
@@ -76,7 +77,7 @@ public class OracleXmlDbImpl extends AbstractXmlDbImpl {
 			pstmt.setInt(1, siteId.intValue());
 			pstmt.setInt(2, viewComponentId.intValue());
 			// ClassCastException: org.jboss.resource.adapter.jdbc.WrappedConnection cannot be cast to oracle.jdbc.OracleConnection...
-			XMLType xmlType = XMLType.createXML(((org.jboss.resource.adapter.jdbc.WrappedConnection) connection).getUnderlyingConnection(), contentText);
+			XMLType xmlType = XMLType.createXML(((WrappedConnection) connection).getUnderlyingConnection(), contentText);
 			// pstmt.setStringForClob(3, contentText);
 			pstmt.setObject(3, xmlType);
 			pstmt.setInt(4, unitId);

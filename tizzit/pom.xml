@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>jboss.jbossas.core-libs</groupId>
 			<artifactId>jboss-common-jdbc-wrapper</artifactId>
-			<version>4.0.4.GA</version>
+			<version>4.2.3.GA</version>
 		</dependency>
 		
 			<dependency>
