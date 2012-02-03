@@ -15,11 +15,14 @@
  */
 package de.juwimm.cms.search.xmldb;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Map;
 
+import oracle.jdbc.driver.OracleConnection;
 import oracle.xdb.XMLType;
 
 import org.apache.log4j.Logger;
@@ -77,7 +80,9 @@ public class OracleXmlDbImpl extends AbstractXmlDbImpl {
 			pstmt.setInt(1, siteId.intValue());
 			pstmt.setInt(2, viewComponentId.intValue());
 			// ClassCastException: org.jboss.resource.adapter.jdbc.WrappedConnection cannot be cast to oracle.jdbc.OracleConnection...
-			XMLType xmlType = XMLType.createXML(((WrappedConnection) connection).getUnderlyingConnection(), contentText);
+			//XMLType xmlType = XMLType.createXML(((org.jboss.resource.adapter.jdbc.WrappedConnection) connection).getUnderlyingConnection(), contentText);
+			OracleConnection conn = getOracleConnection(connection);
+			XMLType xmlType = XMLType.createXML(conn, contentText);
 			// pstmt.setStringForClob(3, contentText);
 			pstmt.setObject(3, xmlType);
 			pstmt.setInt(4, unitId);
@@ -87,7 +92,7 @@ public class OracleXmlDbImpl extends AbstractXmlDbImpl {
 			retVal = pstmt.execute();
 			if (log.isDebugEnabled()) log.debug("doInsert(...) -> insert query executed");
 		} catch (SQLException sqle) {
-			log.error("doInsert(...) -> failed to excecute insert query for viewComponentId = " + viewComponentId + ", " + sqle.getMessage());
+			log.error("doInsert(...) -> failed to excecute insert query for viewComponentId = " + viewComponentId + ", " + sqle.getMessage(), sqle);
 			if (log.isDebugEnabled()) log.debug("Content to insert: " + contentText);
 		} catch (Exception e) {
 			log.error("doInsert(...) -> unkown exception occured " + e.getMessage(), e);
@@ -127,6 +132,24 @@ public class OracleXmlDbImpl extends AbstractXmlDbImpl {
 		pstmt.setString(3, xpathQuery);
 
 		return pstmt;
+	}
+
+	
+	public static OracleConnection getOracleConnection(Connection conFromPool)
+	throws SQLException {
+	 
+		 try {
+			 Class[] parms = null;
+			 Method method =
+			 (conFromPool.getClass()).getMethod("getUnderlyingConnection",
+			 parms);
+			 return (OracleConnection) method.invoke(conFromPool, parms);
+		 
+		 } catch (InvocationTargetException ite) {
+		 throw new SQLException(ite.getMessage());
+		 } catch (Exception e) {
+		 throw new SQLException(e.getMessage());
+		 }
 	}
 
 }
