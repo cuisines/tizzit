@@ -65,3 +65,4 @@ tizzit-webstart/.settings/org.eclipse.jdt.core.prefs
 tizzit-xmlsearch-xindice/.classpath
 tizzit-xmlsearch-xindice/.settings/org.eclipse.jdt.core.prefs
 *.log
+tizzit-grails-plugin/web-app/WEB-INF/classes/

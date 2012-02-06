@@ -256,7 +256,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 
 			try {
 				if (sm.equals("")) {
-					sm = "<navigationBackward>" + webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver) + "</navigationBackward>";
+					sm = "<navigationBackWard>"+webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver)+"</navigationBackWard>";
 				}
 				Document smdoc = XercesHelper.string2Dom(sm);
 				Node page = doc.importNode(smdoc.getFirstChild(), true);
