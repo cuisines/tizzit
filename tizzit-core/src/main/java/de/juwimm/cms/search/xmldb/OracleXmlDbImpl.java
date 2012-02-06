@@ -79,8 +79,6 @@ public class OracleXmlDbImpl extends AbstractXmlDbImpl {
 			pstmt = connection.prepareStatement(this.getInsertStatementSql());
 			pstmt.setInt(1, siteId.intValue());
 			pstmt.setInt(2, viewComponentId.intValue());
-			// ClassCastException: org.jboss.resource.adapter.jdbc.WrappedConnection cannot be cast to oracle.jdbc.OracleConnection...
-			//XMLType xmlType = XMLType.createXML(((org.jboss.resource.adapter.jdbc.WrappedConnection) connection).getUnderlyingConnection(), contentText);
 			OracleConnection conn = getOracleConnection(connection);
 			XMLType xmlType = XMLType.createXML(conn, contentText);
 			// pstmt.setStringForClob(3, contentText);
@@ -134,7 +132,13 @@ public class OracleXmlDbImpl extends AbstractXmlDbImpl {
 		return pstmt;
 	}
 
-	
+	/**
+	 * To avoid a ClassCastException like org.jboss.resource.adapter.jdbc.WrappedConnection cannot be cast to oracle.jdbc.OracleConnection... using reflection to get the underlying connection.
+	 * 
+	 * @param conFromPool
+	 * @return
+	 * @throws SQLException
+	 */
 	public static OracleConnection getOracleConnection(Connection conFromPool)
 	throws SQLException {
 	 
