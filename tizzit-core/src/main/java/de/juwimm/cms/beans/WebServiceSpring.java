@@ -349,7 +349,7 @@ public class WebServiceSpring {
 			StringBuilder sb = new StringBuilder();
 			ViewComponentHbm vcl = null;
 			ViewComponentHbm sinceVcl = null;
-			if (since.equalsIgnoreCase("root")) { // means root from the
+			if (since==null || since.equalsIgnoreCase("root")) { // means root from the
 				// ViewDocument
 				//
 				if (log.isDebugEnabled()) log.debug("means root from the ViewDocument");
