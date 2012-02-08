@@ -3,6 +3,8 @@ package de.juwimm.cms.test.hibernate;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import de.juwimm.cms.model.UnitHbmImpl;
 import de.juwimm.cms.vo.UnitValue;
 
 public class UnitDaoTest extends HbmTestImpl {
+	private static final Log log = LogFactory.getLog(UnitDaoTest.class);
 
 	@Autowired
 	UnitHbmDao unitDao;
@@ -76,10 +79,12 @@ public class UnitDaoTest extends HbmTestImpl {
 
 		UnitHbm unit = new UnitHbmImpl();
 		unit.setName("testUnit");
+		unit.setColour("Red");
 
 		try {
 			EasyMock.expect(userDao.load(EasyMock.eq("testUser"))).andReturn(user);
 		} catch (Exception e) {
+			log.error("Exception on unit creation test", e);
 			Assert.assertTrue(false);
 		}
 
@@ -91,6 +96,7 @@ public class UnitDaoTest extends HbmTestImpl {
 			Assert.assertNotNull(unit.getSite());
 			Assert.assertNotNull(unit.getLastModifiedDate());
 		} catch (Exception e) {
+			log.error("Exception on unit creation test", e);
 			Assert.assertTrue(false);
 		}
 		EasyMock.verify(userDao);
@@ -178,6 +184,7 @@ public class UnitDaoTest extends HbmTestImpl {
 		UnitHbm unit = new UnitHbmImpl();
 		unit.setUnitId(1);
 		unit.setName("testUnit");
+		unit.setColour("testColour");
 		unit.setImageId(1);
 		unit.setLogoId(1);
 		unit.setLastModifiedDate(0);
@@ -203,7 +210,7 @@ public class UnitDaoTest extends HbmTestImpl {
 
 		try {
 			String result = unitDao.toXmlRecursive(1, unit);
-			String expected = "<unit id=\"1\" imageId=\"1\" logoId=\"1\" isRootUnit=\"true\"><![CDATA[testUnit]]>\n</unit>\n";
+			String expected = "<unit id=\"1\" imageId=\"1\" logoId=\"1\" colour=\"testColour\" isRootUnit=\"true\"><![CDATA[testUnit]]>\n</unit>\n";
 			Assert.assertNotNull(result);
 			Assert.assertEquals(expected, result);
 		} catch (Exception e) {

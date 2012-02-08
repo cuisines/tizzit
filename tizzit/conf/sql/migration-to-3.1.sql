@@ -94,3 +94,4 @@ CREATE TABLE ACCESSROLE (
 );
 alter table viewcomponent add ACCESSROLE2VC_ID_FK integer null;
 ALTER TABLE document ADD password VARCHAR(45) NULL;
+alter table unit add COLOUR VARCHAR2(255 BYTE);

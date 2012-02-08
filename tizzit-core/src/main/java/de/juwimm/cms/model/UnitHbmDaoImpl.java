@@ -77,6 +77,7 @@ public class UnitHbmDaoImpl extends UnitHbmDaoBase {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<unit id=\"" + unit.getUnitId() + "\" ");
 		sb.append("imageId=\"" + unit.getImageId() + "\" logoId=\"" + unit.getLogoId() + "\" ");
+		sb.append("colour=\"" + unit.getColour() + "\" ");
 		sb.append("isRootUnit=\"" + Boolean.toString(isRootUnit) + "\">");
 		sb.append("<![CDATA[").append(unit.getName().trim()).append("]]>\n");
 		{
@@ -149,7 +150,8 @@ public class UnitHbmDaoImpl extends UnitHbmDaoBase {
 		value.setLastModifiedDate(unit.getLastModifiedDate());
 		value.setLogoId(unit.getLogoId());
 		value.setName(unit.getName());
-
+		value.setColour(unit.getColour());
+		
 		try {
 			ArrayList vec = new ArrayList<AddressValue>();
 			Iterator it = unit.getAddresses().iterator();
