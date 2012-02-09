@@ -1298,6 +1298,15 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			if (node.getNodeName().equals("name")) {
 				node.appendChild(doc.createTextNode(unit.getName()));
 			}
+			if (node.getNodeName().equals("colour")) {
+				node.appendChild(doc.createTextNode(unit.getColour()));
+			}
+			if (node.getNodeName().equals("logo")) {
+				node.appendChild(doc.createTextNode(unit.getLogoId().toString()));
+			}
+			if (node.getNodeName().equals("image")) {
+				node.appendChild(doc.createTextNode(unit.getImageId().toString()));
+			}
 		}
 
 		it = XercesHelper.findNodes(ndeInclude, "./include");

@@ -62,6 +62,7 @@ public class UnitHbmImpl extends UnitHbm {
 			setName(unit.getName());
 			setImageId(unit.getImageId());
 			setLogoId(unit.getLogoId());
+			setColour(unit.getColour());
 			long ts = System.currentTimeMillis();
 			setLastModifiedDate(ts);
 		} catch (Exception e) {
@@ -80,6 +81,7 @@ public class UnitHbmImpl extends UnitHbm {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<unit id=\"").append(getUnitId()).append("\" imageId=\"").append(getImageId());
 		sb.append("\" logoId=\"").append(getLogoId()).append("\" siteid=\"").append(getSite().getSiteId());
+		sb.append("\" colour=\"").append(getColour());
 		sb.append("\" isRootUnit=\"").append(Boolean.toString(isRootUnit)).append("\">");
 		sb.append("<![CDATA[").append(getName()).append("]]>");
 		sb.append("</unit>\n");

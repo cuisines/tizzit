@@ -25,6 +25,8 @@ import java.util.Hashtable;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.log4j.Logger;
 
@@ -58,9 +60,11 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 	private JLabel lblCaptionVisibility = new JLabel(UIConstants.DBC_VISIBILTY);
 	private JLabel lblCaptionDB = new JLabel(rb.getString("PanDBC.component"));
 	private JLabel lblName = new JLabel();
+	private JLabel lblColour = new JLabel();
 	private VisibilityCheckBox vcbName =  new VisibilityCheckBox(getCheckActionListener());
 	private VisibilityCheckBox vcbImage = new VisibilityCheckBox(getCheckActionListener());
 	private VisibilityCheckBox vcbLogo = new VisibilityCheckBox(getCheckActionListener());
+	private VisibilityCheckBox vcbColour =  new VisibilityCheckBox(getCheckActionListener());
 	private JTextField txtUnitName = new JTextField();
 	private JLabel lblImage = new JLabel();
 	private JTextField txtImage = new JTextField();
@@ -68,6 +72,7 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 	private JButton btnDeleteImage = new JButton();
 	private JLabel lblLogo = new JLabel();
 	private JTextField txtLogo = new JTextField();
+	private JTextField txtUnitColour = new JTextField();
 	private JButton btnChooseLogo = new JButton();
 	private JButton btnDeleteLogo = new JButton();
 
@@ -80,6 +85,26 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 			this.lblName.setText(Messages.getString("PanDBCUnit.unitName"));
 			this.txtUnitName.setDisabledTextColor(UIManager.getColor("TextArea.selectionBackground"));
 			this.txtUnitName.setEditable(false);
+
+			this.lblColour.setText(Messages.getString("PanDBCUnit.unitColour"));
+			this.txtUnitColour.setDisabledTextColor(UIManager.getColor("TextArea.selectionBackground"));
+			txtUnitColour.getDocument().addDocumentListener(new DocumentListener() {
+				
+				public void removeUpdate(DocumentEvent e) {
+					fireChangeListener();
+					
+				}
+				
+				public void insertUpdate(DocumentEvent e) {
+					fireChangeListener();
+					
+				}
+				
+				public void changedUpdate(DocumentEvent e) {
+					fireChangeListener();
+					
+				}
+			});
 			this.lblImage.setText(Messages.getString("PanDBCUnit.picture"));
 			this.txtImage.setMinimumSize(new Dimension(80, 19));
 			this.txtImage.setPreferredSize(new Dimension(80, 19));
@@ -143,8 +168,13 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 			add(this.vcbLogo, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.lblLogo, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 0));
 			add(this.txtLogo, new GridBagConstraints(1, 7, 1, 1, 0.5, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 5, 0, 0), 0, 4));
-			add(this.btnChooseLogo, new GridBagConstraints(2, 7, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
-			add(this.btnDeleteLogo, new GridBagConstraints(3, 7, 1, 1, 0.5, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
+			add(this.btnChooseLogo, new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
+			add(this.btnDeleteLogo, new GridBagConstraints(3, 7, 1, 1, 0.5, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
+			
+			add(this.vcbColour, new GridBagConstraints(0, 8, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(10, 5, 0, 0), 0, 0));
+			add(this.lblColour, new GridBagConstraints(1, 8, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 5, 0, 0), 0, 1));
+			add(this.txtUnitColour, new GridBagConstraints(1, 9, 3, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(0, 7, 0, 24), 338, 4));
+
 		} catch (Exception exception) {
 			log.error("Initialization problem", exception);
 		}
@@ -156,6 +186,7 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 		ht.put("name", this.vcbName.isSelected() ? new Integer(1) : new Integer(0));
 		ht.put("image", this.vcbImage.isSelected() ? new Integer(1) : new Integer(0));
 		ht.put("logo", this.vcbLogo.isSelected() ? new Integer(1) : new Integer(0));
+		ht.put("colour", this.vcbColour.isSelected() ? new Integer(1) : new Integer(0));
 		setCheckHash(ht);
 	}
 
@@ -166,6 +197,7 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 		this.vcbName.setSelected(getCheckValueForName("name"));
 		this.vcbImage.setSelected(getCheckValueForName("image"));
 		this.vcbLogo.setSelected(getCheckValueForName("logo"));
+		this.vcbColour.setSelected(getCheckValueForName("colour"));
 		if (hasClicks()) {
 			this.setAllChecksEnabled(true);
 		}
@@ -174,6 +206,7 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 	/** @see de.juwimm.cms.content.panel.AbstractTreePanel#setFieldsEditable(boolean) */
 	public void setFieldsEditable(boolean editable) {
 		this.btnChooseImage.setEnabled(editable);
+		this.txtUnitColour.setEnabled(editable);
 	}
 
 	/**
@@ -260,10 +293,10 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 		} else {
 			this.txtLogo.setText(Integer.toString(unitValue.getLogoId()));
 		}
-		if (unitValue.getImageId() == null) {
-			this.txtImage.setText(new String());
+		if (unitValue.getColour() == null) {
+			this.txtUnitColour.setText(new String());
 		} else {
-			this.txtImage.setText(Integer.toString(unitValue.getImageId()));
+			this.txtUnitColour.setText(unitValue.getColour());
 		}
 	}
 
@@ -309,6 +342,18 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 			if (unitValue.getLogoId() == null || !(unitValue.getLogoId().equals(logoId ))) {
 				changed = true;
 				unitValue.setLogoId(logoId);
+			}
+		}
+		content = this.txtUnitColour.getText();
+		if (content == null || content.equals("")) {
+			if (unitValue.getColour() != null) {
+				changed = true;
+				unitValue.setColour(null);
+			}
+		} else {
+			if (!content.equals(unitValue.getColour())) {
+				changed = true;
+				unitValue.setColour(content);
 			}
 		}
 

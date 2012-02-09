@@ -27,6 +27,7 @@ import org.tizzit.util.Comparer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.components.vo.PersonValue;
@@ -151,7 +152,8 @@ public class UnitNode extends ComponentNode {
 			while (e.hasMoreElements()) {
 				String elName = (String) e.nextElement();
 				if (new Integer(1).equals(getHashClicks().get(elName))) {
-					elmContent.appendChild(doc.createElement(elName));
+					Element unitNodeElement=doc.createElement(elName);
+					elmContent.appendChild(unitNodeElement);
 				}
 			}
 		}

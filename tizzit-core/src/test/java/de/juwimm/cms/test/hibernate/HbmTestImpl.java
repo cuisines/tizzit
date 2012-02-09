@@ -194,7 +194,7 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 	}
 	
 	public void insertUnit(UnitHbm unit) {
-		getJdbcTemplate().update(String.format("insert into unit (unit_id,name,last_Modified_date,site_id_fk) " + "values (%d,'%s',0,%d)", unit.getUnitId(), unit.getName(), unit.getSite().getSiteId()));
+		getJdbcTemplate().update(String.format("insert into unit (unit_id,name,last_Modified_date,site_id_fk, colour) " + "values (%d,'%s',0,%d,'testColour')", unit.getUnitId(), unit.getName(), unit.getSite().getSiteId()));
 	}
 	
 	public void insertHost(HostHbm hostHbm) {

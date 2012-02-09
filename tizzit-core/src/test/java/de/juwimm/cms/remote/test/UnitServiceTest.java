@@ -43,10 +43,12 @@ public class UnitServiceTest extends TestCase {
 		UnitHbm unit = new UnitHbmImpl();
 		unit.setUnitId(1);
 		unit.setName("testUnitName");
+		unit.setColour("Red");
 
 		UnitValue unitValue = new UnitValue();
 		unitValue.setUnitId(1);
 		unitValue.setName("testUnitName");
+		unitValue.setColour("Red");
 
 		try {
 			EasyMock.expect(userHbmDaoMock.load(EasyMock.eq("testUser"))).andReturn(user);
@@ -83,11 +85,13 @@ public class UnitServiceTest extends TestCase {
 		UnitHbm unit = new UnitHbmImpl();
 		unit.setUnitId(1);
 		unit.setName("testUnitName");
+		unit.setColour("testColour");
 		unit.getUsers().add(user);
 
 		UnitValue unitValue = new UnitValue();
 		unitValue.setUnitId(1);
 		unitValue.setName("testUnitName");
+		unitValue.setColour("testColour");
 
 		try {
 			EasyMock.expect(userHbmDaoMock.load(EasyMock.eq("testUser"))).andReturn(user);
