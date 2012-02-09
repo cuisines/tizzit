@@ -20,6 +20,8 @@
  */
 package de.juwimm.cms.remote;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,6 +44,8 @@ import java.util.TreeMap;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.zip.GZIPOutputStream;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -123,7 +127,17 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	 */
 	@Override
 	protected Integer handleAddPicture2Unit(Integer unitId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null, null);
+		Integer height = null;
+		Integer width = null;
+		ByteArrayInputStream in = new ByteArrayInputStream(picture);
+		try {
+			BufferedImage img = ImageIO.read(in);
+			height = img.getHeight();
+			width = img.getWidth();
+		} catch (IOException e) {
+
+		}
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, height, width, false, title, null, null);
 		UnitHbm unit = super.getUnitHbmDao().load(unitId);
 		pictureHbm.setUnit(unit);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);
@@ -132,7 +146,17 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 	@Override
 	protected Integer handleAddPicture2ViewComponent(Integer viewComponentId, byte[] thumbnail, byte[] picture, String mimeType, String altText, String pictureName, String title) throws Exception {
-		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, null, null, false, title, null, null);
+		Integer height = null;
+		Integer width = null;
+		ByteArrayInputStream in = new ByteArrayInputStream(picture);
+		try {
+			BufferedImage img = ImageIO.read(in);
+			height = img.getHeight();
+			width = img.getWidth();
+		} catch (IOException e) {
+
+		}
+		PictureHbm pictureHbm = PictureHbm.Factory.newInstance(thumbnail, picture, null, mimeType, null, altText, pictureName, height, width, false, title, null, null);
 		ViewComponentHbm viewComponent = super.getViewComponentHbmDao().load(viewComponentId);
 		pictureHbm.setViewComponent(viewComponent);
 		pictureHbm = getPictureHbmDao().create(pictureHbm);

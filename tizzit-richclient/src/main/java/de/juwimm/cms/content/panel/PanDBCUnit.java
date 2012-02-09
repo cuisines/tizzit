@@ -25,6 +25,8 @@ import java.util.Hashtable;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.apache.log4j.Logger;
 
@@ -86,7 +88,23 @@ public class PanDBCUnit extends AbstractTreePanel implements DBCDao {
 
 			this.lblColour.setText(Messages.getString("PanDBCUnit.unitColour"));
 			this.txtUnitColour.setDisabledTextColor(UIManager.getColor("TextArea.selectionBackground"));
-
+			txtUnitColour.getDocument().addDocumentListener(new DocumentListener() {
+				
+				public void removeUpdate(DocumentEvent e) {
+					fireChangeListener();
+					
+				}
+				
+				public void insertUpdate(DocumentEvent e) {
+					fireChangeListener();
+					
+				}
+				
+				public void changedUpdate(DocumentEvent e) {
+					fireChangeListener();
+					
+				}
+			});
 			this.lblImage.setText(Messages.getString("PanDBCUnit.picture"));
 			this.txtImage.setMinimumSize(new Dimension(80, 19));
 			this.txtImage.setPreferredSize(new Dimension(80, 19));

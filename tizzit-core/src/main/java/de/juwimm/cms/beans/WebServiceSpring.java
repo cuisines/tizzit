@@ -2189,6 +2189,7 @@ public class WebServiceSpring {
 				}
 			}
 			sb.append("</unitLogo>");
+			sb.append("<unitColour>").append(unit.getColour()).append("</unitColour>");
 			sb.append("</unit>");
 		} catch (Exception e) {
 			throw new UserException("Error getting UnitInfo  " + unitId + ": " + e.getMessage());
