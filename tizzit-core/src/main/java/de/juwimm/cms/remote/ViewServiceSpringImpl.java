@@ -1071,6 +1071,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			vc.setStatus(dao.getStatus());
 			vc.setLastModifiedDate(System.currentTimeMillis());
 			vc.setUserLastModifiedDate(dao.getUserLastModifiedDate());
+			vc.setReference(dao.getReference());
 			SiteHbm site = vc.getViewDocument().getSite();
 			boolean liveDeploy = false;
 			try {
