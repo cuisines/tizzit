@@ -32,6 +32,7 @@ import org.tizzit.util.Base64;
 
 import de.juwimm.cms.beans.BlobJdbcDao;
 import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.DocumentValue;
 
 /**
  * @see de.juwimm.cms.model.DocumentHbm
@@ -55,6 +56,11 @@ public class DocumentHbmImpl extends DocumentHbm {
 		vo.setTimeStamp(this.getTimeStamp());
 		vo.setUseCountLastVersion(this.getUseCountLastVersion());
 		vo.setUseCountPublishVersion(this.getUseCountPublishVersion());
+		vo.setLabel(this.getLabel());
+		vo.setDescription(this.getDescription());
+		vo.setSearchable(this.isSearchable());
+		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
+		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
 		return vo;
 	}
 
@@ -94,6 +100,31 @@ public class DocumentHbmImpl extends DocumentHbm {
 		sb.append("\t<name><![CDATA[" + this.getDocumentName() + "]]></name>\n");
 		sb.append("</document>\n");
 		return sb.toString();
+	}
+	
+	/**
+	 * @see de.juwimm.cms.model.DocumentHbm#getValue()
+	 */
+	@Override
+	public DocumentValue getValue() {
+		DocumentValue vo = new DocumentValue();
+		vo.setDocumentId(this.getDocumentId());
+		vo.setDocumentName(this.getDocumentName());
+		vo.setMimeType(this.getMimeType());
+		vo.setTimeStamp(this.getTimeStamp());
+		vo.setUseCountLastVersion(this.getUseCountLastVersion());
+		vo.setUseCountPublishVersion(this.getUseCountPublishVersion());
+		vo.setLabel(this.getLabel());
+		vo.setDescription(this.getDescription());
+		vo.setSearchable(this.isSearchable());
+		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
+		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
+		try {
+			vo.setDocument(this.getDocument().getBytes(0, new Long(this.getDocument().length()).intValue()));
+		} catch (SQLException e) {
+			log.error("There was an error in document content fetching", e);
+		}
+		return vo;
 	}
 
 }

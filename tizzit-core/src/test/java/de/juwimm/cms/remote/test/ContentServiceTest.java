@@ -273,6 +273,7 @@ public class ContentServiceTest extends AbstractServiceTest {
 		try {
 			result = contentService.getResources4Unit(1, true, false, true, false);
 		} catch (UserException e) {
+			log.error("Exception in content service.",e);
 			Assert.assertFalse(true);
 		}
 
@@ -323,6 +324,7 @@ public class ContentServiceTest extends AbstractServiceTest {
 		try {
 			result = contentService.getResources4Unit(1, false, true, false, true);
 		} catch (UserException e) {
+			log.error("Exception in content service.",e);
 			Assert.assertFalse(true);
 		}
 
@@ -370,6 +372,7 @@ public class ContentServiceTest extends AbstractServiceTest {
 		try {
 			result = contentService.getResources4Unit(1, true, true, true, true);
 		} catch (UserException e) {
+			log.error("Exception in content service.",e);
 			Assert.assertFalse(true);
 		}
 

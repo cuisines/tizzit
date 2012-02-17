@@ -22,6 +22,9 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -112,9 +115,14 @@ public class PanDocuments extends JPanel {
 	private final JButton btnUpdate = new JButton();
 	private final JButton btnPreview = new JButton();
 	private final JPanel panLinkName = new JPanel();
+	private final JTextField txtDocumentLabel = new JTextField();
+	private final JLabel lbDocumentLabel = new JLabel();
+	private final JTextField txtDocumentDescription = new JTextField();
+	private final JLabel lbDocumentDescription = new JLabel();
+	private final JCheckBox ckbDocumentSearchable = new JCheckBox();
 	private final JTextField txtDocumentDesc = new JTextField();
 	private final JLabel lbLinkDescription = new JLabel();
-	private final BorderLayout panLinkNameLayout = new BorderLayout();
+	private final GridBagLayout panLinkNameLayout = new GridBagLayout();
 	private final JCheckBox cbxDisplayTypeInline = new JCheckBox();
 
 	private final JTable tblDocuments = new JTable();
@@ -143,6 +151,9 @@ public class PanDocuments extends JPanel {
 			btnUpdate.setText(Messages.getString("panel.content.documents.updateDocument"));
 			btnUpdate.setVisible(false);
 			lbLinkDescription.setText(Messages.getString("panel.content.documents.linkdescription"));
+			lbDocumentLabel.setText(Messages.getString("panel.content.documents.documentLabel"));
+			lbDocumentDescription.setText(Messages.getString("panel.content.documents.documentDescription"));
+			ckbDocumentSearchable.setText(Messages.getString("panel.content.documents.documentSearchable"));
 			cbxDisplayTypeInline.setText(rb.getString("content.modules.externalLink.displayTypeInline"));
 		} catch (Exception exe) {
 			log.error("Initialization error", exe);
@@ -259,8 +270,6 @@ public class PanDocuments extends JPanel {
 		lbLinkDescription.setText(" Linkbeschreibung  ");
 		this.setLayout(new BorderLayout());
 		panLinkName.setLayout(panLinkNameLayout);
-		panLinkNameLayout.setHgap(5);
-		panLinkNameLayout.setVgap(5);
 		panDocumentsLayout.setAlignment(FlowLayout.LEFT);
 		panDocumentButtons.setBackground(SystemColor.text);
 		this.add(panBottom, BorderLayout.SOUTH);
@@ -270,8 +279,13 @@ public class PanDocuments extends JPanel {
 		panFileAction.add(btnDelete, null);
 		panFileAction.add(btnPreview, null);
 		panBottom.add(panLinkName, BorderLayout.NORTH);
-		panLinkName.add(lbLinkDescription, BorderLayout.WEST);
-		panLinkName.add(txtDocumentDesc, BorderLayout.CENTER);
+		panLinkName.add(lbLinkDescription, 		new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(txtDocumentDesc, 		new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(lbDocumentLabel, 		new GridBagConstraints(0, 1, 1, 1, 0, 0, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(txtDocumentLabel, 		new GridBagConstraints(1, 1, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(lbDocumentDescription, 	new GridBagConstraints(0, 2, 1, 1, 0, 0, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(txtDocumentDescription, new GridBagConstraints(1, 2, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(ckbDocumentSearchable, 	new GridBagConstraints(0, 3, 2, 1, 1, 1, GridBagConstraints.BASELINE_LEADING, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
 		panBottom.add(cbxDisplayTypeInline, BorderLayout.WEST);
 		this.add(scrollPane, BorderLayout.CENTER);
 		if (showRegionCombo) {
@@ -627,6 +641,9 @@ public class PanDocuments extends JPanel {
 					linkDesc = linkDesc.substring(0, linkDesc.lastIndexOf("."));
 				}
 				txtDocumentDesc.setText(linkDesc);
+				txtDocumentLabel.setText(vo.getLabel());
+				txtDocumentDescription.setText(vo.getDescription());
+				ckbDocumentSearchable.setSelected(vo.isSearchable());
 				mimeType = vo.getMimeType();
 			}
 			btnUpdate.setVisible(false);

@@ -222,7 +222,7 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 	}
 	
 	public void insertDocument(DocumentHbm document) {
-		getJdbcTemplate().update(String.format("insert into document" + "(document_id,mime_type,time_stamp,document_name,use_count_last_version,use_count_publish_version,update_Search_Index,unit_id_fk) " + "values (%d,'%s',0,'%s',1,1,0,%d)", document.getDocumentId(), document.getMimeType(), document.getDocumentName(), document.getUnit().getUnitId()));
+		getJdbcTemplate().update(String.format("insert into document" + "(document_id,mime_type,time_stamp,document_name,use_count_last_version,use_count_publish_version,update_Search_Index,unit_id_fk,searchable) " + "values (%d,'%s',0,'%s',1,1,0,%d,%b)", document.getDocumentId(), document.getMimeType(), document.getDocumentName(), document.getUnit().getUnitId(), document.isSearchable()));
 	}
 
 	public void insertContentVersion(ContentVersionHbm contentVersion, Integer contentId) {

@@ -47,6 +47,7 @@ public class DocumentDaoTest extends HbmTestImpl {
 		documentInserted.setMimeType("txt");
 		documentInserted.setDocumentId(1);
 		documentInserted.setUnit(unit);
+		documentInserted.setSearchable(true);
 		insertDocument(documentInserted);
 	}
 

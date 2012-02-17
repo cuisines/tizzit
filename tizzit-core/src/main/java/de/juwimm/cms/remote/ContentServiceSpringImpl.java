@@ -81,6 +81,7 @@ import de.juwimm.cms.util.SmallSiteConfigReader;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.DocumentValue;
 import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.PictureSlimValue;
 import de.juwimm.cms.vo.PictureSlimstValue;
@@ -1168,6 +1169,75 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				getDocumentHbmDao().setDocumentContent(doc.getDocumentId(), IOUtils.toByteArray(in));
 			}
 			return doc.getDocumentId();
+		} catch (Exception e) {
+			throw new UserException(e.getMessage(),e);
+		}
+	}
+
+	/**
+	 * @see de.juwimm.cms.remote.ContentServiceSpring#addOrUpdateDocument(DocumentValue)
+	 */
+	@Override
+	protected DocumentValue handleAddOrUpdateDocument(DocumentValue documentValue) throws Exception {
+		try {
+			if (log.isDebugEnabled()) log.debug("addOrUpdateDocument for user " + AuthenticationHelper.getUserName());
+
+			UnitHbm unit = null;
+			ViewComponentHbm viewComponent = null;
+			if (documentValue.getViewDocumentId() != null) {
+				viewComponent = getViewComponentHbmDao().load(documentValue.getViewDocumentId());
+			}
+			if (documentValue.getUnitId() != null) {
+				unit = getUnitHbmDao().load(documentValue.getUnitId());
+			}
+			DocumentHbm doc = null;
+
+			//check if we have configured a max allowed size for this site in site configuration
+			int maxSize = -1;
+			UnitHbm configUnit=null;
+			try {
+				if(viewComponent!=null){
+					configUnit=viewComponent.getViewComponentUnit().getAssignedUnit();
+				}
+				SmallSiteConfigReader cfg = new SmallSiteConfigReader(configUnit!=null?configUnit.getSite():unit.getSite());
+				if (cfg != null) {
+					boolean hasMaxDocSize = cfg.getConfigElementValue("parameters/maxDocumentSize_1").equalsIgnoreCase("true");
+					if(hasMaxDocSize){
+						maxSize=Integer.parseInt(cfg.getConfigElementValue("parameters/maxDocumentSize_2"));
+					}
+				}
+			} catch (Exception ex) {
+				log.warn("could not read siteConfig of site: " + (configUnit!=null?configUnit.getSite().getName():"site unavailable"), ex);
+			}
+			if (maxSize > 0) {
+				long maxByteSize = maxSize * 1024 * 1024;
+				if (documentValue.getDocument().length > maxByteSize) {
+					throw new UserException("Invalid document size. Max size is defined in site config to the value of " + maxSize + " MB.");
+				}
+			}
+			// finished checking document size
+			
+//			FileInputStream in = new FileInputStream(tmp);
+			Blob b = Hibernate.createBlob(documentValue.getDocument());
+
+			if (documentValue.getDocumentId() != null) {
+				doc = getDocumentHbmDao().load(documentValue.getDocumentId());
+			} else {
+				doc = DocumentHbm.Factory.newInstance();
+				doc.setTimeStamp(System.currentTimeMillis());
+			}
+				doc.setDocumentName(documentValue.getDocumentName());
+				doc.setMimeType(documentValue.getMimeType());
+				doc.setUnit(unit);
+				doc.setViewComponent(viewComponent);
+				doc.setPassword(documentValue.getPassword());
+				doc.setDocument(b);
+				doc.setLabel(documentValue.getLabel());
+				doc.setPassword(documentValue.getPassword());
+				doc.setDescription(documentValue.getDescription());
+				doc.setSearchable(documentValue.isSearchable());
+
+			return doc.getValue();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage(),e);
 		}
