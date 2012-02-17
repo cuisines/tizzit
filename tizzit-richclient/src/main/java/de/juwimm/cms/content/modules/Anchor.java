@@ -166,6 +166,8 @@ public class Anchor extends AbstractModule {
 				anchor = AbstractModule.getURLDecoded(anchor);
 			} catch (Exception exe) {
 			}
+		} else {
+			anchor="";
 		}
 	}
 

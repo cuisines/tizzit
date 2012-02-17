@@ -1129,7 +1129,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				if(viewComponent!=null){
 					configUnit=viewComponent.getViewComponentUnit().getAssignedUnit();
 				}
-				SmallSiteConfigReader cfg = new SmallSiteConfigReader(configUnit.getSite());
+				SmallSiteConfigReader cfg = new SmallSiteConfigReader(configUnit!=null?configUnit.getSite():unit.getSite());
 				if (cfg != null) {
 					boolean hasMaxDocSize = cfg.getConfigElementValue("parameters/maxDocumentSize_1").equalsIgnoreCase("true");
 					if(hasMaxDocSize){

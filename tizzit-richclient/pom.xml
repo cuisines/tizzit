@@ -223,6 +223,11 @@
     		<artifactId>pdf-renderer</artifactId>
     		<version>1.0.5</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>0.8.0-incubating</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -316,6 +321,7 @@
 							<include>net.java.dev.flamingo:flamingo</include>
 							<include>javax.media:jai-core</include>
 							<include>com.sun.media:jai-codec</include>
+							<include>org.apache.pdfbox:pdfbox</include>
 						</includes>
 					</dependencies>
 					<jnlp>
