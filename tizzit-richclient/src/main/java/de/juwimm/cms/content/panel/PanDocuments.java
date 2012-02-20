@@ -22,18 +22,16 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.io.FileInputStream;
 import java.util.Enumeration;
 import java.util.ResourceBundle;
 
@@ -56,17 +54,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-
-import com.sun.pdfview.PDFFile;
-import com.sun.pdfview.PDFPage;
-import com.sun.pdfview.PagePanel;
 
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
+import de.juwimm.cms.content.event.EditpaneFiredEvent;
+import de.juwimm.cms.content.event.EditpaneFiredListener;
 import de.juwimm.cms.content.frame.DlgPdfDocumentPassword;
 import de.juwimm.cms.content.frame.DlgSaveDocument;
 import de.juwimm.cms.content.frame.helper.DocumentFilter;
@@ -84,6 +81,7 @@ import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.PdfUtils;
 import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.DocumentValue;
 
 /**
  * 
@@ -91,7 +89,7 @@ import de.juwimm.cms.vo.DocumentSlimValue;
  * @author <a href="carsten.schalm@juwimm.com">Carsten Schalm</a>
  * @version $Id$
  */
-public class PanDocuments extends JPanel {
+public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 	private static Logger log = Logger.getLogger(PanDocuments.class);
 	private final ResourceBundle rb = Constants.rb;
 	private Integer intDocId;
@@ -112,9 +110,14 @@ public class PanDocuments extends JPanel {
 	private final JButton btnUpdate = new JButton();
 	private final JButton btnPreview = new JButton();
 	private final JPanel panLinkName = new JPanel();
+	private final JTextField txtDocumentLabel = new JTextField();
+	private final JLabel lbDocumentLabel = new JLabel();
+	private final JTextField txtDocumentDescription = new JTextField();
+	private final JLabel lbDocumentDescription = new JLabel();
+	private final JCheckBox ckbDocumentSearchable = new JCheckBox();
 	private final JTextField txtDocumentDesc = new JTextField();
 	private final JLabel lbLinkDescription = new JLabel();
-	private final BorderLayout panLinkNameLayout = new BorderLayout();
+	private final GridBagLayout panLinkNameLayout = new GridBagLayout();
 	private final JCheckBox cbxDisplayTypeInline = new JCheckBox();
 
 	private final JTable tblDocuments = new JTable();
@@ -126,12 +129,14 @@ public class PanDocuments extends JPanel {
 	private int maxButtonWidth = 0;
 	private boolean isDataActualization = false;
 	boolean showRegionCombo = true;
+	boolean showDocumentProperties=true;
 	private String selectedDocName;
 	private String mimeType = "";
 	private Integer viewComponentId;
 
-	public PanDocuments(boolean showRegionCombo) {
+	public PanDocuments(boolean showRegionCombo, boolean showDocumentProperties) {
 		this.showRegionCombo = showRegionCombo;
+		this.showDocumentProperties=showDocumentProperties;
 		viewComponentId = PanContentView.getInstance().getViewComponent().getViewComponentId();
 		try {
 			jbInit();
@@ -143,6 +148,9 @@ public class PanDocuments extends JPanel {
 			btnUpdate.setText(Messages.getString("panel.content.documents.updateDocument"));
 			btnUpdate.setVisible(false);
 			lbLinkDescription.setText(Messages.getString("panel.content.documents.linkdescription"));
+			lbDocumentLabel.setText(Messages.getString("panel.content.documents.documentLabel"));
+			lbDocumentDescription.setText(Messages.getString("panel.content.documents.documentDescription"));
+			ckbDocumentSearchable.setText(Messages.getString("panel.content.documents.documentSearchable"));
 			cbxDisplayTypeInline.setText(rb.getString("content.modules.externalLink.displayTypeInline"));
 		} catch (Exception exe) {
 			log.error("Initialization error", exe);
@@ -259,8 +267,6 @@ public class PanDocuments extends JPanel {
 		lbLinkDescription.setText(" Linkbeschreibung  ");
 		this.setLayout(new BorderLayout());
 		panLinkName.setLayout(panLinkNameLayout);
-		panLinkNameLayout.setHgap(5);
-		panLinkNameLayout.setVgap(5);
 		panDocumentsLayout.setAlignment(FlowLayout.LEFT);
 		panDocumentButtons.setBackground(SystemColor.text);
 		this.add(panBottom, BorderLayout.SOUTH);
@@ -270,8 +276,29 @@ public class PanDocuments extends JPanel {
 		panFileAction.add(btnDelete, null);
 		panFileAction.add(btnPreview, null);
 		panBottom.add(panLinkName, BorderLayout.NORTH);
-		panLinkName.add(lbLinkDescription, BorderLayout.WEST);
-		panLinkName.add(txtDocumentDesc, BorderLayout.CENTER);
+		panLinkName.add(lbLinkDescription, new GridBagConstraints(0, 0, 1, 1,
+				0, 0, GridBagConstraints.BASELINE_LEADING,
+				GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		panLinkName.add(txtDocumentDesc, new GridBagConstraints(1, 0, 1, 1, 1,
+				0, GridBagConstraints.BASELINE_LEADING,
+				GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		if (showDocumentProperties) {
+			panLinkName.add(lbDocumentLabel, new GridBagConstraints(0, 1, 1, 1,
+					0, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(txtDocumentLabel, new GridBagConstraints(1, 1, 1,
+					1, 1, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(lbDocumentDescription, new GridBagConstraints(0, 2,
+					1, 1, 0, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(txtDocumentDescription, new GridBagConstraints(1,
+					2, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(ckbDocumentSearchable, new GridBagConstraints(0, 3,
+					2, 1, 1, 1, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+		}
 		panBottom.add(cbxDisplayTypeInline, BorderLayout.WEST);
 		this.add(scrollPane, BorderLayout.CENTER);
 		if (showRegionCombo) {
@@ -420,9 +447,9 @@ public class PanDocuments extends JPanel {
 				CboModel cb = (CboModel) cboRegion.getSelectedItem();
 				isDataActualization = false;
 				if (cb.isUnit) {
-					upload(cb.getView(), cb.getRegionId(), null, intDocId);
+					upload(cb.getView(), cb.getRegionId(), null, null);
 				} else {
-					upload(cb.getView(), null, cb.getRegionId(), intDocId);
+					upload(cb.getView(), null, cb.getRegionId(), null);
 				}
 				loadThumbs(cb.getRegionId());
 			}
@@ -543,7 +570,18 @@ public class PanDocuments extends JPanel {
 					if (!isDataActualization) {
 						if (existingDocId == 0) {
 							try{
-								this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
+								DocumentValue documentValue=new DocumentValue();
+//								documentValue.setDescription(txtDocumentDescription.getText());
+								documentValue.setDocument(IOUtils.toByteArray(new FileInputStream(file)));
+								documentValue.setDocumentId(documentId);
+								documentValue.setDocumentName(file.getName());
+//								documentValue.setLabel(txtDocumentLabel.getText());
+								documentValue.setMimeType(mimetype);
+								documentValue.setPassword(password);
+//								documentValue.setSearchable(ckbDocumentSearchable.isSelected());
+								documentValue.setUnitId(unit);
+								documentValue.setViewDocumentId(viewComponentId);
+								this.intDocId = this.comm.addOrUpdateDocument(documentValue).getDocumentId();
 							} catch (InvalidSizeException e) {
 								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), e.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 								return;
@@ -560,7 +598,18 @@ public class PanDocuments extends JPanel {
 					} else {
 						if ((existingDocId == 0) || (file.getName().equalsIgnoreCase(selectedDocName))) {
 							try{
-								this.intDocId = this.comm.addOrUpdateDocument(file, unit, viewComponentId, file.getName(), mimetype, documentId, password);
+								DocumentValue documentValue=new DocumentValue();
+								documentValue.setDescription(txtDocumentDescription.getText());
+								documentValue.setDocument(IOUtils.toByteArray(new FileInputStream(file)));
+								documentValue.setDocumentId(documentId);
+								documentValue.setDocumentName(file.getName());
+								documentValue.setLabel(txtDocumentLabel.getText());
+								documentValue.setMimeType(mimetype);
+								documentValue.setPassword(password);
+								documentValue.setSearchable(ckbDocumentSearchable.isSelected());
+								documentValue.setUnitId(unit);
+								documentValue.setViewDocumentId(viewComponentId);
+								this.intDocId = this.comm.addOrUpdateDocument(documentValue).getDocumentId();
 							} catch (InvalidSizeException e) {
 								JOptionPane.showMessageDialog(UIConstants.getMainFrame(), e.getMessage(), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 								return;
@@ -627,6 +676,9 @@ public class PanDocuments extends JPanel {
 					linkDesc = linkDesc.substring(0, linkDesc.lastIndexOf("."));
 				}
 				txtDocumentDesc.setText(linkDesc);
+				txtDocumentLabel.setText(vo.getLabel());
+				txtDocumentDescription.setText(vo.getDescription());
+				ckbDocumentSearchable.setSelected(vo.isSearchable());
 				mimeType = vo.getMimeType();
 			}
 			btnUpdate.setVisible(false);
@@ -714,6 +766,26 @@ public class PanDocuments extends JPanel {
 	 */
 	public String getMimeType() {
 		return mimeType;
+	}
+
+	public void editpaneFiredPerformed(EditpaneFiredEvent ae) {
+		//get selected document
+		if (intDocId != null) {
+			DocumentSlimValue slimValue= comm.getDocumentSlimValue(intDocId);
+			slimValue.setDescription(txtDocumentDescription.getText());
+			slimValue.setLabel(txtDocumentLabel.getText());
+			slimValue.setSearchable(ckbDocumentSearchable.isSelected());
+			comm.updateDocumentSlimValue(slimValue);
+		}
+		//get properties
+		//update document
+		//send to server
+		
+	}
+
+	public void editpaneCancelPerformed(EditpaneFiredEvent ae) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -102,6 +102,7 @@ import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.DocumentValue;
 import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.HostValue;
 import de.juwimm.cms.vo.PictureSlimValue;
@@ -2566,6 +2567,35 @@ public class Communication implements ExitListener, ActionListener {
 
 	/**
 	 * Adds a document in the database for a given unit or viewComponent.<br> If the parent site has a maximum allowed size parameter defined <b>(PARAM_MAX_DOCUMENT_SIZE)</b>, then the file being sent for upload is checked for allowed size. If the size is above the max size, the method throws @InvalidSizeException
+	 * @param documentValue
+	 * @return
+	 */
+	public DocumentValue addOrUpdateDocument(DocumentValue documentValue) throws InvalidSizeException{
+		//maximum document size validation
+		if(Parameters.getBooleanParameter(Parameters.PARAM_MAX_DOCUMENT_SIZE)){
+			int maxAllowedSize=-1;
+			try{
+				maxAllowedSize=Integer.parseInt(Parameters.getStringParameter(Parameters.PARAM_MAX_DOCUMENT_SIZE));
+			}catch (NumberFormatException e) {
+				log.error("Could not load site parameter PARAM_MAX_DOCUMENT_SIZE (problem with int parsing)", e);
+			}
+			if(maxAllowedSize>0){
+				long maxSizeBytes=maxAllowedSize*1024*1024;
+				if(documentValue.getDocument().length>maxSizeBytes){
+					throw new InvalidSizeException("The document is larger than the maximum allowed limit for upload");
+				}
+			}
+		}
+		try {
+			return getClientService().addOrUpdateDocument(documentValue);
+		} catch (Exception re) {
+			log.error("Error importing document " + re.getMessage());
+		} 
+		return null;
+	}
+
+	/**
+	 * Adds a document in the database for a given unit or viewComponent.<br> If the parent site has a maximum allowed size parameter defined <b>(PARAM_MAX_DOCUMENT_SIZE)</b>, then the file being sent for upload is checked for allowed size. If the size is above the max size, the method throws @InvalidSizeException
 	 * @param file
 	 * @param unitId
 	 * @param viewComponentId
@@ -2830,6 +2860,14 @@ public class Communication implements ExitListener, ActionListener {
 
 	public List<ViewComponentValue> getViewComponentsForSearch(String searchValue) {
 		return getClientService().getViewComponentsForSearch(this.getSelectedUnitId(), this.getViewDocumentId(), searchValue);
+	}
+	
+	public DocumentSlimValue getDocumentSlimValue(Integer documentId){
+		return getClientService().getDocumentSlimValue(documentId);
+	}
+	
+	public DocumentSlimValue updateDocumentSlimValue(DocumentSlimValue documentSlimValue){
+		return getClientService().updateDocument(documentSlimValue);
 	}
 
 }

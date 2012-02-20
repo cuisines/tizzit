@@ -399,7 +399,7 @@ public class SearchengineService {
 				retVal.setPageSize(pageSize);
 				retVal.setPageNumber(pageNumber);
 				retVal.setDuration(Long.valueOf(results.getSearchTime()));
-				retVal.setPageAmount(results.getPages().length);
+				retVal.setPageAmount(results.getPages()!=null?results.getPages().length:null);
 				retVal.setTotalHits(results.getTotalHits());
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
 					String url = resource.getProperty("url").getStringValue();

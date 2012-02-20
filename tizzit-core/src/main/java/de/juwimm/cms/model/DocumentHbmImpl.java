@@ -23,6 +23,7 @@ package de.juwimm.cms.model;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.SQLException;
 
 import org.apache.commons.io.IOUtils;
@@ -32,6 +33,7 @@ import org.tizzit.util.Base64;
 
 import de.juwimm.cms.beans.BlobJdbcDao;
 import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.DocumentValue;
 
 /**
  * @see de.juwimm.cms.model.DocumentHbm
@@ -55,6 +57,11 @@ public class DocumentHbmImpl extends DocumentHbm {
 		vo.setTimeStamp(this.getTimeStamp());
 		vo.setUseCountLastVersion(this.getUseCountLastVersion());
 		vo.setUseCountPublishVersion(this.getUseCountPublishVersion());
+		vo.setLabel(this.getLabel());
+		vo.setDescription(this.getDescription());
+		vo.setSearchable(this.isSearchable());
+		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
+		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
 		return vo;
 	}
 
@@ -94,6 +101,34 @@ public class DocumentHbmImpl extends DocumentHbm {
 		sb.append("\t<name><![CDATA[" + this.getDocumentName() + "]]></name>\n");
 		sb.append("</document>\n");
 		return sb.toString();
+	}
+	
+	/**
+	 * @see de.juwimm.cms.model.DocumentHbm#getValue()
+	 */
+	@Override
+	public DocumentValue getValue() {
+		DocumentValue vo = new DocumentValue();
+		vo.setDocumentId(this.getDocumentId());
+		vo.setDocumentName(this.getDocumentName());
+		vo.setMimeType(this.getMimeType());
+		vo.setTimeStamp(this.getTimeStamp());
+		vo.setUseCountLastVersion(this.getUseCountLastVersion());
+		vo.setUseCountPublishVersion(this.getUseCountPublishVersion());
+		vo.setLabel(this.getLabel());
+		vo.setDescription(this.getDescription());
+		vo.setSearchable(this.isSearchable());
+		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
+		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
+		try {
+			Blob blob = this.getDocument();
+			vo.setDocument(IOUtils.toByteArray(blob.getBinaryStream()));
+		} catch (SQLException e) {
+			log.error("There was an error in document content fetching", e);
+		} catch (IOException e) {
+			log.error("There was an error in document content fetching", e);
+		}
+		return vo;
 	}
 
 }

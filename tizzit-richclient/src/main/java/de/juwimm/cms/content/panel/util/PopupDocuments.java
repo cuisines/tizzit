@@ -30,7 +30,7 @@ public class PopupDocuments extends PopupComponent {
 		content.setBorder(new BevelBorder(BevelBorder.RAISED));
 		content.setSize(600, 300);
 		content.setLayout(new BorderLayout());
-		panDocuments = new PanDocuments(false);
+		panDocuments = new PanDocuments(false,false);
 		panDocuments.setSize(600, 300);
 		panDocuments.setPreferredSize(new Dimension(600, 300));
 		panDocuments.setDocumentId(null);
