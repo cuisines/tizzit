@@ -158,7 +158,7 @@ public class Documents extends AbstractModule {
 			} catch (Exception e) {
 			}
 		} else {
-			pan = new PanDocuments(true,true);
+			pan = new PanDocuments(true,true); 
 			this.addEditpaneFiredListener(pan);
 			pan.setDocumentId(null);
 			pan.setDocumentDescription("");
