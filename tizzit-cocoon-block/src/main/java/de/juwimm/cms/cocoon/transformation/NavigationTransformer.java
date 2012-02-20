@@ -253,6 +253,17 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 				dontShowFirst = new Integer(attrs.getValue("dontShowFirst")).intValue();
 			} catch (Exception exe) {
 			}
+			
+			try {
+				
+				Integer viewAttrComponentId = new Integer(attrs.getValue("viewComponentId"));
+				if (viewAttrComponentId != null && (!viewAttrComponentId.equals(viewComponentId))) {
+					viewComponentId = viewAttrComponentId;
+					viewComponentValue = this.webSpringBean.getViewComponent4Id(viewComponentId);
+				}
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("value for 'viewComponentId' not found ");
+			}
 
 			try {
 				if (sm.equals("")) {

@@ -97,6 +97,7 @@ public class GenericAction extends AbstractCacheableAction implements Configurab
 			log.error(e);
 			throw new ConfigurationException("could not call compose(...) on " + clzName); //$NON-NLS-1$
 		} catch (Exception exe) {
+			log.error(exe);
 			throw new ConfigurationException("Could not instantiate " + clzName); //$NON-NLS-1$
 		}
 		if (this.configurable != null) this.configurable.configure(config);
