@@ -21,12 +21,15 @@
 package de.juwimm.cms.model;
 
 import java.sql.Blob;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.lob.BlobImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.Base64;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 import de.juwimm.cms.beans.BlobJdbcDao;
 import de.juwimm.cms.search.beans.SearchengineDeleteService;
@@ -183,6 +186,12 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 		return newDocument.getDocumentId();
 	}
 
+	/**
+	 * document name, document id, document last modified and mime type.
+	 * - label (text) 
+ 	 * - description (litte text field) 
+	 * - checkbox (show document in search? yes/no)
+	 */
 	@Override
 	public String handleToXml(Integer documentId, int tabdepth) {
 		DocumentHbm document = this.load(documentId);
@@ -198,6 +207,18 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 			sb.append("\" unitId=\"");
 			sb.append(document.getUnit().getUnitId());
 		}
+		sb.append("\" label=\"");
+		sb.append(document.getLabel());
+		sb.append("\" description=\"");
+		sb.append(document.getDescription());
+		sb.append("\" searchable=\"");
+		sb.append(document.isSearchable());
+		sb.append("\" lastModified=\"");
+		Date date =new Date(document.getTimeStamp());
+		sb.append(new SimpleDateFormat().format(date));
+		sb.append("\" documentName=\"");
+		sb.append(document.getDocumentName());
+
 		sb.append("\">\n");
 		byte[] data = blobJdbcDao.getDocumentContent(document.getDocumentId());
 

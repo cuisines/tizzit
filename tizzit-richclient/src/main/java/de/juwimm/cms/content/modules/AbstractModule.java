@@ -248,8 +248,10 @@ public abstract class AbstractModule implements Module, Cloneable {
 
 	public final void runEditpaneFiredEvent(EditpaneFiredEvent efe) {
 		Object[] listeners = listenerList.getListenerList();
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			((EditpaneFiredListener) listeners[i + 1]).editpaneFiredPerformed(efe);
+		for (int i = listeners.length - 1; i >= 0; i --) {
+			if(listeners[i] instanceof EditpaneFiredListener){
+				((EditpaneFiredListener) listeners[i]).editpaneFiredPerformed(efe);
+			}
 		}
 	}
 

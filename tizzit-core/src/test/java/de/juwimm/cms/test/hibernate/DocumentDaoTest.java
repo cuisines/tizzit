@@ -80,7 +80,7 @@ public class DocumentDaoTest extends HbmTestImpl {
 		documentDao.setDocumentContent(1, new byte[] {0});
 		try {
 			String result = documentDao.toXml(1, 0);
-			String expectedResult = "<document id=\"1\" mimeType=\"txt\" unitId=\"1\">\n\t<file>AA==</file>\n\t<name><![CDATA[testDocument]]></name>\n</document>\n";
+			String expectedResult = "<document id=\"1\" mimeType=\"txt\" unitId=\"1\" label=\"null\" description=\"null\" searchable=\"true\" lastModified=\"1/1/70 1:00 AM\" documentName=\"testDocument\">\n\t<file>AA==</file>\n\t<name><![CDATA[testDocument]]></name>\n</document>\n";
 			Assert.assertNotNull(result);
 			Assert.assertEquals(expectedResult, result);
 		} catch (Exception e) {

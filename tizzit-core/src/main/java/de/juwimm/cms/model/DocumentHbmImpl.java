@@ -23,6 +23,7 @@ package de.juwimm.cms.model;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.SQLException;
 
 import org.apache.commons.io.IOUtils;
@@ -120,8 +121,11 @@ public class DocumentHbmImpl extends DocumentHbm {
 		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
 		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
 		try {
-			vo.setDocument(this.getDocument().getBytes(0, new Long(this.getDocument().length()).intValue()));
+			Blob blob = this.getDocument();
+			vo.setDocument(IOUtils.toByteArray(blob.getBinaryStream()));
 		} catch (SQLException e) {
+			log.error("There was an error in document content fetching", e);
+		} catch (IOException e) {
 			log.error("There was an error in document content fetching", e);
 		}
 		return vo;

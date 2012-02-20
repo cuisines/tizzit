@@ -1226,17 +1226,21 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				doc = DocumentHbm.Factory.newInstance();
 				doc.setTimeStamp(System.currentTimeMillis());
 			}
-				doc.setDocumentName(documentValue.getDocumentName());
-				doc.setMimeType(documentValue.getMimeType());
-				doc.setUnit(unit);
-				doc.setViewComponent(viewComponent);
-				doc.setPassword(documentValue.getPassword());
-				doc.setDocument(b);
-				doc.setLabel(documentValue.getLabel());
-				doc.setPassword(documentValue.getPassword());
-				doc.setDescription(documentValue.getDescription());
-				doc.setSearchable(documentValue.isSearchable());
-
+			doc.setDocumentName(documentValue.getDocumentName());
+			doc.setMimeType(documentValue.getMimeType());
+			doc.setUnit(unit);
+			doc.setViewComponent(viewComponent);
+			doc.setPassword(documentValue.getPassword());
+			doc.setDocument(b);
+			doc.setLabel(documentValue.getLabel());
+			doc.setPassword(documentValue.getPassword());
+			doc.setDescription(documentValue.getDescription());
+			doc.setSearchable(documentValue.isSearchable());
+			if (documentValue.getDocumentId() != null) {
+				getDocumentHbmDao().update(doc);
+			} else {
+				getDocumentHbmDao().create(doc);
+			}
 			return doc.getValue();
 		} catch (Exception e) {
 			throw new UserException(e.getMessage(),e);
@@ -2344,5 +2348,54 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	protected Integer handleGetDocumentIdForNameAndViewComponent(String name, Integer viewComponentId) throws Exception {
 		return getDocumentHbmDao().getIdForNameAndViewComponent(name, viewComponentId);
 	}
+
+	@Override
+	protected DocumentSlimValue handleGetDocumentSlimValue(Integer documentId)
+			throws Exception {
+		DocumentHbm document=getDocumentHbmDao().load(documentId);
+		return document.getSlimValue();
+	}
+
+	@Override
+	protected DocumentSlimValue handleUpdateDocument(
+			DocumentSlimValue documentSlimValue) throws Exception {
+		try {
+			if (log.isDebugEnabled()) log.debug("addOrUpdateDocument for user " + AuthenticationHelper.getUserName());
+
+			UnitHbm unit = null;
+			ViewComponentHbm viewComponent = null;
+			if (documentSlimValue.getViewDocumentId() != null) {
+				viewComponent = getViewComponentHbmDao().load(documentSlimValue.getViewDocumentId());
+			}
+			if (documentSlimValue.getUnitId() != null) {
+				unit = getUnitHbmDao().load(documentSlimValue.getUnitId());
+			}
+			DocumentHbm doc = null;
+
+			if (documentSlimValue.getDocumentId() != null) {
+				doc = getDocumentHbmDao().load(
+						documentSlimValue.getDocumentId());
+			} else {
+				doc = DocumentHbm.Factory.newInstance();
+				doc.setTimeStamp(System.currentTimeMillis());
+			}
+			doc.setDocumentName(documentSlimValue.getDocumentName());
+			doc.setMimeType(documentSlimValue.getMimeType());
+			doc.setUnit(unit);
+			doc.setViewComponent(viewComponent);
+			doc.setLabel(documentSlimValue.getLabel());
+			doc.setPassword(documentSlimValue.getPassword());
+			doc.setDescription(documentSlimValue.getDescription());
+			doc.setSearchable(documentSlimValue.isSearchable());
+			if (documentSlimValue.getDocumentId() != null) {
+				getDocumentHbmDao().update(doc);
+			} else {
+				getDocumentHbmDao().create(doc);
+			}
+
+			return doc.getSlimValue();
+		} catch (Exception e) {
+			throw new UserException(e.getMessage(),e);
+		}	}
 
 }

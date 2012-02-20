@@ -63,6 +63,7 @@ import de.juwimm.cms.vo.AccessRoleValue;
 import de.juwimm.cms.vo.ContentValue;
 import de.juwimm.cms.vo.ContentVersionValue;
 import de.juwimm.cms.vo.DocumentSlimValue;
+import de.juwimm.cms.vo.DocumentValue;
 import de.juwimm.cms.vo.EditionValue;
 import de.juwimm.cms.vo.HostValue;
 import de.juwimm.cms.vo.PictureSlimValue;
@@ -2061,6 +2062,24 @@ public class ClientServiceSpringImpl extends ClientServiceSpringBase {
 	@Override
 	protected byte[] handleGetDocumentBytes(Integer documentId) throws Exception {
 		return getContentServiceSpring().getDocument(documentId);
+	}
+
+	@Override
+	protected DocumentValue handleAddOrUpdateDocument(
+			DocumentValue documentValue) throws Exception {
+		return getContentServiceSpring().addOrUpdateDocument(documentValue);
+	}
+
+	@Override
+	protected DocumentSlimValue handleGetDocumentSlimValue(Integer documentId)
+			throws Exception {
+		return getContentServiceSpring().getDocumentSlimValue(documentId);
+	}
+
+	@Override
+	protected DocumentSlimValue handleUpdateDocument(
+			DocumentSlimValue documentSlimValue) throws Exception {
+		return getContentServiceSpring().updateDocument(documentSlimValue);
 	}
 
 }

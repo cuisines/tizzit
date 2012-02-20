@@ -2861,5 +2861,13 @@ public class Communication implements ExitListener, ActionListener {
 	public List<ViewComponentValue> getViewComponentsForSearch(String searchValue) {
 		return getClientService().getViewComponentsForSearch(this.getSelectedUnitId(), this.getViewDocumentId(), searchValue);
 	}
+	
+	public DocumentSlimValue getDocumentSlimValue(Integer documentId){
+		return getClientService().getDocumentSlimValue(documentId);
+	}
+	
+	public DocumentSlimValue updateDocumentSlimValue(DocumentSlimValue documentSlimValue){
+		return getClientService().updateDocument(documentSlimValue);
+	}
 
 }
