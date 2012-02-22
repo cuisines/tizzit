@@ -678,15 +678,14 @@ public class WebServiceSpring {
 		return null;
 	}
 
-	//
-	//	public SiteValue getSiteForHost(Integer siteId) throws Exception {
-	//		SiteHbm site = this.siteHbmDao.load(siteId);
-	//		if (site != null) {
-	//			return site.getSiteValue();
-	//		} else {
-	//			return null;
-	//		}
-	//	}
+	public SiteValue getSiteValue(Integer siteId) throws Exception {
+		SiteHbm site = this.siteHbmDao.load(siteId);
+		if (site != null) {
+			return site.getSiteValue();
+		} else {
+			return null;
+		}
+	}
 
 	/**
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getAllSites()
@@ -2274,5 +2273,58 @@ public class WebServiceSpring {
 			log.info("Could not load access roles from tizzit db");
 		}
 	}
+	
+	public String getDocumentsForSiteXml(Integer siteId) throws Exception {
+		if (log.isDebugEnabled())
+			log.debug("getDocumentsForSiteXml start");
+		try {
+			String retVal = "";
+			SiteValue siteValue = getSiteValue(siteId);
+			if (log.isDebugEnabled())
+				log.debug("site id: " + siteId);
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
+			Collection<DocumentHbm> docs= documentHbmDao.findAllPerSite(siteId);
+			for (Iterator iterator = docs.iterator(); iterator.hasNext();) {
+				DocumentHbm documentHbm = (DocumentHbm) iterator.next();
+				if (documentHbm.isSearchable()) {
+					out.append(documentHbmDao.toXml(
+							documentHbm.getDocumentId(), 0, false));
+				}
+			}
+			retVal = byteOut.toString("UTF-8");
+			return retVal;
+		} catch (Exception e) {
+			log.error("ERROR GET DOCUMENTS XML ERROR " + e.getMessage());
+			throw new UserException();
+		}
+	}
+
+	public String getDocumentsForUnitXml(Integer unitId) throws Exception {
+		if (log.isDebugEnabled())
+			log.debug("getDocumentsForUnitXml start");
+		try {
+			String retVal = "";
+			UnitValue unitValue = getUnit(unitId);
+			if (log.isDebugEnabled())
+				log.debug("unit id: " + unitId);
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
+			Collection<DocumentHbm> docs= documentHbmDao.findAllPerUnit(unitId);
+			for (Iterator iterator = docs.iterator(); iterator.hasNext();) {
+				DocumentHbm documentHbm = (DocumentHbm) iterator.next();
+				if (documentHbm.isSearchable()) {
+					out.append(documentHbmDao.toXml(
+							documentHbm.getDocumentId(), 0, false));
+				}
+			}
+			retVal = byteOut.toString("UTF-8");
+			return retVal;
+		} catch (Exception e) {
+			log.error("ERROR GET DOCUMENTS XML ERROR " + e.getMessage());
+			throw new UserException();
+		}
+	}
+
 
 }

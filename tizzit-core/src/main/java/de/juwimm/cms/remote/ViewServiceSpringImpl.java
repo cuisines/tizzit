@@ -1818,7 +1818,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 						PictureHbm picture = getPictureHbmDao().load(itemId);
 						out.print(picture.toXml(0));
 					} else if (tagString.equals("document")) {
-						out.print(getDocumentHbmDao().toXml(itemId, 0));
+						out.print(getDocumentHbmDao().toXml(itemId, 0,true));
 					}
 				}
 			}

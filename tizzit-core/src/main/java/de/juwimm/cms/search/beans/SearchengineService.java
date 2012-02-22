@@ -1,9 +1,9 @@
 package de.juwimm.cms.search.beans;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -32,11 +32,11 @@ import org.compass.core.Compass;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
+import org.compass.core.CompassQueryBuilder.CompassBooleanQueryBuilder;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.CompassQueryBuilder.CompassBooleanQueryBuilder;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckSuggestBuilder;
 import org.compass.core.engine.spellcheck.SearchEngineSpellSuggestions;
@@ -575,8 +575,8 @@ public class SearchengineService {
 			boolean hasLivePreview = (viewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
 			boolean hasWorkPreview = (viewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
 			if (viewComponent.isSearchIndexed()) {
-				if (hasLivePreview && contentText != null) this.indexPage4Lucene(viewComponent, contentText, true);
-				if (hasWorkPreview && contentLiveText != null) this.indexPage4Lucene(viewComponent, contentLiveText, false);
+				if (hasWorkPreview && contentText != null) this.indexPage4Lucene(viewComponent, contentText, false);
+				if (hasLivePreview && contentLiveText != null) this.indexPage4Lucene(viewComponent, contentLiveText, true);
 			} else {
 				if (hasLivePreview) searchengineDeleteService.deletePage4Lucene(viewComponent, true);
 				if (hasWorkPreview) searchengineDeleteService.deletePage4Lucene(viewComponent, false);
@@ -724,26 +724,16 @@ public class SearchengineService {
 		boolean retVal = false;
 		try {
 			client.executeMethod(method);
-			InputStream in = method.getResponseBodyAsStream();
+			String responseBody=method.getResponseBodyAsString();
 			OutputStream out = new FileOutputStream(file);
-
+			Closeable streamOut = out;
+			
 			try {
-				byte[] buf = new byte[2048];
-				for (;;) {
-					int cb = in.read(buf);
-					if (cb < 0) break;
-					out.write(buf, 0, cb);
-				}
+				out.write(responseBody.getBytes());
 			} finally {
-				if (out != null) {
+				if (streamOut != null) {
 					try {
-						out.close();
-					} catch (IOException e) {
-					}
-				}
-				if (in != null) {
-					try {
-						in.close();
+						streamOut.close();
 					} catch (IOException e) {
 					}
 				}

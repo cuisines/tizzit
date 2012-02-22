@@ -193,7 +193,7 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 	 * - checkbox (show document in search? yes/no)
 	 */
 	@Override
-	public String handleToXml(Integer documentId, int tabdepth) {
+	public String handleToXml(Integer documentId, int tabdepth, boolean showData) {
 		DocumentHbm document = this.load(documentId);
 		StringBuffer sb = new StringBuffer();
 		sb.append("<document id=\"");
@@ -207,28 +207,28 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 			sb.append("\" unitId=\"");
 			sb.append(document.getUnit().getUnitId());
 		}
-		sb.append("\" label=\"");
-		sb.append(document.getLabel());
-		sb.append("\" description=\"");
-		sb.append(document.getDescription());
+		Date date =new Date(document.getTimeStamp());
+		sb.append("\" lastModified=\"");
+		sb.append(new SimpleDateFormat().format(date));
 		sb.append("\" searchable=\"");
 		sb.append(document.isSearchable());
-		sb.append("\" lastModified=\"");
-		Date date =new Date(document.getTimeStamp());
-		sb.append(new SimpleDateFormat().format(date));
-		sb.append("\" documentName=\"");
-		sb.append(document.getDocumentName());
 
 		sb.append("\">\n");
-		byte[] data = blobJdbcDao.getDocumentContent(document.getDocumentId());
+		if (showData) {
+			byte[] data = blobJdbcDao.getDocumentContent(document
+					.getDocumentId());
 
-		if (data == null || data.length == 0) {
-			sb.append("\t<file></file>\n");
-		} else {
-			sb.append("\t<file>").append(Base64.encodeBytes(data)).append("</file>\n");
+			if (data == null || data.length == 0) {
+				sb.append("\t<file></file>\n");
+			} else {
+				sb.append("\t<file>").append(Base64.encodeBytes(data))
+						.append("</file>\n");
+			}
 		}
-
-		sb.append("\t<name><![CDATA[" + document.getDocumentName() + "]]></name>\n");
+		sb.append("\t<name><![CDATA[" + document.getDocumentName()
+				+ "]]></name>\n");
+		sb.append("\t<label><![CDATA["+document.getLabel()+"]]></label>\n");
+		sb.append("\t<description><![CDATA["+document.getDescription()+"]]></description>\n");
 		sb.append("</document>\n");
 		return sb.toString();
 	}

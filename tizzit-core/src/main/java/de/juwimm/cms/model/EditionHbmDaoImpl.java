@@ -286,7 +286,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 					Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unit.getUnitId());
 					for (DocumentHbm doc : docs) {
 						if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
-						out.print(getDocumentHbmDao().toXml(doc.getDocumentId(), 2));
+						out.print(getDocumentHbmDao().toXml(doc.getDocumentId(), 2,true));
 					}
 				}
 			} else {
@@ -294,7 +294,7 @@ public class EditionHbmDaoImpl extends EditionHbmDaoBase {
 				Collection<DocumentHbm> docs = getDocumentHbmDao().findAllPerUnit(unitId);
 				for (DocumentHbm doc : docs) {
 					if (!includeUnused && doc.getUseCountPublishVersion() == 0) continue;
-					out.print(getDocumentHbmDao().toXml(doc.getDocumentId(), 2));
+					out.print(getDocumentHbmDao().toXml(doc.getDocumentId(), 2,true));
 				}
 			}
 		} catch (Exception exe) {
