@@ -103,8 +103,8 @@ public class HTMLParser implements HTMLParserConstants {
 		if (pipeIn == null) {
 			pipeInStream = new MyPipedInputStream();
 			pipeOutStream = new PipedOutputStream(pipeInStream);
-			pipeIn = new InputStreamReader(pipeInStream, "UTF-16BE");
-			pipeOut = new OutputStreamWriter(pipeOutStream, "UTF-16BE");
+			pipeIn = new InputStreamReader(pipeInStream, "UTF-8");
+			pipeOut = new OutputStreamWriter(pipeOutStream, "UTF-8");
 
 			Thread thread = new ParserThread(this);
 			thread.start(); // start parsing

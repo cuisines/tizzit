@@ -18,6 +18,7 @@ package de.juwimm.cms.search.res;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.util.Collection;
@@ -104,7 +105,8 @@ public class HtmlResourceLocator {
 		} catch (Exception exe) {
 			if (log.isDebugEnabled()) log.debug("realms could not be loaded for vcId: " + vcl.getViewComponentId(), exe);
 		}
-		HTMLParser parser = new HTMLParser(new FileInputStream(file));
+		InputStream inputStream=new FileInputStream(file);
+		HTMLParser parser = new HTMLParser(inputStream);
 		return parseHtml(resource, parser);
 	}
 
@@ -160,7 +162,7 @@ public class HtmlResourceLocator {
 	private Resource parseHtml(Resource resource, HTMLParser parser) throws IOException, InterruptedException {
 		Reader reader = parser.getReader();
 		StringWriter sw = new StringWriter();
-		org.apache.commons.io.IOUtils.copy(reader, sw);
+			org.apache.commons.io.IOUtils.copy(reader, sw);
 		String sresult = sw.toString();
 
 		if (log.isDebugEnabled()) log.debug("Saving tokenized HTML value into searchengine: " + sresult);
