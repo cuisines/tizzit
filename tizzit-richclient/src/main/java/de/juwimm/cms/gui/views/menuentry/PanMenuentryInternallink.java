@@ -191,8 +191,13 @@ public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFi
 			}
 		} else {
 			this.getViewComponent().setViewLevel("3");
-			this.getViewComponent().setReference(((InternalLink) intLink).getLinkTargetViewComponentId().toString());
-			//this.getViewComponent().setViewIndex("3");
+			Integer referencedViewComponent = ((InternalLink) intLink)
+					.getLinkTargetViewComponentId();
+			if (referencedViewComponent != null) {
+				this.getViewComponent().setReference(
+						referencedViewComponent.toString());
+			}
+			this.getViewComponent().setViewIndex("3");
 		}
 
 		if (!prevVLevel.equalsIgnoreCase(this.getViewComponent().getViewLevel()) || !prevVIndex.equalsIgnoreCase(this.getViewComponent().getViewIndex()) || edited) {

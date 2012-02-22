@@ -238,7 +238,7 @@ public class InternalLink extends AbstractModule {
 	}
 
 	public Integer getLinkTargetViewComponentId() {
-		return this.pan.getLinkTarget();
+		return this.pan!=null?this.pan.getLinkTarget():null;
 	}
 
 	public void addDeleteSettingsActionListener(ActionListener al) {

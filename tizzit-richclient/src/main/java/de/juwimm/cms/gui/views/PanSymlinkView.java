@@ -98,6 +98,7 @@ public class PanSymlinkView extends JPanel implements LoadableViewComponentPanel
 				try {
 					save();
 				} catch (Exception exe) {
+					log.error("There was a problem in saving the component", exe);
 				}
 			}
 		});
