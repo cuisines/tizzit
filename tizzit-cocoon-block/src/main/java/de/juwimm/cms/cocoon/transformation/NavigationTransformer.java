@@ -35,6 +35,7 @@ import de.juwimm.cms.vo.ViewComponentValue;
 
 /**
  * @author rhertzfeldt
+ * @update nitun
  *
  */
 public class NavigationTransformer extends AbstractTransformer implements Recyclable {
@@ -191,7 +192,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			}
 			try {
 				if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(viewComponentValue.getViewComponentId()) >= ifDistanceToNavigationRoot) {
-					navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver);
+					navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver, iAmTheLiveserver);
 					if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
 						try {
 							Document docNavigationXml = XercesHelper.string2Dom(navigationXml);

@@ -113,7 +113,7 @@ public class TizzitRestAPIController {
 
 		if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(refVcId) >= ifDistanceToNavigationRoot) {
 			ViewComponentValue viewComponentValue = webSpringBean.getViewComponent4Id(refVcId);
-			String navigationXml = webSpringBean.getNavigationXml(refVcId, since, depth, getPUBLSVersion, showType);
+			String navigationXml = webSpringBean.getNavigationXml(refVcId, since, depth, getPUBLSVersion, false, showType);
 			if (navigationXml != null && !navigationXml.isEmpty()) {
 				Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
 				// add axis 

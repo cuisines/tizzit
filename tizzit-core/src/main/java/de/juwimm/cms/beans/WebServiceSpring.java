@@ -303,7 +303,7 @@ public class WebServiceSpring {
 	 * @see de.juwimm.cms.remote.WebServiceSpring#getNavigationXml(java.lang.Integer,
 	 *      java.lang.String, int, boolean)
 	 */
-	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion, int showType) throws Exception {
+	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion, boolean showOnlyDeployed, int showType) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getNavigationXML start");
 		try {
 			String retVal = "";
@@ -313,7 +313,7 @@ public class WebServiceSpring {
 				ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(byteOut, true, "UTF-8");
 				ViewComponentHbm vcl = viewComponentHbmDao.load(vclpk);
-				viewComponentHbmDao.toXml(vcl, null, false, false, false, true, depth, getPUBLSVersion, true, -1, showType, out);
+				viewComponentHbmDao.toXml(vcl, null, false, false, false, true, depth, getPUBLSVersion, true,showOnlyDeployed, -1, showType, out);
 				retVal = byteOut.toString("UTF-8");
 			}
 			return retVal;
@@ -324,8 +324,12 @@ public class WebServiceSpring {
 	}
 
 	// just for cocoon
+	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion, boolean showOnlyDeployed) throws Exception {
+		return this.getNavigationXml(refVcId, since, depth, getPUBLSVersion, showOnlyDeployed, -1);
+	}
+
 	public String getNavigationXml(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
-		return this.getNavigationXml(refVcId, since, depth, getPUBLSVersion, -1);
+		return this.getNavigationXml(refVcId, since, depth, getPUBLSVersion, false, -1);
 	}
 
 	/**
@@ -383,7 +387,16 @@ public class WebServiceSpring {
 				ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(byteOut, true, "UTF-8");
 
-				viewComponentHbmDao.toXml(aaa, null, false, true, 1, getPUBLSVersion, true, out);
+				boolean lastContenVersionOnly = false;
+				boolean withSiteProtection = false;
+				int deployType = -1;
+				int showType = -1;
+
+//				viewComponentHbmDao.toXml(aaa, null, false, true, 1, getPUBLSVersion, true, out);
+				viewComponentHbmDao.toXml(aaa, null, false,
+						lastContenVersionOnly, withSiteProtection, true, 1,
+						getPUBLSVersion, true, getPUBLSVersion, deployType,
+						showType, out);
 
 				/*
 				 * Integer pk = aaa.getViewComponentId(); ViewComponentHbmHelper

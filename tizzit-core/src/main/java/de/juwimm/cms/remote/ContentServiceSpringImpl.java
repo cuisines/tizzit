@@ -433,6 +433,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			site = getUserHbmDao().load(AuthenticationHelper.getUserName()).getActiveSite();
 			vcParent = getViewComponentHbmDao().load(rootViewComponentId);
 			Vector<ViewComponentValue> vec = new Vector<ViewComponentValue>();
+			vec.addElement(vcParent.getDao());
 			this.getAllViewComponentsChildren4Status(vcParent, vec, Constants.DEPLOY_STATUS_APPROVED, vcParent.getUnit4ViewComponent());
 			this.getAllViewComponentsChildren4Status(vcParent, vec, Constants.DEPLOY_STATUS_DEPLOYED, vcParent.getUnit4ViewComponent());
 			this.getAllViewComponentsChildren4Status(vcParent, vec, Constants.DEPLOY_STATUS_FOR_DEPLOY, vcParent.getUnit4ViewComponent());
