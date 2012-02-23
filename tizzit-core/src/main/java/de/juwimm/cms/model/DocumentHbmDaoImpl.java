@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.lob.BlobImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.Base64;
+import org.tizzit.util.DateConverter;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -209,7 +210,7 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 		}
 		Date date =new Date(document.getTimeStamp());
 		sb.append("\" lastModified=\"");
-		sb.append(new SimpleDateFormat().format(date));
+		sb.append(DateConverter.getSql2String(date));
 		sb.append("\" searchable=\"");
 		sb.append(document.isSearchable());
 

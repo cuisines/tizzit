@@ -1222,6 +1222,7 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 
 			if (documentValue.getDocumentId() != null) {
 				doc = getDocumentHbmDao().load(documentValue.getDocumentId());
+				doc.setTimeStamp(System.currentTimeMillis());
 			} else {
 				doc = DocumentHbm.Factory.newInstance();
 				doc.setTimeStamp(System.currentTimeMillis());
