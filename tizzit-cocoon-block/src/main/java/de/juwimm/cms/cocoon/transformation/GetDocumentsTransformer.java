@@ -76,7 +76,7 @@ public class GetDocumentsTransformer extends AbstractTransformer implements
 	public void startElement(String uri, String localName, String qName,
 			Attributes attrs) throws SAXException {
 		if (localName.equals("getAllDocuments")) {
-//			super.startElement(uri, localName, qName, attrs);
+			super.startElement(uri, localName, qName, attrs);
 			// get site value and unit value based on attributes
 			Document doc = XercesHelper.getNewDocument();
 			if (log.isDebugEnabled())
