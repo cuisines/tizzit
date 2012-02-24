@@ -214,9 +214,22 @@ public class PanMenuentryContent extends PanMenuentry implements ChooseTemplateL
 	public void chooseTemplatePerformed(int unitId, PageNode parentEntry, String template, int position) {
 		log.debug("Selected template: " + template);
 		try {
+			ViewComponentValue vc=comm.getViewComponent(this.getViewComponent().getViewComponentId());
+			if (unitId <= 0) {
+				vc.setUnit(false);
+				vc.setViewIndex("3");
+			} else {
+				vc.setUnit(true);
+				vc.setUnitId(new Integer(unitId));
+				vc.setViewLevel("3");
+				vc.setViewIndex("2");
+				comm.setUnit4ViewComponent(unitId, comm.getViewDocument(), vc.getViewComponentId().intValue());
+			}
+			vc = comm.saveViewComponent(vc);
 			comm.updateTemplate(this.getViewComponent().getViewComponentId(), template);
 			TreeNode entry = PanTree.getSelectedEntry();
-			ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_SELECT));
+			entry.update(vc);
+			ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_SELECT_SAVE));
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("panel.panelView.content.changeTemplateWarningCache"), rb.getString("dialog.title"), JOptionPane.WARNING_MESSAGE);
 		} catch (Exception exe) {
 			log.error("Choosing Templates Error", exe);
