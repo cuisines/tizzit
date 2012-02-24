@@ -56,7 +56,7 @@ public class SiteHbmDaoImpl extends SiteHbmDaoBase {
 				siteHbm.setLastModifiedDate(System.currentTimeMillis());
 			}
 			siteHbm = super.create(siteHbm);
-			if (siteHbm.getRootUnit().getSite() == null && unitHbm != null) {
+			if (unitHbm != null) {
 				unitHbm.setSite(siteHbm);
 				getUnitHbmDao().update(unitHbm);
 			}

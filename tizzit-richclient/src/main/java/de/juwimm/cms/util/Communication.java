@@ -2869,5 +2869,9 @@ public class Communication implements ExitListener, ActionListener {
 	public DocumentSlimValue updateDocumentSlimValue(DocumentSlimValue documentSlimValue){
 		return getClientService().updateDocument(documentSlimValue);
 	}
+	
+	public SiteValue getSite(Integer siteId){
+		return getClientService().getCurrentSite(siteId);
+	}
 
 }

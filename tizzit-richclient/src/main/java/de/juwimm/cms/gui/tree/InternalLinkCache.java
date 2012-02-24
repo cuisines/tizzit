@@ -94,6 +94,12 @@ public class InternalLinkCache {
 	 * @param model
 	 */
 	public void addLinkTree(int siteId, DropDownHolder key, InternallinkTreeModel model) {
+		if(this.getViewDocuments4Site(siteId)==null){
+			SiteValue newSite=this.comm.getSite(siteId);
+			DropDownHolder siteDdh=new DropDownHolder(newSite, newSite.getName());
+			HashMap<DropDownHolder, LinkTreeModelDecorator> viewDocumentsMap = new HashMap<DropDownHolder, LinkTreeModelDecorator>();
+			this.siteViewDocumentCache.put(siteDdh, viewDocumentsMap);
+		}
 		this.getViewDocuments4Site(siteId).put(key, new LinkTreeModelDecorator(model));
 	}
 	
@@ -101,8 +107,10 @@ public class InternalLinkCache {
 	 * Clean the cache for the selected site.
 	 */
 	public void clearCache(int siteId) {
-		this.getViewDocuments4Site(siteId).clear();
-		System.gc();
+		if(this.getViewDocuments4Site(siteId)!=null){
+			this.getViewDocuments4Site(siteId).clear();
+			System.gc();
+		}
 	}
 	
 	/**
