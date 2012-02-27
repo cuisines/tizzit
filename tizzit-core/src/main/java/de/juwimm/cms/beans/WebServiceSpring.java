@@ -2297,12 +2297,21 @@ public class WebServiceSpring {
 				log.debug("site id: " + siteId);
 			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
-			Collection<DocumentHbm> docs= documentHbmDao.findAllPerSite(siteId);
-			for (Iterator iterator = docs.iterator(); iterator.hasNext();) {
-				DocumentHbm documentHbm = (DocumentHbm) iterator.next();
-				if (documentHbm.isSearchable()) {
-					out.append(documentHbmDao.toXml(
-							documentHbm.getDocumentId(), 0, false));
+//			Collection<DocumentHbm> docs= documentHbmDao.findAllPerSite(siteId);
+//			for (Iterator iterator = docs.iterator(); iterator.hasNext();) {
+//				DocumentHbm documentHbm = (DocumentHbm) iterator.next();
+//				if (documentHbm.isSearchable()) {
+//					out.append(documentHbmDao.toXml(
+//							documentHbm.getDocumentId(), 0, false));
+//				}
+//			}
+			Collection<UnitHbm> unitsCollection=unitHbmDao.findAll(siteId);
+			for (Iterator iterator = unitsCollection.iterator(); iterator
+					.hasNext();) {
+				UnitHbm unitHbm = (UnitHbm) iterator.next();
+				Collection<ViewComponentHbm> vcCollection=viewComponentHbmDao.findRootViewComponents4Unit(unitHbm.getUnitId());
+				for (ViewComponentHbm viewComponentHbm : vcCollection) {
+					out.append(getDocumentsForUnitXml(viewComponentHbm.getViewComponentId()));
 				}
 			}
 			retVal = byteOut.toString("UTF-8");
@@ -2313,17 +2322,50 @@ public class WebServiceSpring {
 		}
 	}
 
-	public String getDocumentsForUnitXml(Integer unitId) throws Exception {
+	public String getDocumentsForUnitXml(Integer rootViewComponentId) throws Exception {
 		if (log.isDebugEnabled())
 			log.debug("getDocumentsForUnitXml start");
 		try {
 			String retVal = "";
-			UnitValue unitValue = getUnit(unitId);
+			ViewComponentHbm viewComponentHbm=viewComponentHbmDao.load(rootViewComponentId); 
+			UnitHbm unitHbm = unitHbmDao.load(viewComponentHbm.getUnit4ViewComponent());
 			if (log.isDebugEnabled())
-				log.debug("unit id: " + unitId);
+				log.debug("unit id: " + unitHbm.getUnitId());
 			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
-			Collection<DocumentHbm> docs= documentHbmDao.findAllPerUnit(unitId);
+			Collection<DocumentHbm> docs= documentHbmDao.findAllPerUnit(unitHbm.getUnitId());
+			for (Iterator iterator = docs.iterator(); iterator.hasNext();) {
+				DocumentHbm documentHbm = (DocumentHbm) iterator.next();
+				if (documentHbm.isSearchable()) {
+					out.append(documentHbmDao.toXml(
+							documentHbm.getDocumentId(), 0, false));
+				}
+			}
+			Collection<ViewComponentHbm> vcCollection=new ArrayList<ViewComponentHbm>();
+			vcCollection.addAll(viewComponentHbm.getAllChildrenOfUnit());
+			for (Iterator iterator = vcCollection.iterator(); iterator.hasNext();) {
+				ViewComponentHbm viewComponent = (ViewComponentHbm) iterator
+						.next();
+				out.append(getDocumentsForViewComponentXml(viewComponent.getViewComponentId()));
+			}
+			retVal = byteOut.toString("UTF-8");
+			return retVal;
+		} catch (Exception e) {
+			log.error("ERROR GET DOCUMENTS XML ERROR " + e.getMessage());
+			throw new UserException();
+		}
+	}
+
+	public String getDocumentsForViewComponentXml(Integer viewComponentId) throws Exception {
+		if (log.isDebugEnabled())
+			log.debug("getDocumentsForUnitXml start");
+		try {
+			String retVal = "";
+			if (log.isDebugEnabled())
+				log.debug("viewComponentId: " + viewComponentId);
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(byteOut, true, "UTF-8");
+			Collection<DocumentHbm> docs= documentHbmDao.findAllPerViewComponent(viewComponentId);
 			for (Iterator iterator = docs.iterator(); iterator.hasNext();) {
 				DocumentHbm documentHbm = (DocumentHbm) iterator.next();
 				if (documentHbm.isSearchable()) {
@@ -2338,6 +2380,5 @@ public class WebServiceSpring {
 			throw new UserException();
 		}
 	}
-
 
 }

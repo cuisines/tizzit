@@ -30,6 +30,8 @@ import de.juwimm.cms.beans.WebServiceSpring;
 import de.juwimm.cms.cocoon.helper.CocoonSpringHelper;
 import de.juwimm.cms.vo.SiteValue;
 import de.juwimm.cms.vo.UnitValue;
+import de.juwimm.cms.vo.ViewComponentValue;
+import de.juwimm.cms.vo.ViewDocumentValue;
 
 /**
  * 
@@ -81,35 +83,40 @@ public class GetDocumentsTransformer extends AbstractTransformer implements
 			Document doc = XercesHelper.getNewDocument();
 			if (log.isDebugEnabled())
 				log.debug("getAllDocuments entered.");
-			String documentsXml = "";
-			Integer unitId=null;
-			Integer siteId=null;
-			SiteValue siteValue=null;
+			StringBuilder documentsXml = new StringBuilder();
+			
+			Integer viewComponentId=null;
+			String docsFor=null;
 			try {
-				unitId = new Integer(attrs.getValue("unitId"));
-				siteValue = webSpringBean.getSite4Unit(unitId);
+				viewComponentId = new Integer(attrs.getValue("viewComponentId"));
 			} catch (Exception exe) {
 				if (log.isDebugEnabled())
-					log.debug("value for 'unitId' not found or invalid");
-			}
-			if (siteValue == null) {
-				try {
-					siteId = new Integer(attrs.getValue("siteId"));
-					if (siteId != null) {
-						siteValue = this.webSpringBean.getSiteValue(siteId);
-					}
-				} catch (Exception exe) {
-					if (log.isDebugEnabled())
-						log.debug("value for 'siteId' not found or invalid");
-				}
+					log.debug("value for 'viewComponentId' not found or invalid");
 			}
 			try {
-				if (unitId != null) {
-					documentsXml = "<documents>"+webSpringBean.getDocumentsForUnitXml(unitId)+"</documents>";
-				} else {
-					documentsXml = "<documents>"+webSpringBean.getDocumentsForSiteXml(siteId)+"</documents>";
+				docsFor = attrs.getValue("showDocuments");
+			} catch (Exception exe) {
+				if (log.isDebugEnabled())
+					log.debug("value for 'showDocuments' not found or invalid");
+			}
+			documentsXml.append("<documents>");
+			try {
+				if (docsFor.equalsIgnoreCase("unit")) {
+					ViewDocumentValue viewDocumentValue=webSpringBean.getViewDocument4ViewComponentId(viewComponentId);
+					UnitValue unitValue=webSpringBean.getUnit4ViewComponent(viewComponentId);
+					ViewComponentValue rootViewComponent=webSpringBean.getViewComponent4Unit(unitValue.getUnitId(), viewDocumentValue.getViewDocumentId());
+					documentsXml.append(webSpringBean.getDocumentsForUnitXml(rootViewComponent.getViewComponentId()));
+				} else if (docsFor.equalsIgnoreCase("site")){
+					SiteValue siteValue=webSpringBean.getSite4VCId(viewComponentId);
+					documentsXml.append(webSpringBean.getDocumentsForSiteXml(siteValue.getSiteId()));
+				} else if (docsFor.equalsIgnoreCase("viewComponent")){
+					documentsXml.append(webSpringBean.getDocumentsForViewComponentXml(viewComponentId));
 				}
-				Document smdoc = XercesHelper.string2Dom(documentsXml);
+					
+				documentsXml.append("</documents>");
+				
+				
+				Document smdoc = XercesHelper.string2Dom(documentsXml.toString());
 				Node page = doc.importNode(smdoc.getFirstChild(), true);
 				SAXHelper.string2sax(XercesHelper.node2string(page), this);
 			} catch (Exception e) {
