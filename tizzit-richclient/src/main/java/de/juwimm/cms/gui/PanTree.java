@@ -1212,7 +1212,24 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				createInternalLink(entry, Constants.ADD_APPEND, true);
 				this.invalidateTreeCache();
 			} else if (action.equals(Constants.ACTION_SEND2EDITOR) || action.equals(Constants.ACTION_DEPLOY)) {
-				showFrmEditor();
+//				showFrmEditor();
+				try {
+					boolean deployPossible = true;
+						try {
+							deployPossible = comm.isViewComponentPublishable(entry.getViewComponent().getViewComponentId());
+						} catch (Exception exe) {
+
+						}
+					if(!deployPossible){
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.deployCurrentlyBlocked"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					} else {
+						comm.setViewComponentOnline(entry.getViewComponent().getViewComponentId());
+						ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_REFRESH));
+					}
+				} catch (Exception exe) {
+					log.error("Error deploying content", exe);
+				}
+
 			} else if (action.equals(Constants.ACTION_CONTENT_4APPROVAL)) {
 				try {
 					entry.setStatus(Constants.DEPLOY_STATUS_FOR_APPROVAL);
@@ -2099,8 +2116,6 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 
 				comm.updateStatus4ViewComponent(view);
 				if (liveDeploy) {
-					view.setOnline((byte) 1);
-					view.setOnlineStart(System.currentTimeMillis());
 					comm.setViewComponentOnline(view.getViewComponentId());
 				}
 				ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));

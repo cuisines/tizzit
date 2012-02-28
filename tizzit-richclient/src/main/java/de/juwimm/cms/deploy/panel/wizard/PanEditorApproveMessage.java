@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -39,6 +40,8 @@ import de.juwimm.cms.exceptions.EditionXMLIsNotValid;
 import de.juwimm.cms.exceptions.ParentUnitNeverDeployed;
 import de.juwimm.cms.exceptions.PreviousUnitNeverDeployed;
 import de.juwimm.cms.exceptions.UnitWasNeverDeployed;
+import de.juwimm.cms.gui.PanTree;
+import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.UIConstants;
 
@@ -85,8 +88,10 @@ public class PanEditorApproveMessage extends JPanel implements WizardPanel {
 			if (message == null || message.isEmpty()) {
 				message = "UnitDeploy of Unit " + this.unitId;
 			}
-			comm.createEdition(message, comm.getViewComponent4Unit(this.unitId).getViewComponentId(), true, true, deployType);
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("wizard.deploy.editionSucessfulTransmitted"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
+			comm.createEditionWithoutDeploy(message, comm.getViewComponent4Unit(this.unitId).getViewComponentId());
+			ActionHub.fireActionPerformed(new ActionEvent(PanTree.getSelectedEntry(), ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_REFRESH));
+
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("wizard.deploy.deploySuccessfull"), rb.getString("dialog.title"), JOptionPane.INFORMATION_MESSAGE);
 		} catch (ParentUnitNeverDeployed pd) {
 			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("SYSTEMMESSAGE_ERROR.ParentUnitNeverDeployed"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		} catch (PreviousUnitNeverDeployed pu) {

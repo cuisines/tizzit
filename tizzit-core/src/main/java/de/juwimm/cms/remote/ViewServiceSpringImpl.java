@@ -2696,7 +2696,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		Integer[] vcArray = getParents4ViewComponent(viewComponentId);
 		ViewComponentHbmDao vcDao = getViewComponentHbmDao();
 		for (int i = 0; i < vcArray.length; i++) {
-			ViewComponentHbm vc = vcDao.load(viewComponentId);
+			ViewComponentHbm vc = vcDao.load(vcArray[i]);
 			if ((vc.getStatus() < Constants.DEPLOY_STATUS_FOR_DEPLOY) && (vc.getOnline() == 0)) {
 				return false;
 			}
@@ -2708,7 +2708,10 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 	protected void handleSetViewComponentOnline(Integer viewComponentId) throws Exception {
 		ViewComponentHbm viewComponentHbm = getViewComponentHbmDao().load(viewComponentId);
 		viewComponentHbm.setOnline((byte) 1);
+		viewComponentHbm.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
+		viewComponentHbm.setLastModifiedDate(System.currentTimeMillis());
 		getViewComponentHbmDao().update(viewComponentHbm);
+		super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(viewComponentHbm.getReference()));
 	}
 
 	/* (non-Javadoc)
