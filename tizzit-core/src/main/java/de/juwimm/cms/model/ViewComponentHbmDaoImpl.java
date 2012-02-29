@@ -761,23 +761,25 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			exportVCRealms(out, current);
 		}
 
-		//attach viewComponent linked pictures
-		out.println("<pictures>");
-		Collection<PictureHbm> pictureHbms = current.getPictures();
-		for (PictureHbm pictureHbm : pictureHbms) {
-			out.append(pictureHbm.toXml(0));
-		}
-		out.println("</pictures>");
+		if (withContent) {
+			// attach viewComponent linked pictures
+			out.println("<pictures>");
+			Collection<PictureHbm> pictureHbms = current.getPictures();
+			for (PictureHbm pictureHbm : pictureHbms) {
+				out.append(pictureHbm.toXml(0));
+			}
+			out.println("</pictures>");
 
-		//attach viewComponent linked documents
-		out.println("<documents>");
-		Collection<DocumentHbm> documentHbms = current.getDocuments();
-		for (DocumentHbm documentHbm : documentHbms) {
-			byte[] data = blobJdbcDao.getDocumentContent(documentHbm.getDocumentId());
-			out.append(documentHbm.toXml(0, data));
+			// attach viewComponent linked documents
+			out.println("<documents>");
+			Collection<DocumentHbm> documentHbms = current.getDocuments();
+			for (DocumentHbm documentHbm : documentHbms) {
+				byte[] data = blobJdbcDao.getDocumentContent(documentHbm
+						.getDocumentId());
+				out.append(documentHbm.toXml(0, data));
+			}
+			out.println("</documents>");
 		}
-		out.println("</documents>");
-
 		if (depth != 0) { // 0 is only THIS ViewComponent
 			try {
 				Collection coll = current.getChildrenOrdered();
