@@ -56,6 +56,8 @@ import de.juwimm.cms.model.ContentHbmDao;
 import de.juwimm.cms.model.ContentVersionHbm;
 import de.juwimm.cms.model.DocumentHbm;
 import de.juwimm.cms.model.DocumentHbmDao;
+import de.juwimm.cms.model.HostHbm;
+import de.juwimm.cms.model.HostHbmDao;
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.SiteHbmDao;
 import de.juwimm.cms.model.UnitHbm;
@@ -100,6 +102,7 @@ public class SearchengineService {
 
 	private ViewComponentHbmDao viewComponentHbmDao;
 	private SiteHbmDao siteHbmDao;
+	private HostHbmDao hostHbmDao;
 	private DocumentHbmDao documentHbmDao;
 	private ContentHbmDao contentHbmDao;
 	private ViewDocumentHbmDao viewDocumentHbmDao;
@@ -121,6 +124,10 @@ public class SearchengineService {
 
 	public void setSiteHbmDao(SiteHbmDao siteHbmDao) {
 		this.siteHbmDao = siteHbmDao;
+	}
+
+	public void setHostHbmDao(HostHbmDao hostHbmDao) {
+		this.hostHbmDao = hostHbmDao;
 	}
 
 	public void setDocumentHbmDao(DocumentHbmDao documentHbmDao) {
@@ -145,6 +152,10 @@ public class SearchengineService {
 
 	public SiteHbmDao getSiteHbmDao() {
 		return siteHbmDao;
+	}
+
+	public HostHbmDao getHostHbmDao() {
+		return hostHbmDao;
 	}
 
 	public DocumentHbmDao getDocumentHbmDao() {
@@ -330,11 +341,7 @@ public class SearchengineService {
 	}
 
 	@Transactional(readOnly = true)
-	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap) throws Exception {
-		return searchWeb(siteId, searchItem, pageSize, pageNumber, safeGuardCookieMap, null);
-	}
-
-	public SearchResultValue[] searchWeb(Integer siteId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap, String searchUrl) throws Exception {
+	public SearchResultValue[] searchWeb(Integer siteId,Integer unitId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap, String searchUrl, boolean isLiveServer) throws Exception {
 		if (pageSize != null && pageSize.intValue() <= 1) pageSize = new Integer(20);
 		if (pageNumber != null && pageNumber.intValue() < 0) pageNumber = new Integer(0); // first page
 		SearchResultValue[] staticRetArr = null;
@@ -363,7 +370,7 @@ public class SearchengineService {
 			CompassSession session = compass.openSession();
 
 			//per default searchItems get connected by AND (compare CompassSettings.java)
-			CompassQuery query = buildRatedWildcardQuery(session, siteId, searchItemEsc, searchUrlEsc, safeGuardCookieMap);
+			CompassQuery query = buildRatedWildcardQuery(session, siteId,unitId, searchItemEsc, searchUrlEsc, safeGuardCookieMap,isLiveServer);
 			if (log.isDebugEnabled()) log.debug("search for query: " + query.toString());
 
 			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
@@ -408,6 +415,7 @@ public class SearchengineService {
 						retVal.setTitle(resource.getProperty("title").getStringValue());
 						retVal.setLanguage(resource.getProperty("language").getStringValue());
 						retVal.setViewType(resource.getProperty("viewtype").getStringValue());
+						retVal.setIsLiveContent(Boolean.parseBoolean(resource.getProperty("isLiveContent").getStringValue()));
 						Property template = resource.getProperty("template");
 						retVal.setTemplate(template != null ? template.getStringValue() : "standard");
 					}
@@ -470,7 +478,7 @@ public class SearchengineService {
 		String[][] resultValue=new String[spellSuggestions.getSuggestions().length][2];
 		for (int i = 0; i < spellSuggestions.getSuggestions().length; i++) {
 			resultValue[i][0]=spellSuggestions.getSuggestions()[i];
-			CompassQuery query = buildRatedWildcardQuery(session, siteId, spellSuggestions.getSuggestions()[i], null, safeGuardCookieMap);
+			CompassQuery query = buildRatedWildcardQuery(session, siteId,null, spellSuggestions.getSuggestions()[i], null, safeGuardCookieMap,false);
 			CompassHits hits = query.hits();
 			resultValue[i][1]=String.valueOf(hits.getLength());
 		}
@@ -484,7 +492,7 @@ public class SearchengineService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId, String searchItem, String searchUrl, Map safeGuard) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId,Integer unitId, String searchItem, String searchUrl, Map safeGuard, boolean isLiveServer) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Analyzer analyzer = null;
 		CompassBooleanQueryBuilder queryBuilder = session.queryBuilder().bool();
 		IndexReader ir = LuceneHelper.getLuceneInternalSearch(session).getReader();
@@ -509,8 +517,19 @@ public class SearchengineService {
 			query = parser.parse(searchUrl).rewrite(ir);
 			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
 		}
-		query = new QueryParser("siteId", analyzer).parse(siteId.toString());
-		queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+		
+		if(unitId!=null){
+			query = new QueryParser("unitId", analyzer).parse(unitId.toString());
+			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+		} else {
+			query = new QueryParser("siteId", analyzer).parse(siteId.toString());
+			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+		}
+		
+		if(isLiveServer){
+			query = new QueryParser("isLiveContent", analyzer).parse("true");
+			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+		}
 
 		CompassBooleanQueryBuilder subQueryBuilder = session.queryBuilder().bool();
 		String searchFields[] = {"metadata", "url", "title", "contents"};
@@ -572,7 +591,7 @@ public class SearchengineService {
 		while (it.hasNext()) {
 			ViewComponentHbm viewComponent = (ViewComponentHbm) it.next();
 			if (log.isDebugEnabled()) log.debug("Updating Indexes for VCID " + viewComponent.getDisplayLinkName());
-			boolean hasLivePreview = (viewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
+			boolean hasLivePreview = (getLiveUrl(viewComponent.getViewComponentId()) != null);
 			boolean hasWorkPreview = (viewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
 			if (viewComponent.isSearchIndexed()) {
 				if (hasWorkPreview && contentText != null) this.indexPage4Lucene(viewComponent, contentText, false);
@@ -594,15 +613,15 @@ public class SearchengineService {
 			Iterator itRef = referencingViewComponents.iterator();
 			while (itRef.hasNext()) {
 				ViewComponentHbm refViewComponent = (ViewComponentHbm) itRef.next();
-				hasLivePreview = (refViewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
+				hasLivePreview = (getLiveUrl(viewComponent.getViewComponentId()) != null);
 				hasWorkPreview = (refViewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
 
 				if (refViewComponent.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
 					// acts as normal content
 					if (log.isDebugEnabled()) log.debug("trying to index symLink " + refViewComponent.getDisplayLinkName());
 					if (refViewComponent.isSearchIndexed()) {
-						if (hasLivePreview && contentText != null) this.indexPage4Lucene(refViewComponent, contentText, true);
-						if (hasWorkPreview && contentLiveText != null) this.indexPage4Lucene(refViewComponent, contentLiveText, false);
+						if (hasLivePreview && contentLiveText != null) this.indexPage4Lucene(refViewComponent, contentText, true);
+						if (hasWorkPreview && contentText != null) this.indexPage4Lucene(refViewComponent, contentLiveText, false);
 					} else {
 						if (hasLivePreview) searchengineDeleteService.deletePage4Lucene(refViewComponent, true);
 						if (hasWorkPreview) searchengineDeleteService.deletePage4Lucene(refViewComponent, false);
@@ -632,7 +651,12 @@ public class SearchengineService {
 		CompassTransaction tx = null;
 		File file = null;
 		try {
-			String currentUrl = searchengineDeleteService.getUrl(viewComponent, isLive);
+			String currentUrl =null;
+			if(isLive){
+				currentUrl=getLiveUrl(viewComponent.getViewComponentId());
+			} else {
+				currentUrl= searchengineDeleteService.getUrl(viewComponent, isLive);
+			}
 			file = this.downloadFile(currentUrl);
 			if (file != null) {
 				String cleanUrl = viewComponent.getViewDocument().getSite().getPageNameSearch();
@@ -642,6 +666,7 @@ public class SearchengineService {
 				cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
 				session = compass.openSession();
 				Resource resource = htmlResourceLocator.getResource(session, file, cleanUrl, new Date(System.currentTimeMillis()), viewComponent, vdl);
+				resource.addProperty("isLiveContent", isLive);
 				tx = session.beginTransaction();
 				session.save(resource);
 				tx.commit();
@@ -783,4 +808,28 @@ public class SearchengineService {
 		}
 		if (log.isInfoEnabled()) log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
 	}
+	
+	public String getLiveUrl(Integer viewComponentId) {
+		ViewComponentHbm vcHbm=getViewComponentHbmDao().load(viewComponentId);
+		SiteHbm siteHbm=vcHbm.getViewDocument().getSite();
+		vcHbm.getUnit4ViewComponent();
+		UnitHbm rootUnit=siteHbm.getRootUnit();
+		Collection<ViewComponentHbm> vcCollection=viewComponentHbmDao.findRootViewComponents4Unit(rootUnit.getUnitId());
+		Collection<HostHbm> hostHbmCollection=getHostHbmDao().findAllWithStartPage4Site(siteHbm.getSiteId());
+		String url = "";
+		for (HostHbm hostHbm : hostHbmCollection) {
+			if(vcCollection.contains(hostHbm.getStartPage()) && hostHbm.isLiveserver()){
+				url+="http://"+hostHbm.getHostName()+"/";
+				break;
+			}
+		}
+		if (url.isEmpty()) {
+			return null;
+		} else {
+			url += vcHbm.getViewDocument().getLanguage() + "/" + vcHbm.getPath() + "." + siteHbm.getPageNameSearch();
+			if (log.isInfoEnabled()) log.info("created url " + url + " for site " + siteHbm.getName());
+			return url;
+		}
+	}
+
 }

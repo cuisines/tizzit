@@ -42,6 +42,7 @@ import org.apache.excalibur.source.SourceException;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
+import org.tizzit.cocoon.generic.helper.RequestHelper;
 import org.tizzit.util.Base64;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.CDATASection;
@@ -244,15 +245,22 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 				urlSearch = this.request.getParameter("cqUrlSearch");
 			} catch (Exception exe) {
 			}
-
+			boolean unitSearch = false;
+			try {
+				unitSearch = Boolean.getBoolean(this.request.getParameter("unitSearch"));
+			} catch (Exception exe) {
+			}
+			String host = RequestHelper.getHost(request);
+			boolean isLive=webSpringBean.getLiveserver(host);
+			
 			ArrayList<SearchResultValue> resultList = new ArrayList<SearchResultValue>();
 			SearchResultValue[] results = null;
 			if (urlSearch == null) {
-				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber, safeguardMap);
+				results = searchengineService.searchWeb(this.siteValue.getSiteId(),(unitSearch?unitValue.getUnitId():null), this.webSearchquery, pageSize, pageNumber, safeguardMap, null, isLive);
 			} else {
-				results = searchengineService.searchWeb(this.siteValue.getSiteId(), this.webSearchquery, pageSize, pageNumber, safeguardMap, urlSearch);
+				results = searchengineService.searchWeb(this.siteValue.getSiteId(),(unitSearch?unitValue.getUnitId():null), this.webSearchquery, pageSize, pageNumber, safeguardMap, urlSearch, isLive);
 			}
-
+			
 			if (results != null) {
 				resultList.addAll(Arrays.asList(results));
 				Integer totalHits = null;
@@ -1432,6 +1440,10 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 				template.appendChild(templateTxt);
 			}
 			parent.appendChild(template);
+			Node isLiveContent = doc.createElement("liveContent");
+			Node liveContentTxt = doc.createCDATASection((new Boolean(value.isIsLiveContent()).toString()));
+			isLiveContent.appendChild(liveContentTxt);
+			parent.appendChild(isLiveContent);
 		}
 		// common attributes
 		Node score = doc.createElement("score");

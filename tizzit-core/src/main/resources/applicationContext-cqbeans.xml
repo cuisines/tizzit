@@ -104,6 +104,7 @@
 		<property name="contentHbmDao" ref="contentHbmDao"/>
 		<property name="viewDocumentHbmDao" ref="viewDocumentHbmDao"/>
 		<property name="unitHbmDao" ref="unitHbmDao"/>
+		<property name="hostHbmDao" ref="hostHbmDao"/>
 	</bean>
 	<bean class="de.juwimm.cms.search.beans.SearchengineDeleteService" id="searchengineDeleteService"/>
 	<bean class="de.juwimm.cms.beans.WebCrawlerService" id="webCrawlerService"/>

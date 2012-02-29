@@ -40,6 +40,8 @@ public class SearchengineServiceTest {
 	public void testSearchWebSuggestions() throws Exception {
 		String searchItem = "test";
 		Integer siteId = 0;
+		Integer unitId = null;
+		boolean isLiveServer=false;
 		String[] searchSugestions = new String[] {"test1", "test2"};
 		Map safeGuardCookieMap = createNiceMock(Map.class);
 
@@ -74,7 +76,7 @@ public class SearchengineServiceTest {
 		spellSuggestions.getSuggestions();
 		expectLastCall().andReturn(searchSugestions).times(9);
 		for (int i = 0; i < searchSugestions.length; i++) {
-			PowerMock.expectPrivate(service, "buildRatedWildcardQuery", compassSession, siteId, searchSugestions[i], null, safeGuardCookieMap).andReturn(query);
+			PowerMock.expectPrivate(service, "buildRatedWildcardQuery", compassSession, siteId, unitId, searchSugestions[i], null, safeGuardCookieMap, isLiveServer).andReturn(query);
 			query.hits();
 			expectLastCall().andReturn(hits);
 			hits.getLength();

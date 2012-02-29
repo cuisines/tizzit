@@ -77,7 +77,7 @@ public class HtmlResourceLocator {
 		resource.addProperty("uid", url);
 		resource.addProperty("viewComponentId", vcl.getViewComponentId());
 		try {
-			Integer unitId = vcl.getUnit4ViewComponent();
+			Integer unitId = vcl.getViewComponentUnit().getUnit4ViewComponent();
 			if (unitId != null) {
 				UnitHbm unit = unitHbmDao.load(unitId);
 				resource.addProperty("unitId", unit.getUnitId().toString());
