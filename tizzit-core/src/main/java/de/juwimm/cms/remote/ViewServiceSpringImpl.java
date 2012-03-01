@@ -2668,8 +2668,12 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 						flag = true;
 					}
 					if (existingUrlLinkname.startsWith(urlLinkName + "-")) {
-						Integer version = Integer.parseInt(existingUrlLinkname.substring(urlLinkName.length() + 1, existingUrlLinkname.length()));
-						existingNumber.add(version);
+						try{
+							Integer version = Integer.parseInt(existingUrlLinkname.substring(urlLinkName.length() + 1, existingUrlLinkname.length()));
+							existingNumber.add(version);
+						} catch(NumberFormatException e) {
+							//we do nothing here as the rest of the name is not a number. This means the page is something like "urlLinkName-otherName"
+						}
 					}
 				}
 			}
