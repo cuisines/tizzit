@@ -65,27 +65,25 @@ public class SearchengineServiceTest {
 		expectLastCall().andReturn(spellCheckManager);
 		spellCheckManager.suggestBuilder(searchItem);
 		expectLastCall().andReturn(suggestBuilder);
-		suggestBuilder.numberOfSuggestions(10);
+		suggestBuilder.numberOfSuggestions(20);
 		expectLastCall().andReturn(null);
-		suggestBuilder.accuracy(0.3f);
+		suggestBuilder.accuracy(0.5f);
 		expectLastCall().andReturn(null);
 		suggestBuilder.suggest();
 		expectLastCall().andReturn(spellSuggestions);
-		loggerMock.info(spellSuggestions.toString());
-		expectLastCall();
 		spellSuggestions.getSuggestions();
-		expectLastCall().andReturn(searchSugestions).times(9);
+		expectLastCall().andReturn(searchSugestions);
 		for (int i = 0; i < searchSugestions.length; i++) {
 			PowerMock.expectPrivate(service, "buildRatedWildcardQuery", compassSession, siteId, unitId, searchSugestions[i], null, safeGuardCookieMap, isLiveServer).andReturn(query);
 			query.hits();
 			expectLastCall().andReturn(hits);
 			hits.getLength();
-			expectLastCall().andReturn(2);
+			expectLastCall().andReturn(2).times(2);
 		}
 		PowerMock.replayAll();
 
 		//actual method call
-		String[][] strings=service.searchWebSuggestions(siteId, searchItem, safeGuardCookieMap);
+		String[][] strings=service.searchWebSuggestions(siteId,null, searchItem, safeGuardCookieMap);
 		assertEquals(searchSugestions[0], strings[0][0]);
 		assertEquals("2", strings[0][1]);
 		assertEquals(searchSugestions[1], strings[1][0]);

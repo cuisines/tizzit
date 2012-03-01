@@ -2381,4 +2381,30 @@ public class WebServiceSpring {
 		}
 	}
 
+	public String getSearchSuggestionsXml(Integer viewComponentId, String scope, String searchQuery, Map<String, String> safeguardMap) throws Exception {
+		if (log.isDebugEnabled())
+			log.debug("getSearchSuggestionsXml start");
+		try {
+			SiteValue siteValue=null;
+			UnitValue unitValue=null;
+			siteValue = getSite4VCId(viewComponentId);
+			if(scope!=null && scope.equalsIgnoreCase("unit")){
+				unitValue = getUnit4ViewComponent(viewComponentId);
+			}
+			
+			String[][] resultValue = searchengineService.searchWebSuggestions(siteValue.getSiteId(), (unitValue!=null?unitValue.getUnitId():null), searchQuery, safeguardMap);
+			
+			StringBuffer sb = new StringBuffer("");
+			for (int i = 0; i < resultValue.length; i++) {
+				if(resultValue[i][0]!=null && !resultValue[i][0].isEmpty())
+				sb.append("<suggestion hits=\"").append(resultValue[i][1]).append("\"><![CDATA[").append(resultValue[i][0]).append("]]></suggestion>");
+			}
+			
+			return sb.toString();
+		} catch (Exception e) {
+			log.error("ERROR GET SEARCH SUGGESTIONS XML ERROR " + e.getMessage());
+			throw new UserException(e);
+		}
+	}
+
 }

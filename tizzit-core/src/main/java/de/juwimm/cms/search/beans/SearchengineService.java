@@ -87,6 +87,7 @@ public class SearchengineService {
 	private static final String LUCENE_ESCAPE_CHARS = "[\\\\!\\(\\)\\:\\^\\]\\{\\}\\~]";
 	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
 	private static final String REPLACEMENT_STRING = "\\\\$0";
+	private static final int NUMBER_OF_SUGGESTIONS=5;
 	@Autowired
 	private Compass compass;
 	@Autowired
@@ -467,20 +468,28 @@ public class SearchengineService {
 	 * @throws Exception
 	 */
 	@Transactional(readOnly = true)
-	public String[][] searchWebSuggestions(Integer siteId, final String searchItem, Map safeGuardCookieMap) throws Exception {
+	public String[][] searchWebSuggestions(Integer siteId,Integer unitId, final String searchItem, Map safeGuardCookieMap) throws Exception {
 		CompassSession session = compass.openSession();
 		SearchEngineSpellCheckManager spellCheckManager= compass.getSpellCheckManager();
 		SearchEngineSpellCheckSuggestBuilder suggestBuilder=spellCheckManager.suggestBuilder(searchItem);
-		suggestBuilder.numberOfSuggestions(10);
-		suggestBuilder.accuracy(0.3f);
+		suggestBuilder.numberOfSuggestions(20);
+		suggestBuilder.accuracy(0.5f);
 		SearchEngineSpellSuggestions spellSuggestions =suggestBuilder.suggest();
-		log.info(spellSuggestions.getSuggestions().toString());
-		String[][] resultValue=new String[spellSuggestions.getSuggestions().length][2];
-		for (int i = 0; i < spellSuggestions.getSuggestions().length; i++) {
-			resultValue[i][0]=spellSuggestions.getSuggestions()[i];
-			CompassQuery query = buildRatedWildcardQuery(session, siteId,null, spellSuggestions.getSuggestions()[i], null, safeGuardCookieMap,false);
+		String[] results=spellSuggestions.getSuggestions();
+		log.info(results.toString());
+		String[][] resultValue=new String[NUMBER_OF_SUGGESTIONS][2];
+		int max=0;
+		for (int i = 0; i < results.length; i++) {
+			CompassQuery query = buildRatedWildcardQuery(session, siteId,unitId, results[i], null, safeGuardCookieMap,false);
 			CompassHits hits = query.hits();
-			resultValue[i][1]=String.valueOf(hits.getLength());
+			if(hits.getLength()>0){
+				resultValue[max][0]=results[i];
+				resultValue[max][1]=String.valueOf(hits.getLength());
+				max++;
+			}
+			if(max>=NUMBER_OF_SUGGESTIONS){
+				break;
+			}
 		}
 		return resultValue;
 	}
