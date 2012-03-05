@@ -481,6 +481,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 				contentManager.setEnabled(true);
 				txtHeadline.setEditable(true);
 				isCheckedOut = true;
+				Constants.EDIT_CONTENT=true;
 			} catch (AlreadyCheckedOutException ae) {
 				if (comm.isUserInRole(UserRights.UNIT_ADMIN)) {
 					String lockOwner = ae.getMessage();

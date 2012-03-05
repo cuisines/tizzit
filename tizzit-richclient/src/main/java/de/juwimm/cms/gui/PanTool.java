@@ -195,6 +195,10 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 				updateRightComponent(panInit);
 			}
 			setCursor(Cursor.getDefaultCursor());
+		} else if (e.getActionCommand().equals(Constants.ACTION_TREE_ENTRY_NAME)) {
+			ViewComponentValue vc = ((ViewComponentValue) e.getSource());
+			updateRightComponent(panContent);
+			panContent.load(vc);
 		} else if (e.getActionCommand().equals(Constants.ACTION_TREE_DESELECT)) {
 			updateRightComponent(panInit);
 		} else if (e.getActionCommand().equals(Constants.ACTION_TASK_SELECT)) {
