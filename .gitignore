@@ -67,3 +67,4 @@ tizzit-xmlsearch-xindice/.settings/org.eclipse.jdt.core.prefs
 *.log
 tizzit-grails-plugin/web-app/WEB-INF/classes/
 */.project
+.DS_Store
