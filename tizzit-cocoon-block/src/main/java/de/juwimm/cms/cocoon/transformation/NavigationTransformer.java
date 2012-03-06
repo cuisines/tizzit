@@ -6,6 +6,7 @@ package de.juwimm.cms.cocoon.transformation;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +15,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.avalon.excalibur.pool.Recyclable;
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
+import org.apache.cocoon.caching.CacheableProcessingComponent;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.cocoon.transformation.AbstractTransformer;
+import org.apache.excalibur.source.SourceValidity;
+import org.apache.excalibur.source.impl.validity.TimeStampValidity;
 import org.apache.log4j.Logger;
 import org.tizzit.util.XercesHelper;
 import org.tizzit.util.xml.SAXHelper;
@@ -38,7 +42,7 @@ import de.juwimm.cms.vo.ViewComponentValue;
  * @update nitun
  *
  */
-public class NavigationTransformer extends AbstractTransformer implements Recyclable {
+public class NavigationTransformer extends AbstractTransformer implements CacheableProcessingComponent,Recyclable {
 	private static Logger log = Logger.getLogger(NavigationTransformer.class);
 	private WebServiceSpring webSpringBean = null;
 	private Integer viewComponentId = null;
@@ -47,6 +51,7 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 	private boolean iAmTheLiveserver = false;
 	private boolean disableNavigationAxis = false;
 	private Serializable uniqueKey;
+	private long chgDate = 0;
 	private Request request = null;
 	private Map<String, String> safeguardMap = null;
 
@@ -285,6 +290,37 @@ public class NavigationTransformer extends AbstractTransformer implements Recycl
 			((Element) changeNode).setAttribute("onAxisToRoot", "true");
 			changeNode = changeNode.getParentNode();
 		}
+	}
+
+	public Serializable getKey() {
+		return uniqueKey;
+	}
+
+	public SourceValidity getValidity() {
+		chgDate = 0;
+		try {
+			chgDate = this.getModifiedDate().getTime();
+		} catch (Exception exe) {
+			log.error("An error occured", exe);
+		}
+		if (chgDate != 0) {
+			SourceValidity sv = new TimeStampValidity(chgDate);
+			return sv;
+		}
+		return null;	}
+
+	private Date getModifiedDate() {
+		if (viewComponentId == null) {
+			return new Date(System.currentTimeMillis());
+		}
+		
+		try {
+			return webSpringBean.getNavigationAge(viewComponentId, null, 0, false);
+		} catch (Exception e) {
+			log.error("An error occured while trying to fetch the navigation age", e);
+			return new Date(System.currentTimeMillis());
+		}
+
 	}
 
 }
