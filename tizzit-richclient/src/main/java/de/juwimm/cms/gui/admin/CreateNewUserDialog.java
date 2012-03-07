@@ -156,6 +156,46 @@ public class CreateNewUserDialog extends JFrame {
 
 	void btnOkActionPerformed(ActionEvent e) {
 		this.setEnabled(false);
+		if(this.txtUsername.getText().isEmpty()){
+			String msg = rb.getString("exception.usernameRequired");
+			JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			this.setVisible(true);
+			this.setEnabled(true);
+			this.txtUsername.requestFocus();
+			return;
+		}
+		if(String.copyValueOf(pwdOne.getPassword()).isEmpty()){
+			String msg = rb.getString("exception.passwordRequired");
+			JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			this.setVisible(true);
+			this.setEnabled(true);
+			this.pwdOne.requestFocus();
+			return;
+		}
+		if(this.txtFirstName.getText().isEmpty()){
+			String msg = rb.getString("exception.firstnameRequired");
+			JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			this.setVisible(true);
+			this.setEnabled(true);
+			this.txtFirstName.requestFocus();
+			return;
+		}
+		if(this.txtLastName.getText().isEmpty()){
+			String msg = rb.getString("exception.lastnameRequired");
+			JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			this.setVisible(true);
+			this.setEnabled(true);
+			this.txtLastName.requestFocus();
+			return;
+		}
+		if(this.txtEmail.getText().isEmpty()){
+			String msg = rb.getString("exception.emailRequired");
+			JOptionPane.showMessageDialog(this, msg, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			this.setVisible(true);
+			this.setEnabled(true);
+			this.txtEmail.requestFocus();
+			return;
+		}
 		if (String.copyValueOf(pwdOne.getPassword()).equals(String.copyValueOf(pwdTwo.getPassword()))) {
 			Pattern p = Pattern.compile("^[A-Za-z_0-9\\.-]+@[A-Za-z_0-9\\.-]+\\.[a-zA-Z]+");
 			Matcher m = p.matcher(this.txtEmail.getText());
@@ -194,6 +234,7 @@ public class CreateNewUserDialog extends JFrame {
 			JOptionPane.showMessageDialog(this, rb.getString("frame.changePasswd.msgNoMatch"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			pwdOne.setText("");
 			pwdTwo.setText("");
+			this.setVisible(true);
 			pwdOne.requestFocus();
 		}
 		this.setEnabled(true);

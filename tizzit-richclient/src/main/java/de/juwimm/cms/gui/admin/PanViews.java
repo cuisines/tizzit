@@ -243,7 +243,8 @@ public class PanViews extends JPanel implements ReloadablePanel {
 					viewsDeleted.remove(viewDocumentId);
 					UIConstants.setStatusInfo(rb.getString("panel.panelCmsViews.succDeleted"));
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					log.error(ex.getMessage(),ex);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.generic.connection"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -258,7 +259,8 @@ public class PanViews extends JPanel implements ReloadablePanel {
 					viewsNew.remove(id);
 					UIConstants.setStatusInfo(rb.getString("panel.panelCmsViews.succAdded"));
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					log.error(ex.getMessage(),ex);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.generic.connection"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -266,7 +268,8 @@ public class PanViews extends JPanel implements ReloadablePanel {
 			Long vdDefault = tblModel.getDefault();
 			comm.setDefaultViewDocument(vdDefault.intValue());
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			log.error(ex.getMessage(),ex);
+			JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.generic.connection"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

@@ -323,7 +323,8 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 						loadFromDropDown = false;
 						updateContentVersions(new Integer(loadedViewComponentValue.getReference()).intValue(), false);
 					} catch (Exception ex) {
-						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), "CMS", JOptionPane.ERROR_MESSAGE);
+						log.error(ex.getMessage(),ex);
+						JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.generic.connection"), "CMS", JOptionPane.ERROR_MESSAGE);
 					}
 					//To make the XML editor refresh properly
 					if (txtEditor != null) {

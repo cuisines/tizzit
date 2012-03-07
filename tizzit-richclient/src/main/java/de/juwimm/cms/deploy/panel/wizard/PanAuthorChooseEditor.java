@@ -223,7 +223,7 @@ public class PanAuthorChooseEditor extends JPanel implements WizardPanel, ItemLi
 			UIConstants.setStatusInfo(rb.getString("actions.TASK_FOR_EDITOR"));
 		} catch (Exception exe) {
 			log.error("Error during save", exe);
-			JOptionPane.showMessageDialog(this, exe.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, rb.getString("exception.createTask.chooseEditor"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

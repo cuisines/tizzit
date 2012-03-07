@@ -482,7 +482,8 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 					String persmissionMessage = Messages.getString("user.noUpdatePermision.exception", user.getUserName());
 					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), persmissionMessage, rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					log.error(ex);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.generic.connection"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -495,7 +496,8 @@ public class PanUser extends JPanel implements UnloadablePanel, ExitListener, Re
 				it.remove();
 				userDeleted.remove(userNameId);
 			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), ex.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				log.error(ex);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.generic.connection"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		ActionHub.fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, Constants.ACTION_CHANGE_USERACCOUNTS));

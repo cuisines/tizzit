@@ -413,7 +413,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 				int id = dlmGroups.indexOf(gv);
 				lstGroups.setSelectedIndex(id);
 			} catch (Exception exe) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), exe.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.groupEditor.addGroup"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -430,7 +430,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 					}
 				});
 			} catch (Exception exe) {
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), exe.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.groupEditor.delGroup"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -488,7 +488,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 				});
 			} catch (Exception exe) {
 				log.error("Error filling groups", exe);
-				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), exe.getMessage(), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.groupEditor.updateGroup"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
