@@ -230,6 +230,8 @@ public class DocumentHbmDaoImpl extends de.juwimm.cms.model.DocumentHbmDaoBase {
 				+ "]]></name>\n");
 		sb.append("\t<label><![CDATA["+document.getLabel()+"]]></label>\n");
 		sb.append("\t<description><![CDATA["+document.getDescription()+"]]></description>\n");
+		sb.append("\t<author><![CDATA["+document.getAuthor()+"]]></author>\n");
+		sb.append("\t<category><![CDATA["+document.getCategory()+"]]></category>\n");
 		sb.append("</document>\n");
 		return sb.toString();
 	}

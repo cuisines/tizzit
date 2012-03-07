@@ -156,6 +156,7 @@ public class Documents extends AbstractModule {
 				} catch (Exception exe) {
 				}
 			} catch (Exception e) {
+				log.error("Problem loading document properties", e);
 			}
 		} else {
 			pan = new PanDocuments(true,true); 

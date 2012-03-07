@@ -49,6 +49,8 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 	private ViewComponentValue viewComponentValue = null;
 	private UnitValue unitValue = null;
 	private boolean iAmTheLiveserver = false;
+	private int depth;
+	private String since;
 	private boolean disableNavigationAxis = false;
 	private Serializable uniqueKey;
 	private long chgDate = 0;
@@ -315,7 +317,7 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 		}
 		
 		try {
-			return webSpringBean.getNavigationAge(viewComponentId, null, 0, false);
+			return webSpringBean.getNavigationAge(viewComponentId);
 		} catch (Exception e) {
 			log.error("An error occured while trying to fetch the navigation age", e);
 			return new Date(System.currentTimeMillis());

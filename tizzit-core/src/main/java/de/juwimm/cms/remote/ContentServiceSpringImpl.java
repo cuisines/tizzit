@@ -1238,6 +1238,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			doc.setPassword(documentValue.getPassword());
 			doc.setDescription(documentValue.getDescription());
 			doc.setSearchable(documentValue.isSearchable());
+			doc.setAuthor(documentValue.getAuthor());
+			doc.setCategory(documentValue.getCategory());
 			if (documentValue.getDocumentId() != null) {
 				getDocumentHbmDao().update(doc);
 			} else {
@@ -2388,6 +2390,8 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 			doc.setLabel(documentSlimValue.getLabel());
 			doc.setPassword(documentSlimValue.getPassword());
 			doc.setDescription(documentSlimValue.getDescription());
+			doc.setAuthor(documentSlimValue.getAuthor());
+			doc.setCategory(documentSlimValue.getCategory());
 			doc.setSearchable(documentSlimValue.isSearchable());
 			if (documentSlimValue.getDocumentId() != null) {
 				getDocumentHbmDao().update(doc);

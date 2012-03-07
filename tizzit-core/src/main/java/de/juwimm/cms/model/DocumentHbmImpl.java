@@ -60,6 +60,8 @@ public class DocumentHbmImpl extends DocumentHbm {
 		vo.setLabel(this.getLabel());
 		vo.setDescription(this.getDescription());
 		vo.setSearchable(this.isSearchable());
+		vo.setAuthor(this.getAuthor());
+		vo.setCategory(this.getCategory());
 		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
 		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
 		return vo;
@@ -118,6 +120,8 @@ public class DocumentHbmImpl extends DocumentHbm {
 		vo.setLabel(this.getLabel());
 		vo.setDescription(this.getDescription());
 		vo.setSearchable(this.isSearchable());
+		vo.setAuthor(this.getAuthor());
+		vo.setCategory(this.getCategory());
 		vo.setViewDocumentId(this.getViewComponent()!=null?this.getViewComponent().getViewComponentId():null);
 		vo.setUnitId(this.getUnit()!=null?this.getUnit().getUnitId():null);
 		try {

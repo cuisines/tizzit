@@ -91,6 +91,11 @@ import de.juwimm.cms.vo.DocumentValue;
  */
 public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 	private static Logger log = Logger.getLogger(PanDocuments.class);
+
+	private static final int COMBO_REGION_UNIT=0;
+	private static final int COMBO_REGION_SITE=1;
+	private static final int COMBO_REGION_VIEWCOMPONENT=2;
+	
 	private final ResourceBundle rb = Constants.rb;
 	private Integer intDocId;
 	private final JPanel panBottom = new JPanel();
@@ -114,8 +119,12 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 	private final JLabel lbDocumentLabel = new JLabel();
 	private final JTextField txtDocumentDescription = new JTextField();
 	private final JLabel lbDocumentDescription = new JLabel();
+	private final JTextField txtAuthor = new JTextField();
+	private final JLabel lbAuthor = new JLabel();
+	private final JTextField txtCategory = new JTextField();
+	private final JLabel lbCategory = new JLabel();
 	private final JCheckBox ckbDocumentSearchable = new JCheckBox();
-	private final JTextField txtDocumentDesc = new JTextField();
+	private final JTextField txtLinkDesc = new JTextField();
 	private final JLabel lbLinkDescription = new JLabel();
 	private final GridBagLayout panLinkNameLayout = new GridBagLayout();
 	private final JCheckBox cbxDisplayTypeInline = new JCheckBox();
@@ -150,7 +159,10 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 			lbLinkDescription.setText(Messages.getString("panel.content.documents.linkdescription"));
 			lbDocumentLabel.setText(Messages.getString("panel.content.documents.documentLabel"));
 			lbDocumentDescription.setText(Messages.getString("panel.content.documents.documentDescription"));
+			lbAuthor.setText(Messages.getString("panel.content.documents.author"));
+			lbCategory.setText(Messages.getString("panel.content.documents.category"));
 			ckbDocumentSearchable.setText(Messages.getString("panel.content.documents.documentSearchable"));
+			ckbDocumentSearchable.setSelected(true);
 			cbxDisplayTypeInline.setText(rb.getString("content.modules.externalLink.displayTypeInline"));
 		} catch (Exception exe) {
 			log.error("Initialization error", exe);
@@ -279,7 +291,7 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 		panLinkName.add(lbLinkDescription, new GridBagConstraints(0, 0, 1, 1,
 				0, 0, GridBagConstraints.BASELINE_LEADING,
 				GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
-		panLinkName.add(txtDocumentDesc, new GridBagConstraints(1, 0, 1, 1, 1,
+		panLinkName.add(txtLinkDesc, new GridBagConstraints(1, 0, 1, 1, 1,
 				0, GridBagConstraints.BASELINE_LEADING,
 				GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
 		if (showDocumentProperties) {
@@ -295,7 +307,19 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 			panLinkName.add(txtDocumentDescription, new GridBagConstraints(1,
 					2, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING,
 					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
-			panLinkName.add(ckbDocumentSearchable, new GridBagConstraints(0, 3,
+			panLinkName.add(lbAuthor, new GridBagConstraints(0, 3,
+					1, 1, 0, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(txtAuthor, new GridBagConstraints(1,
+					3, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(lbCategory, new GridBagConstraints(0, 4,
+					1, 1, 0, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(txtCategory, new GridBagConstraints(1,
+					4, 1, 1, 1, 0, GridBagConstraints.BASELINE_LEADING,
+					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
+			panLinkName.add(ckbDocumentSearchable, new GridBagConstraints(0, 5,
 					2, 1, 1, 1, GridBagConstraints.BASELINE_LEADING,
 					GridBagConstraints.BOTH, new Insets(2, 2, 2, 2), 2, 2));
 		}
@@ -607,6 +631,8 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 								documentValue.setMimeType(mimetype);
 								documentValue.setPassword(password);
 								documentValue.setSearchable(ckbDocumentSearchable.isSelected());
+								documentValue.setAuthor(txtAuthor.getText());
+								documentValue.setCategory(txtCategory.getText());
 								documentValue.setUnitId(unit);
 								documentValue.setViewDocumentId(viewComponentId);
 								this.intDocId = this.comm.addOrUpdateDocument(documentValue).getDocumentId();
@@ -640,6 +666,18 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 
 	public void setDocumentId(Integer docid) {
 		this.intDocId = docid;
+		if(intDocId!=null){
+			DocumentSlimValue slimValue=comm.getDocumentSlimValue(intDocId);
+			if(slimValue.getViewDocumentId()!=null){
+				cboRegion.setSelectedIndex(COMBO_REGION_VIEWCOMPONENT);
+			}
+			if(slimValue.getUnitId()!=null && slimValue.getUnitId().equals(intActUnit)){
+				cboRegion.setSelectedIndex(COMBO_REGION_UNIT);
+			}
+			if(slimValue.getUnitId()!=null && slimValue.getUnitId().equals(intRootUnit)){
+				cboRegion.setSelectedIndex(COMBO_REGION_SITE);
+			}
+		}
 		//loadThumbs(intActUnit);
 	}
 
@@ -652,11 +690,11 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 	}
 
 	public String getDocumentDescription() {
-		return this.txtDocumentDesc.getText();
+		return this.txtLinkDesc.getText();
 	}
 
 	public void setDocumentDescription(String docDesc) {
-		txtDocumentDesc.setText(docDesc);
+		txtLinkDesc.setText(docDesc);
 	}
 
 	/**
@@ -675,9 +713,13 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 				if (linkDesc.lastIndexOf(".") != -1) {
 					linkDesc = linkDesc.substring(0, linkDesc.lastIndexOf("."));
 				}
-				txtDocumentDesc.setText(linkDesc);
+				if (txtLinkDesc.getText().isEmpty()) {
+					txtLinkDesc.setText(linkDesc);
+				}
 				txtDocumentLabel.setText(vo.getLabel());
 				txtDocumentDescription.setText(vo.getDescription());
+				txtAuthor.setText(vo.getAuthor());
+				txtCategory.setText(vo.getCategory());
 				ckbDocumentSearchable.setSelected(vo.isSearchable());
 				mimeType = vo.getMimeType();
 			}
@@ -774,6 +816,8 @@ public class PanDocuments extends JPanel  implements EditpaneFiredListener{
 			DocumentSlimValue slimValue= comm.getDocumentSlimValue(intDocId);
 			slimValue.setDescription(txtDocumentDescription.getText());
 			slimValue.setLabel(txtDocumentLabel.getText());
+			slimValue.setAuthor(txtAuthor.getText());
+			slimValue.setCategory(txtCategory.getText());
 			slimValue.setSearchable(ckbDocumentSearchable.isSelected());
 			comm.updateDocumentSlimValue(slimValue);
 		}

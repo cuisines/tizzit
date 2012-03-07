@@ -244,7 +244,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	}
 
 	@Override
-	protected Date handleGetNavigationAge(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
+	protected Date handleGetNavigationAge(Integer refVcId) throws Exception {
 		try {
 			if (log.isDebugEnabled()) log.debug("begin getNavigationAge");
 			Date retVal = null;

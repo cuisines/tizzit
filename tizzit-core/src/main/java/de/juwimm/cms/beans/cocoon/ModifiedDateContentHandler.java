@@ -90,7 +90,7 @@ public final class ModifiedDateContentHandler extends DefaultHandler {
 
 				try {
 					if (ifDistanceToNavigationRoot == -1 || this.webServiceSpring.getNavigationRootDistance4VCId(this.viewComponentId) >= ifDistanceToNavigationRoot) {
-						Date navDate = this.webServiceSpring.getNavigationAge(this.viewComponentId, since, depth, this.isLiveserver);
+						Date navDate = this.webServiceSpring.getNavigationAge(this.viewComponentId);
 						if (this.modifiedDate.compareTo(navDate) <= 0) {
 							this.modifiedDate = navDate;
 						}

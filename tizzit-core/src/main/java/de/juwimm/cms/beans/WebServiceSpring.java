@@ -337,8 +337,8 @@ public class WebServiceSpring {
 	 *      java.lang.String, int, boolean)
 	 */
 	//@RequestMapping(value = "/navigationage/{refVcID}/{since}/{depth}/{getPUBLSVersion}", method = RequestMethod.GET)
-	public Date getNavigationAge(Integer refVcId, String since, int depth, boolean getPUBLSVersion) throws Exception {
-		return viewComponentHbmDao.getNavigationAge(refVcId, since, depth, getPUBLSVersion);
+	public Date getNavigationAge(Integer refVcId) throws Exception {
+		return viewComponentHbmDao.getNavigationAge(refVcId);
 	}
 
 	/**
