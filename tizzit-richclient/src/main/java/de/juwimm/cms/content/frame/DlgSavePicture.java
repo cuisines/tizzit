@@ -146,6 +146,7 @@ public class DlgSavePicture extends JDialog implements ActionListener {
 			String fileName = txtFileName.getText().trim();
 			String filePattern = "[\\w.-_+]+";
 			int unitId = ((ContentManager) getBean(Beans.CONTENT_MANAGER)).getActUnitId();
+			fileName = addFileExtension(fileName);
 			if (!fileName.isEmpty() && Pattern.matches(filePattern, fileName) && validateFileName(unitId, fileName)) {
 				try {
 					pictureId = comm.addPicture2Unit(unitId, pictureThumbnail, pictureData, "image/png", pictureValue.getAltText(), fileName, pictureValue.getTitle());
@@ -168,6 +169,14 @@ public class DlgSavePicture extends JDialog implements ActionListener {
 		}
 		this.fireSaveActionListener(new ActionEvent(this, pictureId, "" + pictureId));
 		this.setVisible(false);
+	}
+
+	private String addFileExtension(String fileName) {
+		if(fileName.endsWith(".png") || fileName.endsWith(".PNG")){
+			return fileName;
+		} else {
+			return fileName+".png";
+		}
 	}
 
 	private boolean validateFileName(int unitId, String fileName) {
