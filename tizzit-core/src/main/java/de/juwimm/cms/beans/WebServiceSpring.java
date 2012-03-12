@@ -346,7 +346,7 @@ public class WebServiceSpring {
 	 *      java.lang.String, int, boolean)
 	 */
 	//@RequestMapping(value = "/navigationbackwardxml/{refVcId}/{since}/{dontShowFirst}/{getPUBLSVersion}", method = RequestMethod.GET)
-	public String getNavigationBackwardXml(Integer refVcId, String since, int dontShowFirst, boolean getPUBLSVersion) throws Exception {
+	public String getNavigationBackwardXml(Integer refVcId, String since, int dontShowFirst, boolean getPUBLSVersion,int depth) throws Exception {
 		if (log.isDebugEnabled()) log.debug("getNavigationBackwardXML start");
 
 		try {
@@ -394,7 +394,7 @@ public class WebServiceSpring {
 
 //				viewComponentHbmDao.toXml(aaa, null, false, true, 1, getPUBLSVersion, true, out);
 				viewComponentHbmDao.toXml(aaa, null, false,
-						lastContenVersionOnly, withSiteProtection, true, 1,
+						lastContenVersionOnly, withSiteProtection, true, depth,
 						getPUBLSVersion, true, getPUBLSVersion, deployType,
 						showType, out);
 

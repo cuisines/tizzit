@@ -261,6 +261,11 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 				dontShowFirst = new Integer(attrs.getValue("dontShowFirst")).intValue();
 			} catch (Exception exe) {
 			}
+			int depth = 0;
+			try {
+				depth = new Integer(attrs.getValue("depth")).intValue();
+			} catch (Exception exe) {
+			}
 			
 			try {
 				
@@ -275,7 +280,7 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 
 			try {
 				if (sm.equals("")) {
-					sm = "<navigationBackWard>"+webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver)+"</navigationBackWard>";
+					sm = "<navigationBackWard>"+webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver,depth)+"</navigationBackWard>";
 				}
 				Document smdoc = XercesHelper.string2Dom(sm);
 				Node page = doc.importNode(smdoc.getFirstChild(), true);
