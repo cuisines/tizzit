@@ -169,7 +169,7 @@ public class TizzitRestAPIController {
 		if (log.isDebugEnabled()) log.debug("/navigationbackwardxml/" + refVcId);
 		String sb = null;
 		try {
-			sb = webSpringBean.getNavigationBackwardXml(refVcId, since, dontShowFirst, getPUBLSVersion);
+			sb = webSpringBean.getNavigationBackwardXml(refVcId, since, dontShowFirst, getPUBLSVersion,0);
 		} catch (Exception e) {
 			log.warn("Error calling getNavigationBackwardXml on webservicespring");
 		}

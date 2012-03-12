@@ -913,7 +913,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			}
 
 			if (sm.equals("")) {
-				sm = "<navigationBackward>" + webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver) + "</navigationBackward>";
+				sm = "<navigationBackward>" + webSpringBean.getNavigationBackwardXml(viewComponentId, since, dontShowFirst, iAmTheLiveserver,0) + "</navigationBackward>";
 			}
 			try {
 				Document smdoc = XercesHelper.string2Dom(sm);
