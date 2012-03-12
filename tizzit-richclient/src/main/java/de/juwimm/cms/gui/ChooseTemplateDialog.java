@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
+import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
@@ -45,10 +46,14 @@ import de.juwimm.cms.util.UIConstants;
 import de.juwimm.cms.vo.UnitValue;
 import de.juwimm.swing.CustomComboBoxModel;
 import de.juwimm.swing.DropDownHolder;
+import de.juwimm.swing.TemplatesComboBox;
 
 /**
  * <b>Tizzit Enterprise Content Management</b><br/>
- * <p>Copyright: Copyright (c) 2004</p>
+ * <p>
+ * Copyright: Copyright (c) 2004
+ * </p>
+ * 
  * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
  * @version $Id$
  */
@@ -60,14 +65,16 @@ public class ChooseTemplateDialog extends JDialog {
 	private int position;
 	private final JButton cmdCancel = new JButton();
 	private final JButton cmdOK = new JButton();
-	private final JComboBox cbxTemplates = new JComboBox();
+	private final TemplatesComboBox cbxTemplates = new TemplatesComboBox();
 	private final JLabel lblSelectTemplate = new JLabel();
 	private final JComboBox cbxUnits = new JComboBox();
 	private final JCheckBox cbCreateUnit = new JCheckBox();
 
 	/**
 	 * Use this, if you only want to select the template, nothing more.
-	 * @param ctl The Listener to inform
+	 * 
+	 * @param ctl
+	 *            The Listener to inform
 	 */
 	public ChooseTemplateDialog(ChooseTemplateListener ctl) {
 		this(ctl, null, -1);
@@ -75,36 +82,56 @@ public class ChooseTemplateDialog extends JDialog {
 		this.cbxUnits.setVisible(false);
 	}
 
-	public ChooseTemplateDialog(ChooseTemplateListener ctl, PageNode pgNode, int pos) {
-		super(UIConstants.getMainFrame(), rb.getString("panel.chooseTemplate.title"), true);
+	public ChooseTemplateDialog(ChooseTemplateListener ctl, PageNode pgNode,
+			int pos) {
+		super(UIConstants.getMainFrame(), rb
+				.getString("panel.chooseTemplate.title"), true);
 		try {
 			jbInit();
 			this.cmdCancel.setText(rb.getString("dialog.cancel"));
 			this.cmdOK.setText(rb.getString("dialog.ok"));
-			this.lblSelectTemplate.setText(rb.getString("panel.chooseTemplate.selectTemplate"));
-			this.cbCreateUnit.setText(rb.getString("panel.chooseTemplate.createUnit"));
+			this.lblSelectTemplate.setText(rb
+					.getString("panel.chooseTemplate.selectTemplate"));
+			this.cbCreateUnit.setText(rb
+					.getString("panel.chooseTemplate.createUnit"));
 			Iterator it = Constants.CMS_AVAILABLE_DCF.getKeyOrder().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
 				HashMap val = (HashMap) Constants.CMS_AVAILABLE_DCF.get(key);
 				if (val == null) {
-					JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.TEMPLATE_NOT_FOUND"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(UIConstants.getMainFrame(),
+							rb.getString("exception.TEMPLATE_NOT_FOUND"),
+							rb.getString("dialog.title"),
+							JOptionPane.ERROR_MESSAGE);
 				}
-				String role = "";
-				try {
-					role = (String) val.get("role");
-				} catch (NullPointerException exe) {
-				}
-				if (role.equals("") || comm.isUserInRole(role)) {
-					this.cbxTemplates.addItem(new DropDownHolder(key, (String) val.get("description")));
-				} else if (role.indexOf(',') > 0) {
-					// several roles for the current template
-					StringTokenizer st = new StringTokenizer(role, ",");
-					while (st.hasMoreTokens()) {
-						String currRole = st.nextToken();
-						if (comm.isUserInRole(currRole)) {
-							cbxTemplates.addItem(new DropDownHolder(key, (String) val.get("description")));
-							break;
+				if (val.get("description").equals(
+						Constants.CMS_AVAILABLE_DCF_CATEGORY_NODE)) {
+					this.cbxTemplates
+							.addItem(new DropDownHolder(
+									key,
+									Messages.getString(
+											"panel.chooseTemplate.categoryTemplate",
+											key),
+									DropDownHolder.ELEMENT_TYPE_CATEGORY));
+				} else {
+					String role = "";
+					try {
+						role = (String) val.get("role");
+					} catch (NullPointerException exe) {
+					}
+					if (role.equals("") || comm.isUserInRole(role)) {
+						this.cbxTemplates.addItem(new DropDownHolder(key,
+								(String) val.get("description")));
+					} else if (role.indexOf(',') > 0) {
+						// several roles for the current template
+						StringTokenizer st = new StringTokenizer(role, ",");
+						while (st.hasMoreTokens()) {
+							String currRole = st.nextToken();
+							if (comm.isUserInRole(currRole)) {
+								cbxTemplates.addItem(new DropDownHolder(key,
+										(String) val.get("description")));
+								break;
+							}
 						}
 					}
 				}
@@ -112,7 +139,9 @@ public class ChooseTemplateDialog extends JDialog {
 			this.cbxTemplates.setSelectedIndex(0);
 
 			if (comm.isUserInRole(UserRights.SITE_ROOT)) {
-				cbxUnits.setModel(new CustomComboBoxModel(comm.getNotReferencedUnits(comm.getViewDocument()), "getName"));
+				cbxUnits.setModel(new CustomComboBoxModel(comm
+						.getNotReferencedUnits(comm.getViewDocument()),
+						"getName"));
 				if (cbxUnits.getModel().getSize() <= 0) {
 					this.cbCreateUnit.setEnabled(false);
 				}
@@ -155,12 +184,39 @@ public class ChooseTemplateDialog extends JDialog {
 				cbCreateUnitActionPerformed(e);
 			}
 		});
-		this.getContentPane().add(cbxUnits, new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		this.getContentPane().add(cbCreateUnit, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		this.getContentPane().add(cmdCancel, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0, GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE, new Insets(10, 10, 10, 10), 0, 0));
-		this.getContentPane().add(cmdOK, new GridBagConstraints(0, 5, 1, 1, 0.0, 1.0, GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE, new Insets(10, 10, 10, 0), 0, 0));
-		this.getContentPane().add(lblSelectTemplate, new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
-		this.getContentPane().add(cbxTemplates, new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 0, 10), 0, 0));
+		this.getContentPane().add(
+				cbxUnits,
+				new GridBagConstraints(0, 2, 2, 1, 0.0, 0.0,
+						GridBagConstraints.NORTHWEST,
+						GridBagConstraints.HORIZONTAL,
+						new Insets(10, 10, 0, 10), 0, 0));
+		this.getContentPane().add(
+				cbCreateUnit,
+				new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0,
+						GridBagConstraints.NORTHWEST,
+						GridBagConstraints.HORIZONTAL,
+						new Insets(10, 10, 0, 10), 0, 0));
+		this.getContentPane().add(
+				cmdCancel,
+				new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
+						GridBagConstraints.SOUTHEAST, GridBagConstraints.NONE,
+						new Insets(10, 10, 10, 10), 0, 0));
+		this.getContentPane().add(
+				cmdOK,
+				new GridBagConstraints(0, 5, 1, 1, 0.0, 1.0,
+						GridBagConstraints.SOUTHWEST, GridBagConstraints.NONE,
+						new Insets(10, 10, 10, 0), 0, 0));
+		this.getContentPane().add(
+				lblSelectTemplate,
+				new GridBagConstraints(0, 3, 2, 1, 0.0, 0.0,
+						GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+						new Insets(10, 10, 0, 10), 0, 0));
+		this.getContentPane().add(
+				cbxTemplates,
+				new GridBagConstraints(0, 4, 2, 1, 1.0, 0.0,
+						GridBagConstraints.CENTER,
+						GridBagConstraints.HORIZONTAL,
+						new Insets(10, 10, 0, 10), 0, 0));
 	}
 
 	private void close() {
@@ -183,9 +239,12 @@ public class ChooseTemplateDialog extends JDialog {
 		}
 		int unitId = 0;
 		if (cbCreateUnit.isSelected() && cbxUnits.getSelectedIndex() >= 0) {
-			unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem()).getObject()).getUnitId();
+			unitId = ((UnitValue) ((DropDownHolder) cbxUnits.getSelectedItem())
+					.getObject()).getUnitId();
 		}
-		ctl.chooseTemplatePerformed(unitId, pageNode, ((DropDownHolder) cbxTemplates.getSelectedItem()).getObject().toString(), position);
+		ctl.chooseTemplatePerformed(unitId, pageNode,
+				((DropDownHolder) cbxTemplates.getSelectedItem()).getObject()
+						.toString(), position);
 		close();
 	}
 

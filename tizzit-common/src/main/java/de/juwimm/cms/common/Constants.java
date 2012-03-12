@@ -33,6 +33,8 @@ public final class Constants {
 	public static String CMS_VERSION = "";
 
 	public static KeyOrderKeptHashMap CMS_AVAILABLE_DCF = new KeyOrderKeptHashMap();
+	
+	public static final String CMS_AVAILABLE_DCF_CATEGORY_NODE="TEMPLATE_CATEGORY_NODE";
 
 	public static String CMS_PATH_WYSIWYGIMAGE = "";
 	public static String CMS_PATH_DEMOPAGE = "";

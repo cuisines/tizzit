@@ -352,7 +352,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 				} else {
 					for (int i = 0; i < nl.getLength(); i++) {
 						Node elm = nl.item(i);
-						if (elm instanceof Element) {
+						if (elm instanceof Element && ((Element)elm).getNodeName().equals("item")) {
 							String desc = XercesHelper.getNodeValue(elm);
 							String ndeKey = ((Element) elm).getAttribute("filename");
 							String editableBy = ((Element) elm).getAttribute("editableBy");
@@ -377,6 +377,13 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 							} catch (Exception exe) {
 								log.error("Error during loading of template " + ndeKey, exe);
 							}
+						} else if(elm instanceof Element && ((Element)elm).getNodeName().equals("category")){
+							String ndeKey = ((Element) elm).getAttribute("name");
+							HashMap<String, String> val = new HashMap<String, String>();
+							val.put("description", Constants.CMS_AVAILABLE_DCF_CATEGORY_NODE);
+							Constants.CMS_AVAILABLE_DCF.put(ndeKey, val);
+						} else if(elm instanceof Element){
+							log.error("Invalid node in template list " + elm.getNodeName());
 						}
 					}
 				}

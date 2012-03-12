@@ -22,8 +22,18 @@ package de.juwimm.swing;
  */
 
 public class DropDownHolder {
+	public static final String ELEMENT_TYPE_CATEGORY = "CATEGORY";
+	public static final String ELEMENT_TYPE_TEMPLATE = "TEMPLATE";
+
 	private Object objObject = null;
 	private String strToString = "";
+	private String type=ELEMENT_TYPE_TEMPLATE;
+
+	public DropDownHolder(Object obj, String strToString, String type) {
+		this.objObject = obj;
+		this.strToString = strToString;
+		this.type=type;
+	}
 
 	public DropDownHolder(Object obj, String strToString) {
 		this.objObject = obj;
@@ -38,4 +48,7 @@ public class DropDownHolder {
 		return this.strToString;
 	}
 
+	public Object getType() {
+		return this.type;
+	}
 }
