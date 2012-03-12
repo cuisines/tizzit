@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>tizzit-xmlsearch-xindice</name>
   <comment>The Tizzit Project. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>tizzit-common</project>
     <project>tizzit-core</project>
     <project>tizzit-plugin-api</project>
+    <project>tizzit-common</project>
   </projects>
   <buildSpec>
     <buildCommand>
