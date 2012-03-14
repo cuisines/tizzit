@@ -156,7 +156,9 @@ public class PanMenuentryInternallink extends PanMenuentry implements EditpaneFi
 
 	@Override
 	public void save() throws Exception {
+		String temporaryReference=this.getViewComponent().getReference();
 		super.save();
+		this.getViewComponent().setReference(temporaryReference);
 
 		String prevVLevel = this.getViewComponent().getViewLevel();
 		if (prevVLevel == null) prevVLevel = "";

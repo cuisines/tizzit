@@ -345,7 +345,8 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 			}
 			try {
 				viewComponent = comm.saveViewComponent(viewComponent);
-				ActionHub.fireActionPerformed(new ActionEvent(viewComponent, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
+				if(isFromSaveButton)
+					ActionHub.fireActionPerformed(new ActionEvent(viewComponent, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_ENTRY_NAME));
 			} catch (ViewComponentLinkNameAlreadyExisting vc) {
 				JOptionPane.showMessageDialog(UIConstants.getMainFrame(), rb.getString("exception.ViewComponentLinkNameAlreadyExisting"), rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			} catch (ViewComponentNotFound vn) {
