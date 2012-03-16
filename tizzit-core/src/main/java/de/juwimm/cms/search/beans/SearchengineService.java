@@ -599,8 +599,10 @@ public class SearchengineService {
 		Iterator it = vclColl.iterator();
 		while (it.hasNext()) {
 			ViewComponentHbm viewComponent = (ViewComponentHbm) it.next();
+			log.info("indexing content for referenced vc id "+viewComponent.getViewComponentId()+"("+viewComponent.getDisplayLinkName()+")");
 			if (log.isDebugEnabled()) log.debug("Updating Indexes for VCID " + viewComponent.getDisplayLinkName());
-			boolean hasLivePreview = (getLiveUrl(viewComponent.getViewComponentId()) != null);
+			boolean hasLivePreview = (getLiveUrl(viewComponent) != null);
+//			boolean hasLivePreview = (viewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
 			boolean hasWorkPreview = (viewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
 			if (viewComponent.isSearchIndexed()) {
 				if (hasWorkPreview && contentText != null) this.indexPage4Lucene(viewComponent, contentText, false);
@@ -622,7 +624,9 @@ public class SearchengineService {
 			Iterator itRef = referencingViewComponents.iterator();
 			while (itRef.hasNext()) {
 				ViewComponentHbm refViewComponent = (ViewComponentHbm) itRef.next();
-				hasLivePreview = (getLiveUrl(viewComponent.getViewComponentId()) != null);
+				log.info("indexing content for referencing vc id "+refViewComponent.getViewComponentId()+"("+refViewComponent.getDisplayLinkName()+")");
+				hasLivePreview = (getLiveUrl(refViewComponent) != null);
+//				hasWorkPreview = (refViewComponent.getViewDocument().getSite().getPreviewUrlLiveServer() != null);
 				hasWorkPreview = (refViewComponent.getViewDocument().getSite().getPreviewUrlWorkServer() != null);
 
 				if (refViewComponent.getViewType() == Constants.VIEW_TYPE_SYMLINK) {
@@ -662,7 +666,7 @@ public class SearchengineService {
 		try {
 			String currentUrl =null;
 			if(isLive){
-				currentUrl=getLiveUrl(viewComponent.getViewComponentId());
+				currentUrl=getLiveUrl(viewComponent);
 			} else {
 				currentUrl= searchengineDeleteService.getUrl(viewComponent, isLive);
 			}
@@ -784,7 +788,6 @@ public class SearchengineService {
 		return retVal;
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void indexDocument(Integer documentId) {
 		if (log.isDebugEnabled()) {
 			log.debug("Index create / update for Document: " + documentId);
@@ -818,16 +821,12 @@ public class SearchengineService {
 		if (log.isInfoEnabled()) log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
 	}
 	
-	public String getLiveUrl(Integer viewComponentId) {
-		ViewComponentHbm vcHbm=getViewComponentHbmDao().load(viewComponentId);
-		SiteHbm siteHbm=vcHbm.getViewDocument().getSite();
-		vcHbm.getUnit4ViewComponent();
-		UnitHbm rootUnit=siteHbm.getRootUnit();
-		Collection<ViewComponentHbm> vcCollection=viewComponentHbmDao.findRootViewComponents4Unit(rootUnit.getUnitId());
-		Collection<HostHbm> hostHbmCollection=getHostHbmDao().findAllWithStartPage4Site(siteHbm.getSiteId());
+	public String getLiveUrl(ViewComponentHbm viewComponent) {
+		SiteHbm siteHbm=viewComponent.getViewDocument().getSite();
+		Collection<HostHbm> hostHbmCollection=getHostHbmDao().findAll(siteHbm.getSiteId());
 		String url = "";
 		for (HostHbm hostHbm : hostHbmCollection) {
-			if(vcCollection.contains(hostHbm.getStartPage()) && hostHbm.isLiveserver()){
+			if(hostHbm.isLiveserver()){
 				url+="http://"+hostHbm.getHostName()+"/";
 				break;
 			}
@@ -835,7 +834,7 @@ public class SearchengineService {
 		if (url.isEmpty()) {
 			return null;
 		} else {
-			url += vcHbm.getViewDocument().getLanguage() + "/" + vcHbm.getPath() + "." + siteHbm.getPageNameSearch();
+			url += viewComponent.getViewDocument().getLanguage() + "/" + viewComponent.getPath() + "." + siteHbm.getPageNameSearch();
 			if (log.isInfoEnabled()) log.info("created url " + url + " for site " + siteHbm.getName());
 			return url;
 		}
