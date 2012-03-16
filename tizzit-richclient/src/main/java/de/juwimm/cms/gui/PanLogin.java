@@ -358,6 +358,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 							String editableBy = ((Element) elm).getAttribute("editableBy");
 							String titleRequired = ((Element) elm).getAttribute("titleRequired");
 							String role = ((Element) elm).getAttribute("role");
+							String defaultTemplate=((Element) elm).getAttribute("default");
 
 							if (editableBy == null || editableBy.equals("")) {
 								editableBy = "";
@@ -370,6 +371,7 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 							val.put("role", role);
 							val.put("editableBy", editableBy);
 							val.put("titleRequired", titleRequired);
+							val.put("default", defaultTemplate);
 							//key is filename without .xml, val is Description/Role Hashmap
 							Constants.CMS_AVAILABLE_DCF.put(ndeKey, val);
 							try {

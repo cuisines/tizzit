@@ -94,6 +94,7 @@ public class ChooseTemplateDialog extends JDialog {
 					.getString("panel.chooseTemplate.selectTemplate"));
 			this.cbCreateUnit.setText(rb
 					.getString("panel.chooseTemplate.createUnit"));
+			DropDownHolder defaultTemplate=null; 
 			Iterator it = Constants.CMS_AVAILABLE_DCF.getKeyOrder().iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
@@ -114,29 +115,40 @@ public class ChooseTemplateDialog extends JDialog {
 											key),
 									DropDownHolder.ELEMENT_TYPE_CATEGORY));
 				} else {
+					DropDownHolder comboElement=new DropDownHolder(key,(String) val.get("description")); 
 					String role = "";
+					String defaultAtribute="";
 					try {
 						role = (String) val.get("role");
+						defaultAtribute = (String) val.get("default");
 					} catch (NullPointerException exe) {
 					}
 					if (role.equals("") || comm.isUserInRole(role)) {
-						this.cbxTemplates.addItem(new DropDownHolder(key,
-								(String) val.get("description")));
+						this.cbxTemplates.addItem(comboElement);
+						if(defaultAtribute.equalsIgnoreCase("true")){
+							defaultTemplate=comboElement;
+						}
 					} else if (role.indexOf(',') > 0) {
 						// several roles for the current template
 						StringTokenizer st = new StringTokenizer(role, ",");
 						while (st.hasMoreTokens()) {
 							String currRole = st.nextToken();
 							if (comm.isUserInRole(currRole)) {
-								cbxTemplates.addItem(new DropDownHolder(key,
-										(String) val.get("description")));
+								cbxTemplates.addItem(comboElement);
+								if(defaultAtribute.equalsIgnoreCase("true")){
+									defaultTemplate=comboElement;
+								}
 								break;
 							}
 						}
 					}
 				}
 			}
-			this.cbxTemplates.setSelectedIndex(0);
+			if(defaultTemplate!=null){
+				this.cbxTemplates.setSelectedItem(defaultTemplate);
+			}else{
+				this.cbxTemplates.setSelectedIndex(0);
+			}
 
 			if (comm.isUserInRole(UserRights.SITE_ROOT)) {
 				cbxUnits.setModel(new CustomComboBoxModel(comm
