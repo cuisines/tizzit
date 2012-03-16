@@ -69,3 +69,8 @@ tizzit-grails-plugin/web-app/WEB-INF/classes/
 */.project
 .DS_Store
 target
+tizzit-cocoon-block/.project
+*/.project
+*/.classpath
+*/.project
+*/.settings/*

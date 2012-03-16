@@ -63,6 +63,15 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
+		<developer>
+			<id>nitun</id>
+			<name>Nicolaie Nitu</name>
+			<email>nnitu@pentalog.fr</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+2</timezone>
+		</developer>
 	</developers>
 	<dependencyManagement>
 		<dependencies>
@@ -792,6 +801,7 @@
 		<module>../tizzit-web-admin</module>
 		<module>../tizzit-loginmodules</module>
 		<module>../tizzit-web-xindice</module>
+		<module>../tizzit-custom-valve</module>
 		<module>../tizzit-plugin-testcontainer</module>
 	</modules>
 	<properties>
