@@ -2715,7 +2715,9 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 		viewComponentHbm.setStatus(Constants.DEPLOY_STATUS_DEPLOYED);
 		viewComponentHbm.setLastModifiedDate(System.currentTimeMillis());
 		getViewComponentHbmDao().update(viewComponentHbm);
-		super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(viewComponentHbm.getReference()));
+		if(viewComponentHbm.getViewType()==Constants.VIEW_TYPE_CONTENT || viewComponentHbm.getViewType()==Constants.VIEW_TYPE_UNIT){
+			super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(viewComponentHbm.getReference()));
+		}
 	}
 
 	/* (non-Javadoc)
