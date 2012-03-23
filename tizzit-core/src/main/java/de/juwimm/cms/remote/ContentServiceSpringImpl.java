@@ -446,31 +446,33 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 				vc.setLastModifiedDate(System.currentTimeMillis());
 				vc.setUserLastModifiedDate(viewComponentValue.getUserLastModifiedDate());
 				super.getViewComponentHbmDao().update(vc);
-				super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
+				if(vc.getViewType()==Constants.VIEW_TYPE_CONTENT || vc.getViewType()==Constants.VIEW_TYPE_UNIT){
+					super.getContentHbmDao().setLatestContentVersionAsPublishVersion(new Integer(vc.getReference()));
+				}
 			}
 
 		} catch (Exception exe) {
 			log.error("Havent found either site or viewcomponent: (rootVc)" + rootViewComponentId + " " + exe.getMessage());
 		}
-		if (site != null) {
-			if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for viewComponentId: " + rootViewComponentId);
-			try {
-				boolean needsDeploy = false;
-				//TODO Edition
-				// site, vc, vd, unit in one value - difference makes deploy type
-				// type = 3 rootDeploy
-				// type = 0 fulldeploy - value is site; 1 unitdeploy - value is unit, 2 pagedeploy - value is vc, rest for export...
-				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, vcParent.getUnit4ViewComponent(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
-				newEdition.setDeployType(3);
-				newEdition.setStartActionTimestamp(System.currentTimeMillis());
-//				newEdition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
-				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
-			} catch (Exception e) {
-				throw new UserException(e.getMessage());
-			}
-		} else {
-			throw new UserException("User was not loggedin to the site he is willing to deploy. Deploy has been CANCELED.");
-		}
+//		if (site != null) {
+//			if (log.isInfoEnabled()) log.info("Enqueue createEdition-Event for viewComponentId: " + rootViewComponentId);
+//			try {
+//				boolean needsDeploy = false;
+//				//TODO Edition
+//				// site, vc, vd, unit in one value - difference makes deploy type
+//				// type = 3 rootDeploy
+//				// type = 0 fulldeploy - value is site; 1 unitdeploy - value is unit, 2 pagedeploy - value is vc, rest for export...
+//				EditionHbm newEdition = getEditionHbmDao().create(AuthenticationHelper.getUserName(), commentText, rootViewComponentId, vcParent.getUnit4ViewComponent(), site.getDefaultViewDocument().getViewDocumentId(), site.getSiteId(), needsDeploy);
+//				newEdition.setDeployType(3);
+//				newEdition.setStartActionTimestamp(System.currentTimeMillis());
+////				newEdition.setDeployStatus(LiveserverDeployStatus.EditionCreated.name().getBytes());
+//				if (log.isDebugEnabled()) log.debug("Finished createEdtion Task on Queue");
+//			} catch (Exception e) {
+//				throw new UserException(e.getMessage());
+//			}
+//		} else {
+//			throw new UserException("User was not loggedin to the site he is willing to deploy. Deploy has been CANCELED.");
+//		}
 	}
 	
 	private void getAllViewComponentsChildren4Status(ViewComponentHbm view, Vector<ViewComponentValue> vec, int status, Integer unitId) throws Exception {
@@ -2147,13 +2149,13 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	@Override
 	protected void handleMakeContentOffline(Integer viewComponentId) throws Exception {
 		ViewComponentHbm viewComponent = getViewComponentHbmDao().load(viewComponentId);
-		ContentHbm content = getContentHbmDao().load(Integer.decode(viewComponent.getReference()));
-		ContentVersionHbm publishContentVersion = content.getContentVersionForPublish();
 		//update online status
 		viewComponent.setOnline((byte) 0);
 		viewComponent.setStatus(Constants.DEPLOY_STATUS_EDITED);
 		getViewComponentHbmDao().update(viewComponent);
-
+		try{
+		ContentHbm content = getContentHbmDao().load(Integer.decode(viewComponent.getReference()));
+		ContentVersionHbm publishContentVersion = content!=null?content.getContentVersionForPublish():null;
 		if (publishContentVersion == null) {
 			return;
 		}
@@ -2161,6 +2163,9 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 		content.getContentVersions().remove(publishContentVersion);
 		getContentHbmDao().update(content);
 		removeContentVersion(publishContentVersion.getContentVersionId());
+		}catch(Exception e){
+			log.error(e.getMessage(),e);
+		}
 	}
 
 	@Override
