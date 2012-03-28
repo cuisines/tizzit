@@ -16,6 +16,11 @@
 	<name>tizzit Cocoon Components</name>
 
 	<packaging>jar</packaging>
+	<scm>
+		<connection>scm:git:git@github.com:tizzit/tizzit.git</connection>
+		<developerConnection>scm:git:git@github.com:tizzit/tizzit.git</developerConnection>
+		<url>http://tizzit.googlecode.com/svn/trunk/tizzit</url>
+	</scm>
 
 	<dependencies>
 		<dependency>

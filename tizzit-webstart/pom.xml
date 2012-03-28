@@ -4,6 +4,11 @@
 	<artifactId>tizzit-webstart</artifactId>
 	<packaging>jar</packaging>
 	<name>tizzit Webstart Servlets and Services</name>
+	<scm>
+		<connection>scm:git:git@github.com:tizzit/tizzit.git</connection>
+		<developerConnection>scm:git:git@github.com:tizzit/tizzit.git</developerConnection>
+		<url>http://tizzit.googlecode.com/svn/trunk/tizzit</url>
+	</scm>
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
