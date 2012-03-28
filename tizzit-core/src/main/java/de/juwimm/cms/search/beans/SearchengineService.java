@@ -590,6 +590,10 @@ public class SearchengineService {
 			log.error("ContentVersion not existing for content: " + content.getContentId());
 			return;
 		}
+		if(contentVersion.getLock()!=null || contentLiveVersion.getLock()!=null ){
+			log.error("Skipping index to avoid deadlock. ContentVersion is locked: " + content.getContentId());
+			return;
+		}
 		String contentText = null;
 		String contentLiveText = null;
 		if (contentVersion != null) contentText = contentVersion.getText();
@@ -743,7 +747,7 @@ public class SearchengineService {
 			for (int i = 0; i <= 3; i++) {
 				if (i == 3) {
 					log.error("Trying to fetch the URL " + strUrl + " three times with no success - page could not be loaded in searchengine!");
-					break;
+					return null;
 				}
 				if (log.isDebugEnabled()) log.debug("Trying " + i + " to catch the URL");
 				if (this.downloadToFile(method, file, strUrl)) {
