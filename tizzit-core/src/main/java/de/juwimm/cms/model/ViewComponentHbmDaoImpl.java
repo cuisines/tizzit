@@ -598,7 +598,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 			PrintStream out) throws Exception {
 		if (log.isDebugEnabled()) log.debug("toXml " + withContent + " WITH URL " + withUrl);
 
-		if(showOnlyDeployed && current.getStatus() != Constants.DEPLOY_STATUS_DEPLOYED){
+		if(showOnlyDeployed && current.getOnline() != 1){
 			return;
 		}
 		// if it's a deploy - the status has to be 'approved' and will be set to 'for_deploy'
