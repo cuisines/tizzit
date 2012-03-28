@@ -2,12 +2,12 @@
    <modelVersion>4.0.0</modelVersion>
    <artifactId>tizzit-mda</artifactId>
    <packaging>pom</packaging>
-   <version>3.1.5-SNAPSHOT</version>
+   <version>3.1.5</version>
    <name>tizzit MDA</name>
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
-      <version>3.1.5-SNAPSHOT</version>
+      <version>3.1.5</version>
       <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
 	<scm>
