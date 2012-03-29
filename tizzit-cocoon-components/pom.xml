@@ -5,23 +5,28 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.1.4-SNAPSHOT</version>
+		<version>3.1.6-SNAPSHOT</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-cocoon-components</artifactId>
-	<version>3.1.4-SNAPSHOT</version>
+	<version>3.1.6-SNAPSHOT</version>
 
 	<name>tizzit Cocoon Components</name>
 
 	<packaging>jar</packaging>
+	<scm>
+		<connection>scm:git:git@github.com:tizzit/tizzit.git</connection>
+		<developerConnection>scm:git:git@github.com:tizzit/tizzit.git</developerConnection>
+		<url>http://tizzit.googlecode.com/svn/trunk/tizzit</url>
+	</scm>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-common</artifactId>
-			<version>3.1.4-SNAPSHOT</version>
+			<version>3.1.6-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
