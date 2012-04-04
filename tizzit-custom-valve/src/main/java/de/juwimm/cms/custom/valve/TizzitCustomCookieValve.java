@@ -22,7 +22,7 @@ public class TizzitCustomCookieValve extends ValveBase {
 			if(!tokens[tokens.length-1].matches("\\d{1,3}")) {
 				String domain="";
 				if (tokens.length>=2 ){
-					domain=tokens[tokens.length-2]+"."+tokens[tokens.length-1];
+					domain="."+tokens[tokens.length-2]+"."+tokens[tokens.length-1];
 				} else {
 					domain=url.getHost();
 				}

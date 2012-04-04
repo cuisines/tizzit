@@ -44,6 +44,7 @@ public class SearchCronService {
 				try {
 					searchengineService.indexPage(content.getContentId());
 				} catch (Exception e) {
+					log.error(e.getMessage(), e);
 					if (log.isInfoEnabled()) log.info("Error indexing Content " + content.getContentId() + ": " + e.getMessage());
 				}
 			}

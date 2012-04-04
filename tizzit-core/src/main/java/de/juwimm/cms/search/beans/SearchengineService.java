@@ -590,7 +590,7 @@ public class SearchengineService {
 			log.error("ContentVersion not existing for content: " + content.getContentId());
 			return;
 		}
-		if(contentVersion.getLock()!=null || contentLiveVersion.getLock()!=null ){
+		if((contentVersion!=null && contentVersion.getLock()!=null) || (contentLiveVersion!=null && contentLiveVersion.getLock()!=null) ){
 			log.error("Skipping index to avoid deadlock. ContentVersion is locked: " + content.getContentId());
 			return;
 		}
