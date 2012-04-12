@@ -35,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
 import de.juwimm.cms.authorization.model.UserHbm;
+import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.remote.helper.AuthenticationHelper;
 import de.juwimm.cms.safeguard.model.Realm2viewComponentHbm;
@@ -577,6 +578,15 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 		ActiveRealmValue activeRealmValue = new ActiveRealmValue(false, false, false, false, false, -1, "", "", null);
 		try {
 			Realm2viewComponentHbm realm2viewComponent = getRealm2viewComponentHbmDao().findByViewComponent(viewComponentId);
+			ViewComponentHbm viewComponentHbm= getViewComponentHbmDao().load(viewComponentId);
+			if(viewComponentHbm!=null && viewComponentHbm.getViewType()==Constants.VIEW_TYPE_SYMLINK){
+				try{
+					Integer referencedViewComponentId=Integer.parseInt(viewComponentHbm.getReference());
+					realm2viewComponent = getRealm2viewComponentHbmDao().findByViewComponent(referencedViewComponentId);
+				} catch (Exception e) {
+					log.debug("Could not get referenced VC for symlink",e);
+				}
+			}
 			if (realm2viewComponent != null && realm2viewComponent.getRealm2viewComponentId() != null) {
 				activeRealmValue.setRoleNeeded(realm2viewComponent.getRoleNeeded());
 				if (realm2viewComponent.getLoginPage() != null) activeRealmValue.setLoginPageId(realm2viewComponent.getLoginPage().getViewComponentId());

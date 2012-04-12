@@ -237,7 +237,7 @@ public class SafeguardServiceTest extends AbstractServiceTest {
 
 		viewComponent.setParent(null);
 		try {
-			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent).times(2);
+			EasyMock.expect(viewComponentDaoMock.load(EasyMock.eq(1))).andReturn(viewComponent).times(3);
 			EasyMock.expect(realmSimplePwDaoMock.findByLoginPage("1")).andReturn(realms);
 			EasyMock.expect(realmJaasDaoMock.findByLoginPage("1")).andReturn(realms);
 			EasyMock.expect(realmLdapDaoMock.findByLoginPage("1")).andReturn(realms);
@@ -637,7 +637,7 @@ public class SafeguardServiceTest extends AbstractServiceTest {
 
 		try {
 			EasyMock.expect(realm2viewComponentDaoMock.findByViewComponent(EasyMock.eq(1))).andReturn(realm2viewComponent);
-			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent);
+			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent).times(2);
 			EasyMock.expect(realmSimplePwDaoMock.load(1)).andReturn(realmSimple);
 		} catch (Exception e) {
 			Assert.assertTrue(false);
@@ -684,7 +684,7 @@ public class SafeguardServiceTest extends AbstractServiceTest {
 
 		try {
 			EasyMock.expect(realm2viewComponentDaoMock.findByViewComponent(EasyMock.eq(1))).andReturn(realm2viewComponent);
-			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent);
+			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent).times(2);
 			EasyMock.expect(realmJaasDaoMock.load(1)).andReturn(realmJaas);
 		} catch (Exception e) {
 			Assert.assertTrue(false);
@@ -731,7 +731,7 @@ public class SafeguardServiceTest extends AbstractServiceTest {
 
 		try {
 			EasyMock.expect(realm2viewComponentDaoMock.findByViewComponent(EasyMock.eq(1))).andReturn(realm2viewComponent);
-			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent);
+			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent).times(2);
 			EasyMock.expect(realmJdbcDaoMock.load(1)).andReturn(realmJdbc);
 		} catch (Exception e) {
 			Assert.assertTrue(false);
@@ -778,7 +778,7 @@ public class SafeguardServiceTest extends AbstractServiceTest {
 
 		try {
 			EasyMock.expect(realm2viewComponentDaoMock.findByViewComponent(EasyMock.eq(1))).andReturn(realm2viewComponent);
-			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent);
+			EasyMock.expect(viewComponentDaoMock.load(1)).andReturn(viewComponent).times(2);
 			EasyMock.expect(realmLdapDaoMock.load(1)).andReturn(realmLdap);
 		} catch (Exception e) {
 			Assert.assertTrue(false);
