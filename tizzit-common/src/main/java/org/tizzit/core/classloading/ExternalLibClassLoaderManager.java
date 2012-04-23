@@ -93,6 +93,7 @@ public class ExternalLibClassLoaderManager {
 		for (File file : filesDirs) {
 			if (file.isDirectory()) {
 				//recursive call!
+				if(!file.getName().startsWith("."))
 				result.addAll(getFileList(file));
 			} else {
 				if (log.isDebugEnabled()) log.debug("Adding URL '" + file.getAbsolutePath() + "'.");
