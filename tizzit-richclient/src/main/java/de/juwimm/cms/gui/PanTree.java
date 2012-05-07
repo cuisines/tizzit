@@ -88,6 +88,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import de.juwimm.cms.Main;
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
@@ -728,6 +729,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 					Constants.EDIT_CONTENT = false;
 					ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_SELECT));
 				} else {
+					Main.getInstance().freezeInput(true);
 					if (log.isDebugEnabled()) log.debug("TreeSelectRunner::fireActionPerformed(ACTION_TREE_SELECT_SAVE)");
 //					ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_SAVE));
 					ActionHub.fireActionPerformed(new ActionEvent(treeNode, ActionEvent.ACTION_PERFORMED, Constants.ACTION_TREE_SELECT_SAVE));

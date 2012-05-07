@@ -49,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.jvnet.flamingo.common.JCommandButton;
 import org.jvnet.flamingo.common.icon.ImageWrapperResizableIcon;
 
+import de.juwimm.cms.Main;
 import de.juwimm.cms.Messages;
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
@@ -136,6 +137,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 				private static final long serialVersionUID = -8417253327858948035L;
 
 				public void actionPerformed(ActionEvent e) {
+					Main.getInstance().freezeInput(true);
 					save();
 				}
 			});
@@ -172,6 +174,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 
 		btnSave.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				Main.getInstance().freezeInput(true);
 				if (log.isDebugEnabled()) log.debug("btnSave actionPerformed");
 				btnSave.setEnabled(false);
 				Constants.EDIT_CONTENT = false;
@@ -361,6 +364,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		btnSave.setEnabled(true);
 		ActionHub.configureProperty(PanelContent.PROP_CHECKIN, PropertyConfigurationEvent.PROP_ENABLE, "true");
 		UIConstants.setActionStatus("");
+		Main.getInstance().freezeInput(false);
 	}
 
 	public synchronized void load(ViewComponentValue value) {

@@ -93,12 +93,19 @@ public class Main extends JFrame implements ActionListener {
 	private ResourceBundle rb = null;
 	private UnloadablePanel activePanel = null;
 	private final static String LOG4J_PROPERTIES_ARGUMENT = "clientMailAppenderProperties";
+	private static Main instance;
+	public static Main getInstance(){
+		if(instance==null){
+			throw new IllegalAccessError("Main window is not initialized");
+		}
+		return instance;
+	}
 
 	public static void main(String[] argv) {
 		for (int i = 0; i < argv.length; i++) {
 			argv[i] = argv[i].trim();
 		}
-		new Main(argv);
+		instance=new Main(argv);
 	}
 
 	public void logSys(String stri) {
@@ -519,6 +526,10 @@ public class Main extends JFrame implements ActionListener {
 		text.append("proxyPort=" + System.getProperty("proxyPort")).append(crlf);
 		log.info(text.toString());
 		JOptionPane.showMessageDialog(null, text.toString(), "Proxy-Info", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public void freezeInput(boolean freeze){
+		this.getGlassPane().setVisible(freeze); //block mouse input
 	}
 
 }

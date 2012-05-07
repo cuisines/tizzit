@@ -26,6 +26,7 @@ import javax.swing.JSplitPane;
 
 import org.apache.log4j.Logger;
 
+import de.juwimm.cms.Main;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.content.event.TreeSelectionEventData;
 import de.juwimm.cms.deploy.panel.PanTaskDetails;
@@ -168,6 +169,7 @@ public final class PanTool extends JPanel implements UnloadablePanel, ActionList
 				if (e.getActionCommand().equals(Constants.ACTION_TREE_SELECT_SAVE)) {
 					try {
 						log.debug("actionPerformed::ACTION_TREE_SELECT_SAVE");
+						Main.getInstance().freezeInput(true);
 						panContent.save();
 					} catch (Exception ex) {
 						log.error(ex.getMessage());

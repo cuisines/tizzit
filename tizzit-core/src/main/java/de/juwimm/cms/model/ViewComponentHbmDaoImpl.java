@@ -814,6 +814,7 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		if(viewComponentId!=null){
 		SQLQuery query=getSessionFactory().getCurrentSession().createSQLQuery(UPDATE_INDEX_QUERY1+viewComponentId.intValue()+UPDATE_INDEX_QUERY2); 
 		query.executeUpdate();
+		getSessionFactory().getCurrentSession().flush();
 		} else {
 			throw new IllegalArgumentException("Null value not accepted for viewComponentId");
 		}

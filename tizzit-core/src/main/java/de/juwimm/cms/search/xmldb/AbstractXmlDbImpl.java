@@ -285,6 +285,7 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 
 		String hashcode = this.getHashCode(hashbase);
 		PreparedStatement pstmt = null;
+		PreparedStatement hashPstmt = null;
 
 		try {
 			pstmt = this.getConnection().prepareStatement(AbstractXmlDbImpl.SELECT_COUNT_STATEMENT);
@@ -295,7 +296,6 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 			if (qResult.getInt(1) == 0) {
 				retVal = this.doInsert(siteId, viewComponentId, contentText, metaAttributes, hashcode);
 			} else {
-				PreparedStatement hashPstmt = this.getConnection().prepareStatement(AbstractXmlDbImpl.SELECT_COUNT_STATEMENT);
 				hashPstmt = this.getConnection().prepareStatement(AbstractXmlDbImpl.SELECT_COUNT_HASHCODE_STATEMENT);
 				hashPstmt.setInt(1, siteId);
 				hashPstmt.setInt(2, viewComponentId);
@@ -311,14 +311,15 @@ public abstract class AbstractXmlDbImpl implements XmlDb {
 					if (log.isDebugEnabled()) log.debug("saveXml(...) -> nothing to do, hashcodes are equal (" + hashcode + ")");
 				}
 				hashResult.close();
-				if (hashPstmt != null) hashPstmt.close();
 			}
 			qResult.close();
 		} catch (SQLException e) {
 			log.error("saveXml(...) -> error getting row count ", e);
 		} finally {
 			try {
+				if (hashPstmt != null) hashPstmt.close();
 				if (pstmt != null) pstmt.close();
+				
 			} catch (SQLException e) {
 				log.error("saveXml(...) -> error closing pstmt ", e);
 			}
