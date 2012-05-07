@@ -50,6 +50,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.tizzit.util.XercesHelper;
 
+import de.juwimm.cms.beans.foreign.TizzitPropertiesBeanSpring;
 import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.model.ContentHbm;
 import de.juwimm.cms.model.ContentHbmDao;
@@ -100,6 +101,8 @@ public class SearchengineService {
 	private SearchengineDeleteService searchengineDeleteService;
 	@Autowired
 	private SafeguardServiceSpring safeguardServiceSpring;
+	@Autowired
+	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
 
 	private ViewComponentHbmDao viewComponentHbmDao;
 	private SiteHbmDao siteHbmDao;
@@ -230,7 +233,11 @@ public class SearchengineService {
 				ViewDocumentHbm vdl = (ViewDocumentHbm) itVdocs.next();
 				if (log.isDebugEnabled()) log.debug("- Starting ViewDocument: " + vdl.getLanguage() + " " + vdl.getViewType());
 				ViewComponentHbm rootvc = vdl.getViewComponent();
-				setUpdateSearchIndex4AllVCs(rootvc);
+				if(tizzitPropertiesBeanSpring.getSearch().isUseOracleBatchUpdate()){
+					setUpdateSearchIndex4AllVCsUsingQuery(rootvc);
+				} else {
+					setUpdateSearchIndex4AllVCs(rootvc);
+				}
 			}
 		} catch (Exception e) {
 			log.error("Caught a " + e.getClass() + "\n with message: " + e.getMessage());
@@ -287,6 +294,10 @@ public class SearchengineService {
 				}
 			}
 		}
+	}
+	private void setUpdateSearchIndex4AllVCsUsingQuery(ViewComponentHbm viewComponent) {
+		log.debug("Using oracle batch update for view component id "+viewComponent.getViewComponentId());
+		getViewComponentHbmDao().bulkUpdateForSearchengine(viewComponent.getViewComponentId());
 	}
 
 	private LinkDataValue[] getLinkData(Integer siteId, DocumentHbm doc) {

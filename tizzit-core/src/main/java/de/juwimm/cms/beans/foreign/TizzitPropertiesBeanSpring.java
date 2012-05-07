@@ -116,6 +116,15 @@ public class TizzitPropertiesBeanSpring {
 		private String xindicePort;
 		private int maxClauseCount = 32768;
 		private boolean indexerEnabled;
+		private boolean useOracleBatchUpdate;
+		public boolean isUseOracleBatchUpdate() {
+			return useOracleBatchUpdate;
+		}
+
+		public void setUseOracleBatchUpdate(boolean useOracleBatchUpdate) {
+			this.useOracleBatchUpdate = useOracleBatchUpdate;
+		}
+
 		private String indexerCronExpression;
 
 		public boolean isIndexerEnabled() {

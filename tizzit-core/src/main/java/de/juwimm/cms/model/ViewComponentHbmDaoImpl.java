@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tizzit.util.DateConverter;
 
@@ -54,6 +55,8 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	private static Logger log = Logger.getLogger(ViewComponentHbmDaoImpl.class);
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
 	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
+	private static final String UPDATE_INDEX_QUERY1="update content set update_search_index=1 where content_id in (select vc.reference from viewcomponent vc where vc.view_type in (1,4) start with vc.view_component_id=";
+	private static final String UPDATE_INDEX_QUERY2=" connect by prior vc.view_component_id=vc.parent_id_fk)" ;
 
 	@Autowired
 	private SearchengineDeleteService searchengineDeleteService;
@@ -803,5 +806,17 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 		}
 		out.println("</viewcomponent>");
 		if (log.isDebugEnabled()) log.debug("toXml end");
+	}
+
+	@Override
+	protected void handleBulkUpdateForSearchengine(Integer viewComponentId)
+			throws Exception {
+		if(viewComponentId!=null){
+		SQLQuery query=getSessionFactory().getCurrentSession().createSQLQuery(UPDATE_INDEX_QUERY1+viewComponentId.intValue()+UPDATE_INDEX_QUERY2); 
+		query.executeUpdate();
+		getSessionFactory().getCurrentSession().flush();
+		} else {
+			throw new IllegalArgumentException("Null value not accepted for viewComponentId");
+		}
 	}
 }
