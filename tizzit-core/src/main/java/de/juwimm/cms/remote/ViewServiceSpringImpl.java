@@ -2697,12 +2697,27 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 
 	@Override
 	protected boolean handleIsViewComponentPublishable(Integer viewComponentId) throws Exception {
+		//checking parents
 		Integer[] vcArray = getParents4ViewComponent(viewComponentId);
 		ViewComponentHbmDao vcDao = getViewComponentHbmDao();
 		for (int i = 0; i < vcArray.length; i++) {
 			ViewComponentHbm vc = vcDao.load(vcArray[i]);
 			if ((vc.getStatus() < Constants.DEPLOY_STATUS_FOR_DEPLOY) && (vc.getOnline() == 0)) {
 				return false;
+			}
+		}
+		
+		//checking referenced VCs for symlinks
+		ViewComponentHbm viewComponentHbm=vcDao.load(viewComponentId);
+		if(viewComponentHbm.getViewType()==Constants.VIEW_TYPE_SYMLINK || viewComponentHbm.getViewType()==Constants.VIEW_TYPE_INTERNAL_LINK){
+			try{
+				ViewComponentHbm referencedVC=vcDao.load(Integer.parseInt(viewComponentHbm.getReference()));
+				if ((referencedVC.getStatus() < Constants.DEPLOY_STATUS_FOR_DEPLOY) && (referencedVC.getOnline() == 0)) {
+					return false;
+				}
+				
+			} catch (Exception e) {
+				log.warn("Could not verify referenced ViewComponent from symlink", e);
 			}
 		}
 		return true;
