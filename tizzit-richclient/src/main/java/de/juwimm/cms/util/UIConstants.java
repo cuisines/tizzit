@@ -55,6 +55,7 @@ public final class UIConstants {
 	public static Color backgroundBaseColor = Color.white;
 
 	public static ImageIcon EMPTY;
+	public static ImageIcon CONTENT_LOADER_ANIMATION;
 	public static ImageIcon CMS = load("cms_16x16.gif");
 
 	public static ImageIcon MODULE_DATABASECOMPONENT_DELETE;
@@ -306,6 +307,7 @@ public final class UIConstants {
 
 	public static void loadImages() {
 		EMPTY = load("empty1.gif");
+		CONTENT_LOADER_ANIMATION = load("contentLoader.gif");
 
 		BTN_LOGIN = load("button/login.png");
 		BTN_PREVIEW = load("button/preview.png");

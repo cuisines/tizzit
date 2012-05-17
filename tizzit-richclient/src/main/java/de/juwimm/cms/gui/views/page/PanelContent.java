@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
@@ -350,6 +351,7 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 
 	public void load(ViewComponentValue viewComponentToLoad, boolean fromDropDown) {
 		UIConstants.setWorker(true);
+		showLoadingAnimation(true);
 		this.lock.lock();
 		this.loadedViewComponentValue = viewComponentToLoad;
 		synchronized (viewComponentToLoad) {
@@ -438,6 +440,26 @@ public class PanelContent extends JPanel implements LoadableViewComponentPanel, 
 			}
 		}
 		this.lock.unlock();
+		showLoadingAnimation(false);
+
+	}
+
+	private void showLoadingAnimation(boolean b) {
+		if (b) {
+			this.removeAll();
+			this.setLayout(new GridBagLayout());
+			// add the image label
+			ImageIcon ii = UIConstants.CONTENT_LOADER_ANIMATION;
+			JLabel imageLabel = new JLabel();
+			imageLabel.setIcon(ii);
+			this.add(imageLabel, new GridBagConstraints(0,0,1,1,0,0,GridBagConstraints.BASELINE, GridBagConstraints.CENTER, new Insets(0, 0, 0, 0), 0,0));
+		} else {
+			this.removeAll();
+			this.setLayout(new BorderLayout());
+			this.add(jPanel1, BorderLayout.NORTH);
+			this.add(jScrollpane, BorderLayout.CENTER);
+		}
+
 	}
 
 	/** 
