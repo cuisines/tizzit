@@ -658,7 +658,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 	 * </ul>
 	 */
 	private void fillFulltext(Document doc) throws Exception {
-		boolean ifOnlyUnit = true;
+		boolean ifOnlyUnit = true; 
 		Integer myUnitId = null;
 		Iterator itFulltext = XercesHelper.findNodes(doc, "//fulltextsearch");
 		while (itFulltext.hasNext()) {
@@ -687,25 +687,28 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 						//String foundText = foundArr[i][2];
 
 						if (foundContent != null && !foundContent.equalsIgnoreCase("")) {
-							Document docContent = XercesHelper.string2Dom(foundContent);
-							Node newNode = doc.importNode(docContent.getFirstChild(), true);
-							fulltextsearch.appendChild(newNode);
-
 							Integer foundVcId = null;
 							try {
 								foundVcId = foundArr[i].getViewComponentId();
 							} catch (Exception exe) {
 								log.warn("fillFulltext: Could not find vcId: " + foundArr[i].getViewComponentId());
 							}
+							ViewComponentValue foundVc = null;
 							if (foundVcId != null) {
-								ViewComponentValue foundVc = null;
 								try {
 									foundVc = webSpringBean.getViewComponent4Id(foundVcId);
 								} catch (Exception e) {
 									if (log.isDebugEnabled()) log.debug("Can't find viewComponentId " + foundVcId + "!\n" + e.getMessage());
 								}
-								if (foundVc != null) this.fillUnitInformation(newNode, foundVc);
 							}
+
+							String result="<result><source url=\""+webSpringBean.getPath4ViewComponent(foundVcId);
+							result+="\"/><content>"+foundContent+"</content></result>";
+							Document docContent = XercesHelper.string2Dom(result);
+							Node newNode = doc.importNode(docContent.getFirstChild(), true);
+							fulltextsearch.appendChild(newNode);
+
+							if (foundVc != null) this.fillUnitInformation(newNode, foundVc);
 						}
 					}
 				}
