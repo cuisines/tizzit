@@ -1768,6 +1768,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 		score.appendChild(scoreTxt);
 		parent.appendChild(score);
 
+		//the summary to be added 
 		String summary = "";
 		try {
 			summary = "<root><summary>" + value.getSummary().replaceAll("&", "&#38;") + "</summary></root>";
