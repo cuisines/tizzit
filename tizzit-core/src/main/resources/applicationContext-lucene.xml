@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+		<property name="allowCustomIsolationLevels" value="true"/>
+	</bean>
+	
+	<bean id="luceneService" class="de.juwimm.cms.search.lucene.LuceneService" lazy-init="false" scope="singleton">
+	<constructor-arg><ref bean="tizzitPropertiesBeanSpring"/></constructor-arg>
+	</bean>
+	<!-- COMPASS END -->
+
+	<bean id="htmlDocumentLocator" class="de.juwimm.cms.search.res.HtmlDocumentLocator"/>
+	<bean id="pdfDocumentLocator" class="de.juwimm.cms.search.res.PDFDocumentLocator"/>
+	<bean id="rtfDocumentLocator" class="de.juwimm.cms.search.res.RTFDocumentLocator"/>
+	<bean id="wordDocumentLocator" class="de.juwimm.cms.search.res.WordDocumentLocator"/>
+	<bean id="documentResourceLocatorFactory" class="de.juwimm.cms.search.res.DocumentResourceLocatorFactory"/>
+	
+</beans>

@@ -164,7 +164,7 @@ public final class LucenePDFDocument {
 
 	private void addKeywordField(Document document, String name, String value) {
 		if (value != null) {
-			document.add(new Field(name, value, Field.Store.YES, Field.Index.UN_TOKENIZED));
+			document.add(new Field(name, value, Field.Store.YES, Field.Index.NOT_ANALYZED));
 		}
 	}
 
@@ -176,7 +176,7 @@ public final class LucenePDFDocument {
 
 	private void addTextField(Document document, String name, String value) {
 		if (value != null) {
-			document.add(new Field(name, value, Field.Store.YES, Field.Index.TOKENIZED));
+			document.add(new Field(name, value, Field.Store.YES, Field.Index.ANALYZED));
 		}
 	}
 
@@ -200,7 +200,7 @@ public final class LucenePDFDocument {
 
 	private void addUnstoredKeywordField(Document document, String name, String value) {
 		if (value != null) {
-			document.add(new Field(name, value, Field.Store.NO, Field.Index.UN_TOKENIZED));
+			document.add(new Field(name, value, Field.Store.NO, Field.Index.NOT_ANALYZED));
 		}
 	}
 

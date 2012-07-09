@@ -7,6 +7,7 @@ import de.juwimm.cms.model.PictureHbm;
 import de.juwimm.cms.model.PictureHbmDao;
 import de.juwimm.cms.model.UnitHbm;
 import de.juwimm.cms.model.UnitHbmImpl;
+import de.juwimm.cms.test.hibernate.HbmTestImpl;
 
 public class PictureDaoTest extends HbmTestImpl {
 

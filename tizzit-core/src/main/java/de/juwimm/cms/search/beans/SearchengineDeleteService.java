@@ -1,15 +1,14 @@
 package de.juwimm.cms.search.beans;
 
 import org.apache.log4j.Logger;
-import org.compass.core.Compass;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Resource;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.juwimm.cms.model.SiteHbm;
 import de.juwimm.cms.model.ViewComponentHbm;
 import de.juwimm.cms.model.ViewDocumentHbm;
+import de.juwimm.cms.search.lucene.LuceneService;
 import de.juwimm.cms.search.xmldb.XmlDb;
 
 /**
@@ -22,7 +21,7 @@ import de.juwimm.cms.search.xmldb.XmlDb;
 public class SearchengineDeleteService {
 	private static Logger log = Logger.getLogger(SearchengineDeleteService.class);
 	@Autowired
-	private Compass compass;
+	private LuceneService luceneService;
 	@Autowired
 	private XmlDb xmlDb;
 
@@ -41,25 +40,15 @@ public class SearchengineDeleteService {
 
 	public void deletePage4Lucene(ViewComponentHbm viewComponent, boolean isLive) {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index delete for VC " + viewComponent.getViewComponentId());
-		CompassSession session = null;
-		CompassTransaction tx = null;
 		try {
 			String currentUrl = getUrl(viewComponent, isLive);
 			String cleanUrl = viewComponent.getViewDocument().getSite().getPageNameSearch();
 			cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
-			session = compass.openSession();
-			tx = session.beginTransaction();
-			Resource resource = session.loadResource("HtmlSearchValue", cleanUrl);
-			session.delete(resource);
-			tx.commit();
-			session.close();
-			session = null;
+			luceneService.removeDocument(new Term("uid", cleanUrl));
 		} catch (Exception e) {
 			log.warn("Error deletePage4Lucene, maybe this page is not in the index: " + e.getMessage());
 			if (log.isDebugEnabled()) log.debug(e);
-			if (tx != null) tx.rollback();
 		} finally {
-			if (session != null) session.close();
 		}
 
 		if (log.isDebugEnabled()) log.debug("finished deletePage4Lucene");
@@ -82,22 +71,12 @@ public class SearchengineDeleteService {
 
 	public void deleteDocument(Integer documentId, Integer siteId) {
 		if (log.isDebugEnabled()) log.debug("Index delete for Document: " + documentId);
-		CompassSession session = null;
-		CompassTransaction tx = null;
 		try {
-			session = compass.openSession();
-			tx = session.beginTransaction();
-			Resource resource = session.loadResource("DocumentSearchValue", documentId.toString());
-			session.delete(resource);
-			tx.commit();
-			session.close();
-			session = null;
+			luceneService.removeDocument(new Term("uid", documentId.toString()));
 		} catch (Exception e) {
 			log.warn("Error deleteDocument, maybe this document is not in the index: " + e.getMessage());
 			if (log.isDebugEnabled()) log.debug(e);
-			if (tx != null) tx.rollback();
 		} finally {
-			if (session != null) session.close();
 		}
 		if (log.isDebugEnabled()) log.debug("finished deleteDocument");
 	}

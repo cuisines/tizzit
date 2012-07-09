@@ -1,32 +1,31 @@
 package de.juwimm.cms.search.res;
 
-import org.compass.core.CompassSession;
-import org.compass.core.Resource;
+import org.apache.lucene.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DocumentResourceLocatorFactory {
 	@Autowired
-	private PDFResourceLocator pdfResourceLocator;
+	private PDFDocumentLocator pdfResourceLocator;
 	@Autowired
-	private RTFResourceLocator rtfResourceLocator;
+	private RTFDocumentLocator rtfResourceLocator;
 	@Autowired
-	private WordResourceLocator wordResourceLocator;
+	private WordDocumentLocator wordResourceLocator;
 	 
 
-	public Resource getResource(CompassSession session, de.juwimm.cms.model.DocumentHbm document) throws Exception {
-		Resource resource = null;
-		if (PDFResourceLocator.MIME_TYPE.equalsIgnoreCase(document.getMimeType())) {
-			resource = pdfResourceLocator.getResource(session, document);
-		} else if (WordResourceLocator.MIME_TYPE.equalsIgnoreCase(document.getMimeType())) {
-			resource = wordResourceLocator.getResource(session, document);
-		} else if (RTFResourceLocator.MIME_TYPE.equalsIgnoreCase(document.getMimeType())) {
-			resource = rtfResourceLocator.getResource(session, document);
+	public Document getResource(de.juwimm.cms.model.DocumentHbm document) throws Exception {
+		Document resource = null;
+		if (PDFDocumentLocator.MIME_TYPE.equalsIgnoreCase(document.getMimeType())) {
+			resource = pdfResourceLocator.getResource(document);
+		} else if (WordDocumentLocator.MIME_TYPE.equalsIgnoreCase(document.getMimeType())) {
+			resource = wordResourceLocator.getResource(document);
+		} else if (RTFDocumentLocator.MIME_TYPE.equalsIgnoreCase(document.getMimeType())) {
+			resource = rtfResourceLocator.getResource(document);
 		}
 		return resource;
 	}
 	
 	public boolean isSupportedFileFormat(String mimeType) {
-		return PDFResourceLocator.MIME_TYPE.equalsIgnoreCase(mimeType) || WordResourceLocator.MIME_TYPE.equalsIgnoreCase(mimeType) || RTFResourceLocator.MIME_TYPE.equalsIgnoreCase(mimeType);
+		return PDFDocumentLocator.MIME_TYPE.equalsIgnoreCase(mimeType) || WordDocumentLocator.MIME_TYPE.equalsIgnoreCase(mimeType) || RTFDocumentLocator.MIME_TYPE.equalsIgnoreCase(mimeType);
 	}
  
 }

@@ -36,7 +36,7 @@
 
   <import resource="classpath:applicationContext-cqbeans.xml" />
   <import resource="classpath:applicationContext.xml" />
-  <import resource="classpath:applicationContext-compass.xml" />
+  <import resource="classpath:applicationContext-lucene.xml" />
   <import resource="classpath:applicationContext-server-authentication.xml" />
   <import resource="classpath:applicationContext-ds.xml" /> 
 </beans>

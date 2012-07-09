@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -22,28 +21,26 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.Query;
-import org.compass.core.Compass;
-import org.compass.core.CompassHit;
-import org.compass.core.CompassHits;
-import org.compass.core.CompassQuery;
-import org.compass.core.CompassQueryBuilder.CompassBooleanQueryBuilder;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Property;
-import org.compass.core.Resource;
-import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
-import org.compass.core.engine.spellcheck.SearchEngineSpellCheckSuggestBuilder;
-import org.compass.core.engine.spellcheck.SearchEngineSpellSuggestions;
-import org.compass.core.lucene.util.LuceneHelper;
-import org.compass.core.support.search.CompassSearchCommand;
-import org.compass.core.support.search.CompassSearchHelper;
-import org.compass.core.support.search.CompassSearchResults;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.TokenSources;
+import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -68,8 +65,9 @@ import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.model.ViewDocumentHbmDao;
 import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
+import de.juwimm.cms.search.lucene.LuceneService;
 import de.juwimm.cms.search.res.DocumentResourceLocatorFactory;
-import de.juwimm.cms.search.res.HtmlResourceLocator;
+import de.juwimm.cms.search.res.HtmlDocumentLocator;
 import de.juwimm.cms.search.vo.LinkDataValue;
 import de.juwimm.cms.search.vo.SearchResultValue;
 import de.juwimm.cms.search.vo.XmlSearchValue;
@@ -89,12 +87,18 @@ public class SearchengineService {
 	private static final Pattern LUCENE_PATTERN = Pattern.compile(LUCENE_ESCAPE_CHARS);
 	private static final String REPLACEMENT_STRING = "\\\\$0";
 	private static final int NUMBER_OF_SUGGESTIONS=5;
+//	@Autowired
+//	private Compass compass;
+	
 	@Autowired
-	private Compass compass;
+	private LuceneService luceneService;
+	
 	@Autowired
 	private XmlDb xmlDb;
+//	@Autowired
+//	private HtmlResourceLocator htmlResourceLocator;
 	@Autowired
-	private HtmlResourceLocator htmlResourceLocator;
+	private HtmlDocumentLocator htmlDocumentLocator;
 	@Autowired
 	private DocumentResourceLocatorFactory documentResourceLocatorFactory;
 	@Autowired
@@ -220,11 +224,9 @@ public class SearchengineService {
 			site.setUpdateSiteIndex(true);
 			return;
 		}
-		CompassSession session = compass.openSession();
-		CompassQuery query = session.queryBuilder().term("siteId", siteId);
-		if (log.isDebugEnabled()) log.debug("delete sites with siteId: " + siteId + " with query: " + query.toString());
-		session.delete(query);
-		session.close();
+//		CompassSession session = compass.openSession();
+//		CompassQuery query = session.queryBuilder().term("siteId", siteId);
+		luceneService.removeDocument(new Term("siteId", siteId+""));
 		Date start = new Date();
 		try {
 			Collection vdocs = getViewDocumentHbmDao().findAll(siteId);
@@ -379,72 +381,87 @@ public class SearchengineService {
 				log.debug("search for(escaped form): \"" + searchItemEsc + "\"");
 			}
 
-			CompassSession session = compass.openSession();
 
 			//per default searchItems get connected by AND (compare CompassSettings.java)
-			CompassQuery query = buildRatedWildcardQuery(session, siteId,unitId, searchItemEsc, searchUrlEsc, safeGuardCookieMap,isLiveServer);
+			Query query = buildRatedWildcardQuery(siteId,unitId, searchItemEsc, searchUrlEsc, safeGuardCookieMap,isLiveServer);
 			if (log.isDebugEnabled()) log.debug("search for query: " + query.toString());
 
-			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
-				@Override
-				protected void doProcessBeforeDetach(CompassSearchCommand searchCommand, CompassSession session, CompassHits hits, int from, int size) {
-					for (int i = 0; i < hits.length(); i++) {
-						hits.highlighter(i).fragment("contents");
-					}
-				}
-			};
+//			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
+//				@Override
+//				protected void doProcessBeforeDetach(CompassSearchCommand searchCommand, CompassSession session, CompassHits hits, int from, int size) {
+//					for (int i = 0; i < hits.length(); i++) {
+//						hits.highlighter(i).fragment("contents");
+//					}
+//				}
+//			};
 
-			CompassSearchCommand command = null;
+//			CompassSearchCommand command = null;
+//
+//			if (pageSize == null) {
+//				command = new CompassSearchCommand(query);
+//			} else {
+//				command = new CompassSearchCommand(query, pageNumber);
+//			}
+//
+//			CompassSearchResults results = searchHelper.search(command);
+//			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
 
-			if (pageSize == null) {
-				command = new CompassSearchCommand(query);
-			} else {
-				command = new CompassSearchCommand(query, pageNumber);
-			}
+			TopScoreDocCollector collector  = luceneService.search(query);
+			ScoreDoc[] hits = collector.topDocs().scoreDocs;
+			QueryScorer scorer = new QueryScorer(query, "contents");
+	        Highlighter highlighter = new Highlighter(scorer);
+	        highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer));
 
-			CompassSearchResults results = searchHelper.search(command);
-			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
-			CompassHit[] hits = results.getHits();
 			if (log.isDebugEnabled()) log.debug(hits.length + " results found");
 			for (int i = 0; i < hits.length; i++) {
-				String alias = hits[i].getAlias();
-				Resource resource = hits[i].getResource();
+				int docId = hits[i].doc;
+			    Document resource = luceneService.getDocument(docId);
 				SearchResultValue retVal = new SearchResultValue();
-				retVal.setScore((int) (hits[i].getScore() * 100.0f));
+				retVal.setScore((int) (hits[i].score * 100.0f));
 				//CompassHighlightedText text = hits[i].getHighlightedText();
-				retVal.setSummary(stripNonValidXMLCharacters(hits[i].getHighlightedText().getHighlightedText("contents")));
-				retVal.setUnitId(new Integer(resource.getProperty("unitId").getStringValue()));
-				retVal.setUnitName(resource.getProperty("unitName").getStringValue());
+				String contents = resource.get("contents");
+				TokenStream stream =
+	                    TokenSources.getAnyTokenStream(luceneService.getIndexReader(),
+	                    		docId,
+	                    "contents",
+	                    resource,
+	                    new StandardAnalyzer(Version.LUCENE_36));
+	            String fragment =
+	                    highlighter.getBestFragment(stream, contents);
+				retVal.setSummary(stripNonValidXMLCharacters(fragment/*hits[i].getHighlightedText().getHighlightedText("contents"))*/));
+				retVal.setUnitId(new Integer(resource.get("unitId")));
+				retVal.setUnitName(resource.get("unitName"));
 				retVal.setPageSize(pageSize);
 				retVal.setPageNumber(pageNumber);
-				retVal.setDuration(Long.valueOf(results.getSearchTime()));
-				retVal.setPageAmount(results.getPages()!=null?results.getPages().length:null);
-				retVal.setTotalHits(results.getTotalHits());
+				retVal.setDuration(0l);
+				retVal.setPageAmount(null);
+				retVal.setTotalHits(collector.getTotalHits());
+				String alias=resource.get("alias");
 				if ("HtmlSearchValue".equalsIgnoreCase(alias)) {
-					String url = resource.getProperty("url").getStringValue();
+					String url = resource.get("url");
 					if (url != null) {
 						retVal.setUrl(url);
-						retVal.setTitle(resource.getProperty("title").getStringValue());
-						retVal.setLanguage(resource.getProperty("language").getStringValue());
-						retVal.setViewType(resource.getProperty("viewtype").getStringValue());
-						retVal.setIsLiveContent(Boolean.parseBoolean(resource.getProperty("isLiveContent").getStringValue()));
-						Property template = resource.getProperty("template");
-						retVal.setTemplate(template != null ? template.getStringValue() : "standard");
+						retVal.setTitle(resource.get("title"));
+						retVal.setLanguage(resource.get("language"));
+						retVal.setViewType(resource.get("viewtype"));
+						retVal.setIsLiveContent(Boolean.parseBoolean(resource.get("isLiveContent")));
+						String template = resource.get("template");
+						retVal.setTemplate(template != null ? template : "standard");
 					}
 				} else {
-					String documentId = resource.getProperty("documentId").getStringValue();
-					Integer docId = null;
+					String documentId = resource.get("documentId");
+					Integer intDocumentId = null;
 					try {
-						docId = Integer.valueOf(documentId);
+						intDocumentId = Integer.valueOf(documentId);
 					} catch (Exception e) {
 						log.warn("Error converting documentId: " + e.getMessage());
 						if (log.isDebugEnabled()) log.debug(e);
 					}
-					if (docId != null) {
+					if (intDocumentId != null) {
 						retVal.setDocumentId(docId);
-						retVal.setDocumentName(resource.getProperty("documentName").getStringValue());
-						retVal.setMimeType(resource.getProperty("mimeType").getStringValue());
-						retVal.setTimeStamp(resource.getProperty("timeStamp").getStringValue());
+						retVal.setDocumentName(resource.get("documentName"));
+						retVal.setMimeType(resource.get("mimeType"));
+						retVal.setTimeStamp(resource.get("timeStamp"));
 					}
 				}
 				retArr.add(retVal);
@@ -480,22 +497,19 @@ public class SearchengineService {
 	 */
 	@Transactional(readOnly = true)
 	public String[][] searchWebSuggestions(Integer siteId,Integer unitId, final String searchItem, Map safeGuardCookieMap) throws Exception {
-		CompassSession session = compass.openSession();
-		SearchEngineSpellCheckManager spellCheckManager= compass.getSpellCheckManager();
-		SearchEngineSpellCheckSuggestBuilder suggestBuilder=spellCheckManager.suggestBuilder(searchItem);
-		suggestBuilder.numberOfSuggestions(20);
-		suggestBuilder.accuracy(0.5f);
-		SearchEngineSpellSuggestions spellSuggestions =suggestBuilder.suggest();
-		String[] results=spellSuggestions.getSuggestions();
+		
+		String[] results=luceneService.getSpellChecker().suggestSimilar(searchItem, 20, 0.5f);
+		
 		log.info(results.toString());
 		String[][] resultValue=new String[NUMBER_OF_SUGGESTIONS][2];
 		int max=0;
 		for (int i = 0; i < results.length; i++) {
-			CompassQuery query = buildRatedWildcardQuery(session, siteId,unitId, results[i], null, safeGuardCookieMap,false);
-			CompassHits hits = query.hits();
-			if(hits.getLength()>0){
+			Query query = buildRatedWildcardQuery(siteId,unitId, results[i], null, safeGuardCookieMap,false);
+			TopScoreDocCollector collector  = luceneService.search(query);
+			ScoreDoc[] hits = collector.topDocs().scoreDocs;
+			if(hits.length>0){
 				resultValue[max][0]=results[i];
-				resultValue[max][1]=String.valueOf(hits.getLength());
+				resultValue[max][1]=String.valueOf(hits.length);
 				max++;
 			}
 			if(max>=NUMBER_OF_SUGGESTIONS){
@@ -512,46 +526,51 @@ public class SearchengineService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private CompassQuery buildRatedWildcardQuery(CompassSession session, Integer siteId,Integer unitId, String searchItem, String searchUrl, Map safeGuard, boolean isLiveServer) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private Query buildRatedWildcardQuery(Integer siteId,Integer unitId, String searchItem, String searchUrl, Map safeGuard, boolean isLiveServer) throws IOException, ParseException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Analyzer analyzer = null;
-		CompassBooleanQueryBuilder queryBuilder = session.queryBuilder().bool();
-		IndexReader ir = LuceneHelper.getLuceneInternalSearch(session).getReader();
+//		CompassBooleanQueryBuilder queryBuilder = session.queryBuilder().bool();
+		IndexReader ir = IndexReader.open(luceneService.getDirectory());//LuceneHelper.getLuceneInternalSearch(session).getReader();
 		Query query;
 		QueryParser parser;
+		BooleanQuery booleanQuery=new BooleanQuery();
 		try {
-			String analyzerClass = session.getSettings().getSetting("compass.engine.analyzer.search.type");
-			Constructor<Analyzer> analyzerConstructor = (Constructor<Analyzer>) (Class.forName(analyzerClass)).getConstructor();
-			analyzer = analyzerConstructor.newInstance();
+//			String analyzerClass = session.getSettings().getSetting("compass.engine.analyzer.search.type");
+//			Constructor<Analyzer> analyzerConstructor = (Constructor<Analyzer>) (Class.forName(analyzerClass)).getConstructor();
+			analyzer = new StandardAnalyzer(Version.LUCENE_36);//analyzerConstructor.newInstance();
 			if (log.isInfoEnabled()) log.info("Created search analyzer from compass settings - class is: " + analyzer.getClass().getName());
 		} catch (Exception e) {
 			log.error("Error while instantiating search analyzer from compass settings - going on with StandardAnalyzer");
-			analyzer = new StandardAnalyzer();
+			analyzer = new StandardAnalyzer(Version.LUCENE_36);
 		}
 		if (searchUrl != null) {
 			if (log.isDebugEnabled()) log.debug("to search all hosts and subpages attaching * at start and end of urlString...");
 			// search on this side and all sub sites on all hosts
 			searchUrl = "*" + searchUrl + "*";
 			if (log.isDebugEnabled()) log.debug("urlString before parsing: " + searchUrl);
-			parser = new QueryParser("url", analyzer);
+			parser = new QueryParser(Version.LUCENE_36,"url", analyzer);
 			parser.setAllowLeadingWildcard(true);
 			query = parser.parse(searchUrl).rewrite(ir);
-			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+//			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			booleanQuery.add(query, BooleanClause.Occur.MUST);
 		}
 		
 		if(unitId!=null){
-			query = new QueryParser("unitId", analyzer).parse(unitId.toString());
-			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			query = new QueryParser(Version.LUCENE_36,"unitId", analyzer).parse(unitId.toString());
+//			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			booleanQuery.add(query, BooleanClause.Occur.MUST);
 		} else {
-			query = new QueryParser("siteId", analyzer).parse(siteId.toString());
-			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			query = new QueryParser(Version.LUCENE_36,"siteId", analyzer).parse(siteId.toString());
+//			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			booleanQuery.add(query, BooleanClause.Occur.MUST);
 		}
 		
 		if(isLiveServer){
-			query = new QueryParser("isLiveContent", analyzer).parse("true");
-			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			query = new QueryParser(Version.LUCENE_36,"isLiveContent", analyzer).parse("true");
+//			queryBuilder.addMust(LuceneHelper.createCompassQuery(session, query));
+			booleanQuery.add(query, BooleanClause.Occur.MUST);
 		}
 
-		CompassBooleanQueryBuilder subQueryBuilder = session.queryBuilder().bool();
+		BooleanQuery subQuery=new BooleanQuery();
 		String searchFields[] = {"metadata", "url", "title", "contents"};
 		for (int i = 0; i < searchFields.length; i++) {
 			if (i == (searchFields.length - 1) && searchUrl != null) {
@@ -560,7 +579,7 @@ public class SearchengineService {
 			if (log.isDebugEnabled()) {
 				log.debug("wildcart query string: " + searchItem);
 			}
-			parser = new QueryParser(searchFields[i], analyzer);
+			parser = new QueryParser(Version.LUCENE_36,searchFields[i], analyzer);
 			parser.setAllowLeadingWildcard(true);
 			query = parser.parse(searchItem);
 			if (log.isDebugEnabled()) log.debug("wildcart query part: " + query.toString());
@@ -568,10 +587,11 @@ public class SearchengineService {
 			query.setBoost(searchFields.length - i);
 			if (log.isDebugEnabled()) log.debug("wildcart query part - rewritten: " + query.toString());
 
-			subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
+//			subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
+			subQuery.add(query, BooleanClause.Occur.SHOULD);
 		}
-		queryBuilder.addMust(subQueryBuilder.toQuery());
-		subQueryBuilder = session.queryBuilder().bool();
+		booleanQuery.add(subQuery,BooleanClause.Occur.MUST);
+		subQuery = new BooleanQuery();
 		if (safeGuard != null && !safeGuard.keySet().isEmpty()) {
 			if (log.isDebugEnabled()) log.debug("Safeguard found - adding realms to query.");
 			Iterator it = safeGuard.keySet().iterator();
@@ -579,17 +599,18 @@ public class SearchengineService {
 				String key = new String(((String) it.next()).getBytes("ISO-8859-1"));
 				if (key.trim().equalsIgnoreCase("")) continue;
 				if (log.isDebugEnabled()) log.debug("adding realm: " + key);
-				parser = new QueryParser("realm", analyzer);
+				parser = new QueryParser(Version.LUCENE_36,"realm", analyzer);
 				query = parser.parse(key);
-				subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
+//				subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
+				subQuery.add(query, BooleanClause.Occur.SHOULD);
 			}
 			// adding null representation to find pages without security
-			parser = new QueryParser("realm", analyzer);
+			parser = new QueryParser(Version.LUCENE_36,"realm", analyzer);
 			query = parser.parse(Constants.SEARCH_INDEX_NULL);
-			subQueryBuilder.addShould(LuceneHelper.createCompassQuery(session, query));
-			if (subQueryBuilder.toQuery() != null) queryBuilder.addMust(subQueryBuilder.toQuery());
+			subQuery.add(query,BooleanClause.Occur.SHOULD);
+			if (subQuery != null) 		booleanQuery.add(subQuery,BooleanClause.Occur.MUST);
 		}
-		return queryBuilder.toQuery();
+		return booleanQuery;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -675,8 +696,8 @@ public class SearchengineService {
 	private void indexPage4Lucene(ViewComponentHbm viewComponent, String contentText, boolean isLive) {
 		if (log.isDebugEnabled()) log.debug("Lucene-Index create / update for VC " + viewComponent.getViewComponentId());
 		ViewDocumentHbm vdl = viewComponent.getViewDocument();
-		CompassSession session = null;
-		CompassTransaction tx = null;
+//		CompassSession session = null;
+//		CompassTransaction tx = null;
 		File file = null;
 		try {
 			String currentUrl =null;
@@ -692,23 +713,19 @@ public class SearchengineService {
 				//String cleanUrl = viewComponent.getViewDocument().getLanguage() + "/" + viewComponent.getPath();
 
 				cleanUrl = currentUrl.substring(0, currentUrl.length() - cleanUrl.length());
-				session = compass.openSession();
-				Resource resource = htmlResourceLocator.getResource(session, file, cleanUrl, new Date(System.currentTimeMillis()), viewComponent, vdl);
-				resource.addProperty("isLiveContent", isLive);
-				tx = session.beginTransaction();
-				session.save(resource);
-				tx.commit();
-				session.close();
-				session = null;
+//				session = compass.openSession();
+				Document resource = htmlDocumentLocator.getResource(file, cleanUrl, new Date(System.currentTimeMillis()), viewComponent, vdl);
+				resource.add(new Field("isLiveContent", new Boolean(isLive).toString(), Field.Store.YES, Field.Index.ANALYZED));
+				luceneService.addToIndex(resource);
 			} else {
 				log.warn("Critical Error during indexPage4Lucene - cound not find Ressource: " + currentUrl);
 			}
 
 		} catch (Exception e) {
 			log.warn("Error indexPage4Lucene, VCID " + viewComponent.getViewComponentId().toString() + ": " + e.getMessage(), e);
-			if (tx != null) tx.rollback();
+//			if (tx != null) tx.rollback();
 		} finally {
-			if (session != null) session.close();
+//			if (session != null) session.close();
 			//delete temp file		
 			if (file != null) {
 				file.delete();
@@ -816,22 +833,13 @@ public class SearchengineService {
 			document.setUpdateSearchIndex(false);
 			return;
 		}
-		CompassSession session = null;
-		CompassTransaction tx = null;
 		try {
-			session = compass.openSession();
-			Resource resource = documentResourceLocatorFactory.getResource(session, document);
-			tx = session.beginTransaction();
-			session.save(resource);
-			tx.commit();
-			session.close();
-			session = null;
+			Document resource = documentResourceLocatorFactory.getResource(document);
+			luceneService.addToIndex(resource);
 		} catch (Exception e) {
 			log.warn("Error indexDocument " + document.getDocumentId().toString() + ": " + e.getMessage());
-			if (tx != null) tx.rollback();
 		} finally {
 			document.setUpdateSearchIndex(false);
-			if (session != null) session.close();
 		}
 		if (log.isInfoEnabled()) log.info("finished indexDocument " + document.getDocumentId() + " \"" + document.getDocumentName() + "\"");
 	}

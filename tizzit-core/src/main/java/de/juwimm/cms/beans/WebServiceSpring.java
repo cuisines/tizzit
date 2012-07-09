@@ -2391,7 +2391,7 @@ public class WebServiceSpring {
 			if(scope!=null && scope.equalsIgnoreCase("unit")){
 				unitValue = getUnit4ViewComponent(viewComponentId);
 			}
-			
+			//TODO - fix web suggestions
 			String[][] resultValue = searchengineService.searchWebSuggestions(siteValue.getSiteId(), (unitValue!=null?unitValue.getUnitId():null), searchQuery, safeguardMap);
 			
 			StringBuffer sb = new StringBuffer("");

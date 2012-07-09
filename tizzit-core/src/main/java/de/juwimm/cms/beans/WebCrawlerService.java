@@ -23,20 +23,18 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.compass.core.Compass;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Resource;
+import org.apache.lucene.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.juwimm.cms.model.SiteHbm;
-import de.juwimm.cms.search.res.HtmlResourceLocator;
-import de.juwimm.cms.search.res.PDFResourceLocator;
-import de.juwimm.cms.search.res.RTFResourceLocator;
-import de.juwimm.cms.search.res.WordResourceLocator;
-import de.juwimm.cms.util.SmallSiteConfigReader;
+import de.juwimm.cms.search.lucene.LuceneService;
+import de.juwimm.cms.search.res.HtmlDocumentLocator;
+import de.juwimm.cms.search.res.PDFDocumentLocator;
+import de.juwimm.cms.search.res.RTFDocumentLocator;
+import de.juwimm.cms.search.res.WordDocumentLocator;
 import de.juwimm.cms.util.AbstractCrawlUrlStrategy.FilterCrawlUrlStrategy;
 import de.juwimm.cms.util.AbstractCrawlUrlStrategy.ProtocolCrawlUrlStrategy;
+import de.juwimm.cms.util.SmallSiteConfigReader;
 
 /**
  * @author <a href="florin.zalum@juwimm.com">Florin Zalum</a>
@@ -49,13 +47,13 @@ public class WebCrawlerService {
 	private static String HTML_CONTENT_TYPE = "text/html";
 
 	@Autowired
-	private HtmlResourceLocator htmlResourceLocator;
+	private HtmlDocumentLocator htmlDocumentLocator;
 	@Autowired
-	private PDFResourceLocator pdfResourceLocator;
+	private PDFDocumentLocator pdfResourceLocator;
 	@Autowired
-	private RTFResourceLocator rtfResourceLocator;
+	private RTFDocumentLocator rtfResourceLocator;
 	@Autowired
-	private WordResourceLocator wordResourceLocator;
+	private WordDocumentLocator wordResourceLocator;
 	private Map<Integer, Set<String>> alreadyIndexedPages;
 	/**
 	 * Used for broken links and non html pages
@@ -64,9 +62,9 @@ public class WebCrawlerService {
 	private FilterCrawlUrlStrategy filtersStrategy;
 	private ProtocolCrawlUrlStrategy protocolsStrategy;
 	private int baseDepth;
-
+	
 	@Autowired
-	private Compass compass;
+	private LuceneService luceneService;
 
 	public void indexSite(SiteHbm site) {
 		log.info("Crawl and index on site" + site.getSiteId() + "started");
@@ -191,28 +189,21 @@ public class WebCrawlerService {
 	}
 
 	private void indexNonHtmlResource(HttpMethod httpMethod, String url, String contentType) {
-		CompassSession session = null;
-		CompassTransaction tx = null;
-		session = compass.openSession();
 		InputStream in;
 		try {
 			in = httpMethod.getResponseBodyAsStream();
 
-			Resource resource = null;
-			if (contentType.contains(PDFResourceLocator.MIME_TYPE)) {
-				resource = pdfResourceLocator.getExternalResource(session, url, in);
-			} else if (contentType.contains(RTFResourceLocator.MIME_TYPE)) {
-				resource = rtfResourceLocator.getExternalResource(session, url, in);
-			} else if (contentType.contains(WordResourceLocator.MIME_TYPE)) {
-				resource = wordResourceLocator.getExternalResource(session, url, in);
+			Document resource = null;
+			if (contentType.contains(PDFDocumentLocator.MIME_TYPE)) {
+				resource = pdfResourceLocator.getExternalResource( url, in);
+			} else if (contentType.contains(RTFDocumentLocator.MIME_TYPE)) {
+				resource = rtfResourceLocator.getExternalResource( url, in);
+			} else if (contentType.contains(WordDocumentLocator.MIME_TYPE)) {
+				resource = wordResourceLocator.getExternalResource( url, in);
 			}
 
 			if (resource != null) {
-				tx = session.beginTransaction();
-				session.save(resource);
-				tx.commit();
-				session.close();
-				session = null;
+				luceneService.addToIndex(resource);
 			}
 		} catch (IOException e) {
 			if (log.isDebugEnabled()) {
@@ -223,9 +214,7 @@ public class WebCrawlerService {
 			if (log.isDebugEnabled()) {
 				log.debug("Error index url " + url + " : " + e.getMessage());
 			}
-			if (tx != null) tx.rollback();
 		} finally {
-			if (session != null) session.close();
 			httpMethod.releaseConnection();
 			alreadyIndexedNonHtmlPages.add(url);
 		}
@@ -266,25 +255,16 @@ public class WebCrawlerService {
 		StringReader findLinksReader = new StringReader(out.toString());
 
 		//index
-		CompassSession session = null;
-		CompassTransaction tx = null;
 		try {
-			session = compass.openSession();
-			Resource resource = htmlResourceLocator.getExternalResource(session, url, parseHtmlReader);
+			Document resource = htmlDocumentLocator.getExternalResource(url, parseHtmlReader);
 			if (resource != null) {
-				tx = session.beginTransaction();
-				session.save(resource);
-				tx.commit();
-				session.close();
-				session = null;
+				luceneService.addToIndex(resource);
 			}
 		} catch (Exception e) {
 			if (log.isDebugEnabled()) {
 				log.debug("Error index url " + url + " : " + e.getMessage());
 			}
-			if (tx != null) tx.rollback();
 		} finally {
-			if (session != null) session.close();
 		}
 		httpMethod.releaseConnection();
 		alreadyIndexedPages.get(depth).add(url);
