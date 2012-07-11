@@ -85,9 +85,9 @@ public class LuceneService {
 		StandardAnalyzer analyzer=new StandardAnalyzer(Version.LUCENE_36);
 		try {
 			index=FSDirectory.open(new File(indexLocation));
+			reader = IndexReader.open(index);
 			IndexWriterConfig indexWriterConfig=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
 			writer = new IndexWriter(index,indexWriterConfig);
-			reader = IndexReader.open(index);
 			searcher = new IndexSearcher(reader);
 			spellChecker= new SpellChecker(index);
 			Dictionary dictionary= new LuceneDictionary(reader, "contents");
