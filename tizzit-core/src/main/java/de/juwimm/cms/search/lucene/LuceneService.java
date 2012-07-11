@@ -3,9 +3,6 @@ package de.juwimm.cms.search.lucene;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.CachingTokenFilter;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -13,15 +10,9 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermPositionVector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.search.highlight.Fragmenter;
-import org.apache.lucene.search.highlight.Highlighter;
-import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
-import org.apache.lucene.search.highlight.TokenSources;
-import org.apache.lucene.search.spans.SpanScorer;
 import org.apache.lucene.search.spell.Dictionary;
 import org.apache.lucene.search.spell.LuceneDictionary;
 import org.apache.lucene.search.spell.SpellChecker;
@@ -40,6 +31,7 @@ public class LuceneService {
 	IndexReader reader=null;
 	IndexSearcher searcher=null;
 	private TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring;
+	private IndexingMode indexingMode=IndexingMode.BOTH;
 	SpellChecker spellChecker=null;
 	
 	private LuceneService(TizzitPropertiesBeanSpring tizzitPropertiesBeanSpring){
@@ -48,10 +40,13 @@ public class LuceneService {
 		if ("luceneFile".equalsIgnoreCase(luceneStore)) {
 			indexLocation = tizzitPropertiesBeanSpring.getDatadir();
 			indexLocation += "/" + "searchTest";
-//			if (!filePath.startsWith("file://")) {
-//				filePath = "file://" + filePath;
-//			}
 		}
+		String indexmode = tizzitPropertiesBeanSpring.getSearch().getIndexMode();
+		if(indexmode.equalsIgnoreCase("live"))
+			indexingMode=IndexingMode.LIVE;
+		else if(indexmode.equalsIgnoreCase("work"))
+			indexingMode=IndexingMode.WORK;
+		else indexingMode=IndexingMode.BOTH;
 		initializeIndex();
 	}
 	
@@ -60,14 +55,11 @@ public class LuceneService {
 			writer.addDocument(document);
 			writer.commit();
 		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while adding document to index", e);
 		} catch (LockObtainFailedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while adding document to index", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while adding document to index", e);
 		}
 	}
 	
@@ -76,11 +68,9 @@ public class LuceneService {
 			writer.deleteDocuments(term);
 			writer.commit();
 		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while removing document from index", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while removing document from index", e);
 		}
 	}
 	
@@ -104,14 +94,11 @@ public class LuceneService {
 			IndexWriterConfig indexWriterSpellcheck=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
 			spellChecker.indexDictionary(dictionary,indexWriterSpellcheck, true);
 		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while initializing index", e);
 		} catch (LockObtainFailedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while initializing index", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while initializing index", e);
 		}
 	}
 	
@@ -133,13 +120,10 @@ public class LuceneService {
 	    try {
 			return searcher.doc(docId);
 		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while fetching document from index", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IndexingException("Error while fetching document from index", e);
 		}
-	    return null;
 	}
 	
 	public SpellChecker getSpellChecker(){
@@ -147,8 +131,11 @@ public class LuceneService {
 	}
 
 public IndexReader getIndexReader() {
-	// TODO Auto-generated method stub
 	return reader;
+}
+
+public IndexingMode getIndexingMode() {
+	return indexingMode;
 }
 
 }

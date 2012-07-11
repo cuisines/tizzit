@@ -109,6 +109,7 @@ public class TizzitPropertiesBeanSpring {
 
 	public static class Search {
 		private String luceneStore;
+		private String indexMode;
 		private String searchDataSource;
 		private String xmlDatasource;
 		private String xmlDb;
@@ -157,6 +158,14 @@ public class TizzitPropertiesBeanSpring {
 
 		public void setLuceneStore(String luceneStore) {
 			this.luceneStore = luceneStore;
+		}
+
+		public String getIndexMode() {
+			return indexMode;
+		}
+
+		public void setIndexMode(String indexMode) {
+			this.indexMode = indexMode;
 		}
 
 		public String getSearchDataSource() {
