@@ -9,6 +9,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -52,8 +53,12 @@ public class LuceneService {
 	
 	public void addToIndex(Document document){
 		try {
+			IndexWriterConfig indexWriterConfig=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
+			indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
+			writer = new IndexWriter(index,indexWriterConfig);
 			writer.addDocument(document);
 			writer.commit();
+			writer.close();
 		} catch (CorruptIndexException e) {
 			throw new IndexingException("Error while adding document to index", e);
 		} catch (LockObtainFailedException e) {
@@ -65,8 +70,12 @@ public class LuceneService {
 	
 	public void removeDocument(Term term){
 		try {
+			IndexWriterConfig indexWriterConfig=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
+			indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
+			writer = new IndexWriter(index,indexWriterConfig);
 			writer.deleteDocuments(term);
 			writer.commit();
+			writer.close();
 		} catch (CorruptIndexException e) {
 			throw new IndexingException("Error while removing document from index", e);
 		} catch (IOException e) {
@@ -82,17 +91,8 @@ public class LuceneService {
 	}
 	
 	private void initializeIndex(){
-		StandardAnalyzer analyzer=new StandardAnalyzer(Version.LUCENE_36);
 		try {
 			index=FSDirectory.open(new File(indexLocation));
-			reader = IndexReader.open(index);
-			IndexWriterConfig indexWriterConfig=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
-			writer = new IndexWriter(index,indexWriterConfig);
-			searcher = new IndexSearcher(reader);
-			spellChecker= new SpellChecker(index);
-			Dictionary dictionary= new LuceneDictionary(reader, "contents");
-			IndexWriterConfig indexWriterSpellcheck=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
-			spellChecker.indexDictionary(dictionary,indexWriterSpellcheck, true);
 		} catch (CorruptIndexException e) {
 			throw new IndexingException("Error while initializing index", e);
 		} catch (LockObtainFailedException e) {
@@ -109,6 +109,8 @@ public class LuceneService {
 	public TopScoreDocCollector search(Query query, int hitsPerPage){
 		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
 		try {
+			reader = getIndexReader();
+			searcher = new IndexSearcher(reader);
 			searcher.search(query, collector);
 		} catch (IOException e) {
 			return null;
@@ -118,6 +120,7 @@ public class LuceneService {
 	
 	public Document getDocument(int docId){
 	    try {
+			searcher = new IndexSearcher(reader);
 			return searcher.doc(docId);
 		} catch (CorruptIndexException e) {
 			throw new IndexingException("Error while fetching document from index", e);
@@ -127,10 +130,24 @@ public class LuceneService {
 	}
 	
 	public SpellChecker getSpellChecker(){
+		try {
+		spellChecker= new SpellChecker(index);
+		Dictionary dictionary= new LuceneDictionary(reader, "contents");
+		IndexWriterConfig indexWriterSpellcheck=new IndexWriterConfig(Version.LUCENE_36, new StandardAnalyzer(Version.LUCENE_36));
+		spellChecker.indexDictionary(dictionary,indexWriterSpellcheck, true);
+		} catch (IOException e) {
+			throw new IndexingException("Error while fetching document from index", e);
+		}
 		return spellChecker;
 	}
 
 public IndexReader getIndexReader() {
+	try {
+		if(reader!=null) reader.close();
+		reader = IndexReader.open(index);
+	} catch (Exception e) {
+		throw new IndexingException("Error while fetching document from index", e);
+	}
 	return reader;
 }
 
