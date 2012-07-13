@@ -65,6 +65,7 @@ import de.juwimm.cms.model.ViewComponentHbmDao;
 import de.juwimm.cms.model.ViewDocumentHbm;
 import de.juwimm.cms.model.ViewDocumentHbmDao;
 import de.juwimm.cms.safeguard.remote.SafeguardServiceSpring;
+import de.juwimm.cms.search.lucene.IndexingMode;
 import de.juwimm.cms.search.lucene.LuceneService;
 import de.juwimm.cms.search.res.DocumentResourceLocatorFactory;
 import de.juwimm.cms.search.res.HtmlDocumentLocator;
@@ -616,10 +617,16 @@ public class SearchengineService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void indexPage(Integer contentId) {
 		ContentHbm content = getContentHbmDao().load(contentId);
-		ContentVersionHbm contentVersion = content.getLastContentVersion();
-		ContentVersionHbm contentLiveVersion = content.getContentVersionForPublish();
+		IndexingMode mode=luceneService.getIndexingMode();
+		ContentVersionHbm contentVersion = null;
+		ContentVersionHbm contentLiveVersion=null;
+		if(mode==IndexingMode.WORK || mode==IndexingMode.BOTH)
+			contentVersion=content.getLastContentVersion();
+		if(mode==IndexingMode.LIVE || mode==IndexingMode.BOTH)
+			contentLiveVersion = content.getContentVersionForPublish();
 		if (contentVersion == null && contentLiveVersion == null) {
 			log.error("ContentVersion not existing for content: " + content.getContentId());
+			content.setUpdateSearchIndex(false);
 			return;
 		}
 		if((contentVersion!=null && contentVersion.getLock()!=null) || (contentLiveVersion!=null && contentLiveVersion.getLock()!=null) ){
