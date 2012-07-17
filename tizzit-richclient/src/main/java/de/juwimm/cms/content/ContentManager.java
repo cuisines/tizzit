@@ -309,5 +309,14 @@ public final class ContentManager {
 	public static Document getDomDoc() {
 		return domDoc;
 	}
+	
+	public void clearCurrentContentInfo(){
+		htTemplatePanel = new Hashtable<String, JPanel>();
+		htTemplateDcfDocument = new Hashtable<String, Document>();
+		htTemplateModuleFactory = new Hashtable<String, ModuleFactory>();
+		htTemplateModuleNodes = new Hashtable<String, Hashtable>();
+		strLastDcfName = "";
+		domDoc = XercesHelper.getNewDocument();
+	}
 
 }

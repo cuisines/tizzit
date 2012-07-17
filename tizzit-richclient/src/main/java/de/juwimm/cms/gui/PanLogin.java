@@ -53,6 +53,7 @@ import org.w3c.dom.NodeList;
 
 import de.juwimm.cms.client.beans.Beans;
 import de.juwimm.cms.common.Constants;
+import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.exceptions.InvalidUsernameException;
 import de.juwimm.cms.exceptions.LocalizedException;
 import de.juwimm.cms.exceptions.NoSitesException;
@@ -338,6 +339,8 @@ public class PanLogin extends JPanel implements UnloadablePanel {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				Constants.CMS_AVAILABLE_DCF.clear();
+				((Communication) getBean(Beans.COMMUNICATION)).getDbHelper().autoEmptyCache();
+				((ContentManager) getBean(Beans.CONTENT_MANAGER)).clearCurrentContentInfo();
 				NodeList nl = null;
 
 				try {
