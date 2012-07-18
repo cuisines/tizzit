@@ -38,6 +38,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.util.Version;
@@ -356,8 +357,9 @@ public class SearchengineService {
 	}
 
 	@Transactional(readOnly = true)
-	public SearchResultValue[] searchWeb(Integer siteId,Integer unitId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap, String searchUrl, boolean isLiveServer) throws Exception {
+	public SearchResultValue[] searchWeb(Integer siteId,Integer unitId, final String searchItem, Integer pageSize, Integer pageNumber, Map safeGuardCookieMap, String searchUrl, boolean isLiveServer, int fragmentSize) throws Exception {
 		if (pageSize != null && pageSize.intValue() <= 1) pageSize = new Integer(20);
+		if (fragmentSize <= 1) fragmentSize = 100;
 		if (pageNumber != null && pageNumber.intValue() < 0) pageNumber = new Integer(0); // first page
 		SearchResultValue[] staticRetArr = null;
 		Vector<SearchResultValue> retArr = new Vector<SearchResultValue>();
@@ -387,31 +389,11 @@ public class SearchengineService {
 			Query query = buildRatedWildcardQuery(siteId,unitId, searchItemEsc, searchUrlEsc, safeGuardCookieMap,isLiveServer);
 			if (log.isDebugEnabled()) log.debug("search for query: " + query.toString());
 
-//			CompassSearchHelper searchHelper = new CompassSearchHelper(compass, pageSize) {
-//				@Override
-//				protected void doProcessBeforeDetach(CompassSearchCommand searchCommand, CompassSession session, CompassHits hits, int from, int size) {
-//					for (int i = 0; i < hits.length(); i++) {
-//						hits.highlighter(i).fragment("contents");
-//					}
-//				}
-//			};
-
-//			CompassSearchCommand command = null;
-//
-//			if (pageSize == null) {
-//				command = new CompassSearchCommand(query);
-//			} else {
-//				command = new CompassSearchCommand(query, pageNumber);
-//			}
-//
-//			CompassSearchResults results = searchHelper.search(command);
-//			if (log.isDebugEnabled()) log.debug("search lasted " + results.getSearchTime() + " milliseconds");
-
 			TopScoreDocCollector collector  = luceneService.search(query);
 			ScoreDoc[] hits = collector.topDocs().scoreDocs;
 			QueryScorer scorer = new QueryScorer(query, "contents");
 	        Highlighter highlighter = new Highlighter(scorer);
-	        highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer));
+//	        highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer));
 
 			if (log.isDebugEnabled()) log.debug(hits.length + " results found");
 			for (int i = 0; i < hits.length; i++) {
@@ -427,6 +409,8 @@ public class SearchengineService {
 	                    "contents",
 	                    resource,
 	                    new StandardAnalyzer(Version.LUCENE_36));
+				SimpleFragmenter fragmenter=new SimpleFragmenter(fragmentSize);
+				highlighter.setTextFragmenter(fragmenter);
 	            String fragment =
 	                    highlighter.getBestFragment(stream, contents);
 				retVal.setSummary(stripNonValidXMLCharacters(fragment/*hits[i].getHighlightedText().getHighlightedText("contents"))*/));
@@ -538,7 +522,7 @@ public class SearchengineService {
 //			String analyzerClass = session.getSettings().getSetting("compass.engine.analyzer.search.type");
 //			Constructor<Analyzer> analyzerConstructor = (Constructor<Analyzer>) (Class.forName(analyzerClass)).getConstructor();
 			analyzer = new StandardAnalyzer(Version.LUCENE_36);//analyzerConstructor.newInstance();
-			if (log.isInfoEnabled()) log.info("Created search analyzer from compass settings - class is: " + analyzer.getClass().getName());
+			if (log.isInfoEnabled()) log.info("Created search analyzer - class is: " + analyzer.getClass().getName());
 		} catch (Exception e) {
 			log.error("Error while instantiating search analyzer from compass settings - going on with StandardAnalyzer");
 			analyzer = new StandardAnalyzer(Version.LUCENE_36);

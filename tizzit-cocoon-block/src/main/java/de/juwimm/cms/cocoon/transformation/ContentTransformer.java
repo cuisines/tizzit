@@ -252,13 +252,19 @@ public class ContentTransformer extends AbstractTransformer implements Recyclabl
 			}
 			String host = RequestHelper.getHost(request);
 			boolean isLive=webSpringBean.getLiveserver(host);
+			Integer fragmentSize = new Integer(0);
+			try {
+				fragmentSize = Integer.valueOf(this.request.getParameter("fragmentSize"));
+			} catch (Exception exe) {
+				if (log.isDebugEnabled()) log.debug("No fragmentSize? " + exe.getMessage());
+			}
 			
 			ArrayList<SearchResultValue> resultList = new ArrayList<SearchResultValue>();
 			SearchResultValue[] results = null;
 			if (urlSearch == null) {
-				results = searchengineService.searchWeb(this.siteValue.getSiteId(),(unitSearch?unitValue.getUnitId():null), this.webSearchquery, pageSize, pageNumber, safeguardMap, null, isLive);
+				results = searchengineService.searchWeb(this.siteValue.getSiteId(),(unitSearch?unitValue.getUnitId():null), this.webSearchquery, pageSize, pageNumber, safeguardMap, null, isLive,fragmentSize);
 			} else {
-				results = searchengineService.searchWeb(this.siteValue.getSiteId(),(unitSearch?unitValue.getUnitId():null), this.webSearchquery, pageSize, pageNumber, safeguardMap, urlSearch, isLive);
+				results = searchengineService.searchWeb(this.siteValue.getSiteId(),(unitSearch?unitValue.getUnitId():null), this.webSearchquery, pageSize, pageNumber, safeguardMap, urlSearch, isLive,fragmentSize);
 			}
 			
 			if (results != null) {
