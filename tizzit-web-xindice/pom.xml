@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-web-xindice</artifactId>
-	<version>3.1.9-SNAPSHOT</version>
+	<version>3.1.8-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>tizzit Xindice</name>
 	<scm>
@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.1.9-SNAPSHOT</version>
+		<version>3.1.8-SNAPSHOT</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<dependencies> </dependencies>
