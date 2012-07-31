@@ -56,11 +56,16 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 	private long chgDate = 0;
 	private Request request = null;
 	private Map<String, String> safeguardMap = null;
+	
+//	private static int callsS=0;
+//	private static int callsE=0;
 
 	/* (non-Javadoc)
 	 * @see org.apache.cocoon.sitemap.SitemapModelComponent#setup(org.apache.cocoon.environment.SourceResolver, java.util.Map, java.lang.String, org.apache.avalon.framework.parameters.Parameters)
 	 */
 	public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par) throws ProcessingException, SAXException, IOException {
+//		callsS++;
+//		callsE=0;
 		if (log.isDebugEnabled()) log.debug("begin setup with src: " + src);
 		try {
 			webSpringBean = (WebServiceSpring) CocoonSpringHelper.getBean(objectModel, CocoonSpringHelper.WEB_SERVICE_SPRING);
@@ -110,6 +115,7 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 		} catch (Exception exe) {
 		}
 		if (log.isDebugEnabled()) log.debug("end setup");
+//		log.info("Setup Calls: "+callsS);
 	}
 
 	@Override
@@ -127,6 +133,7 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 	 */
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+//		long timestamp=-1;
 		if (localName.equals("navigation")) {
 			AttributesImpl newAtts = new AttributesImpl();
 			newAtts.setAttributes(attrs);
@@ -149,6 +156,8 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 			super.startElement(uri, localName, qName, attrs);
 		}
 		if (localName.equals("navigation")) {
+//			callsE++;
+//			timestamp=System.currentTimeMillis();
 			Document doc = XercesHelper.getNewDocument();
 			if (log.isDebugEnabled()) log.debug("fillNavigation entered.");
 			String navigationXml = "";
@@ -199,7 +208,7 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 			}
 			try {
 				if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(viewComponentValue.getViewComponentId()) >= ifDistanceToNavigationRoot) {
-					navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver, iAmTheLiveserver);
+					navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth,safeguardMap, iAmTheLiveserver,showOnlyAuthorized, iAmTheLiveserver);
 					if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
 						try {
 							Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
@@ -224,20 +233,20 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 									}
 								}
 							}
-							// filter safeGuard
-							if (showOnlyAuthorized) {
-								try {
-									String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
-									String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
-									if (log.isDebugEnabled()) {
-										log.debug("allNavigationXml\n" + allNavigationXml);
-										log.debug("filteredNavigationXml\n" + filteredNavigationXml);
-									}
-									docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
-								} catch (Exception e) {
-									log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
-								}
-							}
+//							// filter safeGuard
+//							if (showOnlyAuthorized) {
+//								try {
+//									String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
+//									String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
+//									if (log.isDebugEnabled()) {
+//										log.debug("allNavigationXml\n" + allNavigationXml);
+//										log.debug("filteredNavigationXml\n" + filteredNavigationXml);
+//									}
+//									docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
+//								} catch (Exception e) {
+//									log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
+//								}
+//							}
 							// Insert navigationXml -> sitemap
 							Node page = doc.importNode(docNavigationXml.getFirstChild(), true);
 							SAXHelper.string2sax(XercesHelper.node2string(page), this);
@@ -251,6 +260,8 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 			}
 		}
 		if(localName=="navigationBackward"){
+//			callsE++;
+//			timestamp=System.currentTimeMillis();
 			Document doc = XercesHelper.getNewDocument();
 			if (log.isDebugEnabled()) log.debug("fillNavigationBackward entered.");			
 			String sm = "";
@@ -289,6 +300,11 @@ public class NavigationTransformer extends AbstractTransformer implements Cachea
 				log.error("An error occured while trying to create the breadcrumbs navigation", exe);
 			}
 		}
+//		if(timestamp>=0){
+//			log.info("Element call for localName= "+localName);
+//			log.info("Time taken for navigation (millies): "+(System.currentTimeMillis()-timestamp));
+//			log.info("Element calls "+callsE);
+//		}
 	}
 
 	private void setAxisToRootAttributes(Node found) {

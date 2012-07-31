@@ -983,7 +983,7 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 			}
 
 			if (ifDistanceToNavigationRoot == -1 || webSpringBean.getNavigationRootDistance4VCId(viewComponentValue.getViewComponentId()) >= ifDistanceToNavigationRoot) {
-				navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth, iAmTheLiveserver);
+				navigationXml = webSpringBean.getNavigationXml(viewComponentId, since, depth,safeguardMap, iAmTheLiveserver,showOnlyAuthorized);
 				if (navigationXml != null && !"".equalsIgnoreCase(navigationXml)) {
 					try {
 						Document docNavigationXml = XercesHelper.string2Dom(navigationXml);
@@ -1008,20 +1008,20 @@ public class CmsContentGenerator extends AbstractGenerator implements CacheableP
 								}
 							}
 						}
-						// filter safeGuard
-						if (showOnlyAuthorized) {
-							try {
-								String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
-								String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
-								if (log.isDebugEnabled()) {
-									log.debug("allNavigationXml\n" + allNavigationXml);
-									log.debug("filteredNavigationXml\n" + filteredNavigationXml);
-								}
-								docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
-							} catch (Exception e) {
-								log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
-							}
-						}
+//						// filter safeGuard
+//						if (showOnlyAuthorized) {
+//							try {
+//								String allNavigationXml = XercesHelper.doc2String(docNavigationXml);
+//								String filteredNavigationXml = this.webSpringBean.filterNavigation(allNavigationXml, safeguardMap);
+//								if (log.isDebugEnabled()) {
+//									log.debug("allNavigationXml\n" + allNavigationXml);
+//									log.debug("filteredNavigationXml\n" + filteredNavigationXml);
+//								}
+//								docNavigationXml = XercesHelper.string2Dom(filteredNavigationXml);
+//							} catch (Exception e) {
+//								log.error("Error filtering navigation with SafeGuard: " + e.getMessage(), e);
+//							}
+//						}
 						// Insert navigationXml -> sitemap
 						Node page = doc.importNode(docNavigationXml.getFirstChild(), true);
 						navigation.appendChild(page);
