@@ -45,6 +45,8 @@ import org.apache.log4j.PropertyConfigurator;
 import org.tizzit.util.XercesHelper;
 import org.w3c.dom.Document;
 
+import sun.misc.PerformanceLogger;
+
 import com.Ostermiller.util.Browser;
 
 import de.juwimm.cms.client.beans.Application;
@@ -70,6 +72,7 @@ import de.juwimm.cms.http.HttpClientWrapper;
 import de.juwimm.cms.http.ProxyHelper;
 import de.juwimm.cms.util.ActionHub;
 import de.juwimm.cms.util.Communication;
+import de.juwimm.cms.util.PerformanceUtils;
 import de.juwimm.cms.util.UIConstants;
 
 /**
@@ -115,6 +118,7 @@ public class Main extends JFrame implements ActionListener {
 	public Main(String[] argv) {
 		// Bugfix [CH], use the "old" Java 5 RepaintManager (no-arg constructor creates one) for current thread group
 		// instead of setting the system property "swing.bufferPerWindow" to false (does not work with JavaWebStart)
+		PerformanceUtils.start();
 		RepaintManager.setCurrentManager(new RepaintManager());
 
 		System.setProperty("swing.aatext", "true");
@@ -131,7 +135,6 @@ public class Main extends JFrame implements ActionListener {
 			logSys("Starting Tizzit Version " + Constants.CMS_VERSION);
 		} catch (Exception e) {
 		}
-
 		//SplashShell splash = new SplashShell();
 		FrmVersion splash = new FrmVersion();
 		int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -142,7 +145,8 @@ public class Main extends JFrame implements ActionListener {
 		splash.setIconImage(new ImageIcon(getClass().getResource("/images/cms_16x16.gif")).getImage());
 		splash.setSize(frameWidth, frameHeight);
 		splash.setVisible(true);
-
+		
+		
 		String host = "";
 		if (argv.length >= 2 && argv[0].equals("URL_HOST")) {
 			try {
@@ -178,9 +182,8 @@ public class Main extends JFrame implements ActionListener {
 		System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl");
 		System.setProperty("javax.xml.parsers.SAXParser", "org.apache.xerces.jaxp.SAXParserImpl"); //needed?
 		System.setProperty("org.xml.sax.driver", "org.apache.xerces.parsers.SAXParser"); //needed?
-
 		initLog4J(host, argv);
-
+		PerformanceUtils.mark("Initial stage");
 		String testUrl = ((Constants.SERVER_SSL) ? "https://" : "http://") + Constants.SERVER_HOST + ":" + Constants.SERVER_PORT + "/admin/juwimm-cms-client.jnlp";
 		try {
 			URI desturi = new URI(testUrl);
@@ -193,17 +196,17 @@ public class Main extends JFrame implements ActionListener {
 			logSys("could not initialize the proxy settings because URI from host " + host + ": " + ex);
 			// log.error("could not initialize the proxy settings because URI from host " + host + " : ", ex);
 		}
-
+		PerformanceUtils.mark("Initialising proxy server");
 		try {
 			UIManager.getLookAndFeelDefaults().put("ClassLoader", getClass().getClassLoader());
 			LookAndFeel.switchTo(LookAndFeel.determineLookAndFeel());
 		} catch (Exception exe) {
 			log.error("Can't switch to Default LookAndFeel");
 		}
-
+		PerformanceUtils.mark("Initialising look and feel");
 		splash.setStatusInfo("Invoking Bean Framework...");
 		Application.initializeContext();
-
+		PerformanceUtils.mark("Initialising spring context");
 		splash.setStatusInfo("Getting Locale Settings...");
 
 		try {
@@ -212,7 +215,7 @@ public class Main extends JFrame implements ActionListener {
 			log.warn("Could not find ResourceBundle for language: " + Constants.CMS_LOCALE + " - loading default");
 			Constants.rb = ResourceBundle.getBundle("CMS", Constants.CMS_LOCALE);
 		}
-
+		PerformanceUtils.mark("Loading resource bundle");
 		splash.setStatusInfo(Constants.rb.getString("splash.checkingSSL"));
 		HttpClientWrapper httpClientWrapper = HttpClientWrapper.getInstance();
 
@@ -222,7 +225,7 @@ public class Main extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(null, exe.getMessage(), Constants.rb.getString("dialog.title"), JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
-
+		PerformanceUtils.mark("Initialising client wrapper");
 		splash.setStatusInfo(Constants.rb.getString("splash.configBrowserSettings"));
 		Browser.init(); // only needs to be called once.
 		splash.setStatusInfo(Constants.rb.getString("splash.gettingTemplates"));
@@ -231,7 +234,7 @@ public class Main extends JFrame implements ActionListener {
 		comm.getDbHelper(); // check if there is already a programm running
 		ActionHub.addActionListener(this);
 		rb = Constants.rb;
-
+		PerformanceUtils.mark("Initialising dbHelper");
 		splash.setStatusInfo(Constants.rb.getString("splash.initUI"));
 		try {
 			this.getContentPane().setLayout(new BorderLayout());
@@ -267,6 +270,7 @@ public class Main extends JFrame implements ActionListener {
 			//splash.disposeMe();
 			splash.dispose();
 		}
+		PerformanceUtils.mark("Initialising main window");
 	}
 
 	private void initLog4J(String host, String[] arguments) {
