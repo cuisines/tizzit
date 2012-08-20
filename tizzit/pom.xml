@@ -378,21 +378,21 @@
     			<artifactId>lucene-spellchecker</artifactId>
 				<version>${lucene.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-core-tiger</artifactId>
-				<version>${spring.security.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.springframework</groupId>
-						<artifactId>spring-support</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.springframework.security</groupId> -->
+<!-- 				<artifactId>spring-security-core-tiger</artifactId> -->
+<!-- 				<version>${spring.security.version}</version> -->
+<!-- 				<exclusions> -->
+<!-- 					<exclusion> -->
+<!-- 						<groupId>org.springframework</groupId> -->
+<!-- 						<artifactId>spring-core</artifactId> -->
+<!-- 					</exclusion> -->
+<!-- 					<exclusion> -->
+<!-- 						<groupId>org.springframework</groupId> -->
+<!-- 						<artifactId>spring-support</artifactId> -->
+<!-- 					</exclusion> -->
+<!-- 				</exclusions> -->
+<!-- 			</dependency> -->
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
@@ -808,8 +808,8 @@
 		<!-- JIRA: TIZZIT-249 - The version is used in the pom.xml files of tizzit-richclient and tizzit-web-admin. -->
 		<javax.activation.version>1.0.2</javax.activation.version>
 
-		<spring.version>3.0.3.RELEASE</spring.version>
-		<spring.security.version>2.0.4</spring.security.version>
+		<spring.version>3.1.2.RELEASE</spring.version>
+		<spring.security.version>3.1.2.RELEASE</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
 		<lucene.version>3.6.0</lucene.version>
 
@@ -850,7 +850,7 @@
 		<dataSource.name>tizzitDS</dataSource.name>
 		<dataSource>java:/${dataSource.name}</dataSource>
 		<!-- targetJdk property set in order to allow pmd to run -->
-		<targetJdk>1.6</targetJdk>
+		<targetJdk>1.7</targetJdk>
 		<!-- Sonar connection settings -->
         <sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar</sonar.jdbc.url>
         <sonar.jdbc.username>sonar</sonar.jdbc.username>

@@ -19,55 +19,31 @@ import static de.juwimm.cms.client.beans.Application.getBean;
 import static de.juwimm.cms.common.Constants.rb;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
-import java.awt.MediaTracker;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
 import org.apache.log4j.Logger;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
 import de.juwimm.cms.client.beans.Beans;
-import de.juwimm.cms.common.Constants;
 import de.juwimm.cms.common.UserRights;
 import de.juwimm.cms.content.ContentManager;
 import de.juwimm.cms.content.frame.DlgPictureBrowser;
 import de.juwimm.cms.content.frame.DlgPictureEditor;
-import de.juwimm.cms.content.frame.DlgSavePicture;
-import de.juwimm.cms.content.frame.helper.ImageFileView;
-import de.juwimm.cms.content.frame.helper.ImageFilter;
-import de.juwimm.cms.content.frame.helper.ImagePreview;
-import de.juwimm.cms.content.frame.helper.Utils;
 import de.juwimm.cms.content.modules.Module;
 import de.juwimm.cms.content.panel.util.PictureUploadUtil;
-import de.juwimm.cms.gui.FrmProgressDialog;
 import de.juwimm.cms.gui.controls.FileTransferHandler;
 import de.juwimm.cms.util.Communication;
 import de.juwimm.cms.util.Parameters;
