@@ -194,6 +194,7 @@ public class ViewServiceSpringImpl extends ViewServiceSpringBase {
 			throw new UserException(e.getMessage());
 		}
 		if (log.isDebugEnabled()) log.debug("end removeViewComponent");
+		//Luke I am your father!!!
 	}
 
 	/**

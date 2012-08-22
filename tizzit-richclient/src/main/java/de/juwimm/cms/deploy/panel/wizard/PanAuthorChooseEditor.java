@@ -189,7 +189,7 @@ public class PanAuthorChooseEditor extends JPanel implements WizardPanel, ItemLi
 	 * @author <a href="mailto:s.kulawik@juwimm.com">Sascha-Matthias Kulawik</a>
 	 * @version $Id$
 	 */
-	private class RightsCellRenderer extends DefaultListCellRenderer implements ListCellRenderer {
+	private class RightsCellRenderer extends DefaultListCellRenderer implements ListCellRenderer<Object> {
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			return super.getListCellRendererComponent(list, rightsView(((String) value)), index, isSelected, cellHasFocus);
 		}

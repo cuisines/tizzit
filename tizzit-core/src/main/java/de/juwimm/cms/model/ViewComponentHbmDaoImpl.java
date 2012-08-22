@@ -65,6 +65,9 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 	private SequenceHbmDao sequenceHbmDao;
 
 	@Autowired
+	private DocumentHbmDao documentHbmDao;
+
+	@Autowired
 	private BlobJdbcDao blobJdbcDao;
 
 	public TizzitPropertiesBeanSpring getTizzitPropertiesBeanSpring() {
@@ -427,6 +430,13 @@ public class ViewComponentHbmDaoImpl extends ViewComponentHbmDaoBase {
 				log.warn("Error deleting referenced content for viewComponent " + viewComponentHbm.getViewComponentId() + "\n" + exe.getMessage());
 			}
 		}
+		// delete attached documents
+		Collection documents=viewComponentHbm.getDocuments();
+		for (Iterator iterator = documents.iterator(); iterator.hasNext();) {
+			DocumentHbm documentHbm = (DocumentHbm) iterator.next();
+			documentHbmDao.remove(documentHbm);
+		}
+
 		// sending deleted-message to searchEngine
 		if (viewComponentHbm.getViewDocument() != null) {
 			searchengineDeleteService.deletePage(viewComponentHbm, true);
