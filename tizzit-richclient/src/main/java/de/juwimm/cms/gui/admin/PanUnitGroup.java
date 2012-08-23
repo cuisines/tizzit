@@ -331,7 +331,7 @@ public class PanUnitGroup extends JPanel implements ReloadablePanel {
 	/**
 	 * 
 	 */
-	private class RolesCellRenderer extends DefaultListCellRenderer implements ListCellRenderer<Object> {
+	private class RolesCellRenderer extends DefaultListCellRenderer implements ListCellRenderer {
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			return super.getListCellRendererComponent(list, roleView(((RoleValue) value).getRoleId()), index, isSelected, cellHasFocus);
 		}

@@ -204,7 +204,7 @@ public class TinyDirectoryModel extends BasicDirectoryModel {
 	}
 
 	protected void sort(Vector v) {
-		ShellFolder.sort(v);
+		ShellFolder.sortFiles(v);
 	}
 
 	// Obsolete - not used
