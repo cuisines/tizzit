@@ -1639,15 +1639,22 @@ public class ContentServiceSpringImpl extends ContentServiceSpringBase {
 	private Map<ViewComponentHbm, List<ContentVersionHbm>> getAllContentVersionsRecursive(ViewComponentHbm root) {
 
 		Map<ViewComponentHbm, List<ContentVersionHbm>> contentVersions = new HashMap<ViewComponentHbm, List<ContentVersionHbm>>();
-		contentVersions.put(root, (List<ContentVersionHbm>) getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
+		try{
+			long contentId=Long.parseLong(root.getReference());
+			contentVersions.put(root, (List<ContentVersionHbm>) getContentVersionHbmDao().findContentVersionsByViewComponent(root.getViewComponentId()));
+		}catch (Exception e) {
+			log.debug("Reference field not a number",e);
+		} finally {
 		Collection children = root.getChildren();
 		if (children != null && children.size() > 0) {
 			for (Object child : children) {
 				contentVersions.putAll(getAllContentVersionsRecursive((ViewComponentHbm) child));
 			}
 		}
+		}
 
 		return contentVersions;
+		
 	}
 
 	/**
