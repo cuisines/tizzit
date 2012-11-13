@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.1.9-SNAPSHOT</version>
+		<version>3.1.9</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-cocoon-block</artifactId>
 	<name>tizzit Cocoon Block</name>
-	<version>3.1.9-SNAPSHOT</version>
+	<version>3.1.9</version>
 	<packaging>jar</packaging>
 	<scm>
 		<connection>scm:git:git@github.com:tizzit/tizzit.git</connection>
@@ -22,22 +22,22 @@
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-cocoon-components</artifactId>
-			<version>3.1.9-SNAPSHOT</version>
+			<version>3.1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-core</artifactId>
-			<version>3.1.9-SNAPSHOT</version>
+			<version>3.1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-plugin-api</artifactId>
-			<version>3.1.9-SNAPSHOT</version>
+			<version>3.1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-xmlsearch-xindice</artifactId>
-			<version>3.1.9-SNAPSHOT</version>
+			<version>3.1.9</version>
 		</dependency>
 
 		<!-- Cocoon core and blocks -->
