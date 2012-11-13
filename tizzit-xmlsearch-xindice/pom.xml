@@ -2,11 +2,11 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.tizzit</groupId>
    <artifactId>tizzit-xmlsearch-xindice</artifactId>
-   <version>3.1.9</version>
+   <version>3.1.10-SNAPSHOT</version>
    <parent>
       <groupId>org.tizzit</groupId>
       <artifactId>tizzit</artifactId>
-      <version>3.1.9</version>
+      <version>3.1.10-SNAPSHOT</version>
       <relativePath>../tizzit/pom.xml</relativePath>
    </parent>
    <packaging>jar</packaging>
@@ -20,7 +20,7 @@
       <dependency>
          <groupId>org.tizzit</groupId>
          <artifactId>tizzit-core</artifactId>
-         <version>3.1.9</version>
+         <version>3.1.10-SNAPSHOT</version>
       </dependency> 
       <dependency>
          <groupId>xindice</groupId>
