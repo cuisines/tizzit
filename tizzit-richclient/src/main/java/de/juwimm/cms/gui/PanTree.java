@@ -1036,6 +1036,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		log.debug("PANTREE - ACTION PERFORMED: "+e.getActionCommand()+" - "+e.getSource().toString());
 		String action = e.getActionCommand();
 		TreeNode treeNode = (TreeNode) tree.getLastSelectedPathComponent();
 		// This are general Actions, which do not depend on the type of the TreeNode
@@ -1148,6 +1149,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				tree.scrollPathToVisible(tp);
 				this.invalidateTreeCache();
 			} else if (action.equals(Constants.ACTION_TREE_ENTRY_NAME)) {
+				if(Constants.IS_SAVING){
 				if (log.isDebugEnabled()) log.debug("actionPerformed::ACTION_TREE_ENTRY_NAME");
 				ViewComponentValue value = (ViewComponentValue) e.getSource();
 				entry = treeModel.findEntry4Id((PageNode) treeModel.getRoot(), value.getViewComponentId().intValue());
@@ -1155,7 +1157,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				if (log.isDebugEnabled()) log.debug("Found Entry: " + entry);
 				treeModel.nodeChanged(entry);
 				ActionHub.fireActionPerformed(new ActionEvent(entry, ActionEvent.ACTION_PERFORMED, Constants.ACTION_DEPLOY_STATUS_CHANGED));
-				this.invalidateTreeCache();
+				this.invalidateTreeCache();}
 			} else if (action.equals(this.strACTIONROOTDEPLOYSUNIT)) {
 				new EditorController(entry.getViewComponent().getUnitId());
 			} else if (action.equals(this.strACTIONROOTDEPLOYALLUNITS)) {

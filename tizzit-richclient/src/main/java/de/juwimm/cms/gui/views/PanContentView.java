@@ -84,7 +84,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 	private static Logger log = Logger.getLogger(PanContentView.class);
 	private final Communication comm = ((Communication) getBean(Beans.COMMUNICATION));
 	private final ResourceBundle rb = Constants.rb;
-	private ViewComponentValue viewComponent;
+	private volatile ViewComponentValue viewComponent;
 	private final JTabbedPane panTab = new JTabbedPane();
 	private PanMenuentryContent panMenuentry;
 	private PanelContent panContent;
@@ -296,6 +296,17 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 	}
 
 	public synchronized void save() {
+		if (viewComponent.getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+			int i = JOptionPane.showConfirmDialog(this,
+					rb.getString("alert.deploy.publishToLive"),
+					rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if (i != JOptionPane.YES_OPTION) {
+				return;
+			}
+		}
+		Main.getInstance().freezeInput(true);
+		Constants.IS_SAVING=true;
 		UIConstants.setActionStatus(rb.getString("statusinfo.content.save"));
 		btnSave.setEnabled(false);
 		ActionHub.configureProperty(PanelContent.PROP_CHECKIN, PropertyConfigurationEvent.PROP_ENABLE, "false");
@@ -364,6 +375,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 		btnSave.setEnabled(true);
 		ActionHub.configureProperty(PanelContent.PROP_CHECKIN, PropertyConfigurationEvent.PROP_ENABLE, "true");
 		UIConstants.setActionStatus("");
+		Constants.IS_SAVING=false;
 		Main.getInstance().freezeInput(false);
 	}
 

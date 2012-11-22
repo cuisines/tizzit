@@ -654,6 +654,7 @@ public class PanMenuentry extends JPanel implements LoadableViewComponentPanel, 
 	 */
 
 	public void actionPerformed(ActionEvent ae) {
+		log.debug("ACTION PERFORMED: "+ae.getActionCommand()+" - "+ae.getSource().toString());
 		String action = ae.getActionCommand();
 		try {
 			ViewComponentValue vc = ((PageNode) PanTree.getSelectedEntry()).getViewComponent();

@@ -236,6 +236,7 @@ public final class Constants {
 	public static final int OS_WINDOWS = 1;
 	public static final int OS_LINUX = 2;
 	public static final int OS_MACOSX = 3;
+	public static volatile boolean IS_SAVING = false;
 
 	public static final String PUBLISH_VERSION = "PUBLS";
 

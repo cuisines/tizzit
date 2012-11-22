@@ -533,7 +533,10 @@ public class Main extends JFrame implements ActionListener {
 	}
 	
 	public void freezeInput(boolean freeze){
+		log.info("input frozen="+freeze);
 		this.getGlassPane().setVisible(freeze); //block mouse input
+		this.getGlassPane().repaint();
+		this.repaint();
 	}
 
 }

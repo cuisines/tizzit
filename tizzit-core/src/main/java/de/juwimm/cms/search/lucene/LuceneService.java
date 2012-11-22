@@ -40,7 +40,7 @@ public class LuceneService {
 		String luceneStore = tizzitPropertiesBeanSpring.getSearch().getLuceneStore();
 		if ("luceneFile".equalsIgnoreCase(luceneStore)) {
 			indexLocation = tizzitPropertiesBeanSpring.getDatadir();
-			indexLocation += "/" + "searchTest";
+			indexLocation += "/" + "search";
 		}
 		String indexmode = tizzitPropertiesBeanSpring.getSearch().getIndexMode();
 		if(indexmode.equalsIgnoreCase("live"))
