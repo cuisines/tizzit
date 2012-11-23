@@ -37,7 +37,7 @@
             </bean>
         </property>
         <property name="serviceInterface">
-            <value>org.springframework.security.providers.rcp.RemoteAuthenticationManager</value>
+            <value>org.springframework.security.authentication.rcp.RemoteAuthenticationManager</value>
         </property>
     </bean>
 	

@@ -299,7 +299,7 @@
 							<include>org.springframework:spring-tx</include>
 							<include>org.springframework:spring-web</include>
 							<include>org.springframework:spring-webmvc</include>
-							<include>org.springframework.security:spring-security-core-tiger</include>
+							<!--include>org.springframework.security:spring-security-core-tiger</include-->
 							<include>org.springframework.security:spring-security-acl</include>
 							<include>org.springframework.security:spring-security-core</include>
 							<include>commons-codec:commons-codec</include>

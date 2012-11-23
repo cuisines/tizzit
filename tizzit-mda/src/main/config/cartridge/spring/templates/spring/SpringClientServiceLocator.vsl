@@ -126,9 +126,9 @@ public class $clientServiceLocatorName
     /**
      * Get the authentication manager used to validate user credentials.
      */
-     public final org.springframework.security.providers.rcp.RemoteAuthenticationManager getRemoteAuthenticationService()
+     public final org.springframework.security.authentication.rcp.RemoteAuthenticationManager getRemoteAuthenticationService()
     {
-    return (org.springframework.security.providers.rcp.RemoteAuthenticationManager)
+    return (org.springframework.security.authentication.rcp.RemoteAuthenticationManager)
             getContext().getBean("${serviceRemoteContext}RemoteAuthenticationManagerService");
     }
 

@@ -393,6 +393,21 @@
 <!-- 					</exclusion> -->
 <!-- 				</exclusions> -->
 <!-- 			</dependency> -->
+<dependency>
+<groupId>org.springframework.security</groupId>
+<artifactId>spring-security-core</artifactId>
+<version>${spring.security.version}</version>
+</dependency>
+<dependency>
+<groupId>org.springframework.security</groupId>
+<artifactId>spring-security-web</artifactId>
+<version>${spring.security.version}</version>
+</dependency>
+<dependency>
+<groupId>org.springframework.security</groupId>
+<artifactId>spring-security-config</artifactId>
+<version>${spring.security.version}</version>
+</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
@@ -693,14 +708,15 @@
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.5</source>
-						<target>1.5</target>
+						<source>1.7</source>
+						<target>1.7</target>
 						<excludes>
 							<exclude>**/*Point*.java</exclude>
 						</excludes>
 						<!--
 							<executable>${jdk6exe}</executable> <fork>true</fork>
 						-->
+						<version>2.3.2</version>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -1062,7 +1078,7 @@
 			<url>dav:http://maven.tizzit.org/sites-deploy/tizzit</url>
 		</site>
 	</distributionManagement>
-	<repositories>
+	<!--repositories>
 		<repository>
 			<id>tizzit-central</id>
 			<name>Tizzit Repository</name>
@@ -1082,8 +1098,8 @@
 			<name>Juwimm Repository</name>
 			<url>http://maven.juwimm.net/content/repositories/thirdparty/</url>
 		</repository>
-	</repositories>
-	<pluginRepositories>
+	</repositories-->
+	<!--pluginRepositories>
 		<pluginRepository>
 			<id>tizzit-central</id>
 			<name>Tizzit Repository</name>
@@ -1098,7 +1114,7 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</pluginRepository>
-	</pluginRepositories>
+	</pluginRepositories-->
 
 	<prerequisites>
 		<maven>2.0.8</maven>

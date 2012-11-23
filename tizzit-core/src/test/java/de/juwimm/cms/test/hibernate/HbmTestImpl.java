@@ -16,6 +16,8 @@
 package de.juwimm.cms.test.hibernate;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.security.auth.Subject;
@@ -26,12 +28,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.context.SecurityContextImpl;
-import org.springframework.security.providers.anonymous.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.test.AbstractTransactionalDataSourceSpringContextTests;
 
 import de.juwimm.cms.authorization.SimpleCallbackHandler;
@@ -184,7 +186,9 @@ public abstract class HbmTestImpl extends AbstractTransactionalDataSourceSpringC
 
 	public void mockAuthetication() {
 		SecurityContextImpl secureContext = new SecurityContextImpl();
-		Authentication token = new AnonymousAuthenticationToken("testUser", "testUser", new GrantedAuthority[] {new GrantedAuthorityImpl("testRole")});
+		Collection<GrantedAuthority> grantedAuthorities=new ArrayList<GrantedAuthority>();
+		grantedAuthorities.add(new GrantedAuthorityImpl("testRole"));
+		Authentication token = new AnonymousAuthenticationToken("testUser", "testUser", grantedAuthorities);
 		secureContext.setAuthentication(token);
 		SecurityContextHolder.setContext(secureContext);
 	}

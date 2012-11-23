@@ -19,9 +19,9 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import de.juwimm.cms.authorization.vo.UserLoginValue;
 import de.juwimm.cms.authorization.vo.UserValue;
