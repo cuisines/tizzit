@@ -77,6 +77,13 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 					if (principal instanceof Group) {
 						Group group = (Group) principal;
 						if (group.getName().equalsIgnoreCase("roles")) {
+							Enumeration e=group.members();
+							while (e.hasMoreElements()) {
+								Principal p = (Principal) e.nextElement();
+								if(p.getName().equalsIgnoreCase(requiredRole.getName())){
+									login = SafeguardLoginManager.LOGIN_SUCCESSFULLY;
+								}
+							}
 							if (group.isMember(requiredRole)) login = SafeguardLoginManager.LOGIN_SUCCESSFULLY;
 						}
 						if (log.isDebugEnabled()) {
