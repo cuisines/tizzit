@@ -99,7 +99,6 @@ public class JAASRealmLoginManager implements SafeguardLoginManager {
 				login = SafeguardLoginManager.LOGIN_SUCCESSFULLY;
 			}
 			if (log.isDebugEnabled()) log.debug("user \"" + this.userName + "\" at realm " + this.realmId + " is logedin: " + login);
-			lc.logout();
 		} catch (LoginException e) {
 			log.error("Error loging in user " + this.userName + " on JaasRealm " + this.realmId + ": " + e.getMessage(), e);
 		}
