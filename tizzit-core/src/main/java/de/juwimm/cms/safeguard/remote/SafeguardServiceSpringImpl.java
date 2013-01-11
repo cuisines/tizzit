@@ -109,7 +109,17 @@ public class SafeguardServiceSpringImpl extends SafeguardServiceSpringBase {
 				// append the required role to the realmkey
 				realm.setRealmKey(realm.getRealmKey() + "_" + realm.getRoleNeeded().trim().toLowerCase());
 			}
-			if (!safeGuardCookieMap.containsKey(realm.getRealmKey())) {
+			boolean containsKey=false;
+			for (Object roleObject : safeGuardCookieMap.keySet()) {
+				if(roleObject instanceof String){
+					String role1=(String) roleObject;
+					if(role1.equalsIgnoreCase(realm.getRealmKey())){
+						containsKey=true;
+						break;
+					}
+				}
+			}
+			if (!containsKey) {
 				isProtected = true;
 			} else {
 				if (log.isDebugEnabled()) {
