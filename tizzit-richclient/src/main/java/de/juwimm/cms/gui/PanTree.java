@@ -1149,7 +1149,7 @@ public class PanTree extends JPanel implements ActionListener, ViewComponentList
 				tree.scrollPathToVisible(tp);
 				this.invalidateTreeCache();
 			} else if (action.equals(Constants.ACTION_TREE_ENTRY_NAME)) {
-				if(Constants.IS_SAVING){
+				if(!Constants.IS_SAVING){
 				if (log.isDebugEnabled()) log.debug("actionPerformed::ACTION_TREE_ENTRY_NAME");
 				ViewComponentValue value = (ViewComponentValue) e.getSource();
 				entry = treeModel.findEntry4Id((PageNode) treeModel.getRoot(), value.getViewComponentId().intValue());

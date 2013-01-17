@@ -296,7 +296,7 @@ public final class PanContentView extends JPanel implements LoadableViewComponen
 	}
 
 	public synchronized void save() {
-		if (viewComponent.getOnline() == Constants.ONLINE_STATUS_ONLINE) {
+		if (viewComponent.getOnline() == Constants.ONLINE_STATUS_ONLINE && panTab.getSelectedIndex() == 0) {
 			int i = JOptionPane.showConfirmDialog(this,
 					rb.getString("alert.deploy.publishToLive"),
 					rb.getString("dialog.title"), JOptionPane.YES_NO_OPTION,
