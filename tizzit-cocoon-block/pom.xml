@@ -268,7 +268,7 @@
 		</dependency>
 		<!-- JIRA: TIZZIT-247 -->
 		<dependency>
-			<groupId>org.apache.cocoon</groupId>
+			<groupId>cocoon</groupId>
 			<artifactId>cocoon-poi</artifactId>
 			<version>2.1.11</version>
 		</dependency>
