@@ -1048,51 +1048,42 @@
 	
 	<distributionManagement>
 		<repository>
-			<id>tizzit-releases</id>
-			<name>Internal Releases</name>
-			<url>http://maven.tizzit.org/content/repositories/releases</url>
+			<id>juwimm-releases</id>
+			<name>JuwiMM Internal Release Distribution Repository</name>
+			<url>http://maven.juwimm.net/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>tizzit-snapshots</id>
-			<name>Internal Snapshots</name>
-			<url>http://maven.tizzit.org/content/repositories/snapshots</url>
+			<id>juwimm-snapshots</id>
+			<name>JuwiMM Internal Development Snapshot Repository</name>
+			<url>http://maven.juwimm.net/content/repositories/snapshots/</url>
 		</snapshotRepository>
 		<site>
-			<id>tizzit-sites</id>
-			<url>dav:http://maven.tizzit.org/sites-deploy/tizzit</url>
+			<id>juwimm-sites</id>
+			<url>dav:http://maven.juwimm.net/sites-deploy/tizzit</url>
 		</site>
 	</distributionManagement>
 	<repositories>
 		<repository>
-			<id>tizzit-central</id>
-			<name>Tizzit Repository</name>
-			<url>http://maven.tizzit.org/content/groups/public/</url>
-		</repository>
-		<repository>
-			<id>tizzit-central-snapshot</id>
-			<name>Tizzit Repository</name>
-			<url>http://maven.tizzit.org/content/repositories/snapshots/</url>
+			<id>juwimm-central</id>
+			<name>JuwiMM Internal Central Repository</name>
+			<url>http://maven.juwimm.net/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>Juwimm - Third Party</id>
-			<name>Juwimm Repository</name>
-			<url>http://maven.juwimm.net/content/repositories/thirdparty/</url>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>tizzit-central</id>
-			<name>Tizzit Repository</name>
-			<url>http://maven.tizzit.org/content/groups/public/</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>tizzit-central-snapshot</id>
-			<name>Tizzit Repository</name>
-			<url>http://maven.tizzit.org/content/repositories/snapshots/</url>
+			<id>juwimm-central</id>
+			<name>JuwiMM Internal Central Repository</name>
+			<url>http://maven.juwimm.net/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
