@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.tizzit</groupId>
 	<artifactId>tizzit-core</artifactId>
-	<version>3.1.12</version>
+	<version>3.1.13-SNAPSHOT</version>
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.1.12</version>
+		<version>3.1.13-SNAPSHOT</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
 	<packaging>jar</packaging>
@@ -20,12 +20,12 @@
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-plugin-api</artifactId>
-			<version>3.1.12</version>
+			<version>3.1.13-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tizzit</groupId>
 			<artifactId>tizzit-common</artifactId>
-			<version>3.1.12</version>
+			<version>3.1.13-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
