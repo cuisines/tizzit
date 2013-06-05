@@ -12,10 +12,10 @@
 	<parent>
 		<groupId>org.tizzit</groupId>
 		<artifactId>tizzit</artifactId>
-		<version>3.1.13-SNAPSHOT</version>
+		<version>3.1.13</version>
 		<relativePath>../tizzit/pom.xml</relativePath>
 	</parent>
-	<version>3.1.13-SNAPSHOT</version>
+	<version>3.1.13</version>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
