@@ -809,7 +809,7 @@
 		<javax.activation.version>1.0.2</javax.activation.version>
 
 		<spring.version>4.3.21.RELEASE</spring.version>
-		<spring.security.version>2.0.4</spring.security.version>
+		<spring.security.version>4.2.17.RELEASE</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
 		<lucene.version>3.6.0</lucene.version>
 
