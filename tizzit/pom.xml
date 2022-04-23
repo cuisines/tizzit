@@ -808,7 +808,7 @@
 		<!-- JIRA: TIZZIT-249 - The version is used in the pom.xml files of tizzit-richclient and tizzit-web-admin. -->
 		<javax.activation.version>1.0.2</javax.activation.version>
 
-		<spring.version>4.3.21.RELEASE</spring.version>
+		<spring.version>5.3.19</spring.version>
 		<spring.security.version>2.0.4</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
 		<lucene.version>3.6.0</lucene.version>
