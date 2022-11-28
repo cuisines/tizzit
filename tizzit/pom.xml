@@ -811,7 +811,7 @@
 		<spring.version>5.2.21.RELEASE</spring.version>
 		<spring.security.version>5.5.7</spring.security.version>
 		<jboss.security.version>4.2.2.GA</jboss.security.version>
-		<lucene.version>3.6.0</lucene.version>
+		<lucene.version>7.1.0</lucene.version>
 
 		<saxon.version>9.1.0.7B</saxon.version>
 		<!--
